@@ -6,28 +6,29 @@ const Faq = () => {
   const FaqQuestionData = [
     {
       id: 1,
-      title: "Do I use the same class code for each period?",
-      info: "Unicorn vinyl poutine brooklyn, next level direct trade iceland. Shaman copper mug church-key coloring book, whatever poutine normcore fixie cred kickstarter post-ironic street art.",
+      title: "Do I use the same class code for all my students?",
+      info: "Yes, you use the same class code for all your students whether they are from different periods or schools. The students, on their end, will differentiate which period and school they are apart of.",
     },
     {
       id: 2,
-      title: "How do I change my My Page password?",
+      title: "Which form is my student supposed to fill out?",
       info: "Coloring book forage photo booth gentrify lumbersexual. Migas chillwave poutine synth shoreditch, enamel pin thundercats fashion axe roof party polaroid chartreuse.",
     },
     {
       id: 3,
-      title: "What is BankID?",
-      info: "Enamel pin fam sustainable woke whatever venmo. Authentic asymmetrical put a bird on it, lumbersexual activated charcoal kinfolk banjo cred pickled sartorial.",
+      title: "Where can I see the breakdown of my students responses?",
+      info: "You can see a breakdown of your students responses on the metrics page. Here you can see how many students selected each answer choice for each question. You will also be able to differentiate between the responses for each of the periods you teach, schools you teach at, and the different types of forms your students filled out.",
     },
     {
       id: 4,
-      title: "Whose birth number can I use?",
-      info: "Edison bulb direct trade gentrify beard lo-fi seitan sustainable roof party franzen occupy squid. Knausgaard cronut succulents, scenester readymade shabby chic lyft. Copper mug meh vegan gentrify.",
+      title:
+        "How do I edit my state, city, school, and other account information?",
+      info: "You can edit all profile information on the profile page.",
     },
     {
       id: 5,
-      title: "When do I recieve a password ordered by letter?",
-      info: "Locavore franzen fashion axe live-edge neutra irony synth af tilde shabby chic man braid chillwave waistcoat copper mug messenger bag. Banjo snackwave blog, microdosing thundercats migas vaporware viral lo-fi seitan ",
+      title: "Are all student responses anonymous?",
+      info: "Yes, all student responses are fully anonymous. You will not be able to relate a student response to an actual student in your class. As a teacher, you will only be able to see the number of your students that selected a specific answer choice for each question.",
     },
   ];
 
