@@ -6,11 +6,15 @@ import Dropdown from "react-dropdown";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Cannabis = () => {
+const Cannabis = (info) => {
+
+    const {submitForm,Alert,showAlert}=useAppContext()
+    console.log(info)
+    const navigate = useNavigate();
     let selected=[]
     const handleSubmit = (e) => {
         e.preventDefault();
-        let names=["vapor","Waste/Garbage"]
+        let names=["I know that the cannabis that comes out of a vaping device is:","Waste/Garbage"]
         names.map((name)=>{
             let checks=document.getElementsByName(name)
             for (var check of checks)
@@ -20,8 +24,10 @@ const Cannabis = () => {
             }
             }
         })
-        console.log(selected)
+        submitForm(names,selected,localStorage.getItem('code'),info["grade"],info["when"])
 
+        navigate("/success", {
+          });
         
       };
 
@@ -32,13 +38,14 @@ const Cannabis = () => {
     >
       <Wrapper>
         <form className="form" onSubmit={handleSubmit}>
-          {/* {showAlert && <Alert />} */}
+            <h4>{info["form"]}</h4>
+          {showAlert && <Alert />}
           {/* <h4>You have joined {teacher_name}'s class</h4> */}
           <div className="form">
             <h4>I know that the cannabis that comes out of a vaping device is:</h4>
-            <input type="radio" value={"mostly harmless water"} name={"vapor"} /> mostly harmless water <br/>
-            <input type="radio" value={"some aerosolized chemicals"} name={"vapor"} /> some aerosolized chemicals <br/>
-            <input type="radio" value={"mosstly aerosolized chemicals"} name={"vapor"} /> mosstly aerosolized chemicals <br/>
+            <input type="radio" value={"mostly harmless water"} name={"I know that the cannabis that comes out of a vaping device is:"} /> mostly harmless water <br/>
+            <input type="radio" value={"some aerosolized chemicals"} name={"I know that the cannabis that comes out of a vaping device is:"} /> some aerosolized chemicals <br/>
+            <input type="radio" value={"mosstly aerosolized chemicals"} name={"I know that the cannabis that comes out of a vaping device is:I know that the cannabis that comes out of a vaping device is:"} /> mosstly aerosolized chemicals <br/>
 
             <h4 className="form-title">How Much Waste/Garbage Do You Believe cannabis Products Produce?</h4>
             <input type="radio" value={"not at all"} name={"Waste/Garbage"} /> not at all <br/>

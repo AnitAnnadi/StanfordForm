@@ -7,6 +7,7 @@ const Question = new mongoose.Schema(
       required: [true, 'Please provide UUID'],
     },
     Question: {
+      type:String,
       required: [true, 'Please provide Question'],
     },
     Answer: {

@@ -12,6 +12,7 @@ import EnterCode from "./pages/EnterCode";
 import SelectRole from "./pages/SelectRole";
 import JoinForm from "./pages/JoinForm";
 import Form from "./pages/Form";
+import Success from "./components/Sucess";
 function App() {
   return (
     <BrowserRouter>
@@ -37,7 +38,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/landing" element={<SelectRole />} />
         <Route path="/enterCode" element={<EnterCode />} />
-        
+        <Route path="/success" element={<Success />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </BrowserRouter>

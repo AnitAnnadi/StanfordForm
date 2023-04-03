@@ -1,8 +1,10 @@
 import User from '../models/User.js';
+import StudentReponse from '../models/StudentReponse.js';
 import { StatusCodes } from 'http-status-codes';
 import { BadRequestError, UnAuthenticatedError } from '../errors/index.js';
 import attachCookie from '../utils/attachCookie.js';
 import { v4 as uuid } from 'uuid';
+import Question from '../models/Question.js';
 
 
 const enterCode=async(req,res)=>{
@@ -125,4 +127,22 @@ const createLocation = async(req,res) =>{
 
   res.status(StatusCodes.OK).json({ user, state: user.location });
 }
-export { register, login, updateUser, getCurrentUser, logout, createLocation,enterCode };
+
+const submitForm = async(req,res) =>{
+  const {names,answer,code,grade,when}=req.body;
+  console.log(code,grade,when)
+  if (answer.length<names.length){
+    console.log('hi')
+    throw new BadRequestError('Please answer all questions');
+  }
+  const StudentResponseData= await StudentReponse.create({formCode:code,grade:grade,When:when})
+  let _id=(StudentResponseData["_id"])
+  
+  for (var i=0;i<names.length;i++){
+    console.log(_id,names[i],answer[i])
+    const question=await Question.create({StudentResponse:_id,Question:names[i],Answer:answer[i]})
+  }
+  
+   
+}
+export { register, login, updateUser, getCurrentUser, logout, createLocation,enterCode,submitForm };

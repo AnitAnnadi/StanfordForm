@@ -46,6 +46,7 @@ const EnterCode = () => {
     e.preventDefault();
     console.log(code);
     enterCode(code);
+    localStorage.setItem("code",code)
 
     if (isLoading) {
       console.log("loading");

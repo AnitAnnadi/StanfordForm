@@ -22,8 +22,8 @@ const Form = () => {
 
   const navigate = useNavigate();
   let location = useLocation();
-  let form = location.state;
-  console.log(form);
+  let info = location.state;
+  console.log(info);
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(document.getElementById("question"))
@@ -48,11 +48,11 @@ const Form = () => {
 //     )
 //  }, []))
 
-  if (form["form"]=='cannabis'){
-    return(<Cannabis/>)
+  if (info["form"]=='cannabis'){
+    return(<Cannabis {...info}/>)
   }
   else{
-    return(<Tobacco/>)
+    return(<Tobacco {...info}/>)
   }
 };
 export default Form;

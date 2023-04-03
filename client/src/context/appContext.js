@@ -196,6 +196,26 @@ const AppProvider = ({ children }) => {
     }
     clearAlert();
   };
+  const submitForm = async (names,answer,code,grade,when) => {
+    
+    
+    try {
+      console.log(names,answer,code,grade,when)
+      const { data } = await axios.post(`/api/v1/auth/submitForm/`, {names,answer,code,grade,when});
+      // console.log(data)
+      // const {id, name, email, state, city, school} = data;
+      // console.log(data["user"]["name"])
+      // dispatch({ type: ENTER_CODE , payload:{teacher:data["user"]}});
+    } catch (error) {
+      // if (error.response.status !== 401) {
+      //   dispatch({
+      //     type: UPDATE_USER_ERROR,
+      //     payload: { msg: error.response.data.msg },
+      //   });
+      // }
+    }
+    clearAlert();
+  };
 
   const handleChange = ({ name, value }) => {
     dispatch({ type: HANDLE_CHANGE, payload: { name, value } });
@@ -353,7 +373,8 @@ const AppProvider = ({ children }) => {
         clearFilters,
         changePage,
         updateLocation,
-        enterCode
+        enterCode,
+        submitForm
       }}
     >
       {children}

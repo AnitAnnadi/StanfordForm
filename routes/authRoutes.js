@@ -15,7 +15,8 @@ import {
   getCurrentUser,
   logout,
   createLocation,
-  enterCode
+  enterCode,
+  submitForm
 } from '../controllers/authController.js';
 
 import authenticateUser from '../middleware/auth.js';
@@ -24,6 +25,7 @@ router.route('/register').post(apiLimiter, register);
 router.route('/login').post(apiLimiter, login);
 router.get('/logout', logout);
 router.route('/enterCode').post( enterCode);
+router.route('/submitForm').post(submitForm)
 
 
 router.route('/updateUser').patch(authenticateUser, testUser, updateUser);
