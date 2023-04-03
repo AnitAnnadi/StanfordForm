@@ -45,7 +45,7 @@ const Cannabis = (info) => {
             <h4>I know that the cannabis that comes out of a vaping device is:</h4>
             <input type="radio" value={"mostly harmless water"} name={"I know that the cannabis that comes out of a vaping device is:"} /> mostly harmless water <br/>
             <input type="radio" value={"some aerosolized chemicals"} name={"I know that the cannabis that comes out of a vaping device is:"} /> some aerosolized chemicals <br/>
-            <input type="radio" value={"mosstly aerosolized chemicals"} name={"I know that the cannabis that comes out of a vaping device is:I know that the cannabis that comes out of a vaping device is:"} /> mosstly aerosolized chemicals <br/>
+            <input type="radio" value={"mosstly aerosolized chemicals"} name={"I know that the cannabis that comes out of a vaping device is:"} /> mosstly aerosolized chemicals <br/>
 
             <h4 className="form-title">How Much Waste/Garbage Do You Believe cannabis Products Produce?</h4>
             <input type="radio" value={"not at all"} name={"Waste/Garbage"} /> not at all <br/>
