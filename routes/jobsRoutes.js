@@ -7,15 +7,17 @@ import {
   getAllJobs,
   updateJob,
   showStats,
-  enterCode
+  getTotal
 } from '../controllers/jobsController.js';
 
 import testUser from '../middleware/testUser.js';
 
 router.route('/').post(testUser, createJob).get(getAllJobs);
+
 // remember about :id
+router.route('/responses').post(getTotal);
+
 router.route('/stats').get(showStats);
 router.route('/:id').delete(testUser, deleteJob).patch(testUser, updateJob);
-router.route('/enterCode').patch(enterCode);
 
 export default router;

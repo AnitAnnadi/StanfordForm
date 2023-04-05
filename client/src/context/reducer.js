@@ -29,6 +29,7 @@ import {
   ENTER_CODE,
   GET_CURRENT_USER_BEGIN,
   GET_CURRENT_USER_SUCCESS,
+  GET_TOTAL
 } from './actions';
 
 import { initialState } from './appContext';
@@ -163,6 +164,11 @@ const reducer = (state, action) => {
     alertText: "Joined New Form",
     ...state, isLoading: true, 
     teacher:action.payload};
+  }
+
+  if (action.type === GET_TOTAL) {
+    console.log(action.payload)
+    return {...state,totalResponses:action.payload};
   }
 
   // if (action.type === ENTER_CODE) {

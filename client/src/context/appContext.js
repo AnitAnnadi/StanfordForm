@@ -32,7 +32,8 @@ import {
   CHANGE_PAGE,
   GET_CURRENT_USER_BEGIN,
   GET_CURRENT_USER_SUCCESS,
-  ENTER_CODE
+  ENTER_CODE,
+  GET_TOTAL
 } from './actions';
 
 const initialState = {
@@ -64,7 +65,8 @@ const initialState = {
   searchType: 'all',
   sort: 'latest',
   sortOptions: ['latest', 'oldest', 'a-z', 'z-a'],
-  teacher:''
+  teacher:'',
+  totalResponses:null
 };
 
 const AppContext = React.createContext();
@@ -87,6 +89,7 @@ const AppProvider = ({ children }) => {
     (error) => {
       // console.log(error.response)
       if (error.response.status === 401) {
+        console.log('a')
         logoutUser();
       }
       return Promise.reject(error);
@@ -130,7 +133,9 @@ const AppProvider = ({ children }) => {
   };
 
   const logoutUser = async () => {
+    console.log('here')
     await authFetch.get('/auth/logout');
+    // localStorage.clear();
     dispatch({ type: LOGOUT_USER });
   };
   const updateUser = async (currentUser) => {
@@ -311,6 +316,17 @@ const AppProvider = ({ children }) => {
     }
     clearAlert();
   };
+
+  const getTotal = async(user)=>{
+    let code=user.code
+    console.log(code)
+    const {data}=await authFetch.post('/jobs/responses', {
+      code
+    });
+    let total=(data["totalResponses"])
+    dispatch({ type: GET_TOTAL , payload:{total}});
+    
+  }
   const showStats = async () => {
     dispatch({ type: SHOW_STATS_BEGIN });
     try {
@@ -345,6 +361,7 @@ const AppProvider = ({ children }) => {
         payload: { user, location },
       });
     } catch (error) {
+      console.log(error)
       if (error.response.status === 401) return;
       logoutUser();
     }
@@ -374,7 +391,8 @@ const AppProvider = ({ children }) => {
         changePage,
         updateLocation,
         enterCode,
-        submitForm
+        submitForm,
+        getTotal
       }}
     >
       {children}

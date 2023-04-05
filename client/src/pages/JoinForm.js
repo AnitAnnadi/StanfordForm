@@ -106,7 +106,7 @@ const JoinForm = () => {
             <button
               className="btn btn-block"
               type="submit"
-              disabled={isLoading}
+              // disabled={isLoading}
               onSubmit={(e) => handleSubmit(e.target.value)}
               style={{ marginTop: "1.38rem" }}
             >

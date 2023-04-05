@@ -4,11 +4,25 @@ import { FaBug } from "react-icons/fa";
 import { BsFillPeopleFill } from "react-icons/bs";
 import { BiCheckDouble } from "react-icons/bi";
 import Wrapper from "../assets/wrappers/StatsContainer";
+import { useEffect } from "react";
+
 
 const StatsContainer = () => {
-  const { stats, user, showAlert, displayAlert, updateLocation, isLoading } =
+  const { stats, user, showAlert, displayAlert, updateLocation, isLoading, getTotal,totalResponses } =
     useAppContext();
-
+  useEffect(() => {
+    getTotal(user)
+    const interval = setInterval(() => {
+      console.log('hi')
+      getTotal(user);
+    }, 10000);
+   
+  },[] );
+  let total=''
+  if (totalResponses){
+    total=(totalResponses["total"])
+  }
+  
   const defaultStats = [
     {
       title: "Class Code",
@@ -19,7 +33,7 @@ const StatsContainer = () => {
     },
     {
       title: "Total Responses",
-      count: stats.interview || 0,
+      count: total || 'loading',
       icon: <BiCheckDouble />,
       color: "#647acb",
       bcg: "#e0e8f9",

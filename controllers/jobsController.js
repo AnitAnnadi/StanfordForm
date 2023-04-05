@@ -8,11 +8,8 @@ import {
 import checkPermissions from '../utils/checkPermissions.js';
 import mongoose from 'mongoose';
 import moment from 'moment';
+import StudentReponse from '../models/StudentReponse.js';
 
-const enterCode=async(req,res)=>{
-  const {code} = req.body
-  console.log('hi')
-}
 
 
 
@@ -163,5 +160,13 @@ const showStats = async (req, res) => {
 
   res.status(StatusCodes.OK).json({ defaultStats, monthlyApplications });
 };
+const getTotal=async(req,res)=>{
+  const {code}=req.body
+  const result=StudentReponse.find({formCode:code})
+  const total = await result;
+  let totalResponses=total.length
+  res.status(StatusCodes.OK).json({ totalResponses });
 
-export { createJob, deleteJob, getAllJobs, updateJob, showStats,enterCode };
+  
+}
+export { createJob, deleteJob, getAllJobs, updateJob, showStats,getTotal };
