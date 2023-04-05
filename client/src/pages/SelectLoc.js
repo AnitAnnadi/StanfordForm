@@ -13,9 +13,9 @@ const SelectLoc = () => {
     useAppContext();
   const navigate = useNavigate();
 
-  const [state, setState] = useState(user?.state);
-  const [city, setCity] = useState(user?.city);
-  const [school, setSchool] = useState(user?.school);
+  const [state, setState] = useState(user?.state ?? "default");
+  const [city, setCity] = useState(user?.city ?? "default");
+  const [school, setSchool] = useState(user?.school ?? "default");
   const states = ["Alabama", "Alaska", "Arizona", "Arkansas", "California",
       "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida",
       "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas",
@@ -32,15 +32,18 @@ const SelectLoc = () => {
   const handleChange = (field, value) => {
     if (field === 'state') {
       setState(value);
+      setCity('default')
+      setSchool('default')
+
       if (value !== 'default') {
         setCities(narrowCities(value));
-        setSchool('default')
       }
     } else if (field === 'city') {
       setCity(value);
+      setSchool('default')
+
       if (value !== 'default') {
         setSchools(narrowSchools(state, value));
-        setSchool('default')
       }
     } else if (field === 'school') {
       setSchool(value);
@@ -72,9 +75,9 @@ const SelectLoc = () => {
             <h4>State</h4>
             <select
               name="aliasChoice"
+              value={state}
               onChange={(e) => handleChange("state", e.target.value)}
               className="form-select"
-              defaultValue={"default"}
             >
               <option value={"default"}>
                 Choose your State
@@ -90,9 +93,9 @@ const SelectLoc = () => {
             <h4 className="form-title">City</h4>
             <select
               name="aliasChoice"
+              value={city}
               onChange={(e) => handleChange("city", e.target.value)}
               className="form-select"
-              defaultValue={"default"}
             >
               <option value={"default"}>
                 Choose your City
@@ -108,9 +111,9 @@ const SelectLoc = () => {
             <h4 className="form-title">School</h4>
             <select
               name="aliasChoice"
+              value={school}
               onChange={(e) => handleChange("school", e.target.value)}
               className="form-select"
-              defaultValue={"default"}
             >
               <option value={"default"}>
                 Choose your School
