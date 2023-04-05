@@ -6,7 +6,7 @@ import Dropdown from "react-dropdown";
 import { v4 as uuid } from "uuid";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { narrowCities, narrowSchools } from "../utils/narrowSelections";
+import { narrowCities, narrowSchools, getDistrictCounty } from "../utils/schoolDataFetch";
 
 const SelectLoc = () => {
   const { user, showAlert, displayAlert, updateLocation, isLoading } =
@@ -57,7 +57,10 @@ const SelectLoc = () => {
       displayAlert();
       return;
     }
-    updateLocation({ state, city, school });
+
+    const { district, county } = getDistrictCounty(state, city, school);
+
+    updateLocation({ state, county, city, district, school });
     setTimeout(() => {
       navigate("/");
     }, 1000);

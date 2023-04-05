@@ -19,4 +19,14 @@ const narrowSchools = (state, city) => {
     return [...new Set(schools)]
 }
 
-export { narrowCities, narrowSchools }
+const getDistrictCounty = (state, city, schoolName) => {
+    const {county, district} = schoolData
+        .find((school) => school.state === state && school.city === city && school.name === schoolName)
+
+    console.log(county, district)
+
+    return { district, county }
+}
+
+
+export { narrowCities, narrowSchools, getDistrictCounty }
