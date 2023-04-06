@@ -21,22 +21,24 @@ const JoinForm = () => {
   const navigate = useNavigate();
 
   let teacher_name = localStorage.getItem("teacher_name");
-  const [form, setForm] = useState("cannabis");
-  const [grade, setGrade] = useState("K");
-  const [when, setWhen] = useState("before");
+  const [form, setForm] = useState("default");
+  const [grade, setGrade] = useState("default");
+  const [when, setWhen] = useState("default");
   let grades = ["K", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(form, grade,when);
+    if (form!="default" && grade!="default" && when!="default"){
+      navigate("/form", {
+        state: {
+          form: form,
+          grade:grade,
+          when:when
+        },
+      });
+    }
 
-
-    navigate("/form", {
-      state: {
-        form: form,
-        grade:grade,
-        when:when
-      },
-    });
+    
   };
 
   return (
@@ -89,7 +91,7 @@ const JoinForm = () => {
             <h4>When are you taking this form</h4>
             <select
               name="when"
-              value={form}
+              value={when}
               onChange={(e) => setWhen(e.target.value)}
               selected
               className="form-select"

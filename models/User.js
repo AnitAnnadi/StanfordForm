@@ -32,17 +32,29 @@ const UserSchema = new mongoose.Schema({
     maxlength: 20,
     default: 'state',
   },
+  county: {
+    type: String,
+    trim: true,
+    maxlength: 20,
+    default: 'county',
+  },
   city: {
     type: String,
     trim: true,
     maxlength: 20,
-    default: 'state',
+    default: 'city',
+  },
+  district: {
+    type: String,
+    trim: true,
+    maxlength: 20,
+    default: 'district',
   },
   school: {
     type: String,
     trim: true,
     maxlength: 20,
-    default: 'state',
+    default: 'school',
   },
   role: {
     type: String,

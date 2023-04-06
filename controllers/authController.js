@@ -24,7 +24,7 @@ const enterCode=async(req,res)=>{
 }
 
 const register = async (req, res) => {
-  const { name, email, password, role, state, city, school } = req.body;
+  const { name, email, password, role, state, county, city, district, school } = req.body;
   console.log(name)
   if (!name || !email || !password  ) {
     throw new BadRequestError('please provide all values');
@@ -35,7 +35,7 @@ const register = async (req, res) => {
   }
   const unique_id = uuid();
   const code = unique_id.slice(0,8) 
-  const user = await User.create({ name, email, password, role, state, city, school,code });
+  const user = await User.create({ name, email, password, role, state, county, city, district, school, code });
 
   const token = user.createJWT();
   attachCookie({ res, token });
@@ -43,7 +43,9 @@ const register = async (req, res) => {
     user: {
       email: user.email,
       state: user.state,
+      county: user.county,
       city: user.city,
+      district: user.district,
       school: user.school,
       name: user.name,
       role:user.role,
@@ -76,8 +78,8 @@ const login = async (req, res) => {
   res.status(StatusCodes.OK).json({ user, state:user.state });
 };
 const updateUser = async (req, res) => {
-  const { email, name, state, city, school } = req.body;
-  if (!email || !name || !state || !city || !school) {
+  const { email, name, state, county, city, district, school } = req.body;
+  if (!email || !name || !state || !county || !city || !district || !school) {
     throw new BadRequestError('Please provide all values');
   }
   const user = await User.findOne({ _id: req.user.userId });
@@ -85,7 +87,9 @@ const updateUser = async (req, res) => {
   user.email = email;
   user.name = name;
   user.state = state;
+  user.county = county;
   user.city = city;
+  user.district = district;
   user.school = school;
 
   await user.save();
@@ -110,14 +114,16 @@ const logout = async (req, res) => {
 };
 
 const createLocation = async(req,res) =>{
-  const { state, city, school } = req.body;
-  if ( !state || !city || !school) {
+  const { state, county, city, district, school } = req.body;
+  if ( !state || !county || !city || !district || !school) {
     throw new BadRequestError('Please provide all values');
   }
   const user = await User.findOne({ _id: req.user.userId });
 
   user.state = state;
+  user.county = county;
   user.city = city;
+  user.district = district;
   user.school = school;
 
   await user.save();
