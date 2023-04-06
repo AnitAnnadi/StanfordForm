@@ -33,7 +33,7 @@ const StatsContainer = () => {
     },
     {
       title: "Total Responses",
-      count: total || 'loading',
+      count: total ,
       icon: <BiCheckDouble />,
       color: "#647acb",
       bcg: "#e0e8f9",

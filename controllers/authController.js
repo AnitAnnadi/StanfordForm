@@ -9,7 +9,7 @@ import Question from '../models/Question.js';
 
 const enterCode=async(req,res)=>{
   const {code} = req.body
-  if (code==''){
+  if (code==null){
     throw new BadRequestError('Please Enter a Code');
   }
   console.log(code)
