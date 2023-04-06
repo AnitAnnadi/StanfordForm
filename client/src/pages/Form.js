@@ -6,7 +6,6 @@ import Dropdown from "react-dropdown";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import Questions from "../components/Questions";
 const Form = () => {
   const {
     user,
