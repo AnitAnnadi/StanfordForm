@@ -24,7 +24,7 @@ const Tobacco = (info) => {
             }
             }
         })
-        submitForm(names,selected,localStorage.getItem('code'),info["grade"],info["when"])
+        submitForm(names,selected,localStorage.getItem('code'),info["grade"],info["when"],info["form"])
 
         navigate("/success", {
           });

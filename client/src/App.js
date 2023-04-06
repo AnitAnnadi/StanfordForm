@@ -29,10 +29,14 @@ function App() {
           <Route path="all-jobs" element={<AllJobs />} />
           <Route path="add-job" element={<AddJob />} />          
           <Route path="profile" element={<Profile />} />
-          <Route path="/selectLoc" element={<SelectLoc />} />
+          
           
         </Route>
-       
+        <Route path="/selectLoc" element={
+        <ProtectedRoute>
+          <SelectLoc />
+        </ProtectedRoute>
+        } />
         <Route path="/joinedForm" element={<JoinForm />} />
         <Route path="/form" element={<Form />} />
         <Route path="/register" element={<Register />} />

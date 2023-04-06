@@ -201,12 +201,12 @@ const AppProvider = ({ children }) => {
     }
     clearAlert();
   };
-  const submitForm = async (names,answer,code,grade,when) => {
+  const submitForm = async (names,answer,code,grade,when,type) => {
     
     
     try {
       console.log(names,answer,code,grade,when)
-      const { data } = await axios.post(`/api/v1/auth/submitForm/`, {names,answer,code,grade,when});
+      const { data } = await axios.post(`/api/v1/auth/submitForm/`, {names,answer,code,grade,when,type});
       // console.log(data)
       // const {id, name, email, state, city, school} = data;
       // console.log(data["user"]["name"])

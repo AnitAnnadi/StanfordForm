@@ -129,13 +129,13 @@ const createLocation = async(req,res) =>{
 }
 
 const submitForm = async(req,res) =>{
-  const {names,answer,code,grade,when}=req.body;
+  const {names,answer,code,grade,when,type}=req.body;
   console.log(code,grade,when)
   if (answer.length<names.length){
     console.log('hi')
     throw new BadRequestError('Please answer all questions');
   }
-  const StudentResponseData= await StudentReponse.create({formCode:code,grade:grade,When:when})
+  const StudentResponseData= await StudentReponse.create({formCode:code,grade:grade,When:when,formType:type})
   let _id=(StudentResponseData["_id"])
   
   for (var i=0;i<names.length;i++){
