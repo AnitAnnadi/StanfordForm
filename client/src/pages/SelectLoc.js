@@ -6,28 +6,50 @@ import Dropdown from "react-dropdown";
 import { v4 as uuid } from "uuid";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { narrowCities, narrowSchools, getDistrictCounty } from "../utils/schoolDataFetch";
 
 const SelectLoc = () => {
   const { user, showAlert, displayAlert, updateLocation, isLoading } =
     useAppContext();
   const navigate = useNavigate();
 
-  const [state, setState] = useState(user?.state);
-  const [city, setCity] = useState(user?.city);
-  const [school, setSchool] = useState(user?.school);
-  let states = ["CA", "FL", "AL", "MO"];
-  let cities = ["San Francisco", "Dublin", "Los Angeles", "Miami"];
-  let schools = [
-    "Dublin High School",
-    "SF High",
-    "Los Angeles Prep",
-    "Miami Middle School",
-  ];
-  const handleChange = (e) => {
-    setState(e.target.value);
-    setCity(e.target.value);
-    setSchool(e.target.value);
+  const [state, setState] = useState(user?.state ?? "default");
+  const [city, setCity] = useState(user?.city ?? "default");
+  const [school, setSchool] = useState(user?.school ?? "default");
+  const states = ["Alabama", "Alaska", "Arizona", "Arkansas", "California",
+      "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida",
+      "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas",
+      "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan",
+      "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada",
+      "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina",
+      "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island",
+      "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont",
+      "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"];
+
+  const [cities, setCities] = useState([]);
+  const [schools, setSchools] = useState([]);
+
+  const handleChange = (field, value) => {
+    if (field === 'state') {
+      setState(value);
+      setCity('default')
+      setSchool('default')
+
+      if (value !== 'default') {
+        setCities(narrowCities(value));
+      }
+    } else if (field === 'city') {
+      setCity(value);
+      setSchool('default')
+
+      if (value !== 'default') {
+        setSchools(narrowSchools(state, value));
+      }
+    } else if (field === 'school') {
+      setSchool(value);
+    }
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(state, city, school);
@@ -35,7 +57,10 @@ const SelectLoc = () => {
       displayAlert();
       return;
     }
-    updateLocation({ state, city, school });
+
+    const { district, county } = getDistrictCounty(state, city, school);
+
+    updateLocation({ state, county, city, district, school });
     setTimeout(() => {
       navigate("/");
     }, 1000);
@@ -54,11 +79,10 @@ const SelectLoc = () => {
             <select
               name="aliasChoice"
               value={state}
-              onChange={(e) => setState(e.target.value)}
-              defaultValue
+              onChange={(e) => handleChange("state", e.target.value)}
               className="form-select"
             >
-              <option value={"default"} selected>
+              <option value={"default"}>
                 Choose your State
               </option>
               {states.map((state, index) => {
@@ -73,10 +97,10 @@ const SelectLoc = () => {
             <select
               name="aliasChoice"
               value={city}
-              onChange={(e) => setCity(e.target.value)}
+              onChange={(e) => handleChange("city", e.target.value)}
               className="form-select"
             >
-              <option value={"default"} selected>
+              <option value={"default"}>
                 Choose your City
               </option>
               {cities.map((city, index) => {
@@ -91,10 +115,10 @@ const SelectLoc = () => {
             <select
               name="aliasChoice"
               value={school}
-              onChange={(e) => setSchool(e.target.value)}
+              onChange={(e) => handleChange("school", e.target.value)}
               className="form-select"
             >
-              <option value={"default"} selected>
+              <option value={"default"}>
                 Choose your School
               </option>
               {schools.map((school, index) => {
