@@ -40,6 +40,7 @@ function App() {
         <Route path="/joinedForm" element={<JoinForm />} />
         <Route path="/form" element={<Form />} />
         <Route path="/register" element={<Register />} />
+        {/* <Route path="/register/admin" element={<Register />} /> */}
         <Route path="/landing" element={<SelectRole />} />
         <Route path="/enterCode" element={<EnterCode />} />
         <Route path="/success" element={<Success />} />

@@ -11,15 +11,17 @@ function SelectRole() {
   const [role, setRole] = useState("");
   const handleClick = (e) => {
     setRole(e.target.value);
+    console.log(e.target.value)
     localStorage.setItem("role", role);
   };
 
   return (
-    <React.Fragment>
+    // <React.Fragment>
       <Wrapper>
         <div className="content">
           <h2>I am a...</h2>
           <div className="landing-btns">
+
             <Link
               to="/enterCode"
               className="btn btn-hero"
@@ -31,13 +33,15 @@ function SelectRole() {
             <Link
               to="/register"
               className="btn btn-hero"
+              state={{ type: "teacher" }}
               onClick={handleClick}
               value={"teacher"}
             >
               Teacher
             </Link>
             <Link
-              to="/landing"
+              to="/register"
+              state={{ type: "admin" }}
               className="btn btn-hero"
               onClick={handleClick}
               value={"admin"}
@@ -48,7 +52,6 @@ function SelectRole() {
         </div>
         <img width="200" height="100" src={Logo2} className="landing-logo" />
       </Wrapper>
-    </React.Fragment>
   );
 }
 
