@@ -51,11 +51,12 @@ const Register = () => {
   };
 
   useEffect(() => {
-    if (user && user.city != "" && user.state != "" && user.school != "") {
+    console.log({user})
+    if (user && user.hasLocation) {
       setTimeout(() => {
         navigate("/");
       }, 3000);
-    } else if (user && values.state === "") {
+    } else if (user && !user.hasLocation) {
       setTimeout(() => {
         navigate("/selectLoc");
       }, 3000);
