@@ -63,6 +63,7 @@ const Register = () => {
   };
   const onSubmit = (e) => {
     e.preventDefault();
+    console.log(adminRole)
     const { name, email, password, isMember, state, city, school } = values;
     if (!email || !password || (!isMember && !name)) {
       displayAlert();
@@ -70,6 +71,9 @@ const Register = () => {
     }
     if (type=="teacher"){
       role="teacher"
+    }
+    if (type=="admin"){
+      role=adminRole
     }
     const currentUser = { name, email, password, role, state, city, school };
     
