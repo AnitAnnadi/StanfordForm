@@ -33,6 +33,8 @@ const SelectLoc = () => {
 
   const [additionalLoc, setAdditionalLoc] = useState(false);
 
+  const [numOfLocations, setNumOfLocations] = useState(1);
+
   const handleChange = (field, value) => {
     if (field === 'state') {
       setState(value);
@@ -72,6 +74,7 @@ const SelectLoc = () => {
       setSchool('default')
       setMultiplePeriods(false)
       setAdditionalLoc(false)
+      setNumOfLocations(numOfLocations + 1)
     } else {
       setTimeout(() => {
         navigate("/");
@@ -88,6 +91,7 @@ const SelectLoc = () => {
         <form className="form" onSubmit={handleSubmit}>
           {showAlert && <Alert />}
           <div className="form">
+            <h3 className="form-title">Select Location {numOfLocations > 1 ? numOfLocations : ""}</h3>
             <h4>State</h4>
             <select
               name="aliasChoice"
@@ -148,8 +152,8 @@ const SelectLoc = () => {
               type="checkbox"
               className="form-checkbox"
               name="aliasChoice"
-              value={multiplePeriods}
-              onChange={() => setMultiplePeriods(!multiplePeriods)}
+              checked={multiplePeriods}
+              onChange={(e) => setMultiplePeriods(e.target.checked)}
 
             />  I teach multiple classes/periods at this location
             </label>
@@ -159,8 +163,8 @@ const SelectLoc = () => {
               type="checkbox"
               className="form-checkbox"
               name="aliasChoice"
-              value={additionalLoc}
-              onChange={() => setAdditionalLoc(!additionalLoc)}
+              checked={additionalLoc}
+              onChange={(e) => setAdditionalLoc(e.target.checked)}
             />  I would like to submit an additional location
             </label>
             <button

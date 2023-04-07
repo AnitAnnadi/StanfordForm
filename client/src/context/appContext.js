@@ -162,7 +162,6 @@ const AppProvider = ({ children }) => {
   };
 
   const addLocation = async (currentUser) => {
-    dispatch({ type: UPDATE_USER_BEGIN });
     try {
       const { user } = await authFetch.post('/schools', currentUser);
     } catch (error) {
