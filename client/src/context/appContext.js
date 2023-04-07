@@ -165,11 +165,6 @@ const AppProvider = ({ children }) => {
     dispatch({ type: UPDATE_USER_BEGIN });
     try {
       const { user } = await authFetch.post('/schools', currentUser);
-
-      dispatch({
-        type: UPDATE_USER_SUCCESS,
-        payload: { user }
-      });
     } catch (error) {
       if (error.response.status !== 401) {
         dispatch({

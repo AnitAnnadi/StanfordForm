@@ -12,10 +12,11 @@ const StatsContainer = () => {
     useAppContext();
   useEffect(() => {
     getTotal(user)
+    if (user){
     const interval = setInterval(() => {
       console.log('hi')
       getTotal(user);
-    }, 10000);
+    }, 10000);}
    
   },[] );
   let total=''
