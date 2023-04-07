@@ -143,6 +143,17 @@ ul {
   list-style-type: none;
   padding: 0;
 }
+li {
+  margin-bottom: 0.5rem;
+  display: block;
+  font-family: var(--headingFont);
+  font-size: var(--small-text);
+}
+
+.scrollable-locations {
+  overflow-y: scroll;
+  height: 10rem;
+}
 
 .img {
   width: 100%;

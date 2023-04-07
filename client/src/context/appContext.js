@@ -33,9 +33,11 @@ import {
   GET_CURRENT_USER_BEGIN,
   GET_CURRENT_USER_SUCCESS,
   ENTER_CODE,
-  GET_TOTAL
+  GET_TOTAL,
+  ADD_LOCATION_SUCCESS
 } from './actions';
 const user = localStorage.getItem("user");
+const userLocations = localStorage.getItem("userLocations");
 
 const initialState = {
   userLoading: false,
@@ -45,6 +47,7 @@ const initialState = {
   alertType: '',
   user: user ? JSON.parse(user) : null,
   userLocation: '',
+  userLocations: userLocations ? (userLocations !== 'undefined' ? JSON.parse(userLocations) : []) : [],
   showSidebar: false,
   isEditing: false,
   editJobId: '',
@@ -118,11 +121,17 @@ const AppProvider = ({ children }) => {
         currentUser
       );
 
-      const { user,hasLocation } = data;
+      const { user, hasLocation, userLocations } = data;
+
       localStorage.setItem('user', JSON.stringify(user))
+
+      if (userLocations) {
+        localStorage.setItem('userLocations', JSON.stringify(userLocations))
+      }
+
       dispatch({
         type: SETUP_USER_SUCCESS,
-        payload: { user, alertText,hasLocation },
+        payload: { user, alertText, hasLocation, userLocations: userLocations ? userLocations : [] },
       });
     } catch (error) {
       dispatch({
@@ -164,6 +173,16 @@ const AppProvider = ({ children }) => {
   const addLocation = async (currentUser) => {
     try {
       const { user } = await authFetch.post('/schools', currentUser);
+      const { data } = await authFetch.get('/schools', currentUser);
+
+      const { userLocations } = data;
+
+      localStorage.setItem('userLocations', JSON.stringify(userLocations))
+
+      dispatch({
+        type: ADD_LOCATION_SUCCESS,
+        payload: { userLocations },
+      });
     } catch (error) {
       if (error.response.status !== 401) {
         dispatch({

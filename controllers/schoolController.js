@@ -22,12 +22,12 @@ const createLocation = async(req,res) =>{
 
 const getLocations = async(req,res) =>{
   const user = await User.findOne({ _id: req.user.userId });
-  const locations = await School.find({ teacher: user._id });
+  const userLocations = await School.find({ teacher: user._id });
 
   const token = user.createJWT();
   attachCookie({ res, token });
 
-  res.status(StatusCodes.OK).json({ user, locations });
+  res.status(StatusCodes.OK).json({ user, userLocations });
 }
 
 export { createLocation, getLocations }

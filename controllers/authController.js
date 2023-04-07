@@ -69,11 +69,14 @@ const login = async (req, res) => {
   attachCookie({ res, token });
   user.password = undefined;
 
-  const locations = await School.find({ teacher: user._id });
+  const userLocations = await School.find({ teacher: user._id });
 
-  let hasLocation = locations.length > 0;
-  console.log(hasLocation)
-  res.status(StatusCodes.OK).json({ user,hasLocation });
+  let hasLocation = userLocations.length > 0;
+
+  // console.log(hasLocation)
+  // console.log({userLocations})
+
+  res.status(StatusCodes.OK).json({ user,hasLocation, userLocations });
 };
 const updateUser = async (req, res) => {
   const { email, name } = req.body;
@@ -81,9 +84,6 @@ const updateUser = async (req, res) => {
     throw new BadRequestError('Please provide all values');
   }
   const user = await User.findOne({ _id: req.user.userId });
-  const locations = await School.find({ teacher: user._id });
-
-  user.hasLocation = locations.length > 0;
 
   user.email = email;
   user.name = name;

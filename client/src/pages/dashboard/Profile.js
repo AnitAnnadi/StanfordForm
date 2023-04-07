@@ -3,10 +3,9 @@ import { FormRow, Alert } from '../../components'
 import { useAppContext } from '../../context/appContext'
 import Wrapper from '../../assets/wrappers/DashboardFormPage'
 import { v4 as uuid } from 'uuid';
-import {narrowCities, narrowSchools} from "../../utils/schoolDataFetch";
 
 const Profile = () => {
-  const { user, showAlert, displayAlert, updateUser, isLoading } =
+  const { user, userLocations, showAlert, displayAlert, updateUser, isLoading } =
     useAppContext()
 
   const [name, setName] = useState(user?.name)
@@ -39,6 +38,18 @@ const Profile = () => {
             value={email}
             handleChange={(e) => setEmail(e.target.value)}
           />
+          <hr/>
+          <h4>locations</h4>
+          <ul className="scrollable-locations">
+            {userLocations.map(location => {
+                return (
+                  <li
+                    key={location.index}
+                  >{location.school} - {location.city}, {location.state}
+                  </li>
+                );
+              })}
+          </ul>
           <button className='btn btn-block' type='submit' disabled={isLoading}>
             {isLoading ? 'Please Wait...' : 'save changes'}
           </button>

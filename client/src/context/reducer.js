@@ -29,7 +29,8 @@ import {
   ENTER_CODE,
   GET_CURRENT_USER_BEGIN,
   GET_CURRENT_USER_SUCCESS,
-  GET_TOTAL
+  GET_TOTAL,
+  ADD_LOCATION_SUCCESS
 } from './actions';
 
 import { initialState } from './appContext';
@@ -63,6 +64,7 @@ const reducer = (state, action) => {
       user: action.payload.user,
       hasLocation:action.payload.hasLocation,
       userLocation: action.payload.location,
+      userLocations: action.payload.userLocations,
       jobLocation: action.payload.location,
       showAlert: true,
       alertType: 'success',
@@ -276,7 +278,17 @@ const reducer = (state, action) => {
       user: action.payload.user,
       userLocation: action.payload.location,
       jobLocation: action.payload.location,
-      hasLocation:action.payload.hasLocation
+      hasLocation: action.payload.hasLocation
+    };
+  }
+  if (action.type === ADD_LOCATION_SUCCESS) {
+    return {
+      ...state,
+      userLocations: action.payload.userLocations,
+      hasLocation: true,
+      showAlert: true,
+      alertType: 'success',
+      alertText: 'Location added!',
     };
   }
   throw new Error(`no such action : ${action.type}`);
