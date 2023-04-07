@@ -56,16 +56,20 @@ const reducer = (state, action) => {
     return { ...state, isLoading: true };
   }
   if (action.type === SETUP_USER_SUCCESS) {
+    console.log('here')
     return {
       ...state,
       isLoading: false,
       user: action.payload.user,
+      hasLocation:action.payload.hasLocation,
       userLocation: action.payload.location,
       jobLocation: action.payload.location,
       showAlert: true,
       alertType: 'success',
       alertText: action.payload.alertText,
+      
     };
+    
   }
   if (action.type === SETUP_USER_ERROR) {
     return {
@@ -272,6 +276,7 @@ const reducer = (state, action) => {
       user: action.payload.user,
       userLocation: action.payload.location,
       jobLocation: action.payload.location,
+      hasLocation:action.payload.hasLocation
     };
   }
   throw new Error(`no such action : ${action.type}`);

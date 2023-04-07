@@ -71,9 +71,9 @@ const login = async (req, res) => {
 
   const locations = await School.find({ teacher: user._id });
 
-  user.hasLocation = locations.length > 0;
-
-  res.status(StatusCodes.OK).json({ user });
+  let hasLocation = locations.length > 0;
+  console.log(hasLocation)
+  res.status(StatusCodes.OK).json({ user,hasLocation });
 };
 const updateUser = async (req, res) => {
   const { email, name } = req.body;
@@ -97,12 +97,7 @@ const updateUser = async (req, res) => {
 };
 
 const getCurrentUser = async (req, res) => {
-  const user = await User.findOne({ _id: req.user.userId });
-  const locations = await School.find({ teacher: user._id });
-
-  user.hasLocation = locations.length > 0;
-
-  res.status(StatusCodes.OK).json({ user });
+  
 };
 
 const logout = async (req, res) => {

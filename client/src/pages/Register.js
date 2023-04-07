@@ -16,7 +16,7 @@ const initialState = {
 const Register = () => {
   const navigate = useNavigate();
   const [values, setValues] = useState(initialState);
-  const { user, isLoading, showAlert, displayAlert, setupUser } =
+  const { user, isLoading, showAlert, displayAlert, setupUser, hasLocation } =
     useAppContext();
 
   const toggleMember = () => {
@@ -35,12 +35,15 @@ const Register = () => {
     }
     const role = "teacher";
     const currentUser = { name, email, password, role, state, city, school };
+    
     if (isMember) {
       setupUser({
         currentUser,
         endPoint: "login",
         alertText: "Login Successful! Redirecting...",
       });
+
+      
     } else {
       setupUser({
         currentUser,
@@ -48,15 +51,17 @@ const Register = () => {
         alertText: "User Created! Redirecting...",
       });
     }
+    
   };
 
   useEffect(() => {
-    console.log({user})
-    if (user && user.hasLocation) {
+    // console.log(hasLocation)
+    if (user && hasLocation) {
       setTimeout(() => {
         navigate("/");
       }, 3000);
-    } else if (user && !user.hasLocation) {
+    } else if (user && !hasLocation) {
+      console.log('here')
       setTimeout(() => {
         navigate("/selectLoc");
       }, 3000);

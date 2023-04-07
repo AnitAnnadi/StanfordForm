@@ -35,6 +35,7 @@ import {
   ENTER_CODE,
   GET_TOTAL
 } from './actions';
+const user = localStorage.getItem("user");
 
 const initialState = {
   userLoading: false,
@@ -42,7 +43,7 @@ const initialState = {
   showAlert: false,
   alertText: '',
   alertType: '',
-  user: null,
+  user: user ? JSON.parse(user) : null,
   userLocation: '',
   showSidebar: false,
   isEditing: false,
@@ -66,7 +67,8 @@ const initialState = {
   sort: 'latest',
   sortOptions: ['latest', 'oldest', 'a-z', 'z-a'],
   teacher:'',
-  totalResponses:null
+  totalResponses:null,
+  hasLocation:null
 };
 
 const AppContext = React.createContext();
@@ -108,6 +110,7 @@ const AppProvider = ({ children }) => {
   };
 
   const setupUser = async ({ currentUser, endPoint, alertText }) => {
+    localStorage.clear()
     dispatch({ type: SETUP_USER_BEGIN });
     try {
       const { data } = await axios.post(
@@ -115,10 +118,11 @@ const AppProvider = ({ children }) => {
         currentUser
       );
 
-      const { user } = data;
+      const { user,hasLocation } = data;
+      localStorage.setItem('user', JSON.stringify(user))
       dispatch({
         type: SETUP_USER_SUCCESS,
-        payload: { user, alertText },
+        payload: { user, alertText,hasLocation },
       });
     } catch (error) {
       dispatch({
@@ -133,9 +137,8 @@ const AppProvider = ({ children }) => {
   };
 
   const logoutUser = async () => {
-    console.log('here')
     await authFetch.get('/auth/logout');
-    // localStorage.clear();
+    localStorage.clear();
     dispatch({ type: LOGOUT_USER });
   };
   const updateUser = async (currentUser) => {
@@ -346,25 +349,25 @@ const AppProvider = ({ children }) => {
     dispatch({ type: CHANGE_PAGE, payload: { page } });
   };
 
-  const getCurrentUser = async () => {
-    dispatch({ type: GET_CURRENT_USER_BEGIN });
-    try {
-      const { data } = await authFetch('/auth/getCurrentUser');
-      const { user, location } = data;
-
-      dispatch({
-        type: GET_CURRENT_USER_SUCCESS,
-        payload: { user, location },
-      });
-    } catch (error) {
-      console.log(error)
-      if (error.response.status === 401) return;
-      logoutUser();
-    }
-  };
-  useEffect(() => {
-    getCurrentUser();
-  }, []);
+  // const getCurrentUser = async () => {
+  //   dispatch({ type: GET_CURRENT_USER_BEGIN });
+  //   try {
+  //     const { data } = await authFetch('/auth/getCurrentUser');
+  //     const { user, location, hasLocation } = data;
+  //     console.log(hasLocation)
+  //     dispatch({
+  //       type: GET_CURRENT_USER_SUCCESS,
+  //       payload: { user, location, hasLocation },
+  //     });
+  //   } catch (error) {
+  //     console.log(error)
+  //     if (error.response.status === 401) return;
+  //     logoutUser();
+  //   }
+  // };
+  // useEffect(() => {
+  //   getCurrentUser();
+  // }, []);
 
   return (
     <AppContext.Provider
