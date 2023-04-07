@@ -91,6 +91,8 @@ const reducer = (state, action) => {
   if (action.type === LOGOUT_USER) {
     return {
       ...initialState,
+      user: null,
+      userLocations: [],
       userLoading: false,
     };
   }
