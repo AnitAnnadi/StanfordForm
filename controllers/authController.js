@@ -1,4 +1,5 @@
 import User from '../models/User.js';
+import School from "../models/School.js";
 import StudentReponse from '../models/StudentReponse.js';
 import { StatusCodes } from 'http-status-codes';
 import { BadRequestError, UnAuthenticatedError } from '../errors/index.js';
@@ -19,12 +20,12 @@ const enterCode=async(req,res)=>{
     console.log('hi')
   }
   else{
-    throw new BadRequestError('Inavalid Code. Try Again or Ask Teacher for Code');
+    throw new BadRequestError('Invalid Code. Try Again or Ask Teacher for Code');
   }
 }
 
 const register = async (req, res) => {
-  const { name, email, password, role, state, county, city, district, school } = req.body;
+  const { name, email, password, role} = req.body;
   console.log(name)
   if (!name || !email || !password  ) {
     throw new BadRequestError('please provide all values');
@@ -35,25 +36,18 @@ const register = async (req, res) => {
   }
   const unique_id = uuid();
   const code = unique_id.slice(0,8) 
-  const user = await User.create({ name, email, password, role, state, county, city, district, school, code });
+  const user = await User.create({ name, email, password, role, code });
 
   const token = user.createJWT();
   attachCookie({ res, token });
   res.status(StatusCodes.CREATED).json({
     user: {
       email: user.email,
-      state: user.state,
-      county: user.county,
-      city: user.city,
-      district: user.district,
-      school: user.school,
       name: user.name,
       role:user.role,
       password:user.password,
       code: user.code
-    },
-
-    state: user.state,
+    }
   });
 };
 const login = async (req, res) => {
@@ -75,34 +69,40 @@ const login = async (req, res) => {
   attachCookie({ res, token });
   user.password = undefined;
 
-  res.status(StatusCodes.OK).json({ user, state:user.state });
+  const locations = await School.find({ teacher: user._id });
+
+  user.hasLocation = locations.length > 0;
+
+  res.status(StatusCodes.OK).json({ user });
 };
 const updateUser = async (req, res) => {
-  const { email, name, state, county, city, district, school } = req.body;
-  if (!email || !name || !state || !county || !city || !district || !school) {
+  const { email, name } = req.body;
+  if (!email || !name ) {
     throw new BadRequestError('Please provide all values');
   }
   const user = await User.findOne({ _id: req.user.userId });
+  const locations = await School.find({ teacher: user._id });
+
+  user.hasLocation = locations.length > 0;
 
   user.email = email;
   user.name = name;
-  user.state = state;
-  user.county = county;
-  user.city = city;
-  user.district = district;
-  user.school = school;
 
   await user.save();
 
   const token = user.createJWT();
   attachCookie({ res, token });
 
-  res.status(StatusCodes.OK).json({ user, state: user.location });
+  res.status(StatusCodes.OK).json({ user });
 };
 
 const getCurrentUser = async (req, res) => {
   const user = await User.findOne({ _id: req.user.userId });
-  res.status(StatusCodes.OK).json({ user, location: user.location });
+  const locations = await School.find({ teacher: user._id });
+
+  user.hasLocation = locations.length > 0;
+
+  res.status(StatusCodes.OK).json({ user });
 };
 
 const logout = async (req, res) => {
@@ -112,27 +112,6 @@ const logout = async (req, res) => {
   });
   res.status(StatusCodes.OK).json({ msg: 'user logged out!' });
 };
-
-const createLocation = async(req,res) =>{
-  const { state, county, city, district, school } = req.body;
-  if ( !state || !county || !city || !district || !school) {
-    throw new BadRequestError('Please provide all values');
-  }
-  const user = await User.findOne({ _id: req.user.userId });
-
-  user.state = state;
-  user.county = county;
-  user.city = city;
-  user.district = district;
-  user.school = school;
-
-  await user.save();
-
-  const token = user.createJWT();
-  attachCookie({ res, token });
-
-  res.status(StatusCodes.OK).json({ user, state: user.location });
-}
 
 const submitForm = async(req,res) =>{
   const {names,answer,code,grade,when,type}=req.body;
@@ -151,4 +130,4 @@ const submitForm = async(req,res) =>{
   
    
 }
-export { register, login, updateUser, getCurrentUser, logout, createLocation,enterCode,submitForm };
+export { register, login, updateUser, getCurrentUser, logout , enterCode, submitForm };

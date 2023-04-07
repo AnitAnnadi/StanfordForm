@@ -14,7 +14,6 @@ import {
   updateUser,
   getCurrentUser,
   logout,
-  createLocation,
   enterCode,
   submitForm,
 } from '../controllers/authController.js';
@@ -29,5 +28,5 @@ router.route('/submitForm').post(submitForm)
 
 router.route('/updateUser').patch(authenticateUser, testUser, updateUser);
 router.route('/getCurrentUser').get(authenticateUser, getCurrentUser);
-router.route('/updateLocation').patch(authenticateUser, createLocation)
+// router.route('/createLocation').post(authenticateUser, createLocation)
 export default router;

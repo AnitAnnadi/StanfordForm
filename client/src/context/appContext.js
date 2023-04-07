@@ -115,10 +115,10 @@ const AppProvider = ({ children }) => {
         currentUser
       );
 
-      const { user, state } = data;
+      const { user } = data;
       dispatch({
         type: SETUP_USER_SUCCESS,
-        payload: { user, state, alertText },
+        payload: { user, alertText },
       });
     } catch (error) {
       dispatch({
@@ -139,36 +139,13 @@ const AppProvider = ({ children }) => {
     dispatch({ type: LOGOUT_USER });
   };
   const updateUser = async (currentUser) => {
-    console.log(currentUser)
     dispatch({ type: UPDATE_USER_BEGIN });
     try {
-      const { data } = await authFetch.patch('/auth/updateUser', currentUser);
-      const { user, location } = data;
+      const { user } = await authFetch.patch('/auth/updateUser', currentUser);
 
       dispatch({
         type: UPDATE_USER_SUCCESS,
-        payload: { user, location },
-      });
-    } catch (error) {
-      if (error.response.status !== 401) {
-        dispatch({
-          type: UPDATE_USER_ERROR,
-          payload: { msg: error.response.data.msg },
-        });
-      }
-    }
-    clearAlert();
-  };
-  const updateLocation = async (currentUser) => {
-    console.log(currentUser)
-    dispatch({ type: UPDATE_USER_BEGIN });
-    try {
-      const { data } = await authFetch.patch('/auth/updateLocation', currentUser);
-      const { user, state} = data;
-
-      dispatch({
-        type: UPDATE_USER_SUCCESS,
-        payload: { user, state },
+        payload: { user },
       });
     } catch (error) {
       if (error.response.status !== 401) {
@@ -181,6 +158,25 @@ const AppProvider = ({ children }) => {
     clearAlert();
   };
 
+  const addLocation = async (currentUser) => {
+    dispatch({ type: UPDATE_USER_BEGIN });
+    try {
+      const { user } = await authFetch.post('/schools', currentUser);
+
+      dispatch({
+        type: UPDATE_USER_SUCCESS,
+        payload: { user }
+      });
+    } catch (error) {
+      if (error.response.status !== 401) {
+        dispatch({
+          type: UPDATE_USER_ERROR,
+          payload: { msg: error.response.data.msg },
+        });
+      }
+    }
+    clearAlert();
+  };
 
   const enterCode = async (code) => {
     
@@ -389,7 +385,7 @@ const AppProvider = ({ children }) => {
         showStats,
         clearFilters,
         changePage,
-        updateLocation,
+        addLocation,
         enterCode,
         submitForm,
         getTotal

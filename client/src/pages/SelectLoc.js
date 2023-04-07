@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { narrowCities, narrowSchools, getDistrictCounty } from "../utils/schoolDataFetch";
 
 const SelectLoc = () => {
-  const { user, showAlert, displayAlert, updateLocation, isLoading } =
+  const { user, showAlert, displayAlert, addLocation, isLoading } =
     useAppContext();
   const navigate = useNavigate();
 
@@ -28,6 +28,10 @@ const SelectLoc = () => {
 
   const [cities, setCities] = useState([]);
   const [schools, setSchools] = useState([]);
+
+  const [multiplePeriods, setMultiplePeriods] = useState(false);
+
+  const [additionalLoc, setAdditionalLoc] = useState(false);
 
   const handleChange = (field, value) => {
     if (field === 'state') {
@@ -60,10 +64,19 @@ const SelectLoc = () => {
 
     const { district, county } = getDistrictCounty(state, city, school);
 
-    updateLocation({ state, county, city, district, school });
-    setTimeout(() => {
-      navigate("/");
-    }, 1000);
+    addLocation({ multiplePeriods, state, county, city, district, school });
+
+    if (additionalLoc) {
+      setState('default')
+      setCity('default')
+      setSchool('default')
+      setMultiplePeriods(false)
+      setAdditionalLoc(false)
+    } else {
+      setTimeout(() => {
+        navigate("/");
+      }, 1000);
+    }
   };
 
   return (
@@ -129,6 +142,27 @@ const SelectLoc = () => {
                 );
               })}
             </select>
+            <hr/>
+            <label className="form-label">
+            <input
+              type="checkbox"
+              className="form-checkbox"
+              name="aliasChoice"
+              value={multiplePeriods}
+              onChange={() => setMultiplePeriods(!multiplePeriods)}
+
+            />  I teach multiple classes/periods at this location
+            </label>
+            <hr/>
+            <label className="form-label">
+            <input
+              type="checkbox"
+              className="form-checkbox"
+              name="aliasChoice"
+              value={additionalLoc}
+              onChange={() => setAdditionalLoc(!additionalLoc)}
+            />  I would like to submit an additional location
+            </label>
             <button
               className="btn btn-block"
               type="submit"
