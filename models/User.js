@@ -25,37 +25,6 @@ const UserSchema = new mongoose.Schema({
     minlength: 6,
     select: false,
   },
-
-  state: {
-    type: String,
-    trim: true,
-    maxlength: 20,
-    default: 'state',
-  },
-  county: {
-    type: String,
-    trim: true,
-    maxlength: 20,
-    default: 'county',
-  },
-  city: {
-    type: String,
-    trim: true,
-    maxlength: 20,
-    default: 'city',
-  },
-  district: {
-    type: String,
-    trim: true,
-    maxlength: 20,
-    default: 'district',
-  },
-  school: {
-    type: String,
-    trim: true,
-    maxlength: 20,
-    default: 'school',
-  },
   role: {
     type: String,
     trim: true,
