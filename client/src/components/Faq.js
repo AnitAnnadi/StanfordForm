@@ -12,7 +12,7 @@ const Faq = () => {
     {
       id: 2,
       title: "Which form is my student supposed to fill out?",
-      info: "Coloring book forage photo booth gentrify lumbersexual. Migas chillwave poutine synth shoreditch, enamel pin thundercats fashion axe roof party polaroid chartreuse.",
+      info: "The type of form your student should fill out coorelates with the Stanford Reach Lab's toolkit you are using.",
     },
     {
       id: 3,
