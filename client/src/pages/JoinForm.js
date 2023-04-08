@@ -88,7 +88,7 @@ const JoinForm = () => {
               })}
             </select>
 
-            <h4>When are you taking this form</h4>
+            <h4 className="form-title">When are you taking this form</h4>
             <select
               name="when"
               value={when}
