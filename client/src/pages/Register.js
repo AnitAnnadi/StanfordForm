@@ -16,75 +16,76 @@ const initialState = {
 };
 
 const Register = () => {
-  let role=''
-  let adminroles=["principal","counselor","dean"]
+  let role = "";
+  let adminroles = ["principal", "counselor", "dean"];
   const navigate = useNavigate();
-  const location = useLocation()
-  const { type } = location.state
+  const location = useLocation();
+  const { type } = location.state;
   // console.log(type)
   const [values, setValues] = useState(initialState);
-  const [adminRole,setAdminRole]= useState("default")
+  const [adminRole, setAdminRole] = useState("default");
   const { user, isLoading, showAlert, displayAlert, setupUser, hasLocation } =
     useAppContext();
 
   const toggleMember = () => {
     setValues({ ...values, isMember: !values.isMember });
   };
-  function AdminRole(){
-    if (type=="admin"){
-      return(
-        <select
-              name="adminRole"
-              value={adminRole}
-              onChange={handleAdminRole}
-              className="form-select"
-            >
-              <option value={"default"}>
-                Choose your Role
-              </option>
-              {adminroles.map((role, index) => {
-                return (
-                  <option key={index} value={role}>
-                    {role}
-                  </option>
-                );
-              })}
-        </select>
-      )
+  function AdminRole() {
+    if (type == "admin") {
+      return (
+        <div>
+          <label className="form-label" style={{ fontSize: "1rem" }}>
+            Role
+          </label>
+          <select
+            name="adminRole"
+            value={adminRole}
+            onChange={handleAdminRole}
+            className="form-select"
+          >
+            <option value={"default"}>Choose your Role</option>
+            {adminroles.map((role, index) => {
+              return (
+                <option key={index} value={role}>
+                  {role}
+                </option>
+              );
+            })}
+          </select>
+        </div>
+      );
     }
   }
 
-  const handleAdminRole=(e)=>{
-    setAdminRole(e.target.value)
-    console.log(e.target.value)
-  }
+  const handleAdminRole = (e) => {
+    setAdminRole(e.target.value);
+    console.log(e.target.value);
+  };
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
   const onSubmit = (e) => {
     e.preventDefault();
-    console.log(adminRole)
+    console.log(adminRole);
     const { name, email, password, isMember, state, city, school } = values;
     if (!email || !password || (!isMember && !name)) {
       displayAlert();
       return;
     }
-    if (type=="teacher"){
-      role="teacher"
+    if (type == "teacher") {
+      role = "teacher";
     }
-    if (type=="admin"){
-      role=adminRole
+    if (type == "admin") {
+      role = adminRole;
     }
     const currentUser = { name, email, password, role, state, city, school };
-    
+
     if (isMember) {
       setupUser({
         currentUser,
         endPoint: "login",
         alertText: "Login Successful! Redirecting...",
       });
-
-      
     } else {
       setupUser({
         currentUser,
@@ -92,7 +93,6 @@ const Register = () => {
         alertText: "User Created! Redirecting...",
       });
     }
-    
   };
 
   useEffect(() => {
@@ -102,7 +102,7 @@ const Register = () => {
         navigate("/");
       }, 3000);
     } else if (user && !hasLocation) {
-      console.log('here')
+      console.log("here");
       setTimeout(() => {
         navigate("/selectLoc");
       }, 3000);
@@ -116,15 +116,12 @@ const Register = () => {
         {showAlert && <Alert />}
         {/* name input */}
         {!values.isMember && (
-          <div>
           <FormRow
             type="text"
             name="name"
             value={values.name}
             handleChange={handleChange}
           />
-          <AdminRole/>
-          </div>
         )}
 
         {/* email input */}
@@ -141,7 +138,9 @@ const Register = () => {
           value={values.password}
           handleChange={handleChange}
         />
-        
+
+        {!values.isMember && <AdminRole />}
+
         <button type="submit" className="btn btn-block" disabled={isLoading}>
           submit
         </button>
