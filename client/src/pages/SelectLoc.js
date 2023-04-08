@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { narrowCities, narrowSchools, getDistrictCounty } from "../utils/schoolDataFetch";
 
 const SelectLoc = () => {
-  const { user, showAlert, displayAlert, addLocation, isLoading } =
+  const { user, userLocations, showAlert, displayAlert, addLocation, isLoading } =
     useAppContext();
   const navigate = useNavigate();
 
@@ -33,7 +33,7 @@ const SelectLoc = () => {
 
   const [additionalLoc, setAdditionalLoc] = useState(false);
 
-  const [numOfLocations, setNumOfLocations] = useState(1);
+  const [numOfLocations, setNumOfLocations] = useState(userLocations ? userLocations.length + 1 : 1);
 
   const handleChange = (field, value) => {
     if (field === 'state') {

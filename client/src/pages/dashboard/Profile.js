@@ -3,6 +3,7 @@ import { FormRow, Alert } from "../../components";
 import { useAppContext } from "../../context/appContext";
 import Wrapper from "../../assets/wrappers/DashboardFormPage";
 import { v4 as uuid } from "uuid";
+import {NavLink} from "react-router-dom";
 
 const Profile = () => {
   const {
@@ -58,6 +59,9 @@ const Profile = () => {
               </p>
             );
           })}
+          <NavLink to={`/selectLoc`} className="nav-link btn btn-block">
+            Add location
+          </NavLink>
           <button className="btn btn-block" type="submit" disabled={isLoading}>
             {isLoading ? "Please Wait..." : "save changes"}
           </button>

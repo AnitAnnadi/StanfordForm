@@ -132,6 +132,13 @@ a {
   text-decoration: none;
   letter-spacing: var(--letterSpacing);
 }
+
+.nav-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 a,
 button {
   line-height: 1.15;
@@ -173,7 +180,6 @@ li {
   box-shadow: var(--shadow-2);
   transition: var(--transition);
   text-transform: capitalize;
-  display: inline-block;
 }
 .btn:hover {
   background: var(--primary-700);
