@@ -10,7 +10,7 @@ const Success = () => {
 
   return (
     <Wrapper>
-      <h1>Sucessfully Filled out Forrm</h1>
+      <h1>Thanks for filling out our form!</h1>
     </Wrapper>
   );
 };
