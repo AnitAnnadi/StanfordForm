@@ -3,7 +3,8 @@ import { FormRow, Alert } from "../../components";
 import { useAppContext } from "../../context/appContext";
 import Wrapper from "../../assets/wrappers/DashboardFormPage";
 import { v4 as uuid } from "uuid";
-import {NavLink} from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import { BiPlus } from "react-icons/bi";
 
 const Profile = () => {
   const {
@@ -46,12 +47,23 @@ const Profile = () => {
             handleChange={(e) => setEmail(e.target.value)}
           />
           {/* <hr /> */}
-          <label
-            className="form-label"
-            style={{ fontSize: "1rem", marginBottom: 0 }}
+          <div
+            style={{
+              display: "flex",
+              columnGap: "0.35rem",
+              alignItems: "center",
+            }}
           >
-            locations
-          </label>
+            <label
+              className="form-label"
+              style={{ fontSize: "1rem", marginBottom: 0 }}
+            >
+              locations
+            </label>
+            <NavLink to={`/selectLoc`} className="location-link btn btn-block">
+              <BiPlus />
+            </NavLink>
+          </div>
           {userLocations.map((location) => {
             return (
               <p key={location.index} className="location">
@@ -59,9 +71,6 @@ const Profile = () => {
               </p>
             );
           })}
-          <NavLink to={`/selectLoc`} className="nav-link btn btn-block">
-            Add location
-          </NavLink>
           <button className="btn btn-block" type="submit" disabled={isLoading}>
             {isLoading ? "Please Wait..." : "save changes"}
           </button>
