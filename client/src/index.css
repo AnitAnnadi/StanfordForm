@@ -133,12 +133,6 @@ a {
   letter-spacing: var(--letterSpacing);
 }
 
-.nav-link {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 a,
 button {
   line-height: 1.15;
@@ -405,4 +399,13 @@ li {
   height: 6px;
   border-radius: 50%;
   background: white;
+}
+
+.location-link {
+  display: grid;
+  max-width: 1.25rem;
+  justify-content: center;
+  align-content: center;
+  height: 1.25rem;
+  font-size: 1.1rem;
 }
