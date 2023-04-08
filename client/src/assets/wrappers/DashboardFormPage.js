@@ -49,6 +49,11 @@ const Wrapper = styled.section`
   .clear-btn:hover {
     background: var(--black);
   }
+  
+  .location {
+    margin: 0rem;
+    text-indent: 2rem;
+  }
 
   /* @media (min-width: 992px) {
     .form-center {
