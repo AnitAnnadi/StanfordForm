@@ -30,96 +30,89 @@ const JoinForm = () => {
   let location = useLocation();
   let schools = location.state;
   let grades = ["K", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-  let periods=[0,1, 2, 3, 4, 5, 6, 7, 8]
-  schools=schools["schools"]
-  function MultipleSchools(){
-    if (schools.length>1){
-      return(
-      <div>
-        <h4>School Name</h4>
-        <select
-          name="school"
-          value={school}
-          onChange={(e) => setSchool(e.target.value)}
-          selected
-          className="form-select"
-        >
-          <option value={"default"} disabled selected>
-            Choose your School
-          </option>
-          {schools.map((school=>{
-            return(
-              <option value={school["school"]}>
-                {school["school"]}
-              </option>
-            )
-          }))}
-        </select>
-      </div>
-      )
-
-    }
-    else{
-      // console.log(schools[0]["school"])
-      setSchool(schools[0]["school"])
-    }
-  }
-  let current=''
-  function MultiplePeriods(){
-    schools.map((each)=>{
-      if (each["school"]===school){
-        current=each
-        console.log(current)
-        console.log('here')
-      }
-    })
-    console.log(current)
-    if (current["multiplePeriods"]){
-      // console.log('here')
-      return(
+  let periods = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+  schools = schools["schools"];
+  function MultipleSchools() {
+    if (schools.length > 1) {
+      return (
         <div>
-          <h4>Period</h4>
+          <h4 className="form-title">School Name</h4>
           <select
-          name="period"
-          value={period}
-          onChange={(e) => setPeriod(e.target.value)}
-          selected
-          className="form-select"
-        >
-          <option value={"default"} disabled selected>
-            Choose your Period
-          </option>
-          {periods.map((period=>{
-            return(
-              <option value={period}>
-                {period}
-              </option>
-            )
-          }))}
-        </select>
+            name="school"
+            value={school}
+            onChange={(e) => setSchool(e.target.value)}
+            selected
+            className="form-select"
+          >
+            <option value={"default"} disabled selected>
+              Choose your School
+            </option>
+            {schools.map((school) => {
+              return (
+                <option value={school["school"]}>{school["school"]}</option>
+              );
+            })}
+          </select>
         </div>
-        )
+      );
+    } else {
+      // console.log(schools[0]["school"])
+      setSchool(schools[0]["school"]);
     }
   }
-
-
+  let current = "";
+  function MultiplePeriods() {
+    schools.map((each) => {
+      if (each["school"] === school) {
+        current = each;
+        console.log(current);
+        console.log("here");
+      }
+    });
+    console.log(current);
+    if (current["multiplePeriods"]) {
+      // console.log('here')
+      return (
+        <div>
+          <h4 className="form-title">Period</h4>
+          <select
+            name="period"
+            value={period}
+            onChange={(e) => setPeriod(e.target.value)}
+            selected
+            className="form-select"
+          >
+            <option value={"default"} disabled selected>
+              Choose your Period
+            </option>
+            {periods.map((period) => {
+              return <option value={period}>{period}</option>;
+            })}
+          </select>
+        </div>
+      );
+    }
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(school)
-    if (form!="default" && grade!="default" && when!="default" && school!="default" ){
+    console.log(school);
+    if (
+      form != "default" &&
+      grade != "default" &&
+      when != "default" &&
+      school != "default"
+    ) {
       navigate("/form", {
         state: {
           form,
           grade,
           when,
           school,
-          period
+          period,
         },
       });
     }
-
-    
   };
 
   return (
@@ -132,23 +125,8 @@ const JoinForm = () => {
           {showAlert && <Alert />}
           <h4>You have joined {teacher_name}'s class</h4>
           <div className="form">
-            <h4>Form Type</h4>
-            <select
-              name="type"
-              value={form}
-              onChange={(e) => setForm(e.target.value)}
-              selected
-              className="form-select"
-            >
-              <option value={"default"} disabled selected>
-                Choose your Form
-              </option>
-              <option value={"tobacco"}>Tobacco</option>
-              <option value={"cannabis"} selected>
-                Cannabis
-              </option>
-            </select>
-
+            <MultipleSchools />
+            <MultiplePeriods />
             <h4 className="form-title">Grade Level</h4>
             <select
               name="grade"
@@ -169,6 +147,23 @@ const JoinForm = () => {
               })}
             </select>
 
+            <h4 className="form-title">Form Type</h4>
+            <select
+              name="type"
+              value={form}
+              onChange={(e) => setForm(e.target.value)}
+              selected
+              className="form-select"
+            >
+              <option value={"default"} disabled selected>
+                Choose your Form
+              </option>
+              <option value={"tobacco"}>Tobacco</option>
+              <option value={"cannabis"} selected>
+                Cannabis
+              </option>
+            </select>
+
             <h4 className="form-title">When are you taking this form</h4>
             <select
               name="when"
@@ -185,9 +180,7 @@ const JoinForm = () => {
                 After Lesson
               </option>
             </select>
-            <MultipleSchools/>
-            <MultiplePeriods/>
-            
+
             <button
               className="btn btn-block"
               type="submit"
