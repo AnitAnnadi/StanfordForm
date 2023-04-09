@@ -42,9 +42,9 @@ const SelectLoc = () => {
   const [numOfLocations, setNumOfLocations] = useState(userLocations ? userLocations.length + 1 : 1);
 
   const showCounty = user.role === "District Admin" || user.role === "County Admin";
-  const showCity = user.role === "Site Admin";
+  const showCity = user.role === "Site Admin" || user.role === "Teacher"
   const showDistrict = user.role === "District Admin";
-  const showSchool = user.role === "Site Admin";
+  const showSchool = user.role === "Site Admin" || user.role === "Teacher";
   const showMultiplePeriods = user.role === "Teacher";
   const showAdditionalLoc = user.role === "Teacher";
 
