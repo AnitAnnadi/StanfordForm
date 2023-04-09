@@ -19,6 +19,8 @@ const Profile = () => {
   const [name, setName] = useState(user?.name);
   const [email, setEmail] = useState(user?.email);
 
+  const showAddLocation = user.role === 'Teacher'
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!name || !email) {
@@ -60,9 +62,11 @@ const Profile = () => {
             >
               locations
             </label>
+            {showAddLocation && <>
             <NavLink to={`/selectLoc`} className="location-link btn btn-block">
               <BiPlus />
             </NavLink>
+            </>}
           </div>
           {userLocations.map((location, index) => {
             const renderLocationInfo = () => {

@@ -46,6 +46,7 @@ const SelectLoc = () => {
   const showDistrict = user.role === "District Admin";
   const showSchool = user.role === "Site Admin";
   const showMultiplePeriods = user.role === "Teacher";
+  const showAdditionalLoc = user.role === "Teacher";
 
   const handleChange = (field, value) => {
     if (field === 'state') {
@@ -235,8 +236,9 @@ const SelectLoc = () => {
               })}
             </select>
             </>}
-            <hr/>
+
             {showMultiplePeriods && <>
+            <hr/>
             <label className="form-label">
             <input
               type="checkbox"
@@ -247,8 +249,9 @@ const SelectLoc = () => {
 
             />  I teach multiple classes/periods at this location
             </label>
-            <hr/>
             </>}
+            {showAdditionalLoc && <>
+            <hr/>
             <label className="form-label">
             <input
               type="checkbox"
@@ -258,6 +261,7 @@ const SelectLoc = () => {
               onChange={(e) => setAdditionalLoc(e.target.checked)}
             />  I would like to submit an additional location
             </label>
+            </>}
             <button
               className="btn btn-block"
               type="submit"
@@ -268,6 +272,7 @@ const SelectLoc = () => {
               {isLoading ? "Please Wait..." : "submit"}
             </button>
           </div>
+
         </form>
       </Wrapper>
     </div>
