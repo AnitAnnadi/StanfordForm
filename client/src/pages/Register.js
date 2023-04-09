@@ -73,7 +73,7 @@ const Register = () => {
       return;
     }
     if (type == "teacher") {
-      role = "teacher";
+      role = "Teacher";
     }
     if (type == "admin") {
       role = adminRole;
