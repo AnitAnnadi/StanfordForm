@@ -71,7 +71,8 @@ const initialState = {
   sortOptions: ['latest', 'oldest', 'a-z', 'z-a'],
   teacher:'',
   totalResponses:null,
-  hasLocation:null
+  hasLocation:null,
+  schools:''
 };
 
 const AppContext = React.createContext();
@@ -204,7 +205,7 @@ const AppProvider = ({ children }) => {
       console.log(data)
       const {id, name, email, state, city, school} = data;
       console.log(data["user"]["name"])
-      dispatch({ type: ENTER_CODE , payload:{teacher:data["user"]}});
+      dispatch({ type: ENTER_CODE , payload:{teacher:data["user"],schools:data["schools"]}});
     } catch (error) {
       if (error.response.status !== 401) {
         dispatch({
@@ -215,18 +216,14 @@ const AppProvider = ({ children }) => {
     }
     clearAlert();
   };
-  const submitForm = async (names,answer,code,grade,when,type) => {
+  const submitForm = async (names,answer,code,grade,when,type,school,period) => {
     
     
     try {
-      console.log(names,answer,code,grade,when)
-      const { data } = await axios.post(`/api/v1/auth/submitForm/`, {names,answer,code,grade,when,type});
-      // console.log(data)
-      // const {id, name, email, state, city, school} = data;
-      // console.log(data["user"]["name"])
-      // dispatch({ type: ENTER_CODE , payload:{teacher:data["user"]}});
+      console.log(names,answer,code,grade,when,school,period)
+      const { data } = await axios.post(`/api/v1/auth/submitForm/`, {names,answer,code,grade,when,type,school,period});
     } catch (error) {
-      // if (error.response.status !== 401) {
+      if (error.response.status !== 401) return;
       //   dispatch({
       //     type: UPDATE_USER_ERROR,
       //     payload: { msg: error.response.data.msg },

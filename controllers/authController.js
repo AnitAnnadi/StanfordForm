@@ -13,10 +13,12 @@ const enterCode=async(req,res)=>{
   if (code==null){
     throw new BadRequestError('Please Enter a Code');
   }
-  console.log(code)
   const user = await User.findOne({ code });
+  let teacher=user["_id"]
+  const schools=await School.find({teacher})
+  console.log(schools)
   if (user){
-    res.status(StatusCodes.OK).json({ user });
+    res.status(StatusCodes.OK).json({ user,schools });
     console.log('hi')
   }
   else{
@@ -109,13 +111,22 @@ const logout = async (req, res) => {
 };
 
 const submitForm = async(req,res) =>{
-  const {names,answer,code,grade,when,type}=req.body;
-  console.log(code,grade,when)
+  const {names,answer,code,grade,when,type,school,period}=req.body;
   if (answer.length<names.length){
     console.log('hi')
     throw new BadRequestError('Please answer all questions');
   }
-  const StudentResponseData= await StudentReponse.create({formCode:code,grade:grade,When:when,formType:type})
+  let StudentResponseData=''
+  if (period!=="default"){
+    console.log('hi')
+    StudentResponseData= await StudentReponse.create({formCode:code,grade:grade,When:when,formType:type,school:school,period:period})
+
+  }
+  if (period==="default"){
+    
+    StudentResponseData= await StudentReponse.create({formCode:code,grade:grade,When:when,formType:type,school:school})
+
+  }
   let _id=(StudentResponseData["_id"])
   
   for (var i=0;i<names.length;i++){

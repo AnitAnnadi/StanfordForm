@@ -20,6 +20,14 @@ const StudentResponseSchema = new mongoose.Schema(
       type: String,
       enum: ['tobacco', 'cannabis'],
       required: [true, 'Please provide form type'],
+    },
+    school:{
+      type: String,
+      required: [true, 'Please provide school'],
+    },
+    period:{
+      type: String,
+      required: false
     }
   },
   { timestamps: true }

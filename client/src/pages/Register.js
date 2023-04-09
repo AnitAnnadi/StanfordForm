@@ -4,7 +4,7 @@ import Wrapper from "../assets/wrappers/RegisterPage";
 import { useAppContext } from "../context/appContext";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import { Select } from "@mui/material";
+// import { Select } from "@mui/material";
 const initialState = {
   name: "",
   email: "",

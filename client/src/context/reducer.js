@@ -167,11 +167,12 @@ const reducer = (state, action) => {
     };
   }
   if (action.type === ENTER_CODE) {
-    console.log(action.payload)
+    console.log(action.payload.teacher)
     return { alertType: 'success',
     alertText: "Joined New Form",
     ...state, isLoading: true, 
-    teacher:action.payload};
+    teacher:action.payload.teacher,
+    schools:action.payload.schools};
   }
 
   if (action.type === GET_TOTAL) {

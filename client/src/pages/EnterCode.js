@@ -15,20 +15,25 @@ const EnterCode = () => {
     updateLocation,
     isLoading,
     enterCode,
+    schools
   } = useAppContext();
   useEffect(() => {
     // let teacher_info=(((teacher["teacher"])))
 
     if (teacher != "") {
-      let teacher_name = teacher["teacher"]["name"];
-      let teacher_id = teacher["teacher"]["_id"];
-      let teacher_school = teacher["teacher"]["_id"];
+      console.log(teacher)
+      let teacher_name = teacher["name"];
+      let teacher_id = teacher["_id"];
+      let teacher_school = teacher["_id"];
       localStorage.setItem("teacher_name", teacher_name);
       localStorage.setItem("teacher_id", teacher_id);
       localStorage.setItem("teacher_school", teacher_school);
       {
         setTimeout(() => {
-          navigate("/joinedForm");
+          navigate("/joinedForm",{state:
+          {
+            schools
+          }});
         }, 1000);
       }
     }

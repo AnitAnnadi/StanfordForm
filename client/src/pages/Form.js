@@ -71,7 +71,9 @@ const Form = () => {
       localStorage.getItem("code"),
       info["grade"],
       info["when"],
-      info["form"]
+      info["form"],
+      info["school"],
+      info["period"]
     );
 
     navigate("/success", {});

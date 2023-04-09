@@ -4,6 +4,7 @@ import { useAppContext } from "../context/appContext";
 import Wrapper from "../assets/wrappers/DashboardFormPage";
 import Dropdown from "react-dropdown";
 import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 import { useNavigate } from "react-router-dom";
 
@@ -24,16 +25,96 @@ const JoinForm = () => {
   const [form, setForm] = useState("default");
   const [grade, setGrade] = useState("default");
   const [when, setWhen] = useState("default");
+  const [school, setSchool] = useState("default");
+  const [period, setPeriod] = useState();
+  let location = useLocation();
+  let schools = location.state;
   let grades = ["K", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  let periods=[0,1, 2, 3, 4, 5, 6, 7, 8]
+  schools=schools["schools"]
+  function MultipleSchools(){
+    if (schools.length>1){
+      return(
+      <div>
+        <h4>School Name</h4>
+        <select
+          name="school"
+          value={school}
+          onChange={(e) => setSchool(e.target.value)}
+          selected
+          className="form-select"
+        >
+          <option value={"default"} disabled selected>
+            Choose your School
+          </option>
+          {schools.map((school=>{
+            return(
+              <option value={school["school"]}>
+                {school["school"]}
+              </option>
+            )
+          }))}
+        </select>
+      </div>
+      )
+
+    }
+    else{
+      // console.log(schools[0]["school"])
+      setSchool(schools[0]["school"])
+    }
+  }
+  let current=''
+  function MultiplePeriods(){
+    schools.map((each)=>{
+      if (each["school"]===school){
+        current=each
+        console.log(current)
+        console.log('here')
+      }
+    })
+    console.log(current)
+    if (current["multiplePeriods"]){
+      // console.log('here')
+      return(
+        <div>
+          <h4>Period</h4>
+          <select
+          name="period"
+          value={period}
+          onChange={(e) => setPeriod(e.target.value)}
+          selected
+          className="form-select"
+        >
+          <option value={"default"} disabled selected>
+            Choose your Period
+          </option>
+          {periods.map((period=>{
+            return(
+              <option value={period}>
+                {period}
+              </option>
+            )
+          }))}
+        </select>
+        </div>
+        )
+    }
+  }
+
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(form, grade,when);
-    if (form!="default" && grade!="default" && when!="default"){
+    console.log(school)
+    if (form!="default" && grade!="default" && when!="default" && school!="default" ){
       navigate("/form", {
         state: {
-          form: form,
-          grade:grade,
-          when:when
+          form,
+          grade,
+          when,
+          school,
+          period
         },
       });
     }
@@ -53,7 +134,7 @@ const JoinForm = () => {
           <div className="form">
             <h4>Form Type</h4>
             <select
-              name="aliasChoice"
+              name="type"
               value={form}
               onChange={(e) => setForm(e.target.value)}
               selected
@@ -104,7 +185,9 @@ const JoinForm = () => {
                 After Lesson
               </option>
             </select>
-
+            <MultipleSchools/>
+            <MultiplePeriods/>
+            
             <button
               className="btn btn-block"
               type="submit"
