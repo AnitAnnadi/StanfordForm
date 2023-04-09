@@ -6,16 +6,20 @@ import Dropdown from "react-dropdown";
 import { v4 as uuid } from "uuid";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { narrowCities, narrowSchools, getDistrictCounty } from "../utils/schoolDataFetch";
+import { narrowDistricts, narrowCities, narrowCounties, narrowSchools, getDistrictCounty } from "../utils/schoolDataFetch";
+import contains from "validator/es/lib/contains";
 
 const SelectLoc = () => {
   const { user, userLocations, showAlert, displayAlert, addLocation, isLoading } =
     useAppContext();
   const navigate = useNavigate();
 
-  const [state, setState] = useState(user?.state ?? "default");
-  const [city, setCity] = useState(user?.city ?? "default");
-  const [school, setSchool] = useState(user?.school ?? "default");
+  const [state, setState] = useState("default");
+  const [city, setCity] = useState("default");
+  const [school, setSchool] = useState("default");
+  const [district, setDistrict] = useState("default");
+  const [county, setCounty] = useState("default");
+
   const states = ["Alabama", "Alaska", "Arizona", "Arkansas", "California",
       "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida",
       "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas",
@@ -28,12 +32,20 @@ const SelectLoc = () => {
 
   const [cities, setCities] = useState([]);
   const [schools, setSchools] = useState([]);
+  const [counties, setCounties] = useState([]);
+  const [districts, setDistricts] = useState([]);
 
   const [multiplePeriods, setMultiplePeriods] = useState(false);
 
   const [additionalLoc, setAdditionalLoc] = useState(false);
 
   const [numOfLocations, setNumOfLocations] = useState(userLocations ? userLocations.length + 1 : 1);
+
+  const showCounty = user.role === "District Admin" || user.role === "County Admin";
+  const showCity = user.role === "Site Admin";
+  const showDistrict = user.role === "District Admin";
+  const showSchool = user.role === "Site Admin";
+  const showMultiplePeriods = user.role === "Teacher";
 
   const handleChange = (field, value) => {
     if (field === 'state') {
@@ -43,6 +55,14 @@ const SelectLoc = () => {
 
       if (value !== 'default') {
         setCities(narrowCities(value));
+        setCounties(narrowCounties(value));
+      }
+    } else if (field === 'county') {
+      setCounty(value);
+      setDistrict('default')
+
+      if (value !== 'default') {
+          setDistricts(narrowDistricts(state, value));
       }
     } else if (field === 'city') {
       setCity(value);
@@ -51,6 +71,8 @@ const SelectLoc = () => {
       if (value !== 'default') {
         setSchools(narrowSchools(state, value));
       }
+    } else if (field === 'district') {
+      setDistrict(value);
     } else if (field === 'school') {
       setSchool(value);
     }
@@ -58,19 +80,42 @@ const SelectLoc = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(state, city, school);
-    if (!state || !city || !school) {
-      displayAlert();
-      return;
+
+    if (user.role === 'Standford Staff') {
+      setTimeout(() => {
+        navigate("/");
+      }, 1000);
     }
 
-    const { district, county } = getDistrictCounty(state, city, school);
+    if ((state === 'default') || (showCounty && county === 'default') || (showCity && city === 'default')
+        || (showDistrict && district === 'default') || (showSchool && school === 'default')) {
+        displayAlert();
+        return;
+    }
 
-    addLocation({ multiplePeriods, state, county, city, district, school });
+    if (user.role === 'Site Admin' || user.role === 'Teacher') {
+
+      const {foundDistrict, foundCounty} = getDistrictCounty(state, city, school);
+
+      setDistrict(foundDistrict);
+      setCounty(foundCounty);
+    }
+
+    addLocation({
+      multiplePeriods: multiplePeriods !== 'default' ? multiplePeriods: null,
+      state: state,
+      county: county !== 'default' ? county : null,
+      city: city !== 'default' ? city : null,
+      district: district !== 'default' ? district : null,
+      school: school !== 'default' ? school : null,
+    });
+
 
     if (additionalLoc) {
       setState('default')
+      setCounty('default')
       setCity('default')
+      setDistrict('default')
       setSchool('default')
       setMultiplePeriods(false)
       setAdditionalLoc(false)
@@ -92,7 +137,7 @@ const SelectLoc = () => {
           {showAlert && <Alert />}
           <div className="form">
             <h3 className="form-title">Select Location {numOfLocations > 1 ? numOfLocations : ""}</h3>
-            <h4>State</h4>
+            <h4 className="form-title">State</h4>
             <select
               name="aliasChoice"
               value={state}
@@ -110,6 +155,27 @@ const SelectLoc = () => {
                 );
               })}
             </select>
+            {showCounty && <>
+            <h4 className="form-title">County</h4>
+            <select
+              name="aliasChoice"
+              value={county}
+              onChange={(e) => handleChange("county", e.target.value)}
+              className="form-select"
+            >
+              <option value={"default"}>
+                Choose your County
+              </option>
+              {counties.map((county, index) => {
+                return (
+                  <option key={index} value={county}>
+                    {county}
+                  </option>
+                );
+              })}
+            </select>
+            </>}
+            {showCity && <>
             <h4 className="form-title">City</h4>
             <select
               name="aliasChoice"
@@ -128,6 +194,28 @@ const SelectLoc = () => {
                 );
               })}
             </select>
+            </>}
+            {showDistrict && <>
+            <h4 className="form-title">District</h4>
+            <select
+              name="aliasChoice"
+              value={district}
+              onChange={(e) => handleChange("district", e.target.value)}
+              className="form-select"
+            >
+              <option value={"default"}>
+                Choose your District
+              </option>
+              {districts.map((district, index) => {
+                return (
+                  <option key={index} value={district}>
+                    {district}
+                  </option>
+                );
+              })}
+            </select>
+            </>}
+            {showSchool && <>
             <h4 className="form-title">School</h4>
             <select
               name="aliasChoice"
@@ -146,7 +234,9 @@ const SelectLoc = () => {
                 );
               })}
             </select>
+            </>}
             <hr/>
+            {showMultiplePeriods && <>
             <label className="form-label">
             <input
               type="checkbox"
@@ -158,6 +248,7 @@ const SelectLoc = () => {
             />  I teach multiple classes/periods at this location
             </label>
             <hr/>
+            </>}
             <label className="form-label">
             <input
               type="checkbox"

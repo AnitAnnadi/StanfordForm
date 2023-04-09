@@ -6,8 +6,8 @@ import {StatusCodes} from "http-status-codes";
 
 const createLocation = async(req,res) =>{
   const { multiplePeriods, state, county, city, district, school } = req.body;
-  if ( typeof multiplePeriods == 'undefined' || !state || !county || !city || !district || !school) {
-    throw new BadRequestError('Please provide all values');
+  if (!state) {
+    throw new BadRequestError('State is required');
   }
 
   const user = await User.findOne({ _id: req.user.userId });

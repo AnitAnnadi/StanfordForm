@@ -17,7 +17,7 @@ const initialState = {
 
 const Register = () => {
   let role = "";
-  let adminroles = ["principal", "counselor", "dean"];
+  let adminroles = ["Site Admin", "District Admin", "County Admin", "State Admin", "Standford Staff"];
   const navigate = useNavigate();
   const location = useLocation();
   const { type } = location.state;
@@ -97,7 +97,7 @@ const Register = () => {
 
   useEffect(() => {
     // console.log(hasLocation)
-    if (user && hasLocation) {
+    if ((user && hasLocation) || (user?.role === 'Standford Staff')) {
       setTimeout(() => {
         navigate("/");
       }, 3000);

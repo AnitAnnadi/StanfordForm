@@ -1,5 +1,23 @@
 import schoolData from '../assets/school-data.json'
 
+const narrowCounties = (state) => {
+    const counties = schoolData
+        .filter((school) => school.state === state)
+        .map((school) => school.county)
+        .sort();
+
+    return [...new Set(counties)]
+}
+
+const narrowDistricts = (state, county) => {
+    const districts = schoolData
+        .filter((school) => school.state === state && school.county === county)
+        .map((school) => school.district)
+        .sort();
+
+    return [...new Set(districts)]
+}
+
 const narrowCities = (state) => {
     const cities = schoolData
         .filter((school) => school.state === state)
@@ -29,4 +47,4 @@ const getDistrictCounty = (state, city, schoolName) => {
 }
 
 
-export { narrowCities, narrowSchools, getDistrictCounty }
+export { narrowCounties, narrowCities, narrowDistricts, narrowSchools, getDistrictCounty }
