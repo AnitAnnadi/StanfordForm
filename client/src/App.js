@@ -5,7 +5,7 @@ import {
   Profile,
   SharedLayout,
   Stats,
-  AddJob,
+  AddJob, Home,
 } from "./pages/dashboard";
 import SelectLoc from "./pages/SelectLoc";
 import EnterCode from "./pages/EnterCode";
@@ -25,9 +25,10 @@ function App() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<Stats />} />
+          <Route index element={<Home />} />
           <Route path="all-jobs" element={<AllJobs />} />
-          <Route path="add-job" element={<AddJob />} />          
+          <Route path="add-job" element={<AddJob />} />
+          <Route path="stats" element={<Stats />} />
           <Route path="profile" element={<Profile />} />
           
           
