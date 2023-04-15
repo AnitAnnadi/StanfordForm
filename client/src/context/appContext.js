@@ -54,25 +54,28 @@ const initialState = {
   position: '',
   company: '',
   jobLocation: '',
-  jobTypeOptions: ['full-time', 'part-time', 'remote', 'internship'],
-  jobType: 'full-time',
-  statusOptions: ['interview', 'declined', 'pending'],
-  status: 'pending',
-  jobs: [],
-  totalJobs: 0,
+  schools: [],
+  totalSchools: 0,
   numOfPages: 1,
   page: 1,
   stats: {},
   monthlyApplications: [],
   search: '',
-  searchStatus: 'all',
-  searchType: 'all',
-  sort: 'latest',
-  sortOptions: ['latest', 'oldest', 'a-z', 'z-a'],
+  searchState: '',
+  searchCounty: '',
+  searchDistrict: '',
+  searchCity: '',
+  searchSchool: '',
+  gradeOptions: ['all', 'k', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+  searchGrade: 'all',
+  periodOptions: ['all', '1', '2', '3', '4', '5', '6', '7', '8'],
+  searchPeriod: 'all',
+  typeOptions: ['tobacco', 'cannabis'],
+  beforeAfterOptions: ['all', 'before', 'after'],
+  searchBeforeAfter: 'all',
   teacher:'',
   totalResponses:null,
   hasLocation:null,
-  schools:''
 };
 
 const AppContext = React.createContext();
@@ -262,7 +265,7 @@ const AppProvider = ({ children }) => {
     clearAlert();
   };
 
-  const getJobs = async () => {
+  const getSchools = async () => {
     const { page, search, searchStatus, searchType, sort } = state;
 
     let url = `/jobs?page=${page}&status=${searchStatus}&jobType=${searchType}&sort=${sort}`;
@@ -393,7 +396,7 @@ const AppProvider = ({ children }) => {
         handleChange,
         clearValues,
         createJob,
-        getJobs,
+        getSchools,
         setEditJob,
         deleteJob,
         editJob,

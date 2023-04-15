@@ -8,22 +8,28 @@ import PageBtnContainer from './PageBtnContainer';
 
 const JobsContainer = () => {
   const {
-    getJobs,
-    jobs,
+    getSchools,
+    schools,
     isLoading,
     page,
-    totalJobs,
-    search,
-    searchStatus,
-    searchType,
-    sort,
+    totalSchools,
+    searchState,
+    searchCounty,
+    searchDistrict,
+    searchCity,
+    searchSchool,
+    searchGrade,
+    searchPeriod,
+    searchBeforeAfter,
     numOfPages,
     showAlert,
   } = useAppContext();
+
   useEffect(() => {
-    getJobs();
+    getSchools();
     // eslint-disable-next-line
-  }, [page, search, searchStatus, searchType, sort]);
+  }, [page, search, searchStatus, searchType]);
+
   if (isLoading) {
     return <Loading center />;
   }

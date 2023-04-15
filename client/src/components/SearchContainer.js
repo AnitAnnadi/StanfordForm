@@ -3,31 +3,60 @@ import { useAppContext } from '../context/appContext';
 import Wrapper from '../assets/wrappers/SearchContainer';
 import { useState, useMemo } from 'react';
 const SearchContainer = () => {
-  const [localSearch, setLocalSearch] = useState('');
+  const [localSearchState, setLocalSearchState] = useState('');
+  const [localSearchCounty, setLocalSearchCounty] = useState('');
+  const [localSearchDistrict, setLocalSearchDistrict] = useState('');
+  const [localSearchCity, setLocalSearchCity] = useState('');
+  const [localSearchSchool, setLocalSearchSchool] = useState('');
+
   const {
     isLoading,
-    search,
-    searchStatus,
+    searchGrade,
+    searchPeriod,
     searchType,
-    sort,
-    sortOptions,
+    searchBeforeAfter,
+    periodOptions,
+    gradeOptions,
+    typeOptions,
+    beforeAfterOptions,
     handleChange,
     clearFilters,
-    jobTypeOptions,
-    statusOptions,
   } = useAppContext();
+
   const handleSearch = (e) => {
     handleChange({ name: e.target.name, value: e.target.value });
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    setLocalSearch('');
+    setLocalSearchState('');
+    setLocalSearchCounty('');
+    setLocalSearchDistrict('');
+    setLocalSearchCity('');
+    setLocalSearchSchool('');
     clearFilters();
   };
   const debounce = () => {
     let timeoutID;
     return (e) => {
-      setLocalSearch(e.target.value);
+      switch (e.target.name) {
+          case 'state':
+              setLocalSearchState(e.target.value);
+              break;
+          case 'county':
+              setLocalSearchCounty(e.target.value);
+              break;
+          case 'district':
+              setLocalSearchDistrict(e.target.value);
+              break;
+          case 'city':
+              setLocalSearchCity(e.target.value);
+              break;
+          case 'school':
+              setLocalSearchSchool(e.target.value);
+              break;
+          default:
+              break;
+      }
       clearTimeout(timeoutID);
       timeoutID = setTimeout(() => {
         handleChange({ name: e.target.name, value: e.target.value });
@@ -40,21 +69,56 @@ const SearchContainer = () => {
       <form className='form'>
         <h4>search form</h4>
         <div className='form-center'>
-          {/* search position */}
-
+          {/* search by state */}
           <FormRow
             type='text'
-            name='search'
-            value={localSearch}
+            name='searchState'
+            value={localSearchState}
             handleChange={optimizedDebounce}
           />
-          {/* search by status */}
+          {/* search by county */}
+          <FormRow
+            type='text'
+            name='searchCounty'
+            value={localSearchCounty}
+            handleChange={optimizedDebounce}
+          />
+          {/* search by district */}
+          <FormRow
+            type='text'
+            name='searchDistrict'
+            value={localSearchDistrict}
+            handleChange={optimizedDebounce}
+          />
+          {/* search by city */}
+          <FormRow
+            type='text'
+            name='searchCity'
+            value={localSearchCity}
+            handleChange={optimizedDebounce}
+          />
+          {/* search by school */}
+          <FormRow
+            type='text'
+            name='searchSchool'
+            value={localSearchSchool}
+            handleChange={optimizedDebounce}
+          />
+          {/* search by grade */}
           <FormRowSelect
-            labelText='status'
-            name='searchStatus'
-            value={searchStatus}
+            labelText='grade'
+            name='searchGrade'
+            value={searchGrade}
             handleChange={handleSearch}
-            list={['all', ...statusOptions]}
+            list={['all', ...gradeOptions]}
+          />
+          {/* search by period */}
+          <FormRowSelect
+            labelText='period'
+            name='searchPeriod'
+            value={searchPeriod}
+            handleChange={handleSearch}
+            list={periodOptions}
           />
           {/* search by type */}
           <FormRowSelect
@@ -62,14 +126,15 @@ const SearchContainer = () => {
             name='searchType'
             value={searchType}
             handleChange={handleSearch}
-            list={['all', ...jobTypeOptions]}
+            list={typeOptions}
           />
-          {/* sort */}
+          {/* search by before/after */}
           <FormRowSelect
-            name='sort'
-            value={sort}
+            labelText='beforeAfter'
+            name='searchBeforeAfter'
+            value={searchBeforeAfter}
             handleChange={handleSearch}
-            list={sortOptions}
+            list={beforeAfterOptions}
           />
           <button
             className='btn btn-block btn-danger'
