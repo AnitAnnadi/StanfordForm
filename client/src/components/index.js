@@ -3,7 +3,7 @@ import BigSidebar from "./BigSidebar";
 import ChartsContainer from "./ChartsContainer";
 import FormRow from "./FormRow";
 import FormRowSelect from "./FormRowSelect";
-import JobsContainer from "./JobsContainer";
+import SchoolsContainer from "./SchoolsContainer";
 import Loading from "./Loading";
 import Logo from "./Logo";
 import Navbar from "./Navbar";
@@ -20,7 +20,7 @@ export {
   SmallSidebar,
   FormRowSelect,
   SearchContainer,
-  JobsContainer,
+  SchoolsContainer,
   StatsContainer,
   ChartsContainer,
   Loading,

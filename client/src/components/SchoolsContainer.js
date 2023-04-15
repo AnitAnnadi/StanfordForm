@@ -6,7 +6,7 @@ import Alert from './Alert';
 import Wrapper from '../assets/wrappers/JobsContainer';
 import PageBtnContainer from './PageBtnContainer';
 
-const JobsContainer = () => {
+const SchoolsContainer = () => {
   const {
     getSchools,
     schools,
@@ -28,16 +28,16 @@ const JobsContainer = () => {
   useEffect(() => {
     getSchools();
     // eslint-disable-next-line
-  }, [page, search, searchStatus, searchType]);
+  }, [page, searchState, searchCounty, searchDistrict, searchCity, searchSchool, searchGrade, searchPeriod, searchBeforeAfter]);
 
   if (isLoading) {
     return <Loading center />;
   }
 
-  if (jobs.length === 0) {
+  if (schools.length === 0) {
     return (
       <Wrapper>
-        <h2>No jobs to display...</h2>
+        <h2>No schools to display...</h2>
       </Wrapper>
     );
   }
@@ -46,11 +46,11 @@ const JobsContainer = () => {
     <Wrapper>
       {showAlert && <Alert />}
       <h5>
-        {totalJobs} job{jobs.length > 1 && 's'} found
+        {totalSchools} school{schools.length > 1 && 's'} found
       </h5>
       <div className='jobs'>
-        {jobs.map((job) => {
-          return <Job key={job._id} {...job} />;
+        {schools.map((school) => {
+          return <Job key={school._id} {...school} />;
         })}
       </div>
       {numOfPages > 1 && <PageBtnContainer />}
@@ -58,4 +58,4 @@ const JobsContainer = () => {
   );
 };
 
-export default JobsContainer;
+export default SchoolsContainer;
