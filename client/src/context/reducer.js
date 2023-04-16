@@ -10,6 +10,7 @@ import {
   UPDATE_USER_SUCCESS,
   UPDATE_USER_ERROR,
   HANDLE_CHANGE,
+  HANDLE_MULTIPLE_CHANGES,
   CLEAR_VALUES,
   CREATE_JOB_BEGIN,
   CREATE_JOB_SUCCESS,
@@ -127,6 +128,13 @@ const reducer = (state, action) => {
       page: 1,
       [action.payload.name]: action.payload.value,
     };
+  }
+  if (action.type === HANDLE_MULTIPLE_CHANGES) {
+  return {
+    ...state,
+    ...action.payload,
+    page: 1,
+  };
   }
   if (action.type === CLEAR_VALUES) {
     const initialState = {

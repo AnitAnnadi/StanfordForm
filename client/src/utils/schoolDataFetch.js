@@ -28,7 +28,6 @@ const narrowCities = (state) => {
 }
 
 const narrowSchools = (state, city) => {
-    console.log(state, city)
     const schools = schoolData
         .filter((school) => school.state === state && school.city === city)
         .map((school) => school.name)
@@ -41,10 +40,12 @@ const getDistrictCounty = (state, city, schoolName) => {
     const {county, district} = schoolData
         .find((school) => school.state === state && school.city === city && school.name === schoolName)
 
-    console.log(county, district)
-
     return { district, county }
 }
 
+const getSchoolDataValue = (value) => {
+    return [...new Set(schoolData.map((school) => school[value]).sort())]
+}
 
-export { narrowCounties, narrowCities, narrowDistricts, narrowSchools, getDistrictCounty }
+
+export { narrowCounties, narrowCities, narrowDistricts, narrowSchools, getDistrictCounty, getSchoolDataValue }

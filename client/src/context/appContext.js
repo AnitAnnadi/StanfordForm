@@ -1,4 +1,5 @@
 import React, { useReducer, useContext, useEffect } from 'react';
+import { getSchoolDataValue } from "../utils/schoolDataFetch";
 
 import reducer from './reducer';
 import axios from 'axios';
@@ -34,7 +35,7 @@ import {
   GET_CURRENT_USER_SUCCESS,
   ENTER_CODE,
   GET_TOTAL,
-  ADD_LOCATION_SUCCESS
+  ADD_LOCATION_SUCCESS, HANDLE_MULTIPLE_CHANGES
 } from './actions';
 const user = localStorage.getItem("user");
 const userLocations = localStorage.getItem("userLocations");
@@ -60,12 +61,16 @@ const initialState = {
   page: 1,
   stats: {},
   monthlyApplications: [],
-  search: '',
-  searchState: '',
-  searchCounty: '',
-  searchDistrict: '',
-  searchCity: '',
-  searchSchool: '',
+  stateOptions: ['all', ...getSchoolDataValue('state')],
+  searchState: 'all',
+  countyOptions: ['all', ...getSchoolDataValue('county')],
+  searchCounty: 'all',
+  districtOptions: ['all', ...getSchoolDataValue('district')],
+  searchDistrict: 'all',
+  cityOptions: ['all', ...getSchoolDataValue('city')],
+  searchCity: 'all',
+  schoolOptions: ['all', ...getSchoolDataValue('name')],
+  searchSchool: 'all',
   gradeOptions: ['all', 'k', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
   searchGrade: 'all',
   periodOptions: ['all', '1', '2', '3', '4', '5', '6', '7', '8'],
@@ -239,31 +244,34 @@ const AppProvider = ({ children }) => {
   const handleChange = ({ name, value }) => {
     dispatch({ type: HANDLE_CHANGE, payload: { name, value } });
   };
+  const handleChanges = ({newStates}) => {
+    dispatch({ type: HANDLE_MULTIPLE_CHANGES, payload: {newStates} });
+  };
   const clearValues = () => {
     dispatch({ type: CLEAR_VALUES });
   };
-  const createJob = async () => {
-    dispatch({ type: CREATE_JOB_BEGIN });
-    try {
-      const { position, company, jobLocation, jobType, status } = state;
-      await authFetch.post('/jobs', {
-        position,
-        company,
-        jobLocation,
-        jobType,
-        status,
-      });
-      dispatch({ type: CREATE_JOB_SUCCESS });
-      dispatch({ type: CLEAR_VALUES });
-    } catch (error) {
-      if (error.response.status === 401) return;
-      dispatch({
-        type: CREATE_JOB_ERROR,
-        payload: { msg: error.response.data.msg },
-      });
-    }
-    clearAlert();
-  };
+  // const createJob = async () => {
+  //   dispatch({ type: CREATE_JOB_BEGIN });
+  //   try {
+  //     const { position, company, jobLocation, jobType, status } = state;
+  //     await authFetch.post('/jobs', {
+  //       position,
+  //       company,
+  //       jobLocation,
+  //       jobType,
+  //       status,
+  //     });
+  //     dispatch({ type: CREATE_JOB_SUCCESS });
+  //     dispatch({ type: CLEAR_VALUES });
+  //   } catch (error) {
+  //     if (error.response.status === 401) return;
+  //     dispatch({
+  //       type: CREATE_JOB_ERROR,
+  //       payload: { msg: error.response.data.msg },
+  //     });
+  //   }
+  //   clearAlert();
+  // };
 
   const getSchools = async () => {
     const { page, search, searchStatus, searchType, sort } = state;
@@ -290,46 +298,46 @@ const AppProvider = ({ children }) => {
     clearAlert();
   };
 
-  const setEditJob = (id) => {
-    dispatch({ type: SET_EDIT_JOB, payload: { id } });
-  };
-  const editJob = async () => {
-    dispatch({ type: EDIT_JOB_BEGIN });
-
-    try {
-      const { position, company, jobLocation, jobType, status } = state;
-      await authFetch.patch(`/jobs/${state.editJobId}`, {
-        company,
-        position,
-        jobLocation,
-        jobType,
-        status,
-      });
-      dispatch({ type: EDIT_JOB_SUCCESS });
-      dispatch({ type: CLEAR_VALUES });
-    } catch (error) {
-      if (error.response.status === 401) return;
-      dispatch({
-        type: EDIT_JOB_ERROR,
-        payload: { msg: error.response.data.msg },
-      });
-    }
-    clearAlert();
-  };
-  const deleteJob = async (jobId) => {
-    dispatch({ type: DELETE_JOB_BEGIN });
-    try {
-      await authFetch.delete(`/jobs/${jobId}`);
-      getJobs();
-    } catch (error) {
-      if (error.response.status === 401) return;
-      dispatch({
-        type: DELETE_JOB_ERROR,
-        payload: { msg: error.response.data.msg },
-      });
-    }
-    clearAlert();
-  };
+  // const setEditJob = (id) => {
+  //   dispatch({ type: SET_EDIT_JOB, payload: { id } });
+  // };
+  // const editJob = async () => {
+  //   dispatch({ type: EDIT_JOB_BEGIN });
+  //
+  //   try {
+  //     const { position, company, jobLocation, jobType, status } = state;
+  //     await authFetch.patch(`/jobs/${state.editJobId}`, {
+  //       company,
+  //       position,
+  //       jobLocation,
+  //       jobType,
+  //       status,
+  //     });
+  //     dispatch({ type: EDIT_JOB_SUCCESS });
+  //     dispatch({ type: CLEAR_VALUES });
+  //   } catch (error) {
+  //     if (error.response.status === 401) return;
+  //     dispatch({
+  //       type: EDIT_JOB_ERROR,
+  //       payload: { msg: error.response.data.msg },
+  //     });
+  //   }
+  //   clearAlert();
+  // };
+  // const deleteJob = async (jobId) => {
+  //   dispatch({ type: DELETE_JOB_BEGIN });
+  //   try {
+  //     await authFetch.delete(`/jobs/${jobId}`);
+  //     getJobs();
+  //   } catch (error) {
+  //     if (error.response.status === 401) return;
+  //     dispatch({
+  //       type: DELETE_JOB_ERROR,
+  //       payload: { msg: error.response.data.msg },
+  //     });
+  //   }
+  //   clearAlert();
+  // };
 
   const getTotal = async(user)=>{
     let code=user.code
@@ -394,12 +402,13 @@ const AppProvider = ({ children }) => {
         logoutUser,
         updateUser,
         handleChange,
+        handleChanges,
         clearValues,
-        createJob,
+        // createJob,
         getSchools,
-        setEditJob,
-        deleteJob,
-        editJob,
+        // setEditJob,
+        // deleteJob,
+        // editJob,
         showStats,
         clearFilters,
         changePage,

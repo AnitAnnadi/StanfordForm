@@ -2,107 +2,160 @@ import { FormRow, FormRowSelect } from '.';
 import { useAppContext } from '../context/appContext';
 import Wrapper from '../assets/wrappers/SearchContainer';
 import { useState, useMemo } from 'react';
+import {narrowCities, narrowCounties, narrowDistricts, narrowSchools} from "../utils/schoolDataFetch";
 const SearchContainer = () => {
-  const [localSearchState, setLocalSearchState] = useState('');
-  const [localSearchCounty, setLocalSearchCounty] = useState('');
-  const [localSearchDistrict, setLocalSearchDistrict] = useState('');
-  const [localSearchCity, setLocalSearchCity] = useState('');
-  const [localSearchSchool, setLocalSearchSchool] = useState('');
-
   const {
     isLoading,
+    searchState,
+    searchCounty,
+    searchDistrict,
+    searchCity,
+    searchSchool,
     searchGrade,
     searchPeriod,
     searchType,
     searchBeforeAfter,
+    stateOptions,
+    countyOptions,
+    districtOptions,
+    cityOptions,
+    schoolOptions,
     periodOptions,
     gradeOptions,
     typeOptions,
     beforeAfterOptions,
     handleChange,
+    handleChanges,
     clearFilters,
   } = useAppContext();
 
   const handleSearch = (e) => {
     handleChange({ name: e.target.name, value: e.target.value });
+
+    switch (e.target.name) {
+      case 'searchState':
+        handleChanges({
+          [e.target.name]: e.target.value,
+          searchCounty: 'all',
+          searchCity: 'all',
+          searchDistrict: 'all',
+          searchSchool: 'all',
+          countyOptions: narrowCounties(e.target.value),
+          cityOptions: narrowCities(e.target.value),
+          schoolOptions: narrowSchools(e.target.value),
+          districtOptions: narrowDistricts(e.target.value),
+        });
+        break;
+      case 'searchCounty':
+        handleChanges({
+          [e.target.name]: e.target.value,
+          searchCity: 'all',
+          searchDistrict: 'all',
+          searchSchool: 'all',
+          cityOptions: narrowCities(e.target.value),
+          schoolOptions: narrowSchools(e.target.value),
+          districtOptions: narrowDistricts(e.target.value),
+        });
+        break;
+      case 'searchCity':
+        handleChanges({
+          [e.target.name]: e.target.value,
+          searchDistrict: 'all',
+          searchSchool: 'all',
+          districtOptions: narrowDistricts(e.target.value),
+          schoolOptions: narrowSchools(e.target.value),
+        });
+        break;
+      case 'searchDistrict':
+        handleChanges({
+          [e.target.name]: e.target.value,
+          searchSchool: 'all',
+          schoolOptions: narrowSchools(e.target.value),
+        });
+        break;
+      default:
+        handleChanges({[e.target.name]: e.target.value});
+        break;
+    }
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    setLocalSearchState('');
-    setLocalSearchCounty('');
-    setLocalSearchDistrict('');
-    setLocalSearchCity('');
-    setLocalSearchSchool('');
     clearFilters();
   };
-  const debounce = () => {
-    let timeoutID;
-    return (e) => {
-      switch (e.target.name) {
-          case 'state':
-              setLocalSearchState(e.target.value);
-              break;
-          case 'county':
-              setLocalSearchCounty(e.target.value);
-              break;
-          case 'district':
-              setLocalSearchDistrict(e.target.value);
-              break;
-          case 'city':
-              setLocalSearchCity(e.target.value);
-              break;
-          case 'school':
-              setLocalSearchSchool(e.target.value);
-              break;
-          default:
-              break;
-      }
-      clearTimeout(timeoutID);
-      timeoutID = setTimeout(() => {
-        handleChange({ name: e.target.name, value: e.target.value });
-      }, 1000);
-    };
-  };
-  const optimizedDebounce = useMemo(() => debounce(), []);
+  // const debounce = () => {
+  //   let timeoutID;
+  //   return (e) => {
+  //     switch (e.target.name) {
+  //         case 'state':
+  //             setLocalSearchState(e.target.value);
+  //             break;
+  //         case 'county':
+  //             setLocalSearchCounty(e.target.value);
+  //             break;
+  //         case 'district':
+  //             setLocalSearchDistrict(e.target.value);
+  //             break;
+  //         case 'city':
+  //             setLocalSearchCity(e.target.value);
+  //             break;
+  //         case 'school':
+  //             setLocalSearchSchool(e.target.value);
+  //             break;
+  //         default:
+  //             break;
+  //     }
+  //     clearTimeout(timeoutID);
+  //     timeoutID = setTimeout(() => {
+  //       handleChange({ name: e.target.name, value: e.target.value });
+  //     }, 1000);
+  //   };
+  // };
+  // const optimizedDebounce = useMemo(() => debounce(), []);
   return (
     <Wrapper>
       <form className='form'>
         <h4>search form</h4>
         <div className='form-center'>
           {/* search by state */}
-          <FormRow
-            type='text'
+          <FormRowSelect
+            labelText='state'
             name='searchState'
-            value={localSearchState}
-            handleChange={optimizedDebounce}
+            value={searchState}
+            handleChange={handleSearch}
+            list={stateOptions}
           />
           {/* search by county */}
-          <FormRow
-            type='text'
+          <FormRowSelect
+            labelText='county'
             name='searchCounty'
-            value={localSearchCounty}
-            handleChange={optimizedDebounce}
+            value={searchCounty}
+            handleChange={handleSearch}
+            list={countyOptions}
           />
           {/* search by district */}
-          <FormRow
-            type='text'
-            name='searchDistrict'
-            value={localSearchDistrict}
-            handleChange={optimizedDebounce}
+          <FormRowSelect
+            labelText='district'
+            name='searchState'
+            value={searchDistrict}
+            handleChange={handleSearch}
+            list={districtOptions}
           />
           {/* search by city */}
-          <FormRow
-            type='text'
+          <FormRowSelect
+            labelText='city'
             name='searchCity'
-            value={localSearchCity}
-            handleChange={optimizedDebounce}
+            value={searchCity}
+            handleChange={handleSearch}
+            list={cityOptions}
           />
           {/* search by school */}
-          <FormRow
-            type='text'
+          <FormRowSelect
+            labelText='school'
             name='searchSchool'
-            value={localSearchSchool}
-            handleChange={optimizedDebounce}
+            value={searchSchool}
+            handleChange={handleSearch}
+            list={schoolOptions}
           />
           {/* search by grade */}
           <FormRowSelect
