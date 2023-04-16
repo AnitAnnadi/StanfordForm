@@ -310,13 +310,13 @@ const AppProvider = ({ children }) => {
 
       let teacherNames = [];
 
-      for (const i in schools) {
-        console.log(schools[i])
-        console.log({Teacher: schools[i].teacher})
+      for (const schoolIndex in schools) {
+        console.log(schools[schoolIndex])
+        console.log({Teacher: schools[schoolIndex].teacher})
         const { data: data2 } = await authFetch.get('/studentResponses', {
           params: {
-            school: schools[i].school,
-            teacherId: schools[i].teacher,
+            school: schools[schoolIndex].school,
+            teacherId: schools[schoolIndex].teacher,
             grade: searchGrade,
             period: searchPeriod,
             formType: searchType,
@@ -328,23 +328,58 @@ const AppProvider = ({ children }) => {
         console.log({teacherName})
         console.log({studentResponses})
 
-        teacherNames.push([teacherName, schools[i].teacher]);
+        if (!teacherNames.includes(teacherName)) {
+          teacherNames.push([teacherName, schools[schoolIndex].teacher]);
+        }
 
-        const periods = [...new Set(studentResponses.map((response) => response.period))];
+        let uniqueResponseTypes = [];
 
-        console.log({periods})
+        for (const responseIndex in studentResponses) {
+          let newResponseType = {
+            formCode: studentResponses[responseIndex].formCode,
+            teacher: studentResponses[responseIndex].teacher,
+            grade: studentResponses[responseIndex].grade,
+            When: studentResponses[responseIndex].When,
+            formType: studentResponses[responseIndex].formType,
+            school: studentResponses[responseIndex].school,
+            period: studentResponses[responseIndex].period,
+          }
 
-        for (const i in periods) {
-          const studentResponsesByPeriod = studentResponses.filter((response) => response.period === periods[i]);
+          let match = uniqueResponseTypes.find(function(obj) {
+            return JSON.stringify(obj) === JSON.stringify(newResponseType);
+          });
 
-          console.log({studentResponsesByPeriod})
+          if (!match) {
+            uniqueResponseTypes.push(newResponseType);
+          }
+        }
+
+        console.log({uniqueResponseTypes})
+
+        for (const responseTypeIndex in uniqueResponseTypes) {
           responseGroups.push({
-            school: schools[i],
+            school: schools[schoolIndex],
             teacherName,
-            period: periods[i],
-            studentResponsesByPeriod,
+            uniqueResponseType: uniqueResponseTypes[responseTypeIndex],
           });
         }
+
+
+        // const periods = [...new Set(studentResponses.map((response) => response.period))];
+        //
+        // console.log({periods})
+        //
+        // for (const periodIndex in periods) {
+        //   const studentResponsesByPeriod = studentResponses.filter((response) => response.period === periods[periodIndex]);
+        //
+        //   console.log({studentResponsesByPeriod})
+        //   responseGroups.push({
+        //     school: schools[schoolIndex],
+        //     teacherName,
+        //     period: periods[periodIndex],
+        //     studentResponsesByPeriod,
+        //   });
+        // }
       }
 
       console.log({responseGroups})

@@ -1,7 +1,9 @@
 import moment from 'moment'
 import { FaChalkboardTeacher} from 'react-icons/fa'
-import { TbListNumbers } from 'react-icons/tb'
-import { Link } from 'react-router-dom'
+import { TbListNumbers, TbNumbers } from 'react-icons/tb'
+import { FaRegCalendarAlt } from 'react-icons/fa'
+import { AiOutlineForm, AiOutlineNumber } from 'react-icons/ai'
+import {json, Link} from 'react-router-dom'
 import { useAppContext } from '../context/appContext'
 import Wrapper from '../assets/wrappers/Job'
 import JobInfo from './JobInfo'
@@ -9,8 +11,7 @@ import JobInfo from './JobInfo'
 const ResponseGroup = ({
   school,
   teacherName,
-  period,
-  studentResponsesByPeriod,
+  uniqueResponseType,
 }) => {
   const { setEditJob, deleteJob } = useAppContext()
 
@@ -26,7 +27,14 @@ const ResponseGroup = ({
       <div className='content'>
         <div className='content-center'>
           <JobInfo icon={<FaChalkboardTeacher />} text={teacherName} />
-          <JobInfo icon={<TbListNumbers />} text={period ? 'Period ' + period: 'No specified period'} />
+          <JobInfo icon={<AiOutlineNumber />} text={uniqueResponseType.formCode} />
+          <JobInfo icon={<TbListNumbers />} text=
+          {uniqueResponseType?.period ? 'Period ' + uniqueResponseType.period:
+            'No specified period'}
+          />
+          <JobInfo icon={<TbNumbers />} text={'Grade ' + uniqueResponseType.grade} />
+          <JobInfo icon={<AiOutlineForm />} text={uniqueResponseType.formType} />
+          <JobInfo icon={<FaRegCalendarAlt />} text={uniqueResponseType.When} />
         </div>
         <footer>
           {/*<div className='actions'>*/}
