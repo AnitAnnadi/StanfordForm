@@ -59,14 +59,12 @@ const Register = () => {
 
   const handleAdminRole = (e) => {
     setAdminRole(e.target.value);
-    console.log(e.target.value);
   };
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
   const onSubmit = (e) => {
     e.preventDefault();
-    console.log(adminRole);
     const { name, email, password, isMember, state, city, school } = values;
     if (!email || !password || (!isMember && !name)) {
       displayAlert();
@@ -102,7 +100,6 @@ const Register = () => {
         navigate("/");
       }, 3000);
     } else if (user && !hasLocation) {
-      console.log("here");
       setTimeout(() => {
         navigate("/selectLoc");
       }, 3000);

@@ -11,7 +11,6 @@ function SelectRole() {
   const [role, setRole] = useState("");
   const handleClick = (e) => {
     setRole(e.target.value);
-    console.log(e.target.value)
     localStorage.setItem("role", role);
   };
 

@@ -55,7 +55,6 @@ const Form = () => {
   let names = [];
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(names);
     names.map((name) => {
       let checks = document.getElementsByName(name);
       for (var check of checks) {
@@ -64,7 +63,6 @@ const Form = () => {
         }
       }
     });
-    console.log(selected);
     submitForm(
       names,
       selected,

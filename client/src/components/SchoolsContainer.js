@@ -49,8 +49,8 @@ const SchoolsContainer = () => {
         {totalResponseGroups} school{responseGroups.length > 1 && 's'} found
       </h5>
       <div className='jobs'>
-        {responseGroups.map((ResponseGroup, index) => {
-          return <ResponseGroup key={index} {...ResponseGroup} />;
+        {responseGroups.map((ResponseGroupItem, index) => {
+          return <ResponseGroup key={index} {...ResponseGroupItem} />;
         })}
       </div>
       {numOfPages > 1 && <PageBtnContainer />}

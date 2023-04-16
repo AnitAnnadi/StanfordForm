@@ -58,7 +58,6 @@ const reducer = (state, action) => {
     return { ...state, isLoading: true };
   }
   if (action.type === SETUP_USER_SUCCESS) {
-    console.log('here')
     return {
       ...state,
       isLoading: false,
@@ -175,7 +174,6 @@ const reducer = (state, action) => {
     };
   }
   if (action.type === ENTER_CODE) {
-    console.log(action.payload.teacher)
     return { alertType: 'success',
     alertText: "Joined New Form",
     ...state, isLoading: true, 
@@ -184,7 +182,6 @@ const reducer = (state, action) => {
   }
 
   if (action.type === GET_TOTAL) {
-    console.log(action.payload)
     return {...state,totalResponses:action.payload};
   }
 
@@ -231,7 +228,6 @@ const reducer = (state, action) => {
     };
   }
   if (action.type === EDIT_JOB_BEGIN) {
-    console.log(action.payload)
     return {
       ...state,
       isLoading: true,

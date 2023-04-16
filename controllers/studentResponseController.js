@@ -12,6 +12,7 @@ const getStudentResponses = async(req, res) => {
   attachCookie({ res, token });
 
   const {
+    school,
     teacherId,
     grade,
     period,
@@ -19,9 +20,12 @@ const getStudentResponses = async(req, res) => {
     When
   } = req.query;
 
-  const teacher = User.findOne({ _id: teacherId })
+  const teacher = await User.findOne({ _id: teacherId })
+
+  console.log({ teacher, teacherId })
 
   const queryObject = {
+    school,
     teacher: teacherId,
     formType,
   };
@@ -36,6 +40,7 @@ const getStudentResponses = async(req, res) => {
     queryObject.When = When;
   }
 
+  console.log({ queryObject })
   const studentResponses = await StudentReponse.find(queryObject)
 
   res.status(StatusCodes.OK).json({ teacherName: teacher.name, studentResponses });

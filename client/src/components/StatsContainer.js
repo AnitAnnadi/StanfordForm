@@ -14,7 +14,6 @@ const StatsContainer = () => {
     getTotal(user)
     if (user){
     const interval = setInterval(() => {
-      console.log('hi')
       getTotal(user);
     }, 10000);}
    

@@ -16,10 +16,8 @@ const enterCode=async(req,res)=>{
   const user = await User.findOne({ code });
   let teacher=user["_id"]
   const schools=await School.find({teacher})
-  console.log(schools)
   if (user){
     res.status(StatusCodes.OK).json({ user,schools });
-    console.log('hi')
   }
   else{
     throw new BadRequestError('Invalid Code. Try Again or Ask Teacher for Code');
@@ -28,7 +26,6 @@ const enterCode=async(req,res)=>{
 
 const register = async (req, res) => {
   const { name, email, password, role} = req.body;
-  console.log(name)
   if (!name || !email || !password  ) {
     throw new BadRequestError('please provide all values');
   }
@@ -53,7 +50,6 @@ const register = async (req, res) => {
   });
 };
 const login = async (req, res) => {
-  console.log(req.body)
   const { email, password } = req.body;
   if (!email || !password) {
     throw new BadRequestError('Please provide all values');
@@ -113,11 +109,10 @@ const logout = async (req, res) => {
 const submitForm = async(req,res) =>{
   const {names,answer,code,grade,when,type,school,period}=req.body;
   if (answer.length<names.length){
-    console.log('hi')
     throw new BadRequestError('Please answer all questions');
   }
 
-  const teacher = User.findOne({ code });
+  const teacher = await User.findOne({ code });
 
   if (!teacher){
     throw new BadRequestError('Invalid Code. Try Again or Ask Teacher for Code');
@@ -125,7 +120,6 @@ const submitForm = async(req,res) =>{
 
   let StudentResponseData=''
   if (period!=="default"){
-    console.log('hi')
     StudentResponseData= await StudentReponse.create({formCode:code,teacher:teacher._id,grade:grade,When:when,formType:type,school:school,period:period})
 
   }
@@ -137,7 +131,6 @@ const submitForm = async(req,res) =>{
   let _id=(StudentResponseData["_id"])
   
   for (var i=0;i<names.length;i++){
-    console.log(_id,names[i],answer[i])
     const question=await Question.create({StudentResponse:_id,Question:names[i],Answer:answer[i]})
   }
   

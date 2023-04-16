@@ -37,10 +37,12 @@ const narrowSchools = (state, city) => {
 }
 
 const getDistrictCounty = (state, city, schoolName) => {
-    const {county, district} = schoolData
+    const {district, county} = schoolData
         .find((school) => school.state === state && school.city === city && school.name === schoolName)
 
-    return { district, county }
+    console.log({foundDistrict: district, foundCounty: county})
+
+    return { foundDistrict: district, foundCounty: county}
 }
 
 const getSchoolDataValue = (value) => {

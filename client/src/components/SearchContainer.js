@@ -135,7 +135,7 @@ const SearchContainer = () => {
           {/* search by district */}
           <FormRowSelect
             labelText='district'
-            name='searchState'
+            name='searchDistrict'
             value={searchDistrict}
             handleChange={handleSearch}
             list={districtOptions}

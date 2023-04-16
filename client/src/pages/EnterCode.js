@@ -21,7 +21,6 @@ const EnterCode = () => {
     // let teacher_info=(((teacher["teacher"])))
 
     if (teacher != "") {
-      console.log(teacher)
       let teacher_name = teacher["name"];
       let teacher_id = teacher["_id"];
       let teacher_school = teacher["_id"];
@@ -45,19 +44,15 @@ const EnterCode = () => {
 
   const handleChange = (e) => {
     setCode(e.target.value);
-    console.log(code);
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(code);
     enterCode(code);
     localStorage.setItem("code",code)
 
     if (isLoading) {
-      console.log("loading");
     }
     if (teacher) {
-      console.log(teacher);
     }
   };
 

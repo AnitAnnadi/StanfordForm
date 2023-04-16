@@ -48,6 +48,18 @@ const SelectLoc = () => {
   const showMultiplePeriods = user.role === "Teacher";
   const showAdditionalLoc = user.role === "Teacher";
 
+  useEffect(() => {
+    if (user.role === 'Site Admin' || user.role === 'Teacher') {
+      if (state !== 'default' && city !== 'default' && school !== 'default') {
+        const {foundDistrict, foundCounty} = getDistrictCounty(state, city, school);
+
+        setDistrict(foundDistrict);
+        setCounty(foundCounty);
+      }
+    }
+  }, [school]
+  );
+
   const handleChange = (field, value) => {
     if (field === 'state') {
       setState(value);
@@ -94,16 +106,10 @@ const SelectLoc = () => {
         return;
     }
 
-    if (user.role === 'Site Admin' || user.role === 'Teacher') {
-
-      const {foundDistrict, foundCounty} = getDistrictCounty(state, city, school);
-
-      setDistrict(foundDistrict);
-      setCounty(foundCounty);
-    }
+    console.log({state, county, city, district, school})
 
     addLocation({
-      multiplePeriods: multiplePeriods !== 'default' ? multiplePeriods: null,
+      multiplePeriods: multiplePeriods,
       state: state,
       county: county !== 'default' ? county : null,
       city: city !== 'default' ? city : null,

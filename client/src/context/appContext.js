@@ -106,7 +106,6 @@ const AppProvider = ({ children }) => {
     (error) => {
       // console.log(error.response)
       if (error.response.status === 401) {
-        console.log('a')
         logoutUser();
       }
       return Promise.reject(error);
@@ -213,9 +212,7 @@ const AppProvider = ({ children }) => {
     
     try {
       const { data } = await axios.post(`/api/v1/auth/enterCode/`, {code});
-      console.log(data)
       const {id, name, email, state, city, school} = data;
-      console.log(data["user"]["name"])
       dispatch({ type: ENTER_CODE , payload:{teacher:data["user"],schools:data["schools"]}});
     } catch (error) {
       if (error.response.status !== 401) {
@@ -231,7 +228,6 @@ const AppProvider = ({ children }) => {
     
     
     try {
-      console.log(names,answer,code,grade,when,school,period)
       const { data } = await axios.post(`/api/v1/auth/submitForm/`, {names,answer,code,grade,when,type,school,period});
     } catch (error) {
       if (error.response.status !== 401) return;
@@ -306,15 +302,20 @@ const AppProvider = ({ children }) => {
 
       const { schools } = data;
 
+      console.log("RetrievedSchools")
+      console.log({schools})
+
       let responseGroups = [];
 
       let teacherNames = [];
 
-      for (const school in schools) {
+      for (const i in schools) {
+        console.log(schools[i])
+        console.log({Teacher: schools[i].teacher})
         const { data: data2 } = await authFetch.get('/studentResponses', {
           params: {
-            page,
-            teacherId: school.teacher,
+            school: schools[i].school,
+            teacherId: schools[i].teacher,
             grade: searchGrade,
             period: searchPeriod,
             formType: searchType,
@@ -323,24 +324,29 @@ const AppProvider = ({ children }) => {
         });
         const { teacherName, studentResponses } = data2;
 
-        teacherNames.push([teacherName, school.teacher]);
+        console.log({teacherName})
+        console.log({studentResponses})
+
+        teacherNames.push([teacherName, schools[i].teacher]);
 
         const periods = [...new Set(studentResponses.map((response) => response.period))];
 
-        let period;
+        console.log({periods})
 
-        for (period in periods) {
-          const studentResponsesByPeriod = studentResponses.filter((response) => response.period === period);
+        for (const i in periods) {
+          const studentResponsesByPeriod = studentResponses.filter((response) => response.period === periods[i]);
 
+          console.log({studentResponsesByPeriod})
           responseGroups.push({
-            school,
+            school: schools[i],
             teacherName,
-            period,
+            period: periods[i],
             studentResponsesByPeriod,
           });
         }
       }
 
+      console.log({responseGroups})
 
       const limit = 10;
       const skip = (page - 1) * limit;
@@ -349,14 +355,17 @@ const AppProvider = ({ children }) => {
 
       const numOfPages = Math.ceil(responseGroups.length / limit);
 
+      console.log({responseGroups})
+      console.log(schools)
+
 
       dispatch({
         type: GET_RESPONSE_GROUPS_SUCCESS,
         payload: {
           responseGroups,
-          totalResponseGroups: schools.length,
+          totalResponseGroups: responseGroups.length,
           numOfPages,
-          teacherOptions: searchSchool === 'all' ? ['all'] : ['all', ...teacherNames],
+          teacherOptions: searchSchool === 'all' ? [] : [teacherNames],
         },
       });
     } catch (error) {
@@ -408,7 +417,6 @@ const AppProvider = ({ children }) => {
 
   const getTotal = async(user)=>{
     let code=user.code
-    console.log(code)
     const {data}=await authFetch.post('/jobs/responses', {
       code
     });

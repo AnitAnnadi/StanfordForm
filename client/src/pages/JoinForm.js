@@ -65,11 +65,8 @@ const JoinForm = () => {
     schools.map((each) => {
       if (each["school"] === school) {
         current = each;
-        console.log(current);
-        console.log("here");
       }
     });
-    console.log(current);
     if (current["multiplePeriods"]) {
       // console.log('here')
       return (
@@ -96,7 +93,6 @@ const JoinForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(school);
     if (
       form != "default" &&
       grade != "default" &&
