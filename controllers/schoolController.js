@@ -20,7 +20,7 @@ const createLocation = async(req,res) =>{
   res.status(StatusCodes.CREATED).json({ user, location });
 }
 
-const getLocations = async(req,res) =>{
+const getUserLocations = async(req, res) => {
   const user = await User.findOne({ _id: req.user.userId });
   const userLocations = await School.find({ teacher: user._id });
 
@@ -30,4 +30,45 @@ const getLocations = async(req,res) =>{
   res.status(StatusCodes.OK).json({ user, userLocations });
 }
 
-export { createLocation, getLocations }
+const getLocations = async(req, res) =>{
+  const user = await User.findOne({ _id: req.user.userId });
+
+  const token = user.createJWT();
+  attachCookie({ res, token });
+
+  const {
+    searchState,
+    searchCounty,
+    searchCity,
+    searchDistrict,
+    searchSchool,
+    searchTeacher,
+  } = req.query;
+
+  const queryObject = {};
+
+  if (searchState && searchState !== 'all') {
+    queryObject.state = searchState;
+  }
+  if (searchCounty && searchCounty !== 'all') {
+    queryObject.county = searchCounty;
+  }
+  if (searchCity && searchCity !== 'all') {
+    queryObject.city = searchCity;
+  }
+  if (searchDistrict && searchDistrict !== 'all') {
+    queryObject.district = searchDistrict;
+  }
+  if (searchSchool && searchSchool !== 'all') {
+    queryObject.school = searchSchool;
+  }
+  if (searchTeacher && searchTeacher !== 'all') {
+    queryObject.teacher = searchTeacher;
+  }
+
+  const schools = await School.find(queryObject)
+
+  res.status(StatusCodes.OK).json({ schools });
+}
+
+export { createLocation, getUserLocations, getLocations }

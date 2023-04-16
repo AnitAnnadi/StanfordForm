@@ -16,23 +16,23 @@ import {
   UPDATE_USER_ERROR,
   HANDLE_CHANGE,
   CLEAR_VALUES,
-  CREATE_JOB_BEGIN,
-  CREATE_JOB_SUCCESS,
-  CREATE_JOB_ERROR,
-  GET_JOBS_BEGIN,
-  GET_JOBS_SUCCESS,
-  SET_EDIT_JOB,
-  DELETE_JOB_BEGIN,
-  DELETE_JOB_ERROR,
-  EDIT_JOB_BEGIN,
-  EDIT_JOB_SUCCESS,
-  EDIT_JOB_ERROR,
+  // CREATE_JOB_BEGIN,
+  // CREATE_JOB_SUCCESS,
+  // CREATE_JOB_ERROR,
+  GET_RESPONSE_GROUPS_BEGIN,
+  GET_RESPONSE_GROUPS_SUCCESS,
+  // SET_EDIT_JOB,
+  // DELETE_JOB_BEGIN,
+  // DELETE_JOB_ERROR,
+  // EDIT_JOB_BEGIN,
+  // EDIT_JOB_SUCCESS,
+  // EDIT_JOB_ERROR,
   SHOW_STATS_BEGIN,
   SHOW_STATS_SUCCESS,
   CLEAR_FILTERS,
   CHANGE_PAGE,
-  GET_CURRENT_USER_BEGIN,
-  GET_CURRENT_USER_SUCCESS,
+  // GET_CURRENT_USER_BEGIN,
+  // GET_CURRENT_USER_SUCCESS,
   ENTER_CODE,
   GET_TOTAL,
   ADD_LOCATION_SUCCESS, HANDLE_MULTIPLE_CHANGES
@@ -55,8 +55,8 @@ const initialState = {
   position: '',
   company: '',
   jobLocation: '',
-  schools: [],
-  totalSchools: 0,
+  responseGroups: [],
+  totalResponseGroups: 0,
   numOfPages: 1,
   page: 1,
   stats: {},
@@ -75,7 +75,10 @@ const initialState = {
   searchGrade: 'all',
   periodOptions: ['all', '1', '2', '3', '4', '5', '6', '7', '8'],
   searchPeriod: 'all',
+  teacherOptions: [], // [[teacherName, teacherId], [teacherName, teacherId], ...]
+  searchTeacher: 'all',
   typeOptions: ['tobacco', 'cannabis'],
+  searchType: 'tobacco',
   beforeAfterOptions: ['all', 'before', 'after'],
   searchBeforeAfter: 'all',
   teacher:'',
@@ -181,10 +184,10 @@ const AppProvider = ({ children }) => {
     clearAlert();
   };
 
-  const addLocation = async (currentUser) => {
+  const addLocation = async (locationData) => {
     try {
-      const { user } = await authFetch.post('/schools', currentUser);
-      const { data } = await authFetch.get('/schools', currentUser);
+      const { user } = await authFetch.post('/schools/user', locationData);
+      const { data } = await authFetch.get('/schools/user', locationData);
 
       const { userLocations } = data;
 
@@ -272,24 +275,88 @@ const AppProvider = ({ children }) => {
   //   }
   //   clearAlert();
   // };
+  const getResponseGroups = async () => {
+    const {
+      page,
+      searchState,
+      searchCounty,
+      searchCity,
+      searchDistrict,
+      searchSchool,
+      searchGrade,
+      searchPeriod,
+      searchTeacher,
+      searchType,
+      searchBeforeAfter,
+    } = state;
 
-  const getSchools = async () => {
-    const { page, search, searchStatus, searchType, sort } = state;
+    dispatch({ type: GET_RESPONSE_GROUPS_BEGIN });
 
-    let url = `/jobs?page=${page}&status=${searchStatus}&jobType=${searchType}&sort=${sort}`;
-    if (search) {
-      url = url + `&search=${search}`;
-    }
-    dispatch({ type: GET_JOBS_BEGIN });
     try {
-      const { data } = await authFetch(url);
-      const { jobs, totalJobs, numOfPages } = data;
+      const { data } = await authFetch.get('/schools', {
+        params: {
+          searchState,
+          searchCounty,
+          searchCity,
+          searchDistrict,
+          searchSchool,
+          searchTeacher,
+        }
+      });
+
+      const { schools } = data;
+
+      let responseGroups = [];
+
+      let teacherNames = [];
+
+      for (const school in schools) {
+        const { data: data2 } = await authFetch.get('/studentResponses', {
+          params: {
+            page,
+            teacherId: school.teacher,
+            grade: searchGrade,
+            period: searchPeriod,
+            formType: searchType,
+            When: searchBeforeAfter,
+          }
+        });
+        const { teacherName, studentResponses } = data2;
+
+        teacherNames.push([teacherName, school.teacher]);
+
+        const periods = [...new Set(studentResponses.map((response) => response.period))];
+
+        let period;
+
+        for (period in periods) {
+          const studentResponsesByPeriod = studentResponses.filter((response) => response.period === period);
+
+          responseGroups.push({
+            school,
+            teacherName,
+            period,
+            studentResponsesByPeriod,
+          });
+        }
+      }
+
+
+      const limit = 10;
+      const skip = (page - 1) * limit;
+
+      responseGroups = responseGroups.slice(skip, skip + limit + 1);
+
+      const numOfPages = Math.ceil(responseGroups.length / limit);
+
+
       dispatch({
-        type: GET_JOBS_SUCCESS,
+        type: GET_RESPONSE_GROUPS_SUCCESS,
         payload: {
-          jobs,
-          totalJobs,
+          responseGroups,
+          totalResponseGroups: schools.length,
           numOfPages,
+          teacherOptions: searchSchool === 'all' ? ['all'] : ['all', ...teacherNames],
         },
       });
     } catch (error) {
@@ -405,7 +472,7 @@ const AppProvider = ({ children }) => {
         handleChanges,
         clearValues,
         // createJob,
-        getSchools,
+        getResponseGroups,
         // setEditJob,
         // deleteJob,
         // editJob,

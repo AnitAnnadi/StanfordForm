@@ -8,11 +8,11 @@ import PageBtnContainer from './PageBtnContainer';
 
 const SchoolsContainer = () => {
   const {
-    getSchools,
-    schools,
+    getResponseGroups,
+    responseGroups,
     isLoading,
     page,
-    totalSchools,
+    totalResponseGroups,
     searchState,
     searchCounty,
     searchDistrict,
@@ -26,7 +26,7 @@ const SchoolsContainer = () => {
   } = useAppContext();
 
   useEffect(() => {
-    getSchools();
+    getResponseGroups();
     // eslint-disable-next-line
   }, [page, searchState, searchCounty, searchDistrict, searchCity, searchSchool, searchGrade, searchPeriod, searchBeforeAfter]);
 
@@ -34,10 +34,10 @@ const SchoolsContainer = () => {
     return <Loading center />;
   }
 
-  if (schools.length === 0) {
+  if (responseGroups.length === 0) {
     return (
       <Wrapper>
-        <h2>No schools to display...</h2>
+        <h2>No Response Groups to display...</h2>
       </Wrapper>
     );
   }
@@ -46,11 +46,11 @@ const SchoolsContainer = () => {
     <Wrapper>
       {showAlert && <Alert />}
       <h5>
-        {totalSchools} school{schools.length > 1 && 's'} found
+        {totalResponseGroups} school{responseGroups.length > 1 && 's'} found
       </h5>
       <div className='jobs'>
-        {schools.map((school) => {
-          return <Job key={school._id} {...school} />;
+        {responseGroups.map((ResponseGroup) => {
+          return <Job key={ResponseGroup._id} {...ResponseGroup} />;
         })}
       </div>
       {numOfPages > 1 && <PageBtnContainer />}

@@ -14,6 +14,7 @@ const SearchContainer = () => {
     searchGrade,
     searchPeriod,
     searchType,
+    searchTeacher,
     searchBeforeAfter,
     stateOptions,
     countyOptions,
@@ -22,6 +23,7 @@ const SearchContainer = () => {
     schoolOptions,
     periodOptions,
     gradeOptions,
+    teacherOptions,
     typeOptions,
     beforeAfterOptions,
     handleChange,
@@ -30,8 +32,6 @@ const SearchContainer = () => {
   } = useAppContext();
 
   const handleSearch = (e) => {
-    handleChange({ name: e.target.name, value: e.target.value });
-
     switch (e.target.name) {
       case 'searchState':
         handleChanges({
@@ -40,10 +40,11 @@ const SearchContainer = () => {
           searchCity: 'all',
           searchDistrict: 'all',
           searchSchool: 'all',
-          countyOptions: narrowCounties(e.target.value),
-          cityOptions: narrowCities(e.target.value),
-          schoolOptions: narrowSchools(e.target.value),
-          districtOptions: narrowDistricts(e.target.value),
+          searchTeacher: 'all',
+          countyOptions: ['all', ...narrowCounties(e.target.value)],
+          cityOptions: ['all', ...narrowCities(e.target.value)],
+          schoolOptions: ['all', ...narrowSchools(e.target.value)],
+          districtOptions: ['all', ...narrowDistricts(e.target.value)],
         });
         break;
       case 'searchCounty':
@@ -52,9 +53,10 @@ const SearchContainer = () => {
           searchCity: 'all',
           searchDistrict: 'all',
           searchSchool: 'all',
-          cityOptions: narrowCities(e.target.value),
-          schoolOptions: narrowSchools(e.target.value),
-          districtOptions: narrowDistricts(e.target.value),
+          searchTeacher: 'all',
+          cityOptions: ['all', ...narrowCities(e.target.value)],
+          schoolOptions: ['all', ...narrowSchools(e.target.value)],
+          districtOptions: ['all', ...narrowDistricts(e.target.value)],
         });
         break;
       case 'searchCity':
@@ -62,17 +64,42 @@ const SearchContainer = () => {
           [e.target.name]: e.target.value,
           searchDistrict: 'all',
           searchSchool: 'all',
-          districtOptions: narrowDistricts(e.target.value),
-          schoolOptions: narrowSchools(e.target.value),
+          searchTeacher: 'all',
+          districtOptions: ['all', ...narrowDistricts(e.target.value)],
+          schoolOptions: ['all', ...narrowSchools(e.target.value)],
         });
         break;
       case 'searchDistrict':
         handleChanges({
           [e.target.name]: e.target.value,
           searchSchool: 'all',
-          schoolOptions: narrowSchools(e.target.value),
+          searchTeacher: 'all',
+          schoolOptions: ['all', ...narrowSchools(e.target.value)],
         });
         break;
+      case 'searchSchool':
+        handleChanges({
+          searchTeacher: 'all',
+          [e.target.name]: e.target.value,
+        });
+        break;
+      case 'searchTeacher':
+        // get the second element of the teacher option array
+        if (e.target.value === 'all') {
+          handleChanges({
+            [e.target.name]: 'all',
+          });
+          break;
+        } else {
+          const selectedTeacher = teacherOptions.find(
+            (teacher) => teacher[0] === e.target.value
+          );
+          const selectedTeacherId = selectedTeacher ? selectedTeacher[1] : 'all';
+          handleChanges({
+            [e.target.name]: selectedTeacherId,
+          });
+          break;
+        }
       default:
         handleChanges({[e.target.name]: e.target.value});
         break;
@@ -83,35 +110,7 @@ const SearchContainer = () => {
     e.preventDefault();
     clearFilters();
   };
-  // const debounce = () => {
-  //   let timeoutID;
-  //   return (e) => {
-  //     switch (e.target.name) {
-  //         case 'state':
-  //             setLocalSearchState(e.target.value);
-  //             break;
-  //         case 'county':
-  //             setLocalSearchCounty(e.target.value);
-  //             break;
-  //         case 'district':
-  //             setLocalSearchDistrict(e.target.value);
-  //             break;
-  //         case 'city':
-  //             setLocalSearchCity(e.target.value);
-  //             break;
-  //         case 'school':
-  //             setLocalSearchSchool(e.target.value);
-  //             break;
-  //         default:
-  //             break;
-  //     }
-  //     clearTimeout(timeoutID);
-  //     timeoutID = setTimeout(() => {
-  //       handleChange({ name: e.target.name, value: e.target.value });
-  //     }, 1000);
-  //   };
-  // };
-  // const optimizedDebounce = useMemo(() => debounce(), []);
+
   return (
     <Wrapper>
       <form className='form'>
@@ -163,7 +162,7 @@ const SearchContainer = () => {
             name='searchGrade'
             value={searchGrade}
             handleChange={handleSearch}
-            list={['all', ...gradeOptions]}
+            list={[gradeOptions]}
           />
           {/* search by period */}
           <FormRowSelect
@@ -172,6 +171,14 @@ const SearchContainer = () => {
             value={searchPeriod}
             handleChange={handleSearch}
             list={periodOptions}
+          />
+          {/* search by teacher */}
+          <FormRowSelect
+            labelText='teacher'
+            name='searchTeacher'
+            value={searchTeacher}
+            handleChange={handleSearch}
+            list={['all', ...teacherOptions.map((teacher) => teacher[0])]}
           />
           {/* search by type */}
           <FormRowSelect

@@ -15,8 +15,8 @@ import {
   CREATE_JOB_BEGIN,
   CREATE_JOB_SUCCESS,
   CREATE_JOB_ERROR,
-  GET_JOBS_BEGIN,
-  GET_JOBS_SUCCESS,
+  GET_RESPONSE_GROUPS_BEGIN,
+  GET_RESPONSE_GROUPS_SUCCESS,
   SET_EDIT_JOB,
   DELETE_JOB_BEGIN,
   DELETE_JOB_ERROR,
@@ -191,14 +191,17 @@ const reducer = (state, action) => {
   // if (action.type === ENTER_CODE) {
   //   return { ...state, isLoading: true, showAlert: false };
   // }
-
-  if (action.type === GET_JOBS_SUCCESS) {
+  if (action.type === GET_RESPONSE_GROUPS_BEGIN) {
+    return { ...state, isLoading: true, showAlert: false };
+  }
+  if (action.type === GET_RESPONSE_GROUPS_SUCCESS) {
     return {
       ...state,
       isLoading: false,
-      jobs: action.payload.jobs,
-      totalJobs: action.payload.totalJobs,
+      responseGroups: action.payload.responseGroups,
+      totalResponseGroups: action.payload.totalResponseGroups,
       numOfPages: action.payload.numOfPages,
+      teacherOptions: action.payload.teacherOptions,
     };
   }
   if (action.type === SET_EDIT_JOB) {
