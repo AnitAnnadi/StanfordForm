@@ -62,7 +62,15 @@ const initialState = {
   page: 1,
   stats: {},
   monthlyApplications: [],
-  stateOptions: ['all', ...getSchoolDataValue('state')],
+  stateOptions: ["all", "Alabama", "Alaska", "Arizona", "Arkansas", "California",
+      "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida",
+      "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas",
+      "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan",
+      "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada",
+      "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina",
+      "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island",
+      "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont",
+      "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"],
   searchState: 'all',
   countyOptions: ['all', ...getSchoolDataValue('county')],
   searchCounty: 'all',
@@ -244,8 +252,8 @@ const AppProvider = ({ children }) => {
   const handleChange = ({ name, value }) => {
     dispatch({ type: HANDLE_CHANGE, payload: { name, value } });
   };
-  const handleChanges = ({newStates}) => {
-    dispatch({ type: HANDLE_MULTIPLE_CHANGES, payload: {newStates} });
+  const handleChanges = (newStates) => {
+    dispatch({ type: HANDLE_MULTIPLE_CHANGES, payload: newStates });
   };
   const clearValues = () => {
     dispatch({ type: CLEAR_VALUES });
