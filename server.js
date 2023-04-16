@@ -21,6 +21,7 @@ import connectDB from './db/connect.js';
 import authRouter from './routes/authRoutes.js';
 import jobsRouter from './routes/jobsRoutes.js';
 import schoolRouter from './routes/schoolRoutes.js';
+import studentResponseRouter from './routes/studentResponseRoutes.js';
 
 // middleware
 import notFoundMiddleware from './middleware/not-found.js';
@@ -45,6 +46,7 @@ app.use(cookieParser());
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/jobs', authenticateUser, jobsRouter);
 app.use('/api/v1/schools', authenticateUser, schoolRouter);
+app.use('/api/v1/studentResponses', authenticateUser, studentResponseRouter);
 
 // only when ready to deploy
 app.get('*', (req, res) => {
