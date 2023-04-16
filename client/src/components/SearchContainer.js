@@ -162,7 +162,7 @@ const SearchContainer = () => {
             name='searchGrade'
             value={searchGrade}
             handleChange={handleSearch}
-            list={[gradeOptions]}
+            list={gradeOptions}
           />
           {/* search by period */}
           <FormRowSelect

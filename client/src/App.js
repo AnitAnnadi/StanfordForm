@@ -1,11 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Register, Landing, Error, ProtectedRoute } from "./pages";
 import {
-  AllJobs,
   Profile,
   SharedLayout,
-  Stats,
-  AddJob, Home,
+  Metrics,
+  Home,
 } from "./pages/dashboard";
 import SelectLoc from "./pages/SelectLoc";
 import EnterCode from "./pages/EnterCode";
@@ -26,9 +25,7 @@ function App() {
           }
         >
           <Route index element={<Home />} />
-          <Route path="all-jobs" element={<AllJobs />} />
-          <Route path="add-job" element={<AddJob />} />
-          <Route path="stats" element={<Stats />} />
+          <Route path="metrics" element={<Metrics />} />
           <Route path="profile" element={<Profile />} />
           
           

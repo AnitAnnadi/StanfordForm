@@ -3,10 +3,12 @@ const router = express.Router();
 
 import {
   getUserLocations,
-  createLocation} from '../controllers/schoolController.js';
+  createLocation,
+  getLocations,
+} from '../controllers/schoolController.js';
 
 import authenticateUser from '../middleware/auth.js';
 
-router.route('/').post(authenticateUser, createLocation).get(authenticateUser, getLocations);
-router.route('/user').get(authenticateUser, getUserLocations);
+router.route('/').get(authenticateUser, getLocations);
+router.route('/user').post(authenticateUser, createLocation).get(authenticateUser, getUserLocations);
 export default router;

@@ -160,6 +160,7 @@ const showStats = async (req, res) => {
 
   res.status(StatusCodes.OK).json({ defaultStats, monthlyApplications });
 };
+
 const getTotal=async(req,res)=>{
   const {code}=req.body
   const result=StudentReponse.find({formCode:code})

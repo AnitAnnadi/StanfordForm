@@ -1,7 +1,7 @@
 import { useAppContext } from '../context/appContext';
 import { useEffect } from 'react';
 import Loading from './Loading';
-import Job from './Job';
+import ResponseGroup from './ResponseGroup';
 import Alert from './Alert';
 import Wrapper from '../assets/wrappers/JobsContainer';
 import PageBtnContainer from './PageBtnContainer';
@@ -49,8 +49,8 @@ const SchoolsContainer = () => {
         {totalResponseGroups} school{responseGroups.length > 1 && 's'} found
       </h5>
       <div className='jobs'>
-        {responseGroups.map((ResponseGroup) => {
-          return <Job key={ResponseGroup._id} {...ResponseGroup} />;
+        {responseGroups.map((ResponseGroup, index) => {
+          return <ResponseGroup key={index} {...ResponseGroup} />;
         })}
       </div>
       {numOfPages > 1 && <PageBtnContainer />}
