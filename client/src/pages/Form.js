@@ -82,17 +82,19 @@ const Form = () => {
       {showAlert && <Alert />}
       <h3>{info["form"]}</h3>
       {eval(info["form"]).map((element, index) => (
-        <div>
+        <div
+          key={index}
+        >
           <div style={{ display: "flex", columnGap: "0.35rem" }}>
             <p>{names.push(element["question"])}.</p>
             <p>{element["question"]}</p>
           </div>
-          {element["answers"].map((answer) => {
+          {element["answers"].map((answer, index) => {
             return (
-              <label class="container">
+              <label key={index} className="container">
                 <span>{answer}</span>
                 <input type="radio" value={answer} name={element["question"]} />
-                <span class="checkmark"></span>
+                <span className="checkmark"></span>
               </label>
             );
           })}

@@ -41,15 +41,14 @@ const JoinForm = () => {
             name="school"
             value={school}
             onChange={(e) => setSchool(e.target.value)}
-            selected
             className="form-select"
           >
-            <option value={"default"} disabled selected>
+            <option value={"default"} disabled>
               Choose your School
             </option>
-            {schools.map((school) => {
+            {schools.map((school, index) => {
               return (
-                <option value={school["school"]}>{school["school"]}</option>
+                <option key={index} value={school["school"]}>{school["school"]}</option>
               );
             })}
           </select>
@@ -76,14 +75,13 @@ const JoinForm = () => {
             name="period"
             value={period}
             onChange={(e) => setPeriod(e.target.value)}
-            selected
             className="form-select"
           >
-            <option value={"default"} disabled selected>
+            <option value={"default"} disabled>
               Choose your Period
             </option>
-            {periods.map((period) => {
-              return <option value={period}>{period}</option>;
+            {periods.map((period, index) => {
+              return <option key={index} value={period}>{period}</option>;
             })}
           </select>
         </div>
@@ -94,10 +92,10 @@ const JoinForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (
-      form != "default" &&
-      grade != "default" &&
-      when != "default" &&
-      school != "default"
+      form !== "default" &&
+      grade !== "default" &&
+      when !== "default" &&
+      school !== "default"
     ) {
       navigate("/form", {
         state: {
@@ -128,10 +126,9 @@ const JoinForm = () => {
               name="grade"
               value={grade}
               onChange={(e) => setGrade(e.target.value)}
-              defaultValue
               className="form-select"
             >
-              <option value={"default"} disabled selected>
+              <option value={"default"} disabled>
                 Grade Level
               </option>
               {grades.map((grade, index) => {
@@ -148,14 +145,13 @@ const JoinForm = () => {
               name="type"
               value={form}
               onChange={(e) => setForm(e.target.value)}
-              selected
               className="form-select"
             >
-              <option value={"default"} disabled selected>
+              <option value={"default"} disabled>
                 Choose your Form
               </option>
               <option value={"tobacco"}>Tobacco</option>
-              <option value={"cannabis"} selected>
+              <option value={"cannabis"}>
                 Cannabis
               </option>
             </select>
@@ -165,14 +161,13 @@ const JoinForm = () => {
               name="when"
               value={when}
               onChange={(e) => setWhen(e.target.value)}
-              selected
               className="form-select"
             >
-              <option value={"default"} disabled selected>
+              <option value={"default"} disabled>
                 Choose When
               </option>
               <option value={"before"}>Before Lesson</option>
-              <option value={"after"} selected>
+              <option value={"after"}>
                 After Lesson
               </option>
             </select>
