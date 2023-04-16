@@ -311,16 +311,11 @@ const AppProvider = ({ children }) => {
 
       const { schools } = data;
 
-      console.log("RetrievedSchools")
-      console.log({schools})
-
       let responseGroups = [];
 
       let teacherNames = [];
 
       for (const schoolIndex in schools) {
-        console.log(schools[schoolIndex])
-        console.log({Teacher: schools[schoolIndex].teacher})
         const { data: data2 } = await authFetch.get('/studentResponses', {
           params: {
             school: schools[schoolIndex].school,
@@ -332,9 +327,6 @@ const AppProvider = ({ children }) => {
           }
         });
         const { teacherName, studentResponses } = data2;
-
-        console.log({teacherName})
-        console.log({studentResponses})
 
         if (!teacherNames.includes(teacherName)) {
           teacherNames.push([teacherName, schools[schoolIndex].teacher]);
@@ -362,8 +354,6 @@ const AppProvider = ({ children }) => {
           }
         }
 
-        console.log({uniqueResponseTypes})
-
         for (const responseTypeIndex in uniqueResponseTypes) {
           responseGroups.push({
             school: schools[schoolIndex],
@@ -390,7 +380,6 @@ const AppProvider = ({ children }) => {
         // }
       }
 
-      console.log({responseGroups})
 
       const limit = 10;
       const skip = (page - 1) * limit;
@@ -398,10 +387,6 @@ const AppProvider = ({ children }) => {
       responseGroups = responseGroups.slice(skip, skip + limit + 1);
 
       const numOfPages = Math.ceil(responseGroups.length / limit);
-
-      console.log({responseGroups})
-      console.log(schools)
-
 
       dispatch({
         type: GET_RESPONSE_GROUPS_SUCCESS,
