@@ -116,15 +116,22 @@ const submitForm = async(req,res) =>{
     console.log('hi')
     throw new BadRequestError('Please answer all questions');
   }
+
+  const teacher = User.findOne({ code });
+
+  if (!teacher){
+    throw new BadRequestError('Invalid Code. Try Again or Ask Teacher for Code');
+  }
+
   let StudentResponseData=''
   if (period!=="default"){
     console.log('hi')
-    StudentResponseData= await StudentReponse.create({formCode:code,grade:grade,When:when,formType:type,school:school,period:period})
+    StudentResponseData= await StudentReponse.create({formCode:code,teacher:teacher._id,grade:grade,When:when,formType:type,school:school,period:period})
 
   }
   if (period==="default"){
     
-    StudentResponseData= await StudentReponse.create({formCode:code,grade:grade,When:when,formType:type,school:school})
+    StudentResponseData= await StudentReponse.create({formCode:code,teacher:teacher._id,grade:grade,When:when,formType:type,school:school})
 
   }
   let _id=(StudentResponseData["_id"])
