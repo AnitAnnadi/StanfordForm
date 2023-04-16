@@ -17,6 +17,7 @@ import {
   CREATE_JOB_ERROR,
   GET_RESPONSE_GROUPS_BEGIN,
   GET_RESPONSE_GROUPS_SUCCESS,
+  GET_RESPONSE_GROUPS_ERROR,
   SET_EDIT_JOB,
   DELETE_JOB_BEGIN,
   DELETE_JOB_ERROR,
@@ -199,6 +200,15 @@ const reducer = (state, action) => {
       totalResponseGroups: action.payload.totalResponseGroups,
       numOfPages: action.payload.numOfPages,
       teacherOptions: action.payload.teacherOptions,
+    };
+  }
+  if (action.type === GET_RESPONSE_GROUPS_ERROR) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: true,
+      alertType: 'danger',
+      alertText: action.payload.msg,
     };
   }
   if (action.type === SET_EDIT_JOB) {

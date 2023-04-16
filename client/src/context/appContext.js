@@ -21,6 +21,7 @@ import {
   // CREATE_JOB_ERROR,
   GET_RESPONSE_GROUPS_BEGIN,
   GET_RESPONSE_GROUPS_SUCCESS,
+  GET_RESPONSE_GROUPS_ERROR,
   // SET_EDIT_JOB,
   // DELETE_JOB_BEGIN,
   // DELETE_JOB_ERROR,
@@ -369,6 +370,10 @@ const AppProvider = ({ children }) => {
         },
       });
     } catch (error) {
+      dispatch({
+        type: GET_RESPONSE_GROUPS_ERROR,
+        payload: { msg: error.response.data.msg },
+      });
       logoutUser();
     }
     clearAlert();
