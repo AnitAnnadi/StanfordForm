@@ -6,8 +6,13 @@ const StudentResponseSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please provide code'],
     },
+    teacher: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
     grade: {
-    type: String,
+      type: String,
       required: [true, 'Please provide grade'],
       maxlength:10,
     },
