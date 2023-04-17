@@ -43,9 +43,9 @@ const SearchContainer = () => {
           searchSchool: 'all',
           searchTeacher: 'all',
           countyOptions: ['all', ...narrowCounties(e.target.value)],
-          cityOptions: ['all', ...narrowCities(e.target.value)],
-          schoolOptions: ['all', ...narrowSchools(e.target.value)],
-          districtOptions: ['all', ...narrowDistricts(e.target.value)],
+          cityOptions: ['all', ...narrowCities({state: e.target.value})],
+          schoolOptions: ['all', ...narrowSchools({state: e.target.value})],
+          districtOptions: ['all', ...narrowDistricts({state: e.target.value})],
         });
         break;
       case 'searchCounty':
@@ -55,9 +55,9 @@ const SearchContainer = () => {
           searchDistrict: 'all',
           searchSchool: 'all',
           searchTeacher: 'all',
-          cityOptions: ['all', ...narrowCities(e.target.value)],
-          schoolOptions: ['all', ...narrowSchools(e.target.value)],
-          districtOptions: ['all', ...narrowDistricts(e.target.value)],
+          cityOptions: ['all', ...narrowCities({county: e.target.value})],
+          schoolOptions: ['all', ...narrowSchools({county: e.target.value})],
+          districtOptions: ['all', ...narrowDistricts({county: e.target.value})],
         });
         break;
       case 'searchCity':
@@ -66,8 +66,8 @@ const SearchContainer = () => {
           searchDistrict: 'all',
           searchSchool: 'all',
           searchTeacher: 'all',
-          districtOptions: ['all', ...narrowDistricts(e.target.value)],
-          schoolOptions: ['all', ...narrowSchools(e.target.value)],
+          districtOptions: ['all', ...narrowDistricts({city: e.target.value})],
+          schoolOptions: ['all', ...narrowSchools({city: e.target.value})],
         });
         break;
       case 'searchDistrict':
@@ -75,7 +75,7 @@ const SearchContainer = () => {
           [e.target.name]: e.target.value,
           searchSchool: 'all',
           searchTeacher: 'all',
-          schoolOptions: ['all', ...narrowSchools(e.target.value)],
+          schoolOptions: ['all', ...narrowSchools({district: e.target.value})],
         });
         break;
       case 'searchSchool':
@@ -133,14 +133,6 @@ const SearchContainer = () => {
             handleChange={handleSearch}
             list={countyOptions}
           />
-          {/* search by district */}
-          <FormRowSelect
-            labelText='district'
-            name='searchDistrict'
-            value={searchDistrict}
-            handleChange={handleSearch}
-            list={districtOptions}
-          />
           {/* search by city */}
           <FormRowSelect
             labelText='city'
@@ -149,6 +141,14 @@ const SearchContainer = () => {
             handleChange={handleSearch}
             list={cityOptions}
           />
+          {/* search by district */}
+          <FormRowSelect
+            labelText='district'
+            name='searchDistrict'
+            value={searchDistrict}
+            handleChange={handleSearch}
+            list={districtOptions}
+          />
           {/* search by school */}
           <FormRowSelect
             labelText='school'
@@ -156,6 +156,14 @@ const SearchContainer = () => {
             value={searchSchool}
             handleChange={handleSearch}
             list={schoolOptions}
+          />
+          {/* search by teacher */}
+          <FormRowSelect
+            labelText='teacher'
+            name='searchTeacher'
+            value={searchTeacher === 'all' ? 'all' : searchTeacher[0]}
+            handleChange={handleSearch}
+            list={['all', ...teacherOptions.map((teacher) => teacher[0])]}
           />
           {/* search by grade */}
           <FormRowSelect
@@ -172,14 +180,6 @@ const SearchContainer = () => {
             value={searchPeriod}
             handleChange={handleSearch}
             list={periodOptions}
-          />
-          {/* search by teacher */}
-          <FormRowSelect
-            labelText='teacher'
-            name='searchTeacher'
-            value={searchTeacher === 'all' ? 'all' : searchTeacher[0]}
-            handleChange={handleSearch}
-            list={['all', ...teacherOptions.map((teacher) => teacher[0])]}
           />
           {/* search by type */}
           <FormRowSelect

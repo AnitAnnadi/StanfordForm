@@ -67,7 +67,7 @@ const SelectLoc = () => {
       setSchool('default')
 
       if (value !== 'default') {
-        setCities(narrowCities(value));
+        setCities(narrowCities({state: value}));
         setCounties(narrowCounties(value));
       }
     } else if (field === 'county') {
@@ -75,14 +75,14 @@ const SelectLoc = () => {
       setDistrict('default')
 
       if (value !== 'default') {
-          setDistricts(narrowDistricts(state, value));
+          setDistricts(narrowDistricts({state, county: value}));
       }
     } else if (field === 'city') {
       setCity(value);
       setSchool('default')
 
       if (value !== 'default') {
-        setSchools(narrowSchools(state, value));
+        setSchools(narrowSchools({state, city: value}));
       }
     } else if (field === 'district') {
       setDistrict(value);

@@ -9,27 +9,61 @@ const narrowCounties = (state) => {
     return [...new Set(counties)]
 }
 
-const narrowDistricts = (state, county) => {
+const narrowDistricts = ({state, county, city}) => {
     const districts = schoolData
-        .filter((school) => school.state === state && school.county === county)
+        .filter((school) => {
+            if (state && county) {
+                return (school.state === state && school.county === county)
+            } else if (city) {
+                return (school.city === city)
+            } else if (county) {
+                return (school.county === county)
+            } else if (state) {
+                return (school.state === state)
+            } else {
+                return school
+            }
+        })
         .map((school) => school.district)
         .sort();
 
     return [...new Set(districts)]
 }
 
-const narrowCities = (state) => {
+const narrowCities = ({state, county}) => {
     const cities = schoolData
-        .filter((school) => school.state === state)
+        .filter((school) => {
+            if (county === undefined) {
+                return school.state === state
+            } else if (state === undefined) {
+                return school.county === county
+            } else {
+                return school.state === state && school.county === county
+            }
+        })
         .map((school) => school.city)
         .sort();
 
     return [...new Set(cities)]
 }
 
-const narrowSchools = (state, city) => {
+const narrowSchools = ({state, county, city, district}) => {
     const schools = schoolData
-        .filter((school) => school.state === state && school.city === city)
+        .filter((school) => {
+            if (state && city) {
+                return (school.state === state && school.city === city)
+            } else if (state) {
+                return (school.state === state)
+            } else if (county) {
+                return (school.county === county)
+            } else if (city) {
+                return (school.city === city)
+            } else if (district) {
+                return (school.district === district)
+            } else {
+                return school
+            }
+        })
         .map((school) => school.name)
         .sort();
 
