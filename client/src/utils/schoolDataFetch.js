@@ -40,8 +40,6 @@ const getDistrictCounty = (state, city, schoolName) => {
     const {district, county} = schoolData
         .find((school) => school.state === state && school.city === city && school.name === schoolName)
 
-    console.log({foundDistrict: district, foundCounty: county})
-
     return { foundDistrict: district, foundCounty: county}
 }
 

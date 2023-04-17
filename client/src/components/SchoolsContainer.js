@@ -21,14 +21,25 @@ const SchoolsContainer = () => {
     searchGrade,
     searchPeriod,
     searchBeforeAfter,
+    searchType,
+    searchTeacher,
     numOfPages,
     showAlert,
   } = useAppContext();
 
   useEffect(() => {
-    getResponseGroups();
+    // use timeout to prevent multiple requests
+    const timeout = setTimeout(() => {
+      getResponseGroups();
+    }, 500);
+
+    return () => {
+      clearTimeout(timeout);
+    }
     // eslint-disable-next-line
-  }, [page, searchState, searchCounty, searchDistrict, searchCity, searchSchool, searchGrade, searchPeriod, searchBeforeAfter]);
+  }, [page, searchState, searchCounty, searchDistrict,
+    searchCity, searchSchool, searchGrade, searchPeriod,
+    searchBeforeAfter, searchType, searchTeacher]);
 
   if (isLoading) {
     return <Loading center />;

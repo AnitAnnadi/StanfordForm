@@ -106,8 +106,6 @@ const SelectLoc = () => {
         return;
     }
 
-    console.log({state, county, city, district, school})
-
     addLocation({
       multiplePeriods: multiplePeriods,
       state: state,

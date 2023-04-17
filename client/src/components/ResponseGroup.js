@@ -6,7 +6,7 @@ import { AiOutlineForm, AiOutlineNumber } from 'react-icons/ai'
 import {json, Link} from 'react-router-dom'
 import { useAppContext } from '../context/appContext'
 import Wrapper from '../assets/wrappers/Job'
-import JobInfo from './JobInfo'
+import ResponseGroupInfo from './ResponseGroupInfo'
 
 const ResponseGroup = ({
   school,
@@ -26,15 +26,15 @@ const ResponseGroup = ({
       </header>
       <div className='content'>
         <div className='content-center'>
-          <JobInfo icon={<FaChalkboardTeacher />} text={teacherName} />
-          <JobInfo icon={<AiOutlineNumber />} text={uniqueResponseType.formCode} />
-          <JobInfo icon={<TbListNumbers />} text=
+          <ResponseGroupInfo icon={<FaChalkboardTeacher />} text={teacherName} />
+          <ResponseGroupInfo icon={<AiOutlineNumber />} text={uniqueResponseType.formCode} />
+          <ResponseGroupInfo icon={<TbListNumbers />} text=
           {uniqueResponseType?.period ? 'Period ' + uniqueResponseType.period:
             'No specified period'}
           />
-          <JobInfo icon={<TbNumbers />} text={'Grade ' + uniqueResponseType.grade} />
-          <JobInfo icon={<AiOutlineForm />} text={uniqueResponseType.formType} />
-          <JobInfo icon={<FaRegCalendarAlt />} text={uniqueResponseType.When} />
+          <ResponseGroupInfo icon={<TbNumbers />} text={'Grade ' + uniqueResponseType.grade} />
+          <ResponseGroupInfo icon={<AiOutlineForm />} text={uniqueResponseType.formType} />
+          <ResponseGroupInfo icon={<FaRegCalendarAlt />} text={uniqueResponseType.When} />
         </div>
         <footer>
           {/*<div className='actions'>*/}

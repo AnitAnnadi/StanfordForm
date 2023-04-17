@@ -29,6 +29,7 @@ const SearchContainer = () => {
     handleChange,
     handleChanges,
     clearFilters,
+    getResponseGroups,
   } = useAppContext();
 
   const handleSearch = (e) => {
@@ -94,9 +95,8 @@ const SearchContainer = () => {
           const selectedTeacher = teacherOptions.find(
             (teacher) => teacher[0] === e.target.value
           );
-          const selectedTeacherId = selectedTeacher ? selectedTeacher[1] : 'all';
           handleChanges({
-            [e.target.name]: selectedTeacherId,
+            [e.target.name]: selectedTeacher ? selectedTeacher : 'all',
           });
           break;
         }
@@ -109,6 +109,7 @@ const SearchContainer = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     clearFilters();
+    getResponseGroups();
   };
 
   return (
@@ -176,7 +177,7 @@ const SearchContainer = () => {
           <FormRowSelect
             labelText='teacher'
             name='searchTeacher'
-            value={searchTeacher}
+            value={searchTeacher === 'all' ? 'all' : searchTeacher[0]}
             handleChange={handleSearch}
             list={['all', ...teacherOptions.map((teacher) => teacher[0])]}
           />

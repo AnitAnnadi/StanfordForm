@@ -22,7 +22,6 @@ const getStudentResponses = async(req, res) => {
 
   const teacher = await User.findOne({ _id: teacherId })
 
-  console.log({ teacher, teacherId })
 
   const queryObject = {
     school,
@@ -40,7 +39,6 @@ const getStudentResponses = async(req, res) => {
     queryObject.When = When;
   }
 
-  console.log({ queryObject })
   const studentResponses = await StudentReponse.find(queryObject)
 
   res.status(StatusCodes.OK).json({ teacherName: teacher.name, studentResponses });

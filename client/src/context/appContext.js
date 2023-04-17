@@ -295,6 +295,7 @@ const AppProvider = ({ children }) => {
       searchBeforeAfter,
     } = state;
 
+
     dispatch({ type: GET_RESPONSE_GROUPS_BEGIN });
 
     try {
@@ -305,7 +306,7 @@ const AppProvider = ({ children }) => {
           searchCity,
           searchDistrict,
           searchSchool,
-          searchTeacher,
+          searchTeacher: searchTeacher === 'all' ? 'all' : searchTeacher[1],
         }
       });
 
@@ -328,9 +329,14 @@ const AppProvider = ({ children }) => {
         });
         const { teacherName, studentResponses } = data2;
 
-        if (!teacherNames.includes(teacherName)) {
+        let teacherMatch = teacherNames.find(function(obj) {
+            return obj[1] === schools[schoolIndex].teacher;
+          });
+
+        if (!teacherMatch) {
           teacherNames.push([teacherName, schools[schoolIndex].teacher]);
         }
+
 
         let uniqueResponseTypes = [];
 
@@ -394,7 +400,7 @@ const AppProvider = ({ children }) => {
           responseGroups,
           totalResponseGroups: responseGroups.length,
           numOfPages,
-          teacherOptions: searchSchool === 'all' ? [] : [teacherNames],
+          teacherOptions: searchTeacher === 'all' ? teacherNames : state.teacherOptions,
         },
       });
     } catch (error) {

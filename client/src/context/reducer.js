@@ -134,6 +134,7 @@ const reducer = (state, action) => {
     ...state,
     ...action.payload,
     page: 1,
+    isLoading: true,
   };
   }
   if (action.type === CLEAR_VALUES) {
@@ -279,10 +280,24 @@ const reducer = (state, action) => {
   if (action.type === CLEAR_FILTERS) {
     return {
       ...state,
-      search: '',
-      searchStatus: 'all',
-      searchType: 'all',
-      sort: 'latest',
+      numOfPages: 1,
+      responseGroups: [],
+      totalResponsesGroups: 0,
+      searchState: 'all',
+      searchCounty: 'all',
+      searchCity: 'all',
+      searchDistrict: 'all',
+      searchSchool: 'all',
+      searchGrade: 'all',
+      searchTeacher: 'all',
+      searchPeriod: 'all',
+      searchType: 'tobacco',
+      searchBeforeAfter: 'all',
+      countyOptions: initialState.countyOptions,
+      cityOptions: initialState.cityOptions,
+      districtOptions: initialState.districtOptions,
+      schoolOptions: initialState.schoolOptions,
+      teacherOptions: initialState.teacherOptions,
     };
   }
   if (action.type === CHANGE_PAGE) {
