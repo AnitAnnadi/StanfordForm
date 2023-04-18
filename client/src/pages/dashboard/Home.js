@@ -8,9 +8,10 @@ import {
 } from "../../components";
 
 const Home = () => {
-  const { showStats, isLoading, monthlyApplications } = useAppContext();
+  const { user, showStats, isLoading, monthlyApplications } = useAppContext();
 
   useEffect(() => {
+    if (user && user.role === "Teacher")
     showStats();
     // eslint-disable-next-line
   }, []);
@@ -19,7 +20,7 @@ const Home = () => {
   }
   return (
     <>
-      <StatsContainer />
+      {user?.role === "Teacher" && <StatsContainer/>}
       <Faq />
       {monthlyApplications.length > 0 && <ChartsContainer />}
     </>
