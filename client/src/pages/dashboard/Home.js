@@ -11,8 +11,9 @@ const Home = () => {
   const { user, showStats, isLoading, monthlyApplications } = useAppContext();
 
   useEffect(() => {
-    if (user && user.role === "Teacher")
-    showStats();
+    if (user && user.role === "Teacher") {
+      showStats();
+    }
     // eslint-disable-next-line
   }, []);
   if (isLoading) {
