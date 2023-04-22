@@ -174,35 +174,41 @@ const Form = () => {
   };
 
   return (
-    <form className="form" onSubmit={handleSubmit}>
-      {showAlert && <Alert />}
-      <h3>{info["form"]}</h3>
-      {eval(info["form"]).map((element, index) => (
-        <div key={index}>
-          <div style={{ display: "flex", columnGap: "0.35rem" }}>
-            <p>{names.push(element["question"])}.</p>
-            <p>{element["question"]}</p>
+    <Wrapper style={{ margin: "2rem auto", width: "90%", maxWidth: "700px" }}>
+      <form className="form" onSubmit={handleSubmit}>
+        {showAlert && <Alert />}
+        <h3>{info["form"]}</h3>
+        {eval(info["form"]).map((element, index) => (
+          <div key={index}>
+            <div style={{ display: "flex", columnGap: "0.35rem" }}>
+              <p>{names.push(element["question"])}.</p>
+              <p>{element["question"]}</p>
+            </div>
+            {element["answers"].map((answer, index) => {
+              return (
+                <label key={index} className="container">
+                  <span>{answer}</span>
+                  <input
+                    type="radio"
+                    value={answer}
+                    name={element["question"]}
+                  />
+                  <span className="checkmark"></span>
+                </label>
+              );
+            })}
           </div>
-          {element["answers"].map((answer, index) => {
-            return (
-              <label key={index} className="container">
-                <span>{answer}</span>
-                <input type="radio" value={answer} name={element["question"]} />
-                <span className="checkmark"></span>
-              </label>
-            );
-          })}
-        </div>
-      ))}
-      <button
-        className="btn btn-block"
-        type="submit"
-        onSubmit={(e) => handleSubmit(e.target.value)}
-        style={{ marginTop: "1.38rem" }}
-      >
-        submit
-      </button>
-    </form>
+        ))}
+        <button
+          className="btn btn-block"
+          type="submit"
+          onSubmit={(e) => handleSubmit(e.target.value)}
+          style={{ marginTop: "1.38rem" }}
+        >
+          submit
+        </button>
+      </form>
+    </Wrapper>
   );
 };
 export default Form;
