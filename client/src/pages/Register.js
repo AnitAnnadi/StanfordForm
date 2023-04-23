@@ -4,6 +4,7 @@ import Wrapper from "../assets/wrappers/RegisterPage";
 import { useAppContext } from "../context/appContext";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import Logo2 from "../assets/images/logo.png";
 // import { Select } from "@mui/material";
 const initialState = {
   name: "",
@@ -107,6 +108,7 @@ const Register = () => {
   }, [user, navigate]);
 
   return (
+    <div>
     <Wrapper className="full-page">
       <form className="form" onSubmit={onSubmit}>
         <h3>{values.isMember ? "Login" : "Register"}</h3>
@@ -149,6 +151,8 @@ const Register = () => {
         </p>
       </form>
     </Wrapper>
+<img width="200" height="100" src={Logo2} className="corner-logo" />
+    </div>
   );
 };
 export default Register;
