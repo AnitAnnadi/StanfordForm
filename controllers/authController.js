@@ -45,7 +45,8 @@ const register = async (req, res) => {
       name: user.name,
       role:user.role,
       password:user.password,
-      code: user.code
+      code: user.code,
+      _id: user._id
     }
   });
 };

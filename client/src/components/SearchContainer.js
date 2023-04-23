@@ -5,6 +5,7 @@ import { useState, useMemo } from 'react';
 import {narrowCities, narrowCounties, narrowDistricts, narrowSchools} from "../utils/schoolDataFetch";
 const SearchContainer = () => {
   const {
+    user,
     isLoading,
     searchState,
     searchCounty,
@@ -30,7 +31,23 @@ const SearchContainer = () => {
     handleChanges,
     clearFilters,
     getResponseGroups,
+    userLocations,
   } = useAppContext();
+
+  const narrowAllowedOptions = (searchType, searchValues) => {
+    if (user.role === "Teacher") {
+      const allowedValues = userLocations.map(location => location[searchType]);
+      return searchValues.filter(value => allowedValues.includes(value));
+    } else if (user.role === "Standford Staff") {
+      return searchValues;
+    } else {
+      if (userLocations[0][searchType] === null) {
+        return searchValues;
+      } else {
+        return searchValues.filter(value => value === userLocations[0][searchType]);
+      }
+    }
+  }
 
   const handleSearch = (e) => {
     switch (e.target.name) {
@@ -42,10 +59,10 @@ const SearchContainer = () => {
           searchDistrict: 'all',
           searchSchool: 'all',
           searchTeacher: 'all',
-          countyOptions: ['all', ...narrowCounties(e.target.value)],
-          cityOptions: ['all', ...narrowCities({state: e.target.value})],
-          schoolOptions: ['all', ...narrowSchools({state: e.target.value})],
-          districtOptions: ['all', ...narrowDistricts({state: e.target.value})],
+          countyOptions: ['all', ...narrowAllowedOptions("county", narrowCounties({state: e.target.value}))],
+          cityOptions: ['all', ...narrowAllowedOptions("city", narrowCities({state: e.target.value}))],
+          schoolOptions: ['all', ...narrowAllowedOptions("school", narrowSchools({state: e.target.value}))],
+          districtOptions: ['all', ...narrowAllowedOptions("district", narrowDistricts({state: e.target.value}))],
         });
         break;
       case 'searchCounty':
@@ -55,9 +72,9 @@ const SearchContainer = () => {
           searchDistrict: 'all',
           searchSchool: 'all',
           searchTeacher: 'all',
-          cityOptions: ['all', ...narrowCities({county: e.target.value})],
-          schoolOptions: ['all', ...narrowSchools({county: e.target.value})],
-          districtOptions: ['all', ...narrowDistricts({county: e.target.value})],
+          cityOptions: ['all', ...narrowAllowedOptions("city", narrowCities({county: e.target.value}))],
+          schoolOptions: ['all', ...narrowAllowedOptions("school", narrowSchools({county: e.target.value}))],
+          districtOptions: ['all', ...narrowAllowedOptions("district", narrowDistricts({county: e.target.value}))],
         });
         break;
       case 'searchCity':
@@ -66,8 +83,8 @@ const SearchContainer = () => {
           searchDistrict: 'all',
           searchSchool: 'all',
           searchTeacher: 'all',
-          districtOptions: ['all', ...narrowDistricts({city: e.target.value})],
-          schoolOptions: ['all', ...narrowSchools({city: e.target.value})],
+          districtOptions: ['all', ...narrowAllowedOptions("district", narrowDistricts({city: e.target.value}))],
+          schoolOptions: ['all', ...narrowAllowedOptions("school", narrowSchools({city: e.target.value}))],
         });
         break;
       case 'searchDistrict':
@@ -75,7 +92,7 @@ const SearchContainer = () => {
           [e.target.name]: e.target.value,
           searchSchool: 'all',
           searchTeacher: 'all',
-          schoolOptions: ['all', ...narrowSchools({district: e.target.value})],
+          schoolOptions: ['all', ...narrowAllowedOptions("school", narrowSchools({district: e.target.value}))],
         });
         break;
       case 'searchSchool':
@@ -123,7 +140,7 @@ const SearchContainer = () => {
             name='searchState'
             value={searchState}
             handleChange={handleSearch}
-            list={stateOptions}
+            list={['all', ...narrowAllowedOptions("state", stateOptions)]}
           />
           {/* search by county */}
           <FormRowSelect
@@ -161,9 +178,16 @@ const SearchContainer = () => {
           <FormRowSelect
             labelText='teacher'
             name='searchTeacher'
-            value={searchTeacher === 'all' ? 'all' : searchTeacher[0]}
+            value={
+              user.role === 'Teacher' ? user.name :
+                searchTeacher === 'all' ? 'all' :
+                  searchTeacher[0]
+            }
             handleChange={handleSearch}
-            list={['all', ...teacherOptions.map((teacher) => teacher[0])]}
+            list={
+              user.role === 'Teacher' ? [user.name] :
+                ['all', ...teacherOptions.map((teacher) => teacher[0])]
+            }
           />
           {/* search by grade */}
           <FormRowSelect

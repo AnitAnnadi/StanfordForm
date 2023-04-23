@@ -1,8 +1,8 @@
 import schoolData from '../assets/school-data.json'
 
-const narrowCounties = (state) => {
+const narrowCounties = ({state}) => {
     const counties = schoolData
-        .filter((school) => school.state === state)
+        .filter((school) => school.state.toUpperCase() === state.toUpperCase())
         .map((school) => school.county)
         .sort();
 
@@ -13,13 +13,13 @@ const narrowDistricts = ({state, county, city}) => {
     const districts = schoolData
         .filter((school) => {
             if (state && county) {
-                return (school.state === state && school.county === county)
+                return (school.state.toUpperCase() === state.toUpperCase() && school.county === county)
             } else if (city) {
                 return (school.city === city)
             } else if (county) {
                 return (school.county === county)
             } else if (state) {
-                return (school.state === state)
+                return (school.state.toUpperCase() === state.toUpperCase())
             } else {
                 return school
             }
@@ -34,11 +34,11 @@ const narrowCities = ({state, county}) => {
     const cities = schoolData
         .filter((school) => {
             if (county === undefined) {
-                return school.state === state
+                return school.state.toUpperCase() === state.toUpperCase()
             } else if (state === undefined) {
                 return school.county === county
             } else {
-                return school.state === state && school.county === county
+                return school.state.toUpperCase() === state.toUpperCase() && school.county === county
             }
         })
         .map((school) => school.city)
@@ -51,9 +51,9 @@ const narrowSchools = ({state, county, city, district}) => {
     const schools = schoolData
         .filter((school) => {
             if (state && city) {
-                return (school.state === state && school.city === city)
+                return (school.state.toUpperCase() === state.toUpperCase() && school.city === city)
             } else if (state) {
-                return (school.state === state)
+                return (school.state.toUpperCase() === state.toUpperCase())
             } else if (county) {
                 return (school.county === county)
             } else if (city) {
@@ -72,7 +72,7 @@ const narrowSchools = ({state, county, city, district}) => {
 
 const getDistrictCounty = (state, city, schoolName) => {
     const {district, county} = schoolData
-        .find((school) => school.state === state && school.city === city && school.name === schoolName)
+        .find((school) => school.state.toUpperCase() === state.toUpperCase() && school.city === city && school.name === schoolName)
 
     return { foundDistrict: district, foundCounty: county}
 }

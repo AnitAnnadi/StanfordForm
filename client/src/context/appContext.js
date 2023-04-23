@@ -80,7 +80,7 @@ const initialState = {
   searchCity: 'all',
   schoolOptions: ['all'],
   searchSchool: 'all',
-  gradeOptions: ['all', 'k', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+  gradeOptions: ['all', 'K', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
   searchGrade: 'all',
   periodOptions: ['all', '1', '2', '3', '4', '5', '6', '7', '8'],
   searchPeriod: 'all',
@@ -282,6 +282,7 @@ const AppProvider = ({ children }) => {
   // };
   const getResponseGroups = async () => {
     const {
+      user,
       page,
       searchState,
       searchCounty,
@@ -306,7 +307,9 @@ const AppProvider = ({ children }) => {
           searchCity,
           searchDistrict,
           searchSchool,
-          searchTeacher: searchTeacher === 'all' ? 'all' : searchTeacher[1],
+          searchTeacher:
+            user.role === 'Teacher' ? user._id :
+              searchTeacher === 'all' ? 'all' : searchTeacher[1],
         }
       });
 
