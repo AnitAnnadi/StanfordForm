@@ -5,6 +5,7 @@ import Wrapper from "../assets/wrappers/DashboardFormPage";
 import Dropdown from "react-dropdown";
 import { v4 as uuid } from "uuid";
 import { useEffect } from "react";
+import Logo2 from "../assets/images/logo.png";
 import { useNavigate } from "react-router-dom";
 import {
   narrowDistricts,
@@ -351,6 +352,7 @@ const SelectLoc = () => {
           </div>
         </form>
       </Wrapper>
+      <img width="200" height="100" src={Logo2} className="corner-logo" />
     </div>
   );
 };
