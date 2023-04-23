@@ -14,11 +14,5 @@ const Wrapper = styled.main`
     grid-template-columns: max-content max-content max-content;
     column-gap: 0.5rem;
   }
-
-  .landing-logo {
-    position: absolute;
-    bottom: 5%;
-    right: 5%;
-  }
 `;
 export default Wrapper;
