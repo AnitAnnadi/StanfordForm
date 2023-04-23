@@ -5,6 +5,7 @@ import Wrapper from "../assets/wrappers/DashboardFormPage";
 import Dropdown from "react-dropdown";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import Logo2 from "../assets/images/logo.png";
 
 import { useNavigate } from "react-router-dom";
 
@@ -185,6 +186,7 @@ const JoinForm = () => {
           </div>
         </form>
       </Wrapper>
+<img width="200" height="100" src={Logo2} className="corner-logo" />
     </div>
   );
 };
