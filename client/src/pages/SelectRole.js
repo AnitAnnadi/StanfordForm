@@ -49,7 +49,7 @@ function SelectRole() {
             </Link>
           </div>
         </div>
-        <img width="200" height="100" src={Logo2} className="landing-logo" />
+        <img width="200" height="100" src={Logo2} className="corner-logo" />
       </Wrapper>
   );
 }
