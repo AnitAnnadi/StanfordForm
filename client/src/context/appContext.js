@@ -327,7 +327,7 @@ const AppProvider = ({ children }) => {
             grade: searchGrade,
             period: searchPeriod,
             formType: searchType,
-            When: searchBeforeAfter,
+            when: searchBeforeAfter,
           }
         });
         const { teacherName, studentResponses } = data2;
@@ -348,11 +348,13 @@ const AppProvider = ({ children }) => {
             formCode: studentResponses[responseIndex].formCode,
             teacher: studentResponses[responseIndex].teacher,
             grade: studentResponses[responseIndex].grade,
-            When: studentResponses[responseIndex].When,
+            when: studentResponses[responseIndex].when,
             formType: studentResponses[responseIndex].formType,
             school: studentResponses[responseIndex].school,
             period: studentResponses[responseIndex].period,
           }
+
+          console.log({newResponseType})
 
           let match = uniqueResponseTypes.find(function(obj) {
             return JSON.stringify(obj) === JSON.stringify(newResponseType);

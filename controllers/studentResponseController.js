@@ -3,7 +3,7 @@ import User from "../models/User.js";
 import School from "../models/School.js";
 import attachCookie from "../utils/attachCookie.js";
 import {StatusCodes} from "http-status-codes";
-import StudentReponse from "../models/StudentReponse.js";
+import StudentResponse from "../models/StudentResponse.js";
 
 const getStudentResponses = async(req, res) => {
   const user = await User.findOne({ _id: req.user.userId });
@@ -17,7 +17,7 @@ const getStudentResponses = async(req, res) => {
     grade,
     period,
     formType,
-    When
+    when
   } = req.query;
 
   const teacher = await User.findOne({ _id: teacherId })
@@ -35,11 +35,11 @@ const getStudentResponses = async(req, res) => {
   if (period && period !== 'all') {
     queryObject.period = period;
   }
-  if (When && When !== 'all') {
-    queryObject.When = When;
+  if (when && when !== 'all') {
+    queryObject.when = when;
   }
 
-  const studentResponses = await StudentReponse.find(queryObject)
+  const studentResponses = await StudentResponse.find(queryObject)
 
   res.status(StatusCodes.OK).json({ teacherName: teacher.name, studentResponses });
 }

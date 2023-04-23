@@ -485,3 +485,9 @@ li {
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
 }
+
+/* style pie chart container */
+.chartCanvas {
+  width: 400px;
+  height: 400px;
+}

@@ -15,6 +15,17 @@ const ResponseGroup = ({
 }) => {
   const { setEditJob, deleteJob } = useAppContext()
 
+  const formCode = uniqueResponseType.formCode
+
+  const queryParams = new URLSearchParams({
+    teacherId: school.teacher,
+    schoolId: school._id,
+    period: uniqueResponseType.period,
+    grade: uniqueResponseType.grade,
+    formType: uniqueResponseType.formType,
+    when: uniqueResponseType.when,
+  });
+
   return (
     <Wrapper>
       <header>
@@ -34,25 +45,14 @@ const ResponseGroup = ({
           />
           <ResponseGroupInfo icon={<TbNumbers />} text={'Grade ' + uniqueResponseType.grade} />
           <ResponseGroupInfo icon={<AiOutlineForm />} text={uniqueResponseType.formType} />
-          <ResponseGroupInfo icon={<FaRegCalendarAlt />} text={uniqueResponseType.When} />
+          <ResponseGroupInfo icon={<FaRegCalendarAlt />} text={uniqueResponseType.when} />
         </div>
         <footer>
-          {/*<div className='actions'>*/}
-          {/*  <Link*/}
-          {/*    to='/add-job'*/}
-          {/*    className='btn edit-btn'*/}
-          {/*    onClick={() => setEditJob(_id)}*/}
-          {/*  >*/}
-          {/*    Edit*/}
-          {/*  </Link>*/}
-          {/*  <button*/}
-          {/*    type='button'*/}
-          {/*    className='btn delete-btn'*/}
-          {/*    onClick={() => deleteJob(_id)}*/}
-          {/*  >*/}
-          {/*    Delete*/}
-          {/*  </button>*/}
-          {/*</div>*/}
+          <div className='actions'>
+            <Link className='btn edit-btn' to={`/api/v1/form/${formCode}?${queryParams.toString()}`}>
+              View Metrics
+            </Link>
+          </div>
         </footer>
       </div>
     </Wrapper>

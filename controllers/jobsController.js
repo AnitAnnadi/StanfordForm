@@ -8,7 +8,7 @@ import {
 import checkPermissions from '../utils/checkPermissions.js';
 import mongoose from 'mongoose';
 import moment from 'moment';
-import StudentReponse from '../models/StudentReponse.js';
+import StudentResponse from '../models/StudentResponse.js';
 
 
 
@@ -163,7 +163,7 @@ const showStats = async (req, res) => {
 
 const getTotal=async(req,res)=>{
   const {code}=req.body
-  const result=StudentReponse.find({formCode:code})
+  const result=StudentResponse.find({formCode:code})
   const total = await result;
   let totalResponses=total.length
   res.status(StatusCodes.OK).json({ totalResponses });

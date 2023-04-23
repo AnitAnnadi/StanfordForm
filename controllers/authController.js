@@ -1,6 +1,6 @@
 import User from '../models/User.js';
 import School from "../models/School.js";
-import StudentReponse from '../models/StudentReponse.js';
+import StudentResponse from '../models/StudentResponse.js';
 import { StatusCodes } from 'http-status-codes';
 import { BadRequestError, UnAuthenticatedError } from '../errors/index.js';
 import attachCookie from '../utils/attachCookie.js';
@@ -39,6 +39,7 @@ const register = async (req, res) => {
 
   const token = user.createJWT();
   attachCookie({ res, token });
+
   res.status(StatusCodes.CREATED).json({
     user: {
       email: user.email,
@@ -121,12 +122,12 @@ const submitForm = async(req,res) =>{
 
   let StudentResponseData=''
   if (period!=="default"){
-    StudentResponseData= await StudentReponse.create({formCode:code,teacher:teacher._id,grade:grade,When:when,formType:type,school:school,period:period})
+    StudentResponseData= await StudentResponse.create({formCode:code,teacher:teacher._id,grade:grade,when:when,formType:type,school:school,period:period})
 
   }
   if (period==="default"){
     
-    StudentResponseData= await StudentReponse.create({formCode:code,teacher:teacher._id,grade:grade,When:when,formType:type,school:school})
+    StudentResponseData= await StudentResponse.create({formCode:code,teacher:teacher._id,grade:grade,when:when,formType:type,school:school})
 
   }
   let _id=(StudentResponseData["_id"])

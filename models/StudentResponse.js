@@ -16,7 +16,7 @@ const StudentResponseSchema = new mongoose.Schema(
       required: [true, 'Please provide grade'],
       maxlength:10,
     },
-    When: {
+    when: {
       type: String,
       enum: ['before', 'after'],
       required: [true, 'Please provide when'],

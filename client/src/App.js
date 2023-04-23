@@ -12,6 +12,7 @@ import SelectRole from "./pages/SelectRole";
 import JoinForm from "./pages/JoinForm";
 import Form from "./pages/Form";
 import Success from "./components/Sucess";
+import FormMetrics from "./pages/FormMetrics";
 function App() {
   return (
     <BrowserRouter>
@@ -27,13 +28,13 @@ function App() {
           <Route index element={<Home />} />
           <Route path="metrics" element={<Metrics />} />
           <Route path="profile" element={<Profile />} />
-          
-          
+          <Route path="/api/v1/form/:formCode" element={<FormMetrics />}/>
         </Route>
+
         <Route path="/selectLoc" element={
-        <ProtectedRoute>
-          <SelectLoc />
-        </ProtectedRoute>
+          <ProtectedRoute>
+            <SelectLoc />
+          </ProtectedRoute>
         } />
         <Route path="/joinedForm" element={<JoinForm />} />
         <Route path="/form" element={<Form />} />

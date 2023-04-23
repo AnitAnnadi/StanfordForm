@@ -22,6 +22,7 @@ import authRouter from './routes/authRoutes.js';
 import jobsRouter from './routes/jobsRoutes.js';
 import schoolRouter from './routes/schoolRoutes.js';
 import studentResponseRouter from './routes/studentResponseRoutes.js';
+import formRouter from './routes/formRoutes.js';
 
 // middleware
 import notFoundMiddleware from './middleware/not-found.js';
@@ -47,6 +48,7 @@ app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/jobs', authenticateUser, jobsRouter);
 app.use('/api/v1/schools', authenticateUser, schoolRouter);
 app.use('/api/v1/studentResponses', authenticateUser, studentResponseRouter);
+app.use('/api/v1/form', authenticateUser, formRouter);
 
 // only when ready to deploy
 app.get('*', (req, res) => {
