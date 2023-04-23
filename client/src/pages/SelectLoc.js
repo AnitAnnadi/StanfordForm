@@ -131,7 +131,7 @@ const SelectLoc = () => {
 
       if (value !== "default") {
         setCities(narrowCities({ state: value }));
-        setCounties(narrowCounties(value));
+        setCounties(narrowCounties({ state: value}));
       }
     } else if (field === "county") {
       setCounty(value);
