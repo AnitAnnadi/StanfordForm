@@ -50,7 +50,7 @@ const ResponseGroup = ({
         <footer>
           <div className='actions'>
             <Link className='btn edit-btn' to={`/api/v1/form/${formCode}?${queryParams.toString()}`}>
-              View Metrics
+              View Breakdown
             </Link>
           </div>
         </footer>
