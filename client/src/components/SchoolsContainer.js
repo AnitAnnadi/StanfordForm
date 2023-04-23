@@ -48,7 +48,7 @@ const SchoolsContainer = () => {
   if (responseGroups.length === 0) {
     return (
       <Wrapper>
-        <h2>No Response Groups to display...</h2>
+        <h2>No classes to display...</h2>
       </Wrapper>
     );
   }
@@ -57,7 +57,7 @@ const SchoolsContainer = () => {
     <Wrapper>
       {showAlert && <Alert />}
       <h5>
-        {totalResponseGroups} school{responseGroups.length > 1 && 's'} found
+        {totalResponseGroups} class{responseGroups.length > 1 && 'es'} found
       </h5>
       <div className='jobs'>
         {responseGroups.map((ResponseGroupItem, index) => {
