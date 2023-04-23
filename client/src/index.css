@@ -314,6 +314,13 @@ li {
   min-height: 100vh;
 }
 
+.corner-logo {
+  position: absolute;
+  bottom: 5%;
+  right: 5%;
+  z-index: 5;
+}
+
 .coffee-info {
   text-align: center;
   text-transform: capitalize;
