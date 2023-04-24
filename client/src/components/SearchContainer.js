@@ -140,7 +140,7 @@ const SearchContainer = () => {
             name='searchState'
             value={searchState}
             handleChange={handleSearch}
-            list={['all', ...narrowAllowedOptions("state", stateOptions)]}
+            list={[...narrowAllowedOptions("state", stateOptions)]}
           />
           {/* search by county */}
           <FormRowSelect
