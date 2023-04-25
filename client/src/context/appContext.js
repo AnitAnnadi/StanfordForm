@@ -36,7 +36,7 @@ import {
   // GET_CURRENT_USER_SUCCESS,
   ENTER_CODE,
   GET_TOTAL,
-  ADD_LOCATION_SUCCESS, HANDLE_MULTIPLE_CHANGES
+  ADD_LOCATION_SUCCESS, HANDLE_MULTIPLE_CHANGES, SUCCESS_ALERT
 } from './actions';
 const user = localStorage.getItem("user");
 const userLocations = localStorage.getItem("userLocations");
@@ -123,6 +123,10 @@ const AppProvider = ({ children }) => {
 
   const displayAlert = () => {
     dispatch({ type: DISPLAY_ALERT });
+    clearAlert();
+  };
+  const successAlert = (text) => {
+    dispatch({ type: SUCCESS_ALERT,payload:{alertText:text} });
     clearAlert();
   };
 
@@ -527,7 +531,7 @@ const AppProvider = ({ children }) => {
         getResponseGroups,
         // setEditJob,
         // deleteJob,
-        // editJob,
+        successAlert,
         showStats,
         clearFilters,
         changePage,

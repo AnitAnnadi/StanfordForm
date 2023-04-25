@@ -18,6 +18,7 @@ const JoinForm = () => {
     updateLocation,
     isLoading,
     enterCode,
+    successAlert
   } = useAppContext();
 
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ const JoinForm = () => {
   const [grade, setGrade] = useState("default");
   const [when, setWhen] = useState("default");
   const [school, setSchool] = useState("default");
-  const [period, setPeriod] = useState();
+  const [period, setPeriod] = useState("default");
   let location = useLocation();
   let schools = location.state;
   let grades = ["K", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -98,6 +99,7 @@ const JoinForm = () => {
       when !== "default" &&
       school !== "default"
     ) {
+      successAlert("Form Information Submitted")
       navigate("/form", {
         state: {
           form,
@@ -107,6 +109,9 @@ const JoinForm = () => {
           period,
         },
       });
+    }
+    else{
+      displayAlert();
     }
   };
 

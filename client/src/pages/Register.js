@@ -22,6 +22,7 @@ const Register = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { type } = location.state;
+  let adminbool=false
   // console.log(type)
   const [values, setValues] = useState(initialState);
   const [adminRole, setAdminRole] = useState("default");
@@ -96,10 +97,24 @@ const Register = () => {
 
   useEffect(() => {
     // console.log(hasLocation)
+    console.log(user)
     if ((user && hasLocation) || (user?.role === 'Standford Staff')) {
-      setTimeout(() => {
-        navigate("/");
-      }, 3000);
+      adminroles.map((role=>{
+        if (role==user.role){
+          adminbool=true
+        }
+      }))
+      if (adminbool){
+        setTimeout(() => {
+          navigate("/metrics");
+        }, 3000);
+      }
+      else{
+        setTimeout(() => {
+          navigate("/");
+        }, 3000);
+      }
+    
     } else if (user && !hasLocation) {
       setTimeout(() => {
         navigate("/selectLoc");

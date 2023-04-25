@@ -93,7 +93,8 @@ const SelectLoc = () => {
   const [districts, setDistricts] = useState([]);
 
   const [multiplePeriods, setMultiplePeriods] = useState(false);
-
+  let adminroles = ["Site Admin", "District Admin", "County Admin", "State Admin", "Standford Staff"];
+  let adminbool=false
   const [additionalLoc, setAdditionalLoc] = useState(false);
 
   const [numOfLocations, setNumOfLocations] = useState(
@@ -162,7 +163,21 @@ const SelectLoc = () => {
         navigate("/");
       }, 1000);
     }
-
+    adminroles.map((role=>{
+        if (role==user.role){
+          adminbool=true
+        }
+      }))
+      if (adminbool){
+        setTimeout(() => {
+          navigate("/metrics");
+        }, 3000);
+      }
+      else{
+        setTimeout(() => {
+          navigate("/");
+        }, 3000);
+      }
     if (
       state === "default" ||
       (showCounty && county === "default") ||

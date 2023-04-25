@@ -32,7 +32,8 @@ import {
   GET_CURRENT_USER_BEGIN,
   GET_CURRENT_USER_SUCCESS,
   GET_TOTAL,
-  ADD_LOCATION_SUCCESS
+  ADD_LOCATION_SUCCESS,
+  SUCCESS_ALERT
 } from './actions';
 
 import { initialState } from './appContext';
@@ -44,6 +45,14 @@ const reducer = (state, action) => {
       showAlert: true,
       alertType: 'danger',
       alertText: 'Please provide all values!',
+    };
+  }
+  if (action.type === SUCCESS_ALERT) {
+    return {
+      ...state,
+      showAlert: true,
+      alertType: 'success',
+      alertText: action.payload.alertText,
     };
   }
   if (action.type === CLEAR_ALERT) {
@@ -176,11 +185,15 @@ const reducer = (state, action) => {
     };
   }
   if (action.type === ENTER_CODE) {
-    return { alertType: 'success',
-    alertText: "Joined New Form",
-    ...state, isLoading: true, 
+    return {
+    // ...state,
+    ...state, 
+    isLoading: true, 
     teacher:action.payload.teacher,
-    schools:action.payload.schools};
+    showAlert:true,
+    alertType: 'success',
+    alertText: "Sucessfully Joined New Form",
+    schools:action.payload.schools,};
   }
 
   if (action.type === GET_TOTAL) {

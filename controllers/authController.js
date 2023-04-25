@@ -14,9 +14,11 @@ const enterCode=async(req,res)=>{
     throw new BadRequestError('Please Enter a Code');
   }
   const user = await User.findOne({ code });
-  let teacher=user["_id"]
-  const schools=await School.find({teacher})
+  // if (user)
+  
   if (user){
+    let teacher=user["_id"]
+    const schools=await School.find({teacher})
     res.status(StatusCodes.OK).json({ user,schools });
   }
   else{

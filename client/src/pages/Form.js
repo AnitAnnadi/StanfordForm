@@ -16,6 +16,7 @@ const Form = () => {
     isLoading,
     enterCode,
     submitForm,
+    successAlert
   } = useAppContext();
   let tobacco = [
     {
@@ -169,7 +170,7 @@ const Form = () => {
       info["school"],
       info["period"]
     );
-
+    successAlert("Form Sucessfully Completed")
     navigate("/success", {});
   };
 
