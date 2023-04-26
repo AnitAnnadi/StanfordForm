@@ -112,11 +112,12 @@ const logout = async (req, res) => {
 
 const submitForm = async(req,res) =>{
   const {names,answer,code,grade,when,type,school,period}=req.body;
-
+  console.log('hi')
 
   const teacher = await User.findOne({ code });
-
+  console.log(code)
   if (!teacher){
+    console.log('here')
     throw new BadRequestError('Invalid Code. Try Again or Ask Teacher for Code');
   }
 
@@ -128,13 +129,14 @@ const submitForm = async(req,res) =>{
   if (period==="default"){
     
     StudentResponseData= await StudentResponse.create({formCode:code,teacher:teacher._id,grade:grade,when:when,formType:type,school:school})
-
+    
   }
+  console.log(StudentResponseData)
   let _id=(StudentResponseData["_id"])
   
   for (var i=0;i<names.length;i++){
     if (answer[i]){
-      console.log('hi')
+    
     const question=await Question.create({StudentResponse:_id,Question:names[i],Answer:answer[i]})}
   }
   
