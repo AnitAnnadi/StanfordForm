@@ -112,9 +112,9 @@ const logout = async (req, res) => {
 
 const submitForm = async(req,res) =>{
   const {names,answer,code,grade,when,type,school,period}=req.body;
-  if (answer.length<names.length){
-    throw new BadRequestError('Please answer all questions');
-  }
+  // if (answer.length<names.length){
+  //   throw new BadRequestError('Please answer all questions');
+  // }
 
   const teacher = await User.findOne({ code });
 
@@ -135,7 +135,9 @@ const submitForm = async(req,res) =>{
   let _id=(StudentResponseData["_id"])
   
   for (var i=0;i<names.length;i++){
-    const question=await Question.create({StudentResponse:_id,Question:names[i],Answer:answer[i]})
+    if (answer[i]){
+      console.log('hi')
+    const question=await Question.create({StudentResponse:_id,Question:names[i],Answer:answer[i]})}
   }
   
    
