@@ -112,9 +112,7 @@ const logout = async (req, res) => {
 
 const submitForm = async(req,res) =>{
   const {names,answer,code,grade,when,type,school,period}=req.body;
-  // if (answer.length<names.length){
-  //   throw new BadRequestError('Please answer all questions');
-  // }
+
 
   const teacher = await User.findOne({ code });
 

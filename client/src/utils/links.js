@@ -7,7 +7,7 @@ let adminroles = ["Site Admin", "District Admin", "County Admin", "State Admin",
 let adminbool=false
 let links=[]
 adminroles.map((role=>{
-  if (role==user["role"]){
+  if (role==user?.["role"]){
     adminbool=true
   }
 }))
