@@ -8,6 +8,7 @@ import ResponseGroupInfo from "../components/ResponseGroupInfo";
 import { FaChalkboardTeacher, FaRegCalendarAlt } from "react-icons/fa";
 import { AiOutlineForm, AiOutlineNumber } from "react-icons/ai";
 import { TbListNumbers, TbNumbers } from "react-icons/tb";
+import {useAppContext} from "../context/appContext";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -19,7 +20,13 @@ const dynamicColors = () => {
 };
 
 const FormMetrics = () => {
+  const {
+    responseGroups,
+  } = useAppContext();
+
   const [isLoading, setIsLoading] = useState(true);
+
+  const [isOverall, setIsOverall] = useState(false);
 
   const [school, setSchool] = useState(null);
   const [teacher, setTeacher] = useState(null);
@@ -32,61 +39,96 @@ const FormMetrics = () => {
   const location = useLocation();
 
   useEffect(() => {
-    const queryParameters = new URLSearchParams(location.search);
+    if (!location.search) {
+      setIsOverall(true);
 
-    fetch(`/api/v1/form/${formCode}?${queryParameters.toString()}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setSchool(data.school);
-        setTeacher(data.teacher);
-        setQuestionsToAnswers(data.questionsToAnswers);
-        setResponseType(data.responseType);
-        setIsLoading(false);
-      })
-      .catch((error) => console.error(error));
+      responseGroups.forEach((responseGroup) => {
+        console.log("Its another grouP")
+        console.log({responseGroup})
+        const { school, uniqueResponseType } = responseGroup;
+
+        const queryParameters = new URLSearchParams({
+          teacherId: school.teacher,
+          schoolId: school._id,
+          period: uniqueResponseType.period,
+          grade: uniqueResponseType.grade,
+          formType: uniqueResponseType.formType,
+          when: uniqueResponseType.when,
+        });
+
+        fetch(`/api/v1/form/${uniqueResponseType.formCode}?${queryParameters.toString()}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setQuestionsToAnswers((prev) => ({ ...prev, ...data.questionsToAnswers }));
+          setIsLoading(false);
+        })
+        .catch((error) => console.error(error));
+      });
+
+
+    } else {
+      setIsOverall(false);
+
+      const queryParameters = new URLSearchParams(location.search);
+
+      fetch(`/api/v1/form/${formCode}?${queryParameters.toString()}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setSchool(data.school);
+          setTeacher(data.teacher);
+          setQuestionsToAnswers(data.questionsToAnswers);
+          setResponseType(data.responseType);
+          setIsLoading(false);
+        })
+        .catch((error) => console.error(error));
+    }
   }, [formCode, location.search]);
 
   if (isLoading) return <Loading center />;
 
   return (
     <Wrapper style={{ maxWidth: "800px" }}>
-      <header>
-        <div className="info">
-          <h3>{school.school}</h3>
-          <h4>
-            {school.city}, {school.state}
-          </h4>
+      {isOverall ? (
+        <h2>Overall Form Metrics</h2>
+      ) : <>
+        <header>
+          <div className="info">
+            <h3>{school.school}</h3>
+            <h4>
+              {school.city}, {school.state}
+            </h4>
+          </div>
+        </header>
+        <div className="content">
+          <div className="content-center">
+            <ResponseGroupInfo
+              icon={<FaChalkboardTeacher />}
+              text={teacher.name}
+            />
+            <ResponseGroupInfo icon={<AiOutlineNumber />} text={formCode} />
+            <ResponseGroupInfo
+              icon={<TbListNumbers />}
+              text={
+                responseType?.period
+                  ? "Period " + responseType.period
+                  : "No specified period"
+              }
+            />
+            <ResponseGroupInfo
+              icon={<TbNumbers />}
+              text={"Grade " + responseType.grade}
+            />
+            <ResponseGroupInfo
+              icon={<AiOutlineForm />}
+              text={responseType.formType}
+            />
+            <ResponseGroupInfo
+              icon={<FaRegCalendarAlt />}
+              text={responseType.when}
+            />
+          </div>
         </div>
-      </header>
-      <div className="content">
-        <div className="content-center">
-          <ResponseGroupInfo
-            icon={<FaChalkboardTeacher />}
-            text={teacher.name}
-          />
-          <ResponseGroupInfo icon={<AiOutlineNumber />} text={formCode} />
-          <ResponseGroupInfo
-            icon={<TbListNumbers />}
-            text={
-              responseType?.period
-                ? "Period " + responseType.period
-                : "No specified period"
-            }
-          />
-          <ResponseGroupInfo
-            icon={<TbNumbers />}
-            text={"Grade " + responseType.grade}
-          />
-          <ResponseGroupInfo
-            icon={<AiOutlineForm />}
-            text={responseType.formType}
-          />
-          <ResponseGroupInfo
-            icon={<FaRegCalendarAlt />}
-            text={responseType.when}
-          />
-        </div>
-      </div>
+      </>}
       <div className="content">
         <div className="content-center">
           {Object.keys(questionsToAnswers).map((question, index) => (
@@ -137,7 +179,7 @@ const FormMetrics = () => {
         </div>
       </div>
       <footer>
-        <button className="btn btn-block" onClick={() => navigate(-1)}>
+        <button className="btn btn-block" onClick={() => navigate('/metrics')}>
           Go back
         </button>
       </footer>

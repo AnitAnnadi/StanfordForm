@@ -3,6 +3,7 @@ import { useAppContext } from '../context/appContext';
 import Wrapper from '../assets/wrappers/SearchContainer';
 import { useState, useMemo } from 'react';
 import {narrowCities, narrowCounties, narrowDistricts, narrowSchools} from "../utils/schoolDataFetch";
+import {Link} from "react-router-dom";
 const SearchContainer = () => {
   const {
     user,
@@ -228,6 +229,9 @@ const SearchContainer = () => {
           >
             clear filters
           </button>
+          <Link className='btn btn-block btn-danger' to={`/api/v1/form/}`}>
+            Overall Breakdown
+          </Link>
         </div>
       </form>
     </Wrapper>

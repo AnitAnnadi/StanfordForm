@@ -29,6 +29,7 @@ function App() {
           <Route path="metrics" element={<Metrics />} />
           <Route path="profile" element={<Profile />} />
           <Route path="/api/v1/form/:formCode" element={<FormMetrics />}/>
+          <Route path="/api/v1/form/" element={<FormMetrics />}/>
         </Route>
 
         <Route path="/selectLoc" element={
