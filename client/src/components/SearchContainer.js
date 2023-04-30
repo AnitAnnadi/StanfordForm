@@ -207,7 +207,7 @@ const SearchContainer = () => {
           />
           {/* search by type */}
           <FormRowSelect
-            labelText='type'
+            labelText='form type'
             name='searchType'
             value={searchType}
             handleChange={handleSearch}
