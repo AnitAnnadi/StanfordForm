@@ -229,7 +229,11 @@ const SearchContainer = () => {
           >
             clear filters
           </button>
-          <Link className='btn btn-block btn-danger' to={`/api/v1/form/}`}>
+          <Link
+            className='btn btn-block btn-danger'
+            to={`/api/v1/form/`}
+            aria-disabled={isLoading}
+          >
             Overall Breakdown
           </Link>
         </div>

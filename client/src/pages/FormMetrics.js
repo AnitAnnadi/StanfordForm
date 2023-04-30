@@ -12,13 +12,6 @@ import {useAppContext} from "../context/appContext";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const dynamicColors = () => {
-  const r = Math.floor(Math.random() * 255);
-  const g = Math.floor(Math.random() * 255);
-  const b = Math.floor(Math.random() * 255);
-  return "rgb(" + r + "," + g + "," + b + ")";
-};
-
 const FormMetrics = () => {
   const {
     responseGroups,
@@ -40,11 +33,10 @@ const FormMetrics = () => {
 
   useEffect(() => {
     if (!location.search) {
+      console.log("No location search")
       setIsOverall(true);
 
       responseGroups.forEach((responseGroup) => {
-        console.log("Its another grouP")
-        console.log({responseGroup})
         const { school, uniqueResponseType } = responseGroup;
 
         const queryParameters = new URLSearchParams({
@@ -60,13 +52,13 @@ const FormMetrics = () => {
         .then((res) => res.json())
         .then((data) => {
           setQuestionsToAnswers((prev) => ({ ...prev, ...data.questionsToAnswers }));
-          setIsLoading(false);
         })
         .catch((error) => console.error(error));
       });
 
-
+      setIsLoading(false);
     } else {
+      console.log("No location search")
       setIsOverall(false);
 
       const queryParameters = new URLSearchParams(location.search);
@@ -82,7 +74,7 @@ const FormMetrics = () => {
         })
         .catch((error) => console.error(error));
     }
-  }, [formCode, location.search]);
+  }, [formCode, location.search, responseGroups]);
 
   if (isLoading) return <Loading center />;
 
@@ -129,55 +121,59 @@ const FormMetrics = () => {
           </div>
         </div>
       </>}
-      <div className="content">
-        <div className="content-center">
-          {Object.keys(questionsToAnswers).map((question, index) => (
-            <div key={index}>
-              <h5 style={{ padding: "1rem 0" }}>{question}</h5>
-              <div className="chartCanvas">
-                <Doughnut
-                  data={{
-                    labels: Object.keys(questionsToAnswers[question]),
-                    datasets: [
-                      {
-                        label: "How many gave this answer",
-                        data: Object.values(questionsToAnswers[question]),
-                        // backgroundColor: Object.keys(
-                        //   questionsToAnswers[question]
-                        // ).map(() => dynamicColors()),
-                        backgroundColor: [
-                          "#d0203f",
-                          "#A2C3DB",
-                          "#8871A0",
-                          "#8AAF22",
-                          "#DCB12D",
-                          "#3F9F9F",
-                        ],
-                        borderWidth: 1,
+      {((responseGroups.length === 0) && (isOverall)) ? (
+        <h3>No responses yet</h3>
+      ) : <>
+        <div className="content">
+          <div className="content-center">
+            {Object.keys(questionsToAnswers).map((question, index) => (
+              <div key={index}>
+                <h5 style={{ padding: "1rem 0" }}>{question}</h5>
+                <div className="chartCanvas">
+                  <Doughnut
+                    data={{
+                      labels: Object.keys(questionsToAnswers[question]),
+                      datasets: [
+                        {
+                          label: "How many gave this answer",
+                          data: Object.values(questionsToAnswers[question]),
+                          // backgroundColor: Object.keys(
+                          //   questionsToAnswers[question]
+                          // ).map(() => dynamicColors()),
+                          backgroundColor: [
+                            "#d0203f",
+                            "#A2C3DB",
+                            "#8871A0",
+                            "#8AAF22",
+                            "#DCB12D",
+                            "#3F9F9F",
+                          ],
+                          borderWidth: 1,
+                        },
+                      ],
+                    }}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: true,
+                      plugins: {
+                        legend: {
+                          position: "right",
+                        },
                       },
-                    ],
-                  }}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: {
-                      legend: {
-                        position: "right",
-                      },
-                    },
-                  }}
-                />
+                    }}
+                  />
+                </div>
+                {/*{Object.keys(questionsToAnswers[question]).map((answer, index) => (*/}
+                {/*  <div key={index}>*/}
+                {/*    <p>{`Answer: ${answer}`}</p>*/}
+                {/*    <p>{`How many gave this answer: ${questionsToAnswers[question][answer]}`}</p>*/}
+                {/*  </div>*/}
+                {/*))}*/}
               </div>
-              {/*{Object.keys(questionsToAnswers[question]).map((answer, index) => (*/}
-              {/*  <div key={index}>*/}
-              {/*    <p>{`Answer: ${answer}`}</p>*/}
-              {/*    <p>{`How many gave this answer: ${questionsToAnswers[question][answer]}`}</p>*/}
-              {/*  </div>*/}
-              {/*))}*/}
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      </>}
       <footer>
         <button className="btn btn-block" onClick={() => navigate('/metrics')}>
           Go back
