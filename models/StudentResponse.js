@@ -23,7 +23,7 @@ const StudentResponseSchema = new mongoose.Schema(
     },
     formType:{
       type: String,
-      enum: ['tobacco', 'cannabis'],
+      enum: ['You and Me, Together Vape-Free', 'Smart Talk: Cannabis Prevention & Education Awareness'],
       required: [true, 'Please provide form type'],
     },
     school:{

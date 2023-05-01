@@ -156,9 +156,9 @@ const JoinForm = () => {
               <option value={"default"} disabled>
                 Choose your Form
               </option>
-              <option value={"tobacco"}>Tobacco</option>
-              <option value={"cannabis"}>
-                Cannabis
+              <option value={"You and Me, Together Vape-Free"}>You and Me, Together Vape-Free</option>
+              <option value={"Smart Talk: Cannabis Prevention & Education Awareness"}>
+                Smart Talk: Cannabis Prevention & Education Awareness
               </option>
             </select>
 

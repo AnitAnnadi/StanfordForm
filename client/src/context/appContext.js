@@ -86,8 +86,8 @@ const initialState = {
   searchPeriod: 'all',
   teacherOptions: [], // [[teacherName, teacherId], [teacherName, teacherId], ...]
   searchTeacher: 'all',
-  typeOptions: ['tobacco', 'cannabis'],
-  searchType: 'tobacco',
+  typeOptions: ['You and Me, Together Vape-Free', 'Smart Talk: Cannabis Prevention & Education Awareness'],
+  searchType: 'You and Me, Together Vape-Free',
   beforeAfterOptions: ['all', 'before', 'after'],
   searchBeforeAfter: 'all',
   teacher:'',
