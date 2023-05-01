@@ -25,6 +25,7 @@ const FormMetrics = () => {
   const [teacher, setTeacher] = useState(null);
   const [questionsToAnswers, setQuestionsToAnswers] = useState({});
   const [responseType, setResponseType] = useState({});
+  const [numbeerOfResponses, setNumberOfResponses] = useState(0);
 
   const { formCode } = useParams();
   const navigate = useNavigate();
@@ -52,6 +53,7 @@ const FormMetrics = () => {
         .then((res) => res.json())
         .then((data) => {
           setQuestionsToAnswers((prev) => ({ ...prev, ...data.questionsToAnswers }));
+          setNumberOfResponses((prev) => prev + data.numberOfResponses);
         })
         .catch((error) => console.error(error));
       });
@@ -69,6 +71,7 @@ const FormMetrics = () => {
           setSchool(data.school);
           setTeacher(data.teacher);
           setQuestionsToAnswers(data.questionsToAnswers);
+          setNumberOfResponses(data.numberOfResponses);
           setResponseType(data.responseType);
           setIsLoading(false);
         })
@@ -80,9 +83,15 @@ const FormMetrics = () => {
 
   return (
     <Wrapper style={{ maxWidth: "800px" }}>
-      {isOverall ? (
-        <h2>Overall Form Metrics</h2>
-      ) : <>
+      {isOverall ?
+        <>
+          <header>
+            <div className="info">
+              <h3>Overall Form Metrics</h3>
+            </div>
+          </header>
+          <ResponseGroupInfo icon={<AiOutlineNumber />} text={`${numbeerOfResponses} response(s)`} />
+        </> : <>
         <header>
           <div className="info">
             <h3>{school.school}</h3>
@@ -97,7 +106,7 @@ const FormMetrics = () => {
               icon={<FaChalkboardTeacher />}
               text={teacher.name}
             />
-            <ResponseGroupInfo icon={<AiOutlineNumber />} text={formCode} />
+            <ResponseGroupInfo icon={<AiOutlineNumber />} text={`${numbeerOfResponses} response(s)`} />
             <ResponseGroupInfo
               icon={<TbListNumbers />}
               text={

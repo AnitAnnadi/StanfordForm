@@ -65,7 +65,7 @@ const getFormMetrics = async(req,res) => {
 
   await Promise.all(questionsToAnswersPromises);
 
-  res.status(StatusCodes.OK).json({ questionsToAnswers, school, teacher, responseType: responseQueryObject });
+  res.status(StatusCodes.OK).json({ questionsToAnswers, school, teacher, responseType: responseQueryObject , numberOfResponses: studentResponses.length});
 
 }
 
