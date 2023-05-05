@@ -174,12 +174,16 @@ const Form = () => {
     navigate("/success", {});
   };
 
+  const [usedForm, setUsedForm] = useState(
+    info["form"] === "You and Me, Together Vape-Free" ? tobacco : cannabis
+  );
+
   return (
     <Wrapper style={{ margin: "2rem auto", width: "90%", maxWidth: "700px" }}>
       <form className="form" onSubmit={handleSubmit}>
         {showAlert && <Alert />}
-        <h3>{info["form"]}</h3>
-        {eval(info["form"]).map((element, index) => (
+        <h3>{`${info.form}`}</h3>
+        {usedForm.map((element, index) => (
           <div key={index}>
             <div style={{ display: "flex", columnGap: "0.35rem" }}>
               <p>{names.push(element["question"])}.</p>

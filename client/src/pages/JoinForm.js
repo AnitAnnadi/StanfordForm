@@ -34,7 +34,7 @@ const JoinForm = () => {
   let grades = ["K", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   let periods = [0, 1, 2, 3, 4, 5, 6, 7, 8];
   schools = schools["schools"];
-  function MultipleSchools() {
+  const MultipleSchools = () => {
     if (schools.length > 1) {
       return (
         <div>
@@ -62,7 +62,7 @@ const JoinForm = () => {
     }
   }
   let current = "";
-  function MultiplePeriods() {
+  const MultiplePeriods = () => {
     schools.map((each) => {
       if (each["school"] === school) {
         current = each;
@@ -182,7 +182,6 @@ const JoinForm = () => {
               className="btn btn-block"
               type="submit"
               // disabled={isLoading}
-              onSubmit={(e) => handleSubmit(e.target.value)}
               style={{ marginTop: "1.38rem" }}
             >
               submit
