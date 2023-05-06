@@ -4,7 +4,7 @@ import Wrapper from '../assets/wrappers/SearchContainer';
 import { useState, useMemo } from 'react';
 import {narrowCities, narrowCounties, narrowDistricts, narrowSchools} from "../utils/schoolDataFetch";
 import {Link} from "react-router-dom";
-const SearchContainer = () => {
+const SearchContainer = ({startReload}) => {
   const {
     user,
     isLoading,
@@ -28,7 +28,6 @@ const SearchContainer = () => {
     teacherOptions,
     typeOptions,
     beforeAfterOptions,
-    handleChange,
     handleChanges,
     clearFilters,
     getResponseGroups,
@@ -50,55 +49,56 @@ const SearchContainer = () => {
     }
   }
 
-  const handleSearch = (e) => {
+  const handleChange = (e) => {
     switch (e.target.name) {
       case 'searchState':
+        console.log("searchState");
         handleChanges({
           [e.target.name]: e.target.value,
-          searchCounty: 'all',
-          searchCity: 'all',
-          searchDistrict: 'all',
-          searchSchool: 'all',
-          searchTeacher: 'all',
-          countyOptions: ['all', ...narrowAllowedOptions("county", narrowCounties({state: e.target.value}))],
-          cityOptions: ['all', ...narrowAllowedOptions("city", narrowCities({state: e.target.value}))],
-          schoolOptions: ['all', ...narrowAllowedOptions("school", narrowSchools({state: e.target.value}))],
-          districtOptions: ['all', ...narrowAllowedOptions("district", narrowDistricts({state: e.target.value}))],
+          // searchCounty: 'all',
+          // searchCity: 'all',
+          // searchDistrict: 'all',
+          // searchSchool: 'all',
+          // searchTeacher: 'all',
+          // countyOptions: ['all', ...narrowAllowedOptions("county", narrowCounties({state: e.target.value}))],
+          // cityOptions: ['all', ...narrowAllowedOptions("city", narrowCities({state: e.target.value}))],
+          // schoolOptions: ['all', ...narrowAllowedOptions("school", narrowSchools({state: e.target.value}))],
+          // districtOptions: ['all', ...narrowAllowedOptions("district", narrowDistricts({state: e.target.value}))],
         });
         break;
       case 'searchCounty':
         handleChanges({
           [e.target.name]: e.target.value,
-          searchCity: 'all',
-          searchDistrict: 'all',
-          searchSchool: 'all',
-          searchTeacher: 'all',
-          cityOptions: ['all', ...narrowAllowedOptions("city", narrowCities({county: e.target.value}))],
-          schoolOptions: ['all', ...narrowAllowedOptions("school", narrowSchools({county: e.target.value}))],
-          districtOptions: ['all', ...narrowAllowedOptions("district", narrowDistricts({county: e.target.value}))],
+          // searchCity: 'all',
+          // searchDistrict: 'all',
+          // searchSchool: 'all',
+          // searchTeacher: 'all',
+          // cityOptions: ['all', ...narrowAllowedOptions("city", narrowCities({county: e.target.value}))],
+          // schoolOptions: ['all', ...narrowAllowedOptions("school", narrowSchools({county: e.target.value}))],
+          // districtOptions: ['all', ...narrowAllowedOptions("district", narrowDistricts({county: e.target.value}))],
         });
         break;
       case 'searchCity':
         handleChanges({
           [e.target.name]: e.target.value,
-          searchDistrict: 'all',
-          searchSchool: 'all',
-          searchTeacher: 'all',
-          districtOptions: ['all', ...narrowAllowedOptions("district", narrowDistricts({city: e.target.value}))],
-          schoolOptions: ['all', ...narrowAllowedOptions("school", narrowSchools({city: e.target.value}))],
+          // searchDistrict: 'all',
+          // searchSchool: 'all',
+          // searchTeacher: 'all',
+          // districtOptions: ['all', ...narrowAllowedOptions("district", narrowDistricts({city: e.target.value}))],
+          // schoolOptions: ['all', ...narrowAllowedOptions("school", narrowSchools({city: e.target.value}))],
         });
         break;
       case 'searchDistrict':
         handleChanges({
           [e.target.name]: e.target.value,
-          searchSchool: 'all',
-          searchTeacher: 'all',
-          schoolOptions: ['all', ...narrowAllowedOptions("school", narrowSchools({district: e.target.value}))],
+          // searchSchool: 'all',
+          // searchTeacher: 'all',
+          // schoolOptions: ['all', ...narrowAllowedOptions("school", narrowSchools({district: e.target.value}))],
         });
         break;
       case 'searchSchool':
         handleChanges({
-          searchTeacher: 'all',
+          // searchTeacher: 'all',
           [e.target.name]: e.target.value,
         });
         break;
@@ -126,8 +126,23 @@ const SearchContainer = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    clearFilters();
-    getResponseGroups();
+
+    const timeout = setTimeout(() => {
+      startReload();
+    }, 1000);
+
+    return () => clearTimeout(timeout);
+  };
+
+  const handleClearFilters = (e) => {
+    e.preventDefault();
+
+    const timeout = setTimeout(() => {
+      clearFilters();
+      startReload();
+    }, 1000);
+
+    return () => clearTimeout(timeout);
   };
 
   return (
@@ -140,15 +155,15 @@ const SearchContainer = () => {
             labelText='state'
             name='searchState'
             value={searchState}
-            handleChange={handleSearch}
-            list={[...narrowAllowedOptions("state", stateOptions)]}
+            handleChange={handleChange}
+            list={stateOptions}
           />
           {/* search by county */}
           <FormRowSelect
             labelText='county'
             name='searchCounty'
             value={searchCounty}
-            handleChange={handleSearch}
+            handleChange={handleChange}
             list={countyOptions}
           />
           {/* search by city */}
@@ -156,7 +171,7 @@ const SearchContainer = () => {
             labelText='city'
             name='searchCity'
             value={searchCity}
-            handleChange={handleSearch}
+            handleChange={handleChange}
             list={cityOptions}
           />
           {/* search by district */}
@@ -164,7 +179,7 @@ const SearchContainer = () => {
             labelText='district'
             name='searchDistrict'
             value={searchDistrict}
-            handleChange={handleSearch}
+            handleChange={handleChange}
             list={districtOptions}
           />
           {/* search by school */}
@@ -172,7 +187,7 @@ const SearchContainer = () => {
             labelText='school'
             name='searchSchool'
             value={searchSchool}
-            handleChange={handleSearch}
+            handleChange={handleChange}
             list={schoolOptions}
           />
           {/* search by teacher */}
@@ -181,10 +196,10 @@ const SearchContainer = () => {
             name='searchTeacher'
             value={
               user.role === 'Teacher' ? user.name :
-                searchTeacher === 'all' ? 'all' :
-                  searchTeacher[0]
+                  searchTeacher === 'all' ? 'all' :
+                    searchTeacher[0]
             }
-            handleChange={handleSearch}
+            handleChange={handleChange}
             list={
               user.role === 'Teacher' ? [user.name] :
                 ['all', ...teacherOptions.map((teacher) => teacher[0])]
@@ -195,7 +210,7 @@ const SearchContainer = () => {
             labelText='grade'
             name='searchGrade'
             value={searchGrade}
-            handleChange={handleSearch}
+            handleChange={handleChange}
             list={gradeOptions}
           />
           {/* search by period */}
@@ -203,7 +218,7 @@ const SearchContainer = () => {
             labelText='period'
             name='searchPeriod'
             value={searchPeriod}
-            handleChange={handleSearch}
+            handleChange={handleChange}
             list={periodOptions}
           />
           {/* search by type */}
@@ -211,7 +226,7 @@ const SearchContainer = () => {
             labelText='form type'
             name='searchType'
             value={searchType}
-            handleChange={handleSearch}
+            handleChange={handleChange}
             list={typeOptions}
           />
           {/* search by before/after */}
@@ -219,13 +234,20 @@ const SearchContainer = () => {
             labelText='beforeAfter'
             name='searchBeforeAfter'
             value={searchBeforeAfter}
-            handleChange={handleSearch}
+            handleChange={handleChange}
             list={beforeAfterOptions}
           />
           <button
             className='btn btn-block btn-danger'
             disabled={isLoading}
             onClick={handleSubmit}
+          >
+            search forms
+          </button>
+          <button
+            className='btn btn-block btn-danger'
+            disabled={isLoading}
+            onClick={handleClearFilters}
           >
             clear filters
           </button>

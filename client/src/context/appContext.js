@@ -137,6 +137,7 @@ const AppProvider = ({ children }) => {
   };
 
   const setupUser = async ({ currentUser, endPoint, alertText }) => {
+    console.log("SUPPPPP")
     localStorage.clear()
     dispatch({ type: SETUP_USER_BEGIN });
     try {
@@ -153,9 +154,88 @@ const AppProvider = ({ children }) => {
         localStorage.setItem('userLocations', JSON.stringify(userLocations))
       }
 
+      let newSearchState = state.searchState;
+      let newSearchCounty = state.searchCounty;
+      let newSearchDistrict = state.searchDistrict;
+      let newSearchCity = state.searchCity;
+      let newSearchSchool = state.searchSchool;
+
+      let newStateOptions = state.stateOptions;
+      let newCountyOptions = state.countyOptions;
+      let newDistrictOptions = state.districtOptions;
+      let newCityOptions = state.cityOptions;
+      let newSchoolOptions = state.schoolOptions;
+
+      switch (user.role) {
+        case "Site Admin":
+          newSearchState = userLocations[0].state;
+          newSearchCounty = userLocations[0].county;
+          newSearchDistrict = userLocations[0].district;
+          newSearchCity = userLocations[0].city;
+          newSearchSchool = userLocations[0].school;
+
+          newStateOptions = [userLocations[0].state];
+          newCountyOptions = [userLocations[0].county];
+          newDistrictOptions = [userLocations[0].district];
+          newCityOptions = [userLocations[0].city];
+          newSchoolOptions = [userLocations[0].school];
+          break;
+        case "District Admin":
+          newSearchState = userLocations[0].state;
+          newSearchCounty = userLocations[0].county;
+          newSearchDistrict = userLocations[0].district;
+
+          newStateOptions = [userLocations[0].state];
+          newCountyOptions = [userLocations[0].county];
+          newDistrictOptions = [userLocations[0].district];
+          break;
+        case "County Admin":
+          newSearchState = userLocations[0].state;
+          newSearchCounty = userLocations[0].county;
+
+          newStateOptions = [userLocations[0].state];
+          newCountyOptions = [userLocations[0].county];
+          break;
+        case "State Admin":
+          newSearchState = userLocations[0].state;
+
+          newStateOptions = [userLocations[0].state];
+          break;
+        case "Teacher":
+          console.log("TEACHER")
+          console.log({userLocations})
+          if (userLocations.length === 1) {
+            newSearchState = userLocations[0].state;
+            newSearchCounty = userLocations[0].county;
+            newSearchDistrict = userLocations[0].district;
+            newSearchCity = userLocations[0].city;
+            newSearchSchool = userLocations[0].school;
+
+            newStateOptions = [userLocations[0].state];
+            newCountyOptions = [userLocations[0].county];
+            newDistrictOptions = [userLocations[0].district];
+            newCityOptions = [userLocations[0].city];
+            newSchoolOptions = [userLocations[0].school];
+
+            console.log({newSearchState, newSearchCounty, newSearchDistrict, newSearchCity, newSearchSchool})
+            console.log({newStateOptions, newCountyOptions, newDistrictOptions, newCityOptions, newSchoolOptions})
+          } else {
+            newStateOptions = userLocations.map((location) => location.state);
+            newCountyOptions = userLocations.map((location) => location.county);
+            newDistrictOptions = userLocations.map((location) => location.district);
+            newCityOptions = userLocations.map((location) => location.city);
+            newSchoolOptions = userLocations.map((location) => location.school);
+          }
+          break;
+      }
+
       dispatch({
         type: SETUP_USER_SUCCESS,
-        payload: { user, alertText, hasLocation, userLocations: userLocations ? userLocations : [] },
+        payload: { user, alertText, hasLocation,
+          userLocations: userLocations ? userLocations : [],
+          newSearchState, newSearchCounty, newSearchDistrict, newSearchCity, newSearchSchool,
+          newStateOptions, newCountyOptions, newDistrictOptions, newCityOptions, newSchoolOptions
+        },
       });
     } catch (error) {
       dispatch({
@@ -319,15 +399,34 @@ const AppProvider = ({ children }) => {
 
       const { schools } = data;
 
+      const filteredSchools = schools.filter(function(obj) {
+        switch (user.role) {
+          case "Site Admin":
+            return obj.school === user.school;
+          case "District Admin":
+            return obj.district === user.district;
+          case "County Admin":
+            return obj.county === user.county;
+          case "State Admin":
+            return obj.state === user.state;
+          case "Standford Staff":
+            return true;
+          case "Teacher":
+            return obj.teacher === user._id;
+          default:
+            return false;
+        }
+      });
+
       let responseGroups = [];
 
       let teacherNames = [];
 
-      for (const schoolIndex in schools) {
+      for (const schoolIndex in filteredSchools) {
         const { data: data2 } = await authFetch.get('/studentResponses', {
           params: {
-            school: schools[schoolIndex].school,
-            teacherId: schools[schoolIndex].teacher,
+            school: filteredSchools[schoolIndex].school,
+            teacherId: filteredSchools[schoolIndex].teacher,
             grade: searchGrade,
             period: searchPeriod,
             formType: searchType,
@@ -337,11 +436,11 @@ const AppProvider = ({ children }) => {
         const { teacherName, studentResponses } = data2;
 
         let teacherMatch = teacherNames.find(function(obj) {
-            return obj[1] === schools[schoolIndex].teacher;
+            return obj[1] === filteredSchools[schoolIndex].teacher;
           });
 
         if (!teacherMatch) {
-          teacherNames.push([teacherName, schools[schoolIndex].teacher]);
+          teacherNames.push([teacherName, filteredSchools[schoolIndex].teacher]);
         }
 
 
@@ -371,7 +470,7 @@ const AppProvider = ({ children }) => {
 
         for (const responseTypeIndex in uniqueResponseTypes) {
           responseGroups.push({
-            school: schools[schoolIndex],
+            school: filteredSchools[schoolIndex],
             teacherName,
             uniqueResponseType: uniqueResponseTypes[responseTypeIndex],
             numberOfResponses: studentResponses.filter((response) => {
@@ -392,7 +491,7 @@ const AppProvider = ({ children }) => {
         //
         //   console.log({studentResponsesByPeriod})
         //   responseGroups.push({
-        //     school: schools[schoolIndex],
+        //     school: filteredSchools[schoolIndex],
         //     teacherName,
         //     period: periods[periodIndex],
         //     studentResponsesByPeriod,

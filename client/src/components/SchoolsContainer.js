@@ -6,7 +6,7 @@ import Alert from './Alert';
 import Wrapper from '../assets/wrappers/JobsContainer';
 import PageBtnContainer from './PageBtnContainer';
 
-const SchoolsContainer = () => {
+const SchoolsContainer = ({shouldReload, stopReload}) => {
   const {
     getResponseGroups,
     responseGroups,
@@ -23,6 +23,7 @@ const SchoolsContainer = () => {
     searchBeforeAfter,
     searchType,
     searchTeacher,
+    changePage,
     numOfPages,
     showAlert,
   } = useAppContext();
@@ -36,10 +37,20 @@ const SchoolsContainer = () => {
     return () => {
       clearTimeout(timeout);
     }
-    // eslint-disable-next-line
-  }, [page, searchState, searchCounty, searchDistrict,
-    searchCity, searchSchool, searchGrade, searchPeriod,
-    searchBeforeAfter, searchType, searchTeacher]);
+  }, [page]);
+
+  useEffect(() => {
+    if (shouldReload) {
+      const timeout = setTimeout(() => {
+        stopReload();
+        changePage(1);
+        getResponseGroups();
+      }, 500);
+      return () => {
+        clearTimeout(timeout);
+      }
+    }
+  }, [shouldReload]);
 
   if (isLoading) {
     return <Loading center />;

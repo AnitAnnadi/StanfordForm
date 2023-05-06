@@ -67,6 +67,7 @@ const reducer = (state, action) => {
   if (action.type === SETUP_USER_BEGIN) {
     return { ...state, isLoading: true };
   }
+
   if (action.type === SETUP_USER_SUCCESS) {
     return {
       ...state,
@@ -76,6 +77,16 @@ const reducer = (state, action) => {
       userLocation: action.payload.location,
       userLocations: action.payload.userLocations,
       jobLocation: action.payload.location,
+      searchState: action.payload.newSearchState ? action.payload.newSearchState : state.searchState,
+      searchCounty: action.payload.newSearchCounty ? action.payload.newSearchCounty : state.searchCounty,
+      searchDistrict: action.payload.newSearchDistrict ? action.payload.newSearchDistrict : state.searchDistrict,
+      searchCity: action.payload.newSearchCity ? action.payload.newSearchCity : state.searchCity,
+      searchSchool: action.payload.newSearchSchool ? action.payload.newSearchSchool : state.searchSchool,
+      stateOptions: action.payload.newStateOptions ? action.payload.newStateOptions : state.newStateOptions,
+      countyOptions: action.payload.newCountyOptions ? action.payload.newCountyOptions : state.newCountyOptions,
+      districtOptions: action.payload.newDistrictOptions ? action.payload.newDistrictOptions : state.newDistrictOptions,
+      cityOptions: action.payload.newCityOptions ? action.payload.newCityOptions : state.newCityOptions,
+      schoolOptions: action.payload.newSchoolOptions ? action.payload.newSchoolOptions : state.newSchoolOptions,
       showAlert: true,
       alertType: 'success',
       alertText: action.payload.alertText,
@@ -142,8 +153,6 @@ const reducer = (state, action) => {
   return {
     ...state,
     ...action.payload,
-    page: 1,
-    isLoading: true,
   };
   }
   if (action.type === CLEAR_VALUES) {
