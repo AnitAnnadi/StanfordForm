@@ -25,7 +25,7 @@ const FormMetrics = () => {
   const [teacher, setTeacher] = useState(null);
   const [questionsToAnswers, setQuestionsToAnswers] = useState({});
   const [responseType, setResponseType] = useState({});
-  const [numbeerOfResponses, setNumberOfResponses] = useState(0);
+  const [numberOfResponses, setNumberOfResponses] = useState(0);
 
   const { formCode } = useParams();
   const navigate = useNavigate();
@@ -90,7 +90,7 @@ const FormMetrics = () => {
               <h3>Overall Form Metrics</h3>
             </div>
           </header>
-          <ResponseGroupInfo icon={<AiOutlineNumber />} text={`${numbeerOfResponses} response(s)`} />
+          <ResponseGroupInfo icon={<AiOutlineNumber />} text={`${numberOfResponses} response(s)`} />
         </> : <>
         <header>
           <div className="info">
@@ -106,7 +106,7 @@ const FormMetrics = () => {
               icon={<FaChalkboardTeacher />}
               text={teacher.name}
             />
-            <ResponseGroupInfo icon={<AiOutlineNumber />} text={`${numbeerOfResponses} response(s)`} />
+            <ResponseGroupInfo icon={<AiOutlineNumber />} text={`${numberOfResponses} response(s)`} />
             <ResponseGroupInfo
               icon={<TbListNumbers />}
               text={

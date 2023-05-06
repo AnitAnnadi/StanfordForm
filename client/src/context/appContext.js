@@ -374,6 +374,11 @@ const AppProvider = ({ children }) => {
             school: schools[schoolIndex],
             teacherName,
             uniqueResponseType: uniqueResponseTypes[responseTypeIndex],
+            numberOfResponses: studentResponses.filter((response) => {
+              return Object.entries(uniqueResponseTypes[responseTypeIndex]).every(([key, value]) => {
+                return response[key] === value;
+              });
+            }).length,
           });
         }
 

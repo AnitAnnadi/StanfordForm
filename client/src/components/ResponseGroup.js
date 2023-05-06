@@ -12,6 +12,7 @@ const ResponseGroup = ({
   school,
   teacherName,
   uniqueResponseType,
+  numberOfResponses,
 }) => {
   const { setEditJob, deleteJob } = useAppContext()
 
@@ -38,7 +39,7 @@ const ResponseGroup = ({
       <div className='content'>
         <div className='content-center'>
           <ResponseGroupInfo icon={<FaChalkboardTeacher />} text={teacherName} />
-          <ResponseGroupInfo icon={<AiOutlineNumber />} text={uniqueResponseType.formCode} />
+          <ResponseGroupInfo icon={<AiOutlineNumber />} text={`${numberOfResponses} response(s)`} />
           <ResponseGroupInfo icon={<TbListNumbers />} text=
           {uniqueResponseType?.period ? 'Period ' + uniqueResponseType.period:
             'No specified period'}
