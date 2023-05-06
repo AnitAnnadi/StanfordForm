@@ -165,9 +165,6 @@ const FormMetrics = () => {
                       responsive: true,
                       maintainAspectRatio: true,
                       plugins: {
-                        legend: {
-                          position: "right",
-                        },
                       },
                     }}
                   />
