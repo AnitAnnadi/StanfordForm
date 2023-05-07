@@ -253,8 +253,7 @@ const SearchContainer = ({startReload}) => {
           </button>
           <Link
             className='btn btn-block btn-danger'
-            to={`/api/v1/form/`}
-            aria-disabled={isLoading}
+            to={isLoading ? '#': `/api/v1/form/`}
           >
             Overall Breakdown
           </Link>
