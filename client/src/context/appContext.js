@@ -166,6 +166,154 @@ const AppProvider = ({ children }) => {
       let newCityOptions = state.cityOptions;
       let newSchoolOptions = state.schoolOptions;
 
+      if (endPoint === 'login') {
+        switch (user.role) {
+          case "Site Admin":
+            newSearchState = userLocations[0].state;
+            newSearchCounty = userLocations[0].county;
+            newSearchDistrict = userLocations[0].district;
+            newSearchCity = userLocations[0].city;
+            newSearchSchool = userLocations[0].school;
+
+            newStateOptions = [userLocations[0].state];
+            newCountyOptions = [userLocations[0].county];
+            newDistrictOptions = [userLocations[0].district];
+            newCityOptions = [userLocations[0].city];
+            newSchoolOptions = [userLocations[0].school];
+            break;
+          case "District Admin":
+            newSearchState = userLocations[0].state;
+            newSearchCounty = userLocations[0].county;
+            newSearchDistrict = userLocations[0].district;
+
+            newStateOptions = [userLocations[0].state];
+            newCountyOptions = [userLocations[0].county];
+            newDistrictOptions = [userLocations[0].district];
+            break;
+          case "County Admin":
+            newSearchState = userLocations[0].state;
+            newSearchCounty = userLocations[0].county;
+
+            newStateOptions = [userLocations[0].state];
+            newCountyOptions = [userLocations[0].county];
+            break;
+          case "State Admin":
+            newSearchState = userLocations[0].state;
+
+            newStateOptions = [userLocations[0].state];
+            break;
+          case "Teacher":
+            console.log("TEACHER")
+            console.log({userLocations})
+            if (userLocations.length === 1) {
+              newSearchState = userLocations[0].state;
+              newSearchCounty = userLocations[0].county;
+              newSearchDistrict = userLocations[0].district;
+              newSearchCity = userLocations[0].city;
+              newSearchSchool = userLocations[0].school;
+
+              newStateOptions = [userLocations[0].state];
+              newCountyOptions = [userLocations[0].county];
+              newDistrictOptions = [userLocations[0].district];
+              newCityOptions = [userLocations[0].city];
+              newSchoolOptions = [userLocations[0].school];
+
+              console.log({newSearchState, newSearchCounty, newSearchDistrict, newSearchCity, newSearchSchool})
+              console.log({newStateOptions, newCountyOptions, newDistrictOptions, newCityOptions, newSchoolOptions})
+            } else {
+              newStateOptions = userLocations.map((location) => location.state);
+              newCountyOptions = userLocations.map((location) => location.county);
+              newDistrictOptions = userLocations.map((location) => location.district);
+              newCityOptions = userLocations.map((location) => location.city);
+              newSchoolOptions = userLocations.map((location) => location.school);
+            }
+            break;
+        }
+
+        // probably better off persisting the whole state using local storage in future
+        localStorage.setItem('searchState', JSON.stringify(newSearchState));
+        localStorage.setItem('searchCounty', JSON.stringify(newSearchCounty));
+        localStorage.setItem('searchDistrict', JSON.stringify(newSearchDistrict));
+        localStorage.setItem('searchCity', JSON.stringify(newSearchCity));
+        localStorage.setItem('searchSchool', JSON.stringify(newSearchSchool));
+
+        localStorage.setItem('stateOptions', JSON.stringify(newStateOptions));
+        localStorage.setItem('countyOptions', JSON.stringify(newCountyOptions));
+        localStorage.setItem('districtOptions', JSON.stringify(newDistrictOptions));
+        localStorage.setItem('cityOptions', JSON.stringify(newCityOptions));
+        localStorage.setItem('schoolOptions', JSON.stringify(newSchoolOptions));
+      }
+
+      dispatch({
+        type: SETUP_USER_SUCCESS,
+        payload: { user, alertText, hasLocation,
+          userLocations: userLocations ? userLocations : [],
+          newSearchState, newSearchCounty, newSearchDistrict, newSearchCity, newSearchSchool,
+          newStateOptions, newCountyOptions, newDistrictOptions, newCityOptions, newSchoolOptions
+        },
+      });
+    } catch (error) {
+      dispatch({
+        type: SETUP_USER_ERROR,
+        payload: { msg: error.response.data.msg },
+      });
+    }
+    clearAlert();
+  };
+  const toggleSidebar = () => {
+    dispatch({ type: TOGGLE_SIDEBAR });
+  };
+
+  const logoutUser = async () => {
+    await authFetch.get('/auth/logout');
+    localStorage.clear();
+    dispatch({ type: LOGOUT_USER });
+  };
+  const updateUser = async (currentUser) => {
+    dispatch({ type: UPDATE_USER_BEGIN });
+    try {
+      const { data } = await authFetch.patch('/auth/updateUser', currentUser);
+
+      const { user } = data;
+
+      dispatch({
+        type: UPDATE_USER_SUCCESS,
+        payload: { user },
+      });
+    } catch (error) {
+      if (error.response.status !== 401) {
+        dispatch({
+          type: UPDATE_USER_ERROR,
+          payload: { msg: error.response.data.msg },
+        });
+      }
+    }
+    clearAlert();
+  };
+
+  const addLocation = async (locationData) => {
+    try {
+      const { data } = await authFetch.post('/schools/user', locationData);
+      const { data: data2 } = await authFetch.get('/schools/user', locationData);
+
+      const { user } = data;
+      const { userLocations } = data2;
+
+      localStorage.setItem('userLocations', JSON.stringify(userLocations))
+
+      let newSearchState = state.searchState;
+      let newSearchCounty = state.searchCounty;
+      let newSearchDistrict = state.searchDistrict;
+      let newSearchCity = state.searchCity;
+      let newSearchSchool = state.searchSchool;
+
+      let newStateOptions = state.stateOptions;
+      let newCountyOptions = state.countyOptions;
+      let newDistrictOptions = state.districtOptions;
+      let newCityOptions = state.cityOptions;
+      let newSchoolOptions = state.schoolOptions;
+
+      console.log({user})
       switch (user.role) {
         case "Site Admin":
           newSearchState = userLocations[0].state;
@@ -244,66 +392,14 @@ const AppProvider = ({ children }) => {
 
 
       dispatch({
-        type: SETUP_USER_SUCCESS,
-        payload: { user, alertText, hasLocation,
-          userLocations: userLocations ? userLocations : [],
-          newSearchState, newSearchCounty, newSearchDistrict, newSearchCity, newSearchSchool,
-          newStateOptions, newCountyOptions, newDistrictOptions, newCityOptions, newSchoolOptions
-        },
-      });
-    } catch (error) {
-      dispatch({
-        type: SETUP_USER_ERROR,
-        payload: { msg: error.response.data.msg },
-      });
-    }
-    clearAlert();
-  };
-  const toggleSidebar = () => {
-    dispatch({ type: TOGGLE_SIDEBAR });
-  };
-
-  const logoutUser = async () => {
-    await authFetch.get('/auth/logout');
-    localStorage.clear();
-    dispatch({ type: LOGOUT_USER });
-  };
-  const updateUser = async (currentUser) => {
-    dispatch({ type: UPDATE_USER_BEGIN });
-    try {
-      const { data } = await authFetch.patch('/auth/updateUser', currentUser);
-
-      const { user } = data;
-
-      dispatch({
-        type: UPDATE_USER_SUCCESS,
-        payload: { user },
-      });
-    } catch (error) {
-      if (error.response.status !== 401) {
-        dispatch({
-          type: UPDATE_USER_ERROR,
-          payload: { msg: error.response.data.msg },
-        });
-      }
-    }
-    clearAlert();
-  };
-
-  const addLocation = async (locationData) => {
-    try {
-      const { user } = await authFetch.post('/schools/user', locationData);
-      const { data } = await authFetch.get('/schools/user', locationData);
-
-      const { userLocations } = data;
-
-      localStorage.setItem('userLocations', JSON.stringify(userLocations))
-
-      dispatch({
         type: ADD_LOCATION_SUCCESS,
-        payload: { userLocations },
+        payload: { userLocations,
+        newSearchState, newSearchCounty, newSearchDistrict, newSearchCity, newSearchSchool,
+          newStateOptions, newCountyOptions, newDistrictOptions, newCityOptions, newSchoolOptions
+        }
       });
     } catch (error) {
+      console.log(error)
       if (error.response.status !== 401) {
         dispatch({
           type: UPDATE_USER_ERROR,
@@ -351,6 +447,9 @@ const AppProvider = ({ children }) => {
     dispatch({ type: HANDLE_CHANGE, payload: { name, value } });
   };
   const handleChanges = (newStates) => {
+    for (const [name, value] of Object.entries(newStates)) {
+      localStorage.setItem(name, JSON.stringify(value));
+    }
     dispatch({ type: HANDLE_MULTIPLE_CHANGES, payload: newStates });
   };
   const clearValues = () => {

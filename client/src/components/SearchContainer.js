@@ -60,10 +60,10 @@ const SearchContainer = ({startReload}) => {
           // searchDistrict: 'all',
           // searchSchool: 'all',
           // searchTeacher: 'all',
-          // countyOptions: ['all', ...narrowAllowedOptions("county", narrowCounties({state: e.target.value}))],
-          // cityOptions: ['all', ...narrowAllowedOptions("city", narrowCities({state: e.target.value}))],
-          // schoolOptions: ['all', ...narrowAllowedOptions("school", narrowSchools({state: e.target.value}))],
-          // districtOptions: ['all', ...narrowAllowedOptions("district", narrowDistricts({state: e.target.value}))],
+          countyOptions: ['all', ...narrowAllowedOptions("county", narrowCounties({state: e.target.value}))],
+          cityOptions: ['all', ...narrowAllowedOptions("city", narrowCities({state: e.target.value}))],
+          schoolOptions: ['all', ...narrowAllowedOptions("school", narrowSchools({state: e.target.value}))],
+          districtOptions: ['all', ...narrowAllowedOptions("district", narrowDistricts({state: e.target.value}))],
         });
         break;
       case 'searchCounty':
@@ -73,9 +73,9 @@ const SearchContainer = ({startReload}) => {
           // searchDistrict: 'all',
           // searchSchool: 'all',
           // searchTeacher: 'all',
-          // cityOptions: ['all', ...narrowAllowedOptions("city", narrowCities({county: e.target.value}))],
-          // schoolOptions: ['all', ...narrowAllowedOptions("school", narrowSchools({county: e.target.value}))],
-          // districtOptions: ['all', ...narrowAllowedOptions("district", narrowDistricts({county: e.target.value}))],
+          cityOptions: ['all', ...narrowAllowedOptions("city", narrowCities({county: e.target.value}))],
+          schoolOptions: ['all', ...narrowAllowedOptions("school", narrowSchools({county: e.target.value}))],
+          districtOptions: ['all', ...narrowAllowedOptions("district", narrowDistricts({county: e.target.value}))],
         });
         break;
       case 'searchCity':
@@ -84,8 +84,8 @@ const SearchContainer = ({startReload}) => {
           // searchDistrict: 'all',
           // searchSchool: 'all',
           // searchTeacher: 'all',
-          // districtOptions: ['all', ...narrowAllowedOptions("district", narrowDistricts({city: e.target.value}))],
-          // schoolOptions: ['all', ...narrowAllowedOptions("school", narrowSchools({city: e.target.value}))],
+          districtOptions: ['all', ...narrowAllowedOptions("district", narrowDistricts({city: e.target.value}))],
+          schoolOptions: ['all', ...narrowAllowedOptions("school", narrowSchools({city: e.target.value}))],
         });
         break;
       case 'searchDistrict':
@@ -93,7 +93,7 @@ const SearchContainer = ({startReload}) => {
           [e.target.name]: e.target.value,
           // searchSchool: 'all',
           // searchTeacher: 'all',
-          // schoolOptions: ['all', ...narrowAllowedOptions("school", narrowSchools({district: e.target.value}))],
+          schoolOptions: ['all', ...narrowAllowedOptions("school", narrowSchools({district: e.target.value}))],
         });
         break;
       case 'searchSchool':
