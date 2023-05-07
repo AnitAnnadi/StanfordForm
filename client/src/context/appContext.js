@@ -62,7 +62,7 @@ const initialState = {
   page: 1,
   stats: {},
   monthlyApplications: [],
-  stateOptions: ["all", "Alabama", "Alaska", "Arizona", "Arkansas", "California",
+  stateOptions: localStorage.getItem("stateOptions") ? JSON.parse(localStorage.getItem("stateOptions")): ["all", "Alabama", "Alaska", "Arizona", "Arkansas", "California",
       "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida",
       "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas",
       "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan",
@@ -71,15 +71,15 @@ const initialState = {
       "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island",
       "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont",
       "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"],
-  searchState: 'all',
-  countyOptions: ['all'],
-  searchCounty: 'all',
-  districtOptions: ['all'],
-  searchDistrict: 'all',
-  cityOptions: ['all'],
-  searchCity: 'all',
-  schoolOptions: ['all'],
-  searchSchool: 'all',
+  searchState: localStorage.getItem("searchState") ? JSON.parse(localStorage.getItem("searchState")): 'all',
+  countyOptions: localStorage.getItem("countyOptions") ? JSON.parse(localStorage.getItem("countyOptions")): ['all'],
+  searchCounty: localStorage.getItem("searchCounty") ? JSON.parse(localStorage.getItem("searchCounty")): 'all',
+  districtOptions: localStorage.getItem("districtOptions") ? JSON.parse(localStorage.getItem("districtOptions")): ['all'],
+  searchDistrict: localStorage.getItem("searchDistrict") ? JSON.parse(localStorage.getItem("searchDistrict")): 'all',
+  cityOptions: localStorage.getItem("cityOptions") ? JSON.parse(localStorage.getItem("cityOptions")): ['all'],
+  searchCity: localStorage.getItem("searchCity") ? JSON.parse(localStorage.getItem("searchCity")): 'all',
+  schoolOptions: localStorage.getItem("schoolOptions") ? JSON.parse(localStorage.getItem("schoolOptions")): ['all'],
+  searchSchool: localStorage.getItem("searchSchool") ? JSON.parse(localStorage.getItem("searchSchool")): 'all',
   gradeOptions: ['all', 'K', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
   searchGrade: 'all',
   periodOptions: ['all', '1', '2', '3', '4', '5', '6', '7', '8'],
@@ -228,6 +228,20 @@ const AppProvider = ({ children }) => {
           }
           break;
       }
+
+      // probably better off persisting the whole state using local storage in future
+      localStorage.setItem('searchState', JSON.stringify(newSearchState));
+      localStorage.setItem('searchCounty', JSON.stringify(newSearchCounty));
+      localStorage.setItem('searchDistrict', JSON.stringify(newSearchDistrict));
+      localStorage.setItem('searchCity', JSON.stringify(newSearchCity));
+      localStorage.setItem('searchSchool', JSON.stringify(newSearchSchool));
+
+      localStorage.setItem('stateOptions', JSON.stringify(newStateOptions));
+      localStorage.setItem('countyOptions', JSON.stringify(newCountyOptions));
+      localStorage.setItem('districtOptions', JSON.stringify(newDistrictOptions));
+      localStorage.setItem('cityOptions', JSON.stringify(newCityOptions));
+      localStorage.setItem('schoolOptions', JSON.stringify(newSchoolOptions));
+
 
       dispatch({
         type: SETUP_USER_SUCCESS,
