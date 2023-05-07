@@ -5,7 +5,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Loading } from "../components";
 import Wrapper from "../assets/wrappers/DashboardFormPage";
 import ResponseGroupInfo from "../components/ResponseGroupInfo";
-import { FaChalkboardTeacher, FaRegCalendarAlt } from "react-icons/fa";
+import { FaChalkboardTeacher, FaRegCalendarAlt, FaLocationArrow} from "react-icons/fa";
 import { AiOutlineForm, AiOutlineNumber } from "react-icons/ai";
 import { TbListNumbers, TbNumbers } from "react-icons/tb";
 import {useAppContext} from "../context/appContext";
@@ -15,6 +15,16 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 const FormMetrics = () => {
   const {
     responseGroups,
+    searchState,
+    searchCounty,
+    searchDistrict,
+    searchCity,
+    searchSchool,
+    searchGrade,
+    searchPeriod,
+    searchType,
+    searchTeacher,
+    searchBeforeAfter,
   } = useAppContext();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -90,7 +100,51 @@ const FormMetrics = () => {
               <h3>Overall Form Metrics</h3>
             </div>
           </header>
-          <ResponseGroupInfo icon={<AiOutlineNumber />} text={`${numberOfResponses} response(s)`} />
+          <div className="content">
+          <div className="content-center">
+            <ResponseGroupInfo icon={<AiOutlineNumber />} text={`${numberOfResponses} response(s)`} />
+            <ResponseGroupInfo
+              icon={<FaLocationArrow />}
+              text={searchState === "all" ? "All states" : searchState}
+            />
+            <ResponseGroupInfo
+              icon={<FaLocationArrow />}
+              text={searchCounty === "all" ? "All counties" : searchCounty}
+            />
+            <ResponseGroupInfo
+              icon={<FaLocationArrow />}
+              text={searchCity === "all" ? "All cities" : searchCity}
+            />
+            <ResponseGroupInfo
+              icon={<FaLocationArrow />}
+              text={searchDistrict === "all" ? "All districts" : searchDistrict}
+            />
+            <ResponseGroupInfo
+              icon={<FaLocationArrow />}
+              text={searchSchool === "all" ? "All schools" : searchSchool}
+            />
+            <ResponseGroupInfo
+              icon={<FaChalkboardTeacher />}
+              text={searchTeacher === "all" ? "All teachers" : searchTeacher}
+            />
+            <ResponseGroupInfo
+              icon={<TbListNumbers />}
+              text={ searchPeriod === "all" ? "All periods" : "Period " + searchPeriod}
+            />
+            <ResponseGroupInfo
+              icon={<TbNumbers />}
+              text={searchGrade === "all" ? "All grades" : "Grade " + searchGrade}
+            />
+            <ResponseGroupInfo
+              icon={<AiOutlineForm />}
+              text={searchType === "all" ? "All types" : searchType}
+            />
+            <ResponseGroupInfo
+              icon={<FaRegCalendarAlt />}
+              text={searchBeforeAfter === "all" ? "Before and after" : searchBeforeAfter}
+            />
+          </div>
+        </div>
         </> : <>
         <header>
           <div className="info">
