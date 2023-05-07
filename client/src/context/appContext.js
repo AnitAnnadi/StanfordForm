@@ -705,9 +705,9 @@ const AppProvider = ({ children }) => {
     }
     clearAlert();
   };
-  const clearFilters = () => {
-    dispatch({ type: CLEAR_FILTERS });
-  };
+  // const clearFilters = () => {
+  //   dispatch({ type: CLEAR_FILTERS });
+  // };
   const changePage = (page) => {
     dispatch({ type: CHANGE_PAGE, payload: { page } });
   };
@@ -750,7 +750,6 @@ const AppProvider = ({ children }) => {
         // deleteJob,
         successAlert,
         showStats,
-        clearFilters,
         changePage,
         addLocation,
         enterCode,

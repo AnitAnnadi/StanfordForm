@@ -29,7 +29,6 @@ const SearchContainer = ({startReload}) => {
     typeOptions,
     beforeAfterOptions,
     handleChanges,
-    clearFilters,
     getResponseGroups,
     userLocations,
   } = useAppContext();
@@ -134,17 +133,6 @@ const SearchContainer = ({startReload}) => {
     return () => clearTimeout(timeout);
   };
 
-  const handleClearFilters = (e) => {
-    e.preventDefault();
-
-    const timeout = setTimeout(() => {
-      clearFilters();
-      startReload();
-    }, 1000);
-
-    return () => clearTimeout(timeout);
-  };
-
   return (
     <Wrapper>
       <form className='form'>
@@ -243,13 +231,6 @@ const SearchContainer = ({startReload}) => {
             onClick={handleSubmit}
           >
             search forms
-          </button>
-          <button
-            className='btn btn-block btn-danger'
-            disabled={isLoading}
-            onClick={handleClearFilters}
-          >
-            clear filters
           </button>
           <Link
             className='btn btn-block btn-danger'
