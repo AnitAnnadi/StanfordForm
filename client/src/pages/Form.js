@@ -183,7 +183,6 @@ const Form = () => {
   return (
     <Wrapper style={{ margin: "2rem auto", width: "90%", maxWidth: "700px" }}>
       <form className="form" onSubmit={handleSubmit}>
-        {showAlert && <Alert />}
         <h3>{`${info.form}`}</h3>
         {usedForm.map((element, index) => (
           <div key={index}>
@@ -206,6 +205,7 @@ const Form = () => {
             })}
           </div>
         ))}
+        {showAlert && <Alert />}
         <button
           className="btn btn-block"
           type="submit"
