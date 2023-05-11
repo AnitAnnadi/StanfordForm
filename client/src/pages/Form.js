@@ -16,7 +16,7 @@ const Form = () => {
     isLoading,
     enterCode,
     submitForm,
-    successAlert
+    successAlert,
   } = useAppContext();
   let tobacco = [
     {
@@ -170,8 +170,10 @@ const Form = () => {
       info["school"],
       info["period"]
     );
-    successAlert("Form Sucessfully Completed")
-    navigate("/success", {});
+    successAlert("Form Sucessfully Completed. Redirecting...");
+    setTimeout(() => {
+      navigate("/success", {});
+    }, 3000);
   };
 
   const [usedForm, setUsedForm] = useState(
