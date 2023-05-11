@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from "styled-components";
 
 const Wrapper = styled.section`
   .form {
@@ -26,6 +26,28 @@ const Wrapper = styled.section`
     align-self: end;
     margin-top: 1rem;
   }
+
+  .btn-obreak {
+    display: grid;
+    place-content: center;
+    color: var(--white);
+    background: var(--grey-500);
+  }
+
+  .btn-obreak:hover {
+    background-color: var(--grey-900);
+  }
+
+  .btn-apply {
+    background-color: var(--green-light);
+    color: var(--green-dark);
+  }
+
+  .btn-apply:hover {
+    background-color: var(--green-dark);
+    color: var(--white);
+  }
+
   @media (min-width: 768px) {
     .form-center {
       grid-template-columns: 1fr 1fr;
@@ -39,6 +61,6 @@ const Wrapper = styled.section`
       margin-top: 0;
     }
   }
-`
+`;
 
-export default Wrapper
+export default Wrapper;
