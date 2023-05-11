@@ -16,7 +16,7 @@ const EnterCode = () => {
     updateLocation,
     isLoading,
     enterCode,
-    schools
+    schools,
   } = useAppContext();
   useEffect(() => {
     // let teacher_info=(((teacher["teacher"])))
@@ -30,11 +30,12 @@ const EnterCode = () => {
       localStorage.setItem("teacher_school", teacher_school);
       {
         setTimeout(() => {
-          navigate("/joinedForm",{state:
-          {
-            schools
-          }});
-        }, 1000);
+          navigate("/joinedForm", {
+            state: {
+              schools,
+            },
+          });
+        }, 3000);
       }
     }
   }, [teacher]);
@@ -49,7 +50,7 @@ const EnterCode = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     enterCode(code);
-    localStorage.setItem("code",code)
+    localStorage.setItem("code", code);
 
     if (isLoading) {
     }
@@ -80,7 +81,7 @@ const EnterCode = () => {
           </div>
         </form>
       </Wrapper>
-<img width="200" height="100" src={Logo2} className="corner-logo" />
+      <img width="200" height="100" src={Logo2} className="corner-logo" />
     </div>
   );
 };
