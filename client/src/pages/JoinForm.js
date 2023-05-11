@@ -18,7 +18,7 @@ const JoinForm = () => {
     updateLocation,
     isLoading,
     enterCode,
-    successAlert
+    successAlert,
   } = useAppContext();
 
   const navigate = useNavigate();
@@ -50,7 +50,9 @@ const JoinForm = () => {
             </option>
             {schools.map((school, index) => {
               return (
-                <option key={index} value={school["school"]}>{school["school"]}</option>
+                <option key={index} value={school["school"]}>
+                  {school["school"]}
+                </option>
               );
             })}
           </select>
@@ -60,7 +62,7 @@ const JoinForm = () => {
       // console.log(schools[0]["school"])
       setSchool(schools[0]["school"]);
     }
-  }
+  };
   let current = "";
   const MultiplePeriods = () => {
     schools.map((each) => {
@@ -83,13 +85,17 @@ const JoinForm = () => {
               Choose your Period
             </option>
             {periods.map((period, index) => {
-              return <option key={index} value={period}>{period}</option>;
+              return (
+                <option key={index} value={period}>
+                  {period}
+                </option>
+              );
             })}
           </select>
         </div>
       );
     }
-  }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -99,18 +105,19 @@ const JoinForm = () => {
       when !== "default" &&
       school !== "default"
     ) {
-      successAlert("Form Information Submitted")
-      navigate("/form", {
-        state: {
-          form,
-          grade,
-          when,
-          school,
-          period,
-        },
-      });
-    }
-    else{
+      successAlert("Redirecting...");
+      setTimeout(() => {
+        navigate("/form", {
+          state: {
+            form,
+            grade,
+            when,
+            school,
+            period,
+          },
+        });
+      }, 3000);
+    } else {
       displayAlert();
     }
   };
@@ -156,8 +163,12 @@ const JoinForm = () => {
               <option value={"default"} disabled>
                 Choose your Form
               </option>
-              <option value={"You and Me, Together Vape-Free"}>You and Me, Together Vape-Free</option>
-              <option value={"Smart Talk: Cannabis Prevention & Education Awareness"}>
+              <option value={"You and Me, Together Vape-Free"}>
+                You and Me, Together Vape-Free
+              </option>
+              <option
+                value={"Smart Talk: Cannabis Prevention & Education Awareness"}
+              >
                 Smart Talk: Cannabis Prevention & Education Awareness
               </option>
             </select>
@@ -173,9 +184,7 @@ const JoinForm = () => {
                 Choose When
               </option>
               <option value={"before"}>Before Lesson</option>
-              <option value={"after"}>
-                After Lesson
-              </option>
+              <option value={"after"}>After Lesson</option>
             </select>
 
             <button
@@ -190,7 +199,7 @@ const JoinForm = () => {
           </div>
         </form>
       </Wrapper>
-<img width="200" height="100" src={Logo2} className="corner-logo" />
+      <img width="200" height="100" src={Logo2} className="corner-logo" />
     </div>
   );
 };
