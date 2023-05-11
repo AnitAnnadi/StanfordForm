@@ -19,7 +19,7 @@ const Profile = () => {
   const [name, setName] = useState(user?.name);
   const [email, setEmail] = useState(user?.email);
 
-  const showAddLocation = user.role === 'Teacher'
+  const showAddLocation = user.role === "Teacher";
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -49,6 +49,16 @@ const Profile = () => {
             handleChange={(e) => setEmail(e.target.value)}
           />
           {/* <hr /> */}
+          {/* <hr /> */}
+          <label
+            className="form-label"
+            style={{ fontSize: "1rem", marginBottom: 0 }}
+          >
+            role -{" "}
+            <span style={{ letterSpacing: "0", color: "#102a43" }}>
+              {user.role}
+            </span>
+          </label>
           <div
             style={{
               display: "flex",
@@ -56,37 +66,58 @@ const Profile = () => {
               alignItems: "center",
             }}
           >
-            <label
-              className="form-label"
-              style={{ fontSize: "1rem", marginBottom: 0 }}
-            >
-              locations
-            </label>
-            {showAddLocation && <>
-            <NavLink to={`/selectLoc`} className="location-link btn btn-block">
-              <BiPlus />
-            </NavLink>
-            </>}
+            {user.role != "Standford Staff" ? (
+              <label
+                className="form-label"
+                style={{ fontSize: "1rem", marginBottom: 0 }}
+              >
+                locations
+              </label>
+            ) : (
+              <></>
+            )}
+            {showAddLocation && (
+              <>
+                <NavLink
+                  to={`/selectLoc`}
+                  className="location-link btn btn-block"
+                >
+                  <BiPlus />
+                </NavLink>
+              </>
+            )}
           </div>
           {userLocations.map((location, index) => {
             const renderLocationInfo = () => {
-                if (user.role === "Teacher" || user.role === "Site Admin") {
-                    return <>{location.school} - {location.city}, {location.state}</>
-                } else if (user.role === "District Admin") {
-                    return <>{location.district} - {location.county}, {location.state}</>
-                } else if (user.role === "County Admin") {
-                    return <>{location.county} - {location.state}</>
-                } else if (user.role === "State Admin") {
-                    return <>{location.state}</>
-                } else if (user.role === "Standford Staff") {
-                    return <></>
-                }
-            }
+              if (user.role === "Teacher" || user.role === "Site Admin") {
+                return (
+                  <>
+                    {location.school} - {location.city}, {location.state}
+                  </>
+                );
+              } else if (user.role === "District Admin") {
+                return (
+                  <>
+                    {location.district} - {location.county}, {location.state}
+                  </>
+                );
+              } else if (user.role === "County Admin") {
+                return (
+                  <>
+                    {location.county} - {location.state}
+                  </>
+                );
+              } else if (user.role === "State Admin") {
+                return <>{location.state}</>;
+              } else if (user.role === "Standford Staff") {
+                return <></>;
+              }
+            };
 
             return (
-                <p key={index} className="location">
-                    {renderLocationInfo()}
-                </p>
+              <p key={index} className="location">
+                {renderLocationInfo()}
+              </p>
             );
           })}
           <button className="btn btn-block" type="submit" disabled={isLoading}>
