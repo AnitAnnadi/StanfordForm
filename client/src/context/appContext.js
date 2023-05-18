@@ -38,8 +38,8 @@ import {
   GET_TOTAL,
   ADD_LOCATION_SUCCESS, HANDLE_MULTIPLE_CHANGES, SUCCESS_ALERT
 } from './actions';
-const user = localStorage.getItem("user");
-const userLocations = localStorage.getItem("userLocations");
+const LSUser = JSON.parse(localStorage.getItem("user"));
+const LSUserLocations = JSON.parse(localStorage.getItem("userLocations"));
 
 const initialState = {
   userLoading: false,
@@ -47,9 +47,9 @@ const initialState = {
   showAlert: false,
   alertText: '',
   alertType: '',
-  user: user ? JSON.parse(user) : null,
+  user: LSUser ? LSUser : null,
   userLocation: '',
-  userLocations: userLocations ? (userLocations !== 'undefined' ? JSON.parse(userLocations) : []) : [],
+  userLocations: LSUserLocations ? (LSUserLocations !== 'undefined' ? LSUserLocations : []) : [],
   showSidebar: false,
   isEditing: false,
   editJobId: '',
@@ -137,7 +137,6 @@ const AppProvider = ({ children }) => {
   };
 
   const setupUser = async ({ currentUser, endPoint, alertText }) => {
-    console.log("SUPPPPP")
     localStorage.clear()
     dispatch({ type: SETUP_USER_BEGIN });
     try {
@@ -203,8 +202,6 @@ const AppProvider = ({ children }) => {
             newStateOptions = [userLocations[0].state];
             break;
           case "Teacher":
-            console.log("TEACHER")
-            console.log({userLocations})
             if (userLocations.length === 1) {
               newSearchState = userLocations[0].state;
               newSearchCounty = userLocations[0].county;
@@ -217,9 +214,6 @@ const AppProvider = ({ children }) => {
               newDistrictOptions = [userLocations[0].district];
               newCityOptions = [userLocations[0].city];
               newSchoolOptions = [userLocations[0].school];
-
-              console.log({newSearchState, newSearchCounty, newSearchDistrict, newSearchCity, newSearchSchool})
-              console.log({newStateOptions, newCountyOptions, newDistrictOptions, newCityOptions, newSchoolOptions})
             } else {
               newStateOptions = userLocations.map((location) => location.state);
               newCountyOptions = userLocations.map((location) => location.county);
@@ -313,7 +307,6 @@ const AppProvider = ({ children }) => {
       let newCityOptions = state.cityOptions;
       let newSchoolOptions = state.schoolOptions;
 
-      console.log({user})
       switch (user.role) {
         case "Site Admin":
           newSearchState = userLocations[0].state;
@@ -350,8 +343,6 @@ const AppProvider = ({ children }) => {
           newStateOptions = [userLocations[0].state];
           break;
         case "Teacher":
-          console.log("TEACHER")
-          console.log({userLocations})
           if (userLocations.length === 1) {
             newSearchState = userLocations[0].state;
             newSearchCounty = userLocations[0].county;
@@ -364,9 +355,6 @@ const AppProvider = ({ children }) => {
             newDistrictOptions = [userLocations[0].district];
             newCityOptions = [userLocations[0].city];
             newSchoolOptions = [userLocations[0].school];
-
-            console.log({newSearchState, newSearchCounty, newSearchDistrict, newSearchCity, newSearchSchool})
-            console.log({newStateOptions, newCountyOptions, newDistrictOptions, newCityOptions, newSchoolOptions})
           } else {
             newStateOptions = userLocations.map((location) => location.state);
             newCountyOptions = userLocations.map((location) => location.county);
@@ -480,6 +468,7 @@ const AppProvider = ({ children }) => {
   const getResponseGroups = async () => {
     const {
       user,
+      userLocations,
       page,
       searchState,
       searchCounty,
@@ -512,16 +501,16 @@ const AppProvider = ({ children }) => {
 
       const { schools } = data;
 
-      const filteredSchools = schools.filter(function(obj) {
+      const filteredSchools = schools.filter((obj) => {
         switch (user.role) {
           case "Site Admin":
-            return obj.school === user.school;
+            return obj.school === userLocations[0].school;
           case "District Admin":
-            return obj.district === user.district;
+            return obj.district === userLocations[0].district;
           case "County Admin":
-            return obj.county === user.county;
+            return obj.county === userLocations[0].county;
           case "State Admin":
-            return obj.state === user.state;
+            return obj.state === userLocations[0].state;
           case "Standford Staff":
             return true;
           case "Teacher":
@@ -569,8 +558,6 @@ const AppProvider = ({ children }) => {
             school: studentResponses[responseIndex].school,
             period: studentResponses[responseIndex].period,
           }
-
-          console.log({newResponseType})
 
           let match = uniqueResponseTypes.find(function(obj) {
             return JSON.stringify(obj) === JSON.stringify(newResponseType);
