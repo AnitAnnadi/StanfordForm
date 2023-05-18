@@ -162,22 +162,10 @@ const SelectLoc = () => {
       setTimeout(() => {
         navigate("/");
       }, 1000);
+
+      return;
     }
-    adminroles.map((role=>{
-        if (role==user.role){
-          adminbool=true
-        }
-      }))
-      if (adminbool){
-        setTimeout(() => {
-          navigate("/metrics");
-        }, 3000);
-      }
-      else{
-        setTimeout(() => {
-          navigate("/");
-        }, 3000);
-      }
+
     if (
       state === "default" ||
       (showCounty && county === "default") ||
@@ -198,6 +186,12 @@ const SelectLoc = () => {
       school: school !== "default" ? school : null,
     });
 
+    adminroles.map((role=>{
+      if (role === user.role){
+        adminbool=true
+      }
+    }))
+
     if (additionalLoc) {
       setState("default");
       setCounty("default");
@@ -208,9 +202,15 @@ const SelectLoc = () => {
       setAdditionalLoc(false);
       setNumOfLocations(numOfLocations + 1);
     } else {
-      setTimeout(() => {
-        navigate("/");
-      }, 1000);
+      if (adminbool){
+        setTimeout(() => {
+          navigate("/metrics");
+        }, 3000);
+      } else {
+        setTimeout(() => {
+          navigate("/");
+        }, 1000);
+      }
     }
   };
 
