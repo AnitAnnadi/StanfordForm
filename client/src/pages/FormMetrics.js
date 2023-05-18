@@ -133,7 +133,7 @@ const FormMetrics = () => {
                 />
                 <ResponseGroupInfo
                   text={
-                    searchCity === "all" ? "All cities," : (searchCity = ",")
+                    searchCity === "all" ? "All cities," : (searchCity + ",")
                   }
                 />
                 <ResponseGroupInfo

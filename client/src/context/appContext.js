@@ -40,6 +40,15 @@ import {
 } from './actions';
 const LSUser = JSON.parse(localStorage.getItem("user"));
 const LSUserLocations = JSON.parse(localStorage.getItem("userLocations"));
+const stateList = ["all", "Alabama", "Alaska", "Arizona", "Arkansas", "California",
+      "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida",
+      "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas",
+      "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan",
+      "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada",
+      "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina",
+      "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island",
+      "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont",
+      "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"];
 
 const initialState = {
   userLoading: false,
@@ -62,15 +71,7 @@ const initialState = {
   page: 1,
   stats: {},
   monthlyApplications: [],
-  stateOptions: localStorage.getItem("stateOptions") ? JSON.parse(localStorage.getItem("stateOptions")): ["all", "Alabama", "Alaska", "Arizona", "Arkansas", "California",
-      "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida",
-      "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas",
-      "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan",
-      "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada",
-      "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina",
-      "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island",
-      "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont",
-      "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"],
+  stateOptions: localStorage.getItem("stateOptions") ? JSON.parse(localStorage.getItem("stateOptions")): stateList,
   searchState: localStorage.getItem("searchState") ? JSON.parse(localStorage.getItem("searchState")): 'all',
   countyOptions: localStorage.getItem("countyOptions") ? JSON.parse(localStorage.getItem("countyOptions")): ['all'],
   searchCounty: localStorage.getItem("searchCounty") ? JSON.parse(localStorage.getItem("searchCounty")): 'all',
@@ -221,6 +222,15 @@ const AppProvider = ({ children }) => {
               newCityOptions = userLocations.map((location) => location.city);
               newSchoolOptions = userLocations.map((location) => location.school);
             }
+            break;
+          case "Standford Staff":
+            newSearchState = "all";
+            newSearchCounty = "all";
+            newSearchDistrict = "all";
+            newSearchCity = "all";
+            newSearchSchool = "all";
+
+            newStateOptions = stateList;
             break;
         }
 
