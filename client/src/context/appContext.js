@@ -1,5 +1,6 @@
 import React, { useReducer, useContext, useEffect } from 'react';
 import { getSchoolDataValue } from "../utils/schoolDataFetch";
+import { narrowCounties} from "../utils/schoolDataFetch";
 
 import reducer from './reducer';
 import axios from 'axios';
@@ -71,16 +72,16 @@ const initialState = {
   page: 1,
   stats: {},
   monthlyApplications: [],
-  stateOptions: localStorage.getItem("stateOptions") ? JSON.parse(localStorage.getItem("stateOptions")): stateList,
-  searchState: localStorage.getItem("searchState") ? JSON.parse(localStorage.getItem("searchState")): 'all',
-  countyOptions: localStorage.getItem("countyOptions") ? JSON.parse(localStorage.getItem("countyOptions")): ['all'],
-  searchCounty: localStorage.getItem("searchCounty") ? JSON.parse(localStorage.getItem("searchCounty")): 'all',
-  districtOptions: localStorage.getItem("districtOptions") ? JSON.parse(localStorage.getItem("districtOptions")): ['all'],
-  searchDistrict: localStorage.getItem("searchDistrict") ? JSON.parse(localStorage.getItem("searchDistrict")): 'all',
-  cityOptions: localStorage.getItem("cityOptions") ? JSON.parse(localStorage.getItem("cityOptions")): ['all'],
-  searchCity: localStorage.getItem("searchCity") ? JSON.parse(localStorage.getItem("searchCity")): 'all',
-  schoolOptions: localStorage.getItem("schoolOptions") ? JSON.parse(localStorage.getItem("schoolOptions")): ['all'],
-  searchSchool: localStorage.getItem("searchSchool") ? JSON.parse(localStorage.getItem("searchSchool")): 'all',
+  stateOptions: localStorage.getItem("stateOptions") ? (localStorage.getItem("stateOptions") !== "undefined" ? JSON.parse(localStorage.getItem("stateOptions")): stateList) : stateList,
+  searchState: localStorage.getItem("searchState") ? (localStorage.getItem("searchState") !== "undefined" ? JSON.parse(localStorage.getItem("searchState")): 'al'): 'all',
+  countyOptions: localStorage.getItem("countyOptions") ? (localStorage.getItem("countyOptions") !== "undefined" ? JSON.parse(localStorage.getItem("countyOptions")): ['all']): ['all'],
+  searchCounty: localStorage.getItem("searchCounty") ? (localStorage.getItem("searchCounty") !== "undefined" ? JSON.parse(localStorage.getItem("searchCounty")): 'all'): 'all',
+  districtOptions: localStorage.getItem("districtOptions") ? (localStorage.getItem("districtOptions") !== "undefined" ? JSON.parse(localStorage.getItem("districtOptions")): ['all']): ['all'],
+  searchDistrict: localStorage.getItem("searchDistrict") ? (localStorage.getItem("searchDistrict") !== "undefined" ? JSON.parse(localStorage.getItem("searchDistrict")): 'all'): 'all',
+  cityOptions: localStorage.getItem("cityOptions") ? (localStorage.getItem("cityOptions") !== "undefined" ? JSON.parse(localStorage.getItem("cityOptions")): ['all']): ['all'],
+  searchCity: localStorage.getItem("searchCity") ? (localStorage.getItem("searchCity") !== "undefined" ? JSON.parse(localStorage.getItem("searchCity")): 'all'): 'all',
+  schoolOptions: localStorage.getItem("schoolOptions") ? (localStorage.getItem("schoolOptions") !== "undefined" ? JSON.parse(localStorage.getItem("schoolOptions")): ['all']): ['all'],
+  searchSchool: localStorage.getItem("searchSchool") ? (localStorage.getItem("searchSchool") !== "undefined" ? JSON.parse(localStorage.getItem("searchSchool")): 'all'): 'all',
   gradeOptions: ['all', 'K', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
   searchGrade: 'all',
   periodOptions: ['all', '1', '2', '3', '4', '5', '6', '7', '8'],
@@ -95,6 +96,116 @@ const initialState = {
   totalResponses:null,
   hasLocation:null,
 };
+
+const configureFormStates = (userLocations, user, formStates) => {
+  let {
+    newSearchState,
+    newSearchCounty,
+    newSearchDistrict,
+    newSearchCity,
+    newSearchSchool,
+    newStateOptions,
+    newCountyOptions,
+    newDistrictOptions,
+    newCityOptions,
+    newSchoolOptions,
+  } = formStates;
+
+  switch (user.role) {
+    case "Site Admin":
+      newSearchState = userLocations[0].state;
+      newSearchCounty = userLocations[0].county;
+      newSearchDistrict = userLocations[0].district;
+      newSearchCity = userLocations[0].city;
+      newSearchSchool = userLocations[0].school;
+
+      newStateOptions = [userLocations[0].state];
+      newCountyOptions = [userLocations[0].county];
+      newDistrictOptions = [userLocations[0].district];
+      newCityOptions = [userLocations[0].city];
+      newSchoolOptions = [userLocations[0].school];
+      break;
+    case "District Admin":
+      newSearchState = userLocations[0].state;
+      newSearchCounty = userLocations[0].county;
+      newSearchDistrict = userLocations[0].district;
+
+      newStateOptions = [userLocations[0].state];
+      newCountyOptions = [userLocations[0].county];
+      newDistrictOptions = [userLocations[0].district];
+      break;
+    case "County Admin":
+      newSearchState = userLocations[0].state;
+      newSearchCounty = userLocations[0].county;
+
+      newStateOptions = [userLocations[0].state];
+      newCountyOptions = [userLocations[0].county];
+      break;
+    case "State Admin":
+      newSearchState = userLocations[0].state;
+      newSearchCounty = "all";
+
+      const tempUsersState = userLocations[0].state;
+
+      newStateOptions = [tempUsersState];
+      newCountyOptions = ["all", ...narrowCounties({tempUsersState})];
+      break;
+    case "Teacher":
+      if (userLocations.length === 1) {
+        newSearchState = userLocations[0].state;
+        newSearchCounty = userLocations[0].county;
+        newSearchDistrict = userLocations[0].district;
+        newSearchCity = userLocations[0].city;
+        newSearchSchool = userLocations[0].school;
+
+        newStateOptions = [userLocations[0].state];
+        newCountyOptions = [userLocations[0].county];
+        newDistrictOptions = [userLocations[0].district];
+        newCityOptions = [userLocations[0].city];
+        newSchoolOptions = [userLocations[0].school];
+      } else {
+        newSearchState = "all";
+        newSearchCounty = "all";
+        newSearchDistrict = "all";
+        newSearchCity = "all";
+        newSearchSchool = "all";
+
+        newStateOptions = ["all", ...userLocations.map((location) => location.state)];
+        newCountyOptions = ["all"];
+        newDistrictOptions = ["all"];
+        newCityOptions = ["all"];
+        newSchoolOptions = ["all"];
+      }
+      break;
+    case "Standford Staff":
+      newSearchState = "all";
+      newSearchCounty = "all";
+      newSearchDistrict = "all";
+      newSearchCity = "all";
+      newSearchSchool = "all";
+
+      newStateOptions = stateList;
+      newCountyOptions = ["all"];
+      newDistrictOptions = ["all"];
+      newCityOptions = ["all"];
+      newSchoolOptions = ["all"];
+      break;
+  }
+
+  return {
+    searchState: newSearchState,
+    searchCounty: newSearchCounty,
+    searchDistrict: newSearchDistrict,
+    searchCity: newSearchCity,
+    searchSchool: newSearchSchool,
+    stateOptions: newStateOptions,
+    countyOptions: newCountyOptions,
+    districtOptions: newDistrictOptions,
+    cityOptions: newCityOptions,
+    schoolOption: newSchoolOptions,
+  }
+}
+
 
 const AppContext = React.createContext();
 
@@ -154,106 +265,36 @@ const AppProvider = ({ children }) => {
         localStorage.setItem('userLocations', JSON.stringify(userLocations))
       }
 
-      let newSearchState = state.searchState;
-      let newSearchCounty = state.searchCounty;
-      let newSearchDistrict = state.searchDistrict;
-      let newSearchCity = state.searchCity;
-      let newSearchSchool = state.searchSchool;
-
-      let newStateOptions = state.stateOptions;
-      let newCountyOptions = state.countyOptions;
-      let newDistrictOptions = state.districtOptions;
-      let newCityOptions = state.cityOptions;
-      let newSchoolOptions = state.schoolOptions;
+      let newFormState = {};
 
       if (endPoint === 'login') {
-        switch (user.role) {
-          case "Site Admin":
-            newSearchState = userLocations[0].state;
-            newSearchCounty = userLocations[0].county;
-            newSearchDistrict = userLocations[0].district;
-            newSearchCity = userLocations[0].city;
-            newSearchSchool = userLocations[0].school;
+        const stateKeys = [
+          'searchState',
+          'searchCounty',
+          'searchDistrict',
+          'searchCity',
+          'searchSchool',
+          'stateOptions',
+          'countyOptions',
+          'districtOptions',
+          'cityOptions',
+          'schoolOptions'
+        ];
 
-            newStateOptions = [userLocations[0].state];
-            newCountyOptions = [userLocations[0].county];
-            newDistrictOptions = [userLocations[0].district];
-            newCityOptions = [userLocations[0].city];
-            newSchoolOptions = [userLocations[0].school];
-            break;
-          case "District Admin":
-            newSearchState = userLocations[0].state;
-            newSearchCounty = userLocations[0].county;
-            newSearchDistrict = userLocations[0].district;
+        newFormState = configureFormStates(userLocations, user,
+            Object.fromEntries(stateKeys.map(key => ['new' + key[0].toUpperCase() + key.slice(1), state[key]])));
 
-            newStateOptions = [userLocations[0].state];
-            newCountyOptions = [userLocations[0].county];
-            newDistrictOptions = [userLocations[0].district];
-            break;
-          case "County Admin":
-            newSearchState = userLocations[0].state;
-            newSearchCounty = userLocations[0].county;
-
-            newStateOptions = [userLocations[0].state];
-            newCountyOptions = [userLocations[0].county];
-            break;
-          case "State Admin":
-            newSearchState = userLocations[0].state;
-
-            newStateOptions = [userLocations[0].state];
-            break;
-          case "Teacher":
-            if (userLocations.length === 1) {
-              newSearchState = userLocations[0].state;
-              newSearchCounty = userLocations[0].county;
-              newSearchDistrict = userLocations[0].district;
-              newSearchCity = userLocations[0].city;
-              newSearchSchool = userLocations[0].school;
-
-              newStateOptions = [userLocations[0].state];
-              newCountyOptions = [userLocations[0].county];
-              newDistrictOptions = [userLocations[0].district];
-              newCityOptions = [userLocations[0].city];
-              newSchoolOptions = [userLocations[0].school];
-            } else {
-              newStateOptions = userLocations.map((location) => location.state);
-              newCountyOptions = userLocations.map((location) => location.county);
-              newDistrictOptions = userLocations.map((location) => location.district);
-              newCityOptions = userLocations.map((location) => location.city);
-              newSchoolOptions = userLocations.map((location) => location.school);
-            }
-            break;
-          case "Standford Staff":
-            newSearchState = "all";
-            newSearchCounty = "all";
-            newSearchDistrict = "all";
-            newSearchCity = "all";
-            newSearchSchool = "all";
-
-            newStateOptions = stateList;
-            break;
-        }
-
-        // probably better off persisting the whole state using local storage in future
-        localStorage.setItem('searchState', JSON.stringify(newSearchState));
-        localStorage.setItem('searchCounty', JSON.stringify(newSearchCounty));
-        localStorage.setItem('searchDistrict', JSON.stringify(newSearchDistrict));
-        localStorage.setItem('searchCity', JSON.stringify(newSearchCity));
-        localStorage.setItem('searchSchool', JSON.stringify(newSearchSchool));
-
-        localStorage.setItem('stateOptions', JSON.stringify(newStateOptions));
-        localStorage.setItem('countyOptions', JSON.stringify(newCountyOptions));
-        localStorage.setItem('districtOptions', JSON.stringify(newDistrictOptions));
-        localStorage.setItem('cityOptions', JSON.stringify(newCityOptions));
-        localStorage.setItem('schoolOptions', JSON.stringify(newSchoolOptions));
+        stateKeys.forEach(key => {
+            const newKey = 'new' + key[0].toUpperCase() + key.slice(1);
+            localStorage.setItem(key, JSON.stringify(newFormState[newKey]));
+        });
       }
 
       dispatch({
         type: SETUP_USER_SUCCESS,
         payload: { user, alertText, hasLocation,
           userLocations: userLocations ? userLocations : [],
-          newSearchState, newSearchCounty, newSearchDistrict, newSearchCity, newSearchSchool,
-          newStateOptions, newCountyOptions, newDistrictOptions, newCityOptions, newSchoolOptions
+          newFormStates: endPoint === 'login' ? newFormState : null
         },
       });
     } catch (error) {
@@ -305,95 +346,36 @@ const AppProvider = ({ children }) => {
 
       localStorage.setItem('userLocations', JSON.stringify(userLocations))
 
-      let newSearchState = state.searchState;
-      let newSearchCounty = state.searchCounty;
-      let newSearchDistrict = state.searchDistrict;
-      let newSearchCity = state.searchCity;
-      let newSearchSchool = state.searchSchool;
+      const stateKeys = [
+        'searchState',
+        'searchCounty',
+        'searchDistrict',
+        'searchCity',
+        'searchSchool',
+        'stateOptions',
+        'countyOptions',
+        'districtOptions',
+        'cityOptions',
+        'schoolOptions'
+      ];
 
-      let newStateOptions = state.stateOptions;
-      let newCountyOptions = state.countyOptions;
-      let newDistrictOptions = state.districtOptions;
-      let newCityOptions = state.cityOptions;
-      let newSchoolOptions = state.schoolOptions;
+      const newFormState = configureFormStates(userLocations, user,
+          Object.fromEntries(stateKeys.map(key => {
+              return ['new' + key[0].toUpperCase() + key.slice(1), state[key]]
+            })
+          )
+      );
 
-      switch (user.role) {
-        case "Site Admin":
-          newSearchState = userLocations[0].state;
-          newSearchCounty = userLocations[0].county;
-          newSearchDistrict = userLocations[0].district;
-          newSearchCity = userLocations[0].city;
-          newSearchSchool = userLocations[0].school;
-
-          newStateOptions = [userLocations[0].state];
-          newCountyOptions = [userLocations[0].county];
-          newDistrictOptions = [userLocations[0].district];
-          newCityOptions = [userLocations[0].city];
-          newSchoolOptions = [userLocations[0].school];
-          break;
-        case "District Admin":
-          newSearchState = userLocations[0].state;
-          newSearchCounty = userLocations[0].county;
-          newSearchDistrict = userLocations[0].district;
-
-          newStateOptions = [userLocations[0].state];
-          newCountyOptions = [userLocations[0].county];
-          newDistrictOptions = [userLocations[0].district];
-          break;
-        case "County Admin":
-          newSearchState = userLocations[0].state;
-          newSearchCounty = userLocations[0].county;
-
-          newStateOptions = [userLocations[0].state];
-          newCountyOptions = [userLocations[0].county];
-          break;
-        case "State Admin":
-          newSearchState = userLocations[0].state;
-
-          newStateOptions = [userLocations[0].state];
-          break;
-        case "Teacher":
-          if (userLocations.length === 1) {
-            newSearchState = userLocations[0].state;
-            newSearchCounty = userLocations[0].county;
-            newSearchDistrict = userLocations[0].district;
-            newSearchCity = userLocations[0].city;
-            newSearchSchool = userLocations[0].school;
-
-            newStateOptions = [userLocations[0].state];
-            newCountyOptions = [userLocations[0].county];
-            newDistrictOptions = [userLocations[0].district];
-            newCityOptions = [userLocations[0].city];
-            newSchoolOptions = [userLocations[0].school];
-          } else {
-            newStateOptions = userLocations.map((location) => location.state);
-            newCountyOptions = userLocations.map((location) => location.county);
-            newDistrictOptions = userLocations.map((location) => location.district);
-            newCityOptions = userLocations.map((location) => location.city);
-            newSchoolOptions = userLocations.map((location) => location.school);
-          }
-          break;
-      }
-
-      // probably better off persisting the whole state using local storage in future
-      localStorage.setItem('searchState', JSON.stringify(newSearchState));
-      localStorage.setItem('searchCounty', JSON.stringify(newSearchCounty));
-      localStorage.setItem('searchDistrict', JSON.stringify(newSearchDistrict));
-      localStorage.setItem('searchCity', JSON.stringify(newSearchCity));
-      localStorage.setItem('searchSchool', JSON.stringify(newSearchSchool));
-
-      localStorage.setItem('stateOptions', JSON.stringify(newStateOptions));
-      localStorage.setItem('countyOptions', JSON.stringify(newCountyOptions));
-      localStorage.setItem('districtOptions', JSON.stringify(newDistrictOptions));
-      localStorage.setItem('cityOptions', JSON.stringify(newCityOptions));
-      localStorage.setItem('schoolOptions', JSON.stringify(newSchoolOptions));
-
+      stateKeys.forEach(key => {
+          const newKey = 'new' + key[0].toUpperCase() + key.slice(1);
+          localStorage.setItem(key, JSON.stringify(newFormState[newKey]));
+      });
 
       dispatch({
         type: ADD_LOCATION_SUCCESS,
-        payload: { userLocations,
-        newSearchState, newSearchCounty, newSearchDistrict, newSearchCity, newSearchSchool,
-          newStateOptions, newCountyOptions, newDistrictOptions, newCityOptions, newSchoolOptions
+        payload: {
+          userLocations,
+          newFormStates: newFormState
         }
       });
     } catch (error) {

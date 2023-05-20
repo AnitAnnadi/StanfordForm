@@ -60,7 +60,6 @@ const SearchContainer = ({ startReload }) => {
   const handleChange = (e) => {
     switch (e.target.name) {
       case "searchState":
-        console.log("searchState");
         handleChanges({
           [e.target.name]: e.target.value,
           // searchCounty: 'all',
