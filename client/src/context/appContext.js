@@ -148,7 +148,8 @@ const configureFormStates = (userLocations, user, formStates) => {
       const tempUsersState = userLocations[0].state;
 
       newStateOptions = [tempUsersState];
-      newCountyOptions = ["all", ...narrowCounties({tempUsersState})];
+
+      newCountyOptions = ["all", ...narrowCounties({state: tempUsersState})];
       break;
     case "Teacher":
       if (userLocations.length === 1) {
@@ -170,7 +171,7 @@ const configureFormStates = (userLocations, user, formStates) => {
         newSearchCity = "all";
         newSearchSchool = "all";
 
-        newStateOptions = ["all", ...userLocations.map((location) => location.state)];
+        newStateOptions = ["all", ...new Set(userLocations.map((location) => location.state))];
         newCountyOptions = ["all"];
         newDistrictOptions = ["all"];
         newCityOptions = ["all"];
@@ -359,16 +360,27 @@ const AppProvider = ({ children }) => {
         'schoolOptions'
       ];
 
+      console.log(Object.fromEntries(stateKeys.map(key => {
+              console.log(key)
+              console.log(key[0])
+              return ['new' + key[0].toUpperCase() + key.slice(1), state[key]]
+            })
+          ))
+
       const newFormState = configureFormStates(userLocations, user,
           Object.fromEntries(stateKeys.map(key => {
+              console.log(key)
+              console.log(key[0])
               return ['new' + key[0].toUpperCase() + key.slice(1), state[key]]
             })
           )
       );
 
       stateKeys.forEach(key => {
-          const newKey = 'new' + key[0].toUpperCase() + key.slice(1);
-          localStorage.setItem(key, JSON.stringify(newFormState[newKey]));
+        console.log(key)
+        console.log(key[0])
+        const newKey = 'new' + key[0].toUpperCase() + key.slice(1);
+        localStorage.setItem(key, JSON.stringify(newFormState[newKey]));
       });
 
       dispatch({
