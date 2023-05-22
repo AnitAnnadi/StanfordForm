@@ -360,25 +360,14 @@ const AppProvider = ({ children }) => {
         'schoolOptions'
       ];
 
-      console.log(Object.fromEntries(stateKeys.map(key => {
-              console.log(key)
-              console.log(key[0])
-              return ['new' + key[0].toUpperCase() + key.slice(1), state[key]]
-            })
-          ))
-
       const newFormState = configureFormStates(userLocations, user,
           Object.fromEntries(stateKeys.map(key => {
-              console.log(key)
-              console.log(key[0])
               return ['new' + key[0].toUpperCase() + key.slice(1), state[key]]
             })
           )
       );
 
       stateKeys.forEach(key => {
-        console.log(key)
-        console.log(key[0])
         const newKey = 'new' + key[0].toUpperCase() + key.slice(1);
         localStorage.setItem(key, JSON.stringify(newFormState[newKey]));
       });
