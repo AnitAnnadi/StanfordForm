@@ -1,6 +1,11 @@
 import React, { useReducer, useContext, useEffect } from 'react';
-import { getSchoolDataValue } from "../utils/schoolDataFetch";
-import { narrowCounties} from "../utils/schoolDataFetch";
+import {
+  getSchoolDataValue,
+  narrowCities,
+  narrowCounties,
+  narrowDistricts,
+  narrowSchools
+} from "../utils/schoolDataFetch";
 
 import reducer from './reducer';
 import axios from 'axios';
@@ -124,6 +129,7 @@ const configureFormStates = (userLocations, user, formStates) => {
       newDistrictOptions = [userLocations[0].district];
       newCityOptions = [userLocations[0].city];
       newSchoolOptions = [userLocations[0].school];
+
       break;
     case "District Admin":
       newSearchState = userLocations[0].state;
@@ -133,6 +139,9 @@ const configureFormStates = (userLocations, user, formStates) => {
       newStateOptions = [userLocations[0].state];
       newCountyOptions = [userLocations[0].county];
       newDistrictOptions = [userLocations[0].district];
+
+      newCityOptions = ["all", ...narrowCities({state: userLocations[0].state, county: userLocations[0].county, district: userLocations[0].district})];
+      newSchoolOptions = ["all", ...narrowSchools({state: userLocations[0].state, county: userLocations[0].county, district: userLocations[0].district})];
       break;
     case "County Admin":
       newSearchState = userLocations[0].state;
@@ -140,6 +149,9 @@ const configureFormStates = (userLocations, user, formStates) => {
 
       newStateOptions = [userLocations[0].state];
       newCountyOptions = [userLocations[0].county];
+
+      newCityOptions = ["all", ...narrowCities({state: userLocations[0].state, county: userLocations[0].county})];
+      newDistrictOptions = ["all", ...narrowDistricts({state: userLocations[0].state, county: userLocations[0].county})];
       break;
     case "State Admin":
       newSearchState = userLocations[0].state;
@@ -203,7 +215,7 @@ const configureFormStates = (userLocations, user, formStates) => {
     countyOptions: newCountyOptions,
     districtOptions: newDistrictOptions,
     cityOptions: newCityOptions,
-    schoolOption: newSchoolOptions,
+    schoolOptions: newSchoolOptions,
   }
 }
 
@@ -282,12 +294,14 @@ const AppProvider = ({ children }) => {
           'schoolOptions'
         ];
 
-        newFormState = configureFormStates(userLocations, user,
-            Object.fromEntries(stateKeys.map(key => ['new' + key[0].toUpperCase() + key.slice(1), state[key]])));
+        const newFormState = configureFormStates(userLocations, user,
+          Object.fromEntries(stateKeys.map(key => {
+              return ['new' + key[0].toUpperCase() + key.slice(1), state[key]]
+          }))
+        );
 
         stateKeys.forEach(key => {
-            const newKey = 'new' + key[0].toUpperCase() + key.slice(1);
-            localStorage.setItem(key, JSON.stringify(newFormState[newKey]));
+          localStorage.setItem(key, JSON.stringify(newFormState[key]));
         });
       }
 
@@ -363,13 +377,11 @@ const AppProvider = ({ children }) => {
       const newFormState = configureFormStates(userLocations, user,
           Object.fromEntries(stateKeys.map(key => {
               return ['new' + key[0].toUpperCase() + key.slice(1), state[key]]
-            })
-          )
+          }))
       );
 
       stateKeys.forEach(key => {
-        const newKey = 'new' + key[0].toUpperCase() + key.slice(1);
-        localStorage.setItem(key, JSON.stringify(newFormState[newKey]));
+        localStorage.setItem(key, JSON.stringify(newFormState[key]));
       });
 
       dispatch({
