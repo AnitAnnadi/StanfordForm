@@ -39,22 +39,32 @@ const SearchContainer = ({ startReload }) => {
   } = useAppContext();
 
   const narrowAllowedOptions = (searchType, searchValues) => {
+    let values;
+
     if (user.role === "Teacher") {
       const allowedValues = userLocations.map(
         (location) => location[searchType]
       );
-      return searchValues.filter((value) => allowedValues.includes(value));
+      values = searchValues.filter((value) => allowedValues.includes(value));
     } else if (user.role === "Standford Staff") {
-      return searchValues;
+      values = searchValues;
     } else {
       if (userLocations[0][searchType] === null) {
-        return searchValues;
+        values = searchValues;
       } else {
-        return searchValues.filter(
+        values = searchValues.filter(
           (value) => value === userLocations[0][searchType]
         );
       }
     }
+
+    if (values.length === 0) {
+      values = ["all"];
+    } else {
+      values = ["all", ...values];
+    }
+
+    return values;
   };
 
   const handleChange = (e) => {
@@ -62,110 +72,80 @@ const SearchContainer = ({ startReload }) => {
       case "searchState":
         handleChanges({
           [e.target.name]: e.target.value,
-          // searchCounty: 'all',
-          // searchCity: 'all',
-          // searchDistrict: 'all',
-          // searchSchool: 'all',
-          // searchTeacher: 'all',
-          countyOptions: [
-            "all",
-            ...narrowAllowedOptions(
+          searchCounty: 'all',
+          searchCity: 'all',
+          searchDistrict: 'all',
+          searchSchool: 'all',
+          searchTeacher: 'all',
+          countyOptions: narrowAllowedOptions(
               "county",
               narrowCounties({ state: e.target.value })
             ),
-          ],
-          cityOptions: [
-            "all",
-            ...narrowAllowedOptions(
+          cityOptions: narrowAllowedOptions(
               "city",
               narrowCities({ state: e.target.value })
             ),
-          ],
-          schoolOptions: [
-            "all",
-            ...narrowAllowedOptions(
+          schoolOptions: narrowAllowedOptions(
               "school",
               narrowSchools({ state: e.target.value })
             ),
-          ],
-          districtOptions: [
-            "all",
-            ...narrowAllowedOptions(
+          districtOptions: narrowAllowedOptions(
               "district",
               narrowDistricts({ state: e.target.value })
             ),
-          ],
         });
         break;
       case "searchCounty":
         handleChanges({
           [e.target.name]: e.target.value,
-          // searchCity: 'all',
-          // searchDistrict: 'all',
-          // searchSchool: 'all',
-          // searchTeacher: 'all',
-          cityOptions: [
-            "all",
-            ...narrowAllowedOptions(
+          searchCity: 'all',
+          searchDistrict: 'all',
+          searchSchool: 'all',
+          searchTeacher: 'all',
+          cityOptions: narrowAllowedOptions(
               "city",
               narrowCities({ county: e.target.value })
             ),
-          ],
-          schoolOptions: [
-            "all",
-            ...narrowAllowedOptions(
+          schoolOptions: narrowAllowedOptions(
               "school",
               narrowSchools({ county: e.target.value })
             ),
-          ],
-          districtOptions: [
-            "all",
-            ...narrowAllowedOptions(
+          districtOptions: narrowAllowedOptions(
               "district",
               narrowDistricts({ county: e.target.value })
             ),
-          ],
         });
         break;
       case "searchCity":
         handleChanges({
           [e.target.name]: e.target.value,
-          // searchDistrict: 'all',
-          // searchSchool: 'all',
-          // searchTeacher: 'all',
-          districtOptions: [
-            "all",
-            ...narrowAllowedOptions(
+          searchDistrict: 'all',
+          searchSchool: 'all',
+          searchTeacher: 'all',
+          districtOptions: narrowAllowedOptions(
               "district",
-              narrowDistricts({ city: e.target.value })
+              narrowDistricts({ city: e.target.value, county: searchCounty, state: searchState })
             ),
-          ],
-          schoolOptions: [
-            "all",
-            ...narrowAllowedOptions(
+          schoolOptions: narrowAllowedOptions(
               "school",
-              narrowSchools({ city: e.target.value })
+              narrowSchools({ city: e.target.value, county: searchCounty, state: searchState })
             ),
-          ],
         });
         break;
       case "searchDistrict":
         handleChanges({
           [e.target.name]: e.target.value,
-          // searchSchool: 'all',
-          // searchTeacher: 'all',
-          schoolOptions: [
-            "all",
-            ...narrowAllowedOptions(
+          searchSchool: 'all',
+          searchTeacher: 'all',
+          schoolOptions: narrowAllowedOptions(
               "school",
-              narrowSchools({ district: e.target.value })
+              narrowSchools({ district: e.target.value, county: searchCounty, state: searchState, city: searchCity })
             ),
-          ],
         });
         break;
       case "searchSchool":
         handleChanges({
-          // searchTeacher: 'all',
+          searchTeacher: 'all',
           [e.target.name]: e.target.value,
         });
         break;
@@ -223,6 +203,7 @@ const SearchContainer = ({ startReload }) => {
             list={countyOptions}
           />
           {/* search by city */}
+          {user.role !== "District Admin" && (
           <FormRowSelect
             labelText="city"
             name="searchCity"
@@ -230,6 +211,7 @@ const SearchContainer = ({ startReload }) => {
             handleChange={handleChange}
             list={cityOptions}
           />
+          )}
           {/* search by district */}
           <FormRowSelect
             labelText="district"

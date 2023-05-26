@@ -135,33 +135,41 @@ const configureFormStates = (userLocations, user, formStates) => {
       newSearchState = userLocations[0].state;
       newSearchCounty = userLocations[0].county;
       newSearchDistrict = userLocations[0].district;
+      newSearchCity = "all";
+      newSearchSchool = "all";
 
       newStateOptions = [userLocations[0].state];
       newCountyOptions = [userLocations[0].county];
       newDistrictOptions = [userLocations[0].district];
-
       newCityOptions = ["all", ...narrowCities({state: userLocations[0].state, county: userLocations[0].county, district: userLocations[0].district})];
       newSchoolOptions = ["all", ...narrowSchools({state: userLocations[0].state, county: userLocations[0].county, district: userLocations[0].district})];
       break;
     case "County Admin":
       newSearchState = userLocations[0].state;
       newSearchCounty = userLocations[0].county;
+      newSearchDistrict = "all";
+      newSearchCity = "all";
+      newSearchSchool = "all";
 
       newStateOptions = [userLocations[0].state];
       newCountyOptions = [userLocations[0].county];
 
       newCityOptions = ["all", ...narrowCities({state: userLocations[0].state, county: userLocations[0].county})];
       newDistrictOptions = ["all", ...narrowDistricts({state: userLocations[0].state, county: userLocations[0].county})];
+      newSchoolOptions = ["all"];
       break;
     case "State Admin":
       newSearchState = userLocations[0].state;
       newSearchCounty = "all";
+      newSearchDistrict = "all";
+      newSearchCity = "all";
+      newSearchSchool = "all";
 
-      const tempUsersState = userLocations[0].state;
-
-      newStateOptions = [tempUsersState];
-
-      newCountyOptions = ["all", ...narrowCounties({state: tempUsersState})];
+      newStateOptions = [userLocations[0].state];
+      newCountyOptions = ["all", ...narrowCounties({state: newSearchState})];
+      newDistrictOptions = ["all"];
+      newCityOptions = ["all"];
+      newSchoolOptions = ["all"];
       break;
     case "Teacher":
       if (userLocations.length === 1) {

@@ -12,7 +12,9 @@ const narrowCounties = ({state}) => {
 const narrowDistricts = ({state, county, city}) => {
     const districts = schoolData
         .filter((school) => {
-            if (state && county) {
+            if (state && county && city) {
+                return (school.state.toUpperCase() === state.toUpperCase() && school.county === county && school.city === city)
+            } else if (state && county) {
                 return (school.state.toUpperCase() === state.toUpperCase() && school.county === county)
             } else if (city) {
                 return (school.city === city)
