@@ -6,6 +6,264 @@ import Dropdown from "react-dropdown";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+
+const tobacco = [
+  {
+    question:
+      "Imagine you vape nicotine occasionally. How harmful would this be for your health?",
+    answers: [
+      "Not at all harmful",
+      "Slightly harmful",
+      "Moderately harmful",
+      "Very harmful",
+      "Extremely harmful"
+    ],
+  },
+  {
+    question:
+      "Imagine you vape nicotine daily. How harmful would this be for your health?",
+    answers: [
+      "Not at all harmful",
+      "Slightly harmful",
+      "Moderately harmful",
+      "Very harmful",
+      "Extremely harmful"
+    ],
+  },
+  {
+    question:
+      "Nicotine vapes are safer than cigarettes.",
+    answers: [
+      "Strongly agree",
+      "Disagree",
+      "Neither disagree nor agree",
+      "Agree",
+      "Strongly agree"
+    ],
+  },
+  {
+    question:
+      "Imagine you vape nicotine occasionally: How likely are you to become addicted?",
+    answers: [
+      "Not at all likely to become addicted",
+      "Slightly likely to become addicted",
+      "Moderately likely to become addicted",
+      "Very likely to become addicted",
+      "Extremely likely to become addicted"
+    ],
+  },
+  {
+    question:
+      "Imagine you vape nicotine daily: How likely are you to become addicted?",
+    answers: [
+      "Not at all likely to become addicted",
+      "Slightly likely to become addicted",
+      "Moderately likely to become addicted",
+      "Very likely to become addicted",
+      "Extremely likely to become addicted"
+    ],
+  },
+  {
+    question:
+      "How hard would it be for you to refuse, or say “no” to, a friend who offered you a cigarette to smoke?",
+    answers: [
+      "Very easy",
+      "Easy",
+      "Neither hard nor easy",
+      "Hard",
+      "Very hard"
+    ],
+  },
+  {
+    question:
+      "How hard would it be for you to refuse, or say “no” to, a friend who offered you an e-cigarette/vape?",
+    answers: [
+      "Very easy",
+      "Easy",
+      "Neither hard nor easy",
+      "Hard",
+      "Very hard"
+    ],
+  },
+  {
+    question:
+      "How much do you believe that tobacco and vaping (e-cigarette) companies target the youth?",
+    answers: ["Not at all", "A little", "A moderate amount", "A lot"],
+  },
+  {
+    question:
+      "How much do you believe that tobacco and vaping (e-cigarette) companies target the adults?",
+    answers: ["Not at all", "A little", "A moderate amount", "A lot"],
+  },
+  {
+    question:
+      "How much do you believe that tobacco and vaping (e-cigarette) companies target the brown and black communities?",
+    answers: ["Not at all", "A little", "A moderate amount", "A lot"],
+  },
+  {
+    question:
+      "How much do you believe that tobacco and vaping (e-cigarette) companies target the LGBTQI+ communities?",
+    answers: ["Not at all", "A little", "A moderate amount", "A lot"],
+  },
+  {
+    question:
+      "How much do you believe that tobacco and vaping (e-cigarette) companies target current cigarette smokers?",
+    answers: ["Not at all", "A little", "A moderate amount", "A lot"],
+  },
+  {
+    question:
+      "How harmful are e-cigarettes to the environment?",
+    answers: [
+      "Not at all harmful",
+      "Slightly harmful",
+      "Moderately harmful",
+      "Very harmful",
+      "Extremely harmful"
+    ],
+  },
+  {
+    question:
+      "The 'vapor' that comes out of a vaping device is:",
+    answers: [
+      "Harmless water vapor",
+      "Mostly water vapor with a few aerosolized chemicals in it",
+      "An equal amount of water vapor with aerosolized and harmful chemicals",
+      "Mostly aerosolized and harmful chemicals with a little water vapor",
+      "Just aerosolized chemicals (no water vapor)"
+    ],
+  },
+  {
+    question:
+      "What are your goals regarding vaping?",
+    answers: [
+      "I want to never use",
+      "I want to cut back my vaping",
+      "I want to quit completely",
+      "I want to change what I vape",
+      "I have not decided yet"
+    ],
+  }
+];
+
+const postTobacco = [
+  {
+    question:
+      "I want to stay tobacco/vape-free, cut back, or quit my tobacco/vaping use.",
+    answers: [
+      "Strongly agree",
+      "Agree",
+      "Neither agree or disagree",
+      "Disagree",
+      "Strongly disagree"
+    ]
+  }
+]
+
+
+const cannabis = [
+  {
+    question:
+      "Imagine you use cannabis products (smoke, vape, eat, or drink) occasionally. How harmful would this be for your health?",
+    answers: [
+      "Not at all harmful",
+      "Slightly harmful",
+      "Moderately harmful",
+      "Very harmful",
+      "Extremely harmful"
+    ],
+  },
+  {
+    question:
+      "Imagine you use cannabis products (smoke, vape, eat, or drink) daily. How harmful would this be for your health?",
+    answers: [
+      "Not at all harmful",
+      "Slightly harmful",
+      "Moderately harmful",
+      "Very harmful",
+      "Extremely harmful"
+    ],
+  },
+  {
+    question:
+      "How hard would it be for you to refuse, or say “no” to, a friend who offered you cannabis to smoke or vape?",
+    answers: [
+      "Very easy",
+      "Easy",
+      "Neither hard nor easy",
+      "Hard",
+      "Very hard"
+    ],
+  },
+  {
+    question:
+      "How hard would it be for you to refuse, or say “no” to, a friend who offered you a cannabis edible?",
+    answers: [
+      "Very easy",
+      "Easy",
+      "Neither hard nor easy",
+      "Hard",
+      "Very hard"
+    ],
+  },
+  {
+    question:
+      "How harmful are 'disposable' (single use) cannabis vaping products to the environment?",
+    answers: [
+      "Not at all harmful",
+      "Slightly harmful",
+      "Moderately harmful",
+      "Very harmful",
+      "Extremely harmful"
+    ],
+  },
+  {
+    question:
+      "The 'vapor' that comes out of cannabis vaping devices is:",
+    answers: [
+      "Harmless water vapor",
+      "Mostly water vapor with a few aerosolized chemicals in it",
+      "An equal amount of water vapor with aerosolized and harmful chemicals",
+      "Mostly aerosolized and harmful chemicals with a little water vapor",
+      "Just aerosolized chemicals (no water vapor)"
+    ],
+  },
+  {
+    question: "Cannabis smoke/vapor is harmful to your lungs?",
+    answers: [
+      "Strongly agree",
+      "Agree",
+      "Neither agree nor disagree",
+      "Disagree",
+      "Strongly disagree"
+    ],
+  },
+  {
+    question: "Cannabis (any type) is harmful to the brain development of someone under the age of 21?",
+    answers: [
+      "Strongly agree",
+      "Agree",
+      "Neither agree nor disagree",
+      "Disagree",
+      "Strongly disagree"
+    ],
+  },
+];
+
+const postCannabis = [
+  {
+    question:
+      "I want to stay cannabis-free, cut back, or quit my use.",
+    answers: [
+      "Strongly agree",
+      "Agree",
+      "Neither agree or disagree",
+      "Disagree",
+      "Strongly disagree"
+    ]
+  }
+]
+
+
 const Form = () => {
   const {
     user,
@@ -18,133 +276,7 @@ const Form = () => {
     submitForm,
     successAlert,
   } = useAppContext();
-  let tobacco = [
-    {
-      question:
-        "How much do people risk harming themselves physically, and in other ways, when they use vape products occasionally?",
-      answers: ["no risk of harm", "slight", "moderate", "great risk of harm"],
-    },
-    {
-      question:
-        "How much do people risk harming themselves physically, and in other ways, when they use vape products several times a day (100 puffs or more)?",
-      answers: ["not at all", "a little", "a moderate amount", "a lot"],
-    },
-    {
-      question:
-        "How hard would it be for you to refuse, or say “no” to, a friend who offered you a cigarette to smoke?",
-      answers: [
-        "very easy",
-        "easy",
-        "neither hard or easy",
-        "hard",
-        "very hard",
-      ],
-    },
-    {
-      question:
-        "How hard would it be for you to refuse, or say “no” to, a friend who offered you a vape?",
-      answers: [
-        "very easy",
-        "easy",
-        "neither hard or easy",
-        "hard",
-        "very hard",
-      ],
-    },
-    {
-      question:
-        "How much do you believe that tobacco and vaping (e-cigarette) companies target the youth?",
-      answers: ["not at all", "a little", "a moderate amount", "a lot"],
-    },
-    {
-      question:
-        "How much do you believe that tobacco and vaping (e-cigarette) companies target the adults?",
-      answers: ["not at all", "a little", "a moderate amount", "a lot"],
-    },
-    {
-      question:
-        "How much do you believe that tobacco and vaping (e-cigarette) companies target the brown and black communities?",
-      answers: ["not at all", "a little", "a moderate amount", "a lot"],
-    },
-    {
-      question:
-        "How much do you believe that tobacco and vaping (e-cigarette) companies target the LGBTQI+ communities?",
-      answers: ["not at all", "a little", "a moderate amount", "a lot"],
-    },
-    {
-      question:
-        "How much waste/garbage do you believe tobacco/vaping products produce?",
-      answers: ["not at all", "a little", "a moderate amount", "a lot"],
-    },
-  ];
-  let cannabis = [
-    {
-      question:
-        "How much do people risk harming themselves physically, and in other ways, when they do they use cannabis products occasionally (smoke, vape, eat, or drink)?",
-      answers: ["no risk of harm", "slight", "moderate", "great risk of harm"],
-    },
-    {
-      question:
-        "How much do people risk harming themselves physically, and in other ways, when they do they use cannabis products daily?",
-      answers: ["no risk of harm", "slight", "moderate", "great risk of harm"],
-    },
-    {
-      question:
-        "How hard would it be for you to refuse, or say “no” to, a friend who offered you cannabis to smoke or vape?",
-      answers: [
-        "very easy",
-        "easy",
-        "neither hard or easy",
-        "hard",
-        "very hard",
-      ],
-    },
-    {
-      question:
-        "How hard would it be for you to refuse, or say “no” to, a friend who offered you a cannabis edible?",
-      answers: [
-        "very easy",
-        "easy",
-        "neither hard or easy",
-        "hard",
-        "very hard",
-      ],
-    },
-    {
-      question:
-        "How much waste/garbage do you believe cannabis products produce?",
-      answers: ["not at all", "a little", "a moderate amount", "a lot"],
-    },
-    {
-      question:
-        "Are “disposable” (single use) cannabis vaping products harmful to the environment?",
-      answers: [
-        "not at all",
-        "a little",
-        "a moderate amount",
-        "a lot, because they contain both e-waste and toxins",
-      ],
-    },
-    {
-      question: "The “vapor” that comes out of cannabis vaping devices is:",
-      answers: [
-        "harmless water vapor",
-        "mostly water vapor with a few aerosolized chemicals in it",
-        "an equal amount of water vapor with aerosolized and harmful chemicals",
-        "mostly aerosolized and harmful chemicals with a little water vapor",
-        "just aerosolized chemicals (no water vapor)",
-      ],
-    },
-    {
-      question: "How harmful is cannabis smoke/vapor to your lungs?",
-      answers: ["no risk of harm", "slight", "moderate", "great risk of harm"],
-    },
-    {
-      question:
-        "How harmful is cannabis (any type) to the brain development of someone under the age of 21?",
-      answers: ["no risk of harm", "slight", "moderate", "great risk of harm"],
-    },
-  ];
+
   const navigate = useNavigate();
   let location = useLocation();
   let info = location.state;
@@ -176,9 +308,13 @@ const Form = () => {
     }, 3000);
   };
 
-  const [usedForm, setUsedForm] = useState(
-    info["form"] === "You and Me, Together Vape-Free" ? tobacco : cannabis
-  );
+  const [usedForm, setUsedForm] = useState(() => {
+    if (info["form"] === "You and Me, Together Vape-Free") {
+      return info["when"] === "before" ? tobacco : tobacco.concat(postTobacco);
+    } else if (info["form"] === "Smart Talk: Cannabis Prevention & Education Awareness") {
+      return info["when"] === "before" ? cannabis : cannabis.concat(postCannabis);
+    }
+  });
 
   return (
     <Wrapper style={{ margin: "2rem auto", width: "90%", maxWidth: "700px" }}>
