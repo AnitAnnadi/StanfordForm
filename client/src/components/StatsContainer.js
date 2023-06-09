@@ -10,14 +10,24 @@ import { useEffect } from "react";
 const StatsContainer = () => {
   const { stats, user, showAlert, displayAlert, updateLocation, isLoading, getTotal,totalResponses } =
     useAppContext();
+
   useEffect(() => {
-    getTotal(user)
+    let interval;
+
     if (user){
-    const interval = setInterval(() => {
       getTotal(user);
-    }, 10000);}
-   
-  },[] );
+      interval = setInterval(() => {
+        getTotal(user);
+      }, 10000);
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  },[]);
+
   let total=''
   if (totalResponses){
     total=(totalResponses["total"])
