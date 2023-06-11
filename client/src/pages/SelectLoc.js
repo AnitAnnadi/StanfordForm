@@ -14,7 +14,6 @@ import {
   narrowSchools,
   getDistrictCounty,
 } from "../utils/schoolDataFetch";
-import contains from "validator/es/lib/contains";
 
 const SelectLoc = () => {
   const {
