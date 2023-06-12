@@ -35,7 +35,7 @@ const StatsContainer = () => {
   
   const defaultStats = [
     {
-      title: "Class Code",
+      title: "Teacher Code",
       count: user.code,
       icon: <BsFillPeopleFill />,
       color: "#e9b949",
