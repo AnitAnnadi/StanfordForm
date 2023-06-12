@@ -68,7 +68,7 @@ const EnterCode = () => {
           {showAlert && <Alert />}
           <div className="form">
             <h3>Enter Code</h3>
-            <FormRow type="text" name="Form Code" handleChange={handleChange} />
+            <FormRow type="text" name="Teacher Code" handleChange={handleChange} />
 
             <button
               type="submit"
