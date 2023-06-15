@@ -20,15 +20,6 @@ function SelectRole() {
         <div className="content">
           <h2>I am a...</h2>
           <div className="landing-btns">
-
-            <Link
-              to="/enterCode"
-              className="btn btn-hero"
-              onClick={handleClick}
-              value={"student"}
-            >
-              Student
-            </Link>
             <Link
               to="/register"
               className="btn btn-hero"
