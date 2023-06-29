@@ -70,11 +70,8 @@ const FormMetrics = () => {
         )
           .then((res) => res.json())
           .then((data) => {
-            setQuestionsToAnswers((prev) => ({
-              ...prev,
-              ...data.questionsToAnswers,
-            }));
-            setNumberOfResponses((prev) => prev + data.numberOfResponses);
+            setQuestionsToAnswers(data.questionsToAnswers);
+            setNumberOfResponses(data.numberOfResponses);
           })
           .catch((error) => console.error(error));
       });
