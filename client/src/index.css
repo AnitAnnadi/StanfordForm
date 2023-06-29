@@ -313,13 +313,22 @@ li {
 .full-page {
   min-height: 100vh;
 }
+@media (max-width: 400px) {
+  .corner-logo {
+    display: none;
+    position: absolute;
+    bottom: 5%;
+    right: 5%;
+    z-index: 5;
+  }}
+  @media (min-width: 375px) {
+    .corner-logo {
+      position: absolute;
+      bottom: 5%;
+      right: 5%;
+      z-index: 5;
+    }}
 
-.corner-logo {
-  position: absolute;
-  bottom: 5%;
-  right: 5%;
-  z-index: 5;
-}
 
 .coffee-info {
   text-align: center;
@@ -487,8 +496,34 @@ li {
 }
 
 /* style pie chart container */
-.chartCanvas {
-  width: 400px;
-  height: 400px;
-  margin: 0 auto;
+@media (min-width: 500px) {
+  .chartCanvas {
+    width: 400px;
+    height: 400px;
+    margin: 0 auto;
+  }}
+@media (max-width: 500px) {
+  .chartCanvas {
+    width: 40vh;
+    height: 80vw;
+    margin: 0 auto;
+  }}
+
+
+.form-container{
+  margin: "2rem auto";
+  width: 90%;
 }
+/* @media screen and (min-width: 992px) {
+  .coffee-info {
+    text-align: left;
+  }
+  .coffee-info span {
+    display: inline-block;
+    margin-right: 0.5rem;
+  }
+} */
+
+/* .form-metrics-display{
+  display: "block";
+} */

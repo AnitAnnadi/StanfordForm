@@ -317,7 +317,7 @@ const Form = () => {
   });
 
   return (
-    <Wrapper style={{ margin: "2rem auto", width: "90%", maxWidth: "700px" }}>
+    <Wrapper style={{ margin: "2rem auto",  maxWidth: "700px" }}>
       <form className="form" onSubmit={handleSubmit}>
         <h3>{`${info.form}`}</h3>
         {usedForm.map((element, index) => (
@@ -329,7 +329,7 @@ const Form = () => {
             {element["answers"].map((answer, index) => {
               return (
                 <label key={index} className="container">
-                  <span>{answer}</span>
+                  <span >{answer}</span>
                   <input
                     type="radio"
                     value={answer}

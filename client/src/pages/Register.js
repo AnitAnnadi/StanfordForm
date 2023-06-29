@@ -166,7 +166,7 @@ const Register = () => {
         </p>
       </form>
     </Wrapper>
-<img width="200" height="100" src={Logo2} className="corner-logo" />
+  <img width="200" height="90" src={Logo2} className="corner-logo" />
     </div>
   );
 };

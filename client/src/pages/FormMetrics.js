@@ -114,7 +114,7 @@ const FormMetrics = () => {
                 icon={<AiOutlineNumber />}
                 text={`${numberOfResponses} response(s)`}
               />
-              <div style={{ display: "flex" }}>
+              <div >
                 <ResponseGroupInfo
                   icon={<FaLocationArrow />}
                   text={
@@ -230,7 +230,7 @@ const FormMetrics = () => {
               {Object.keys(questionsToAnswers).map((question, index) => (
                 <div key={index}>
                   <h5 style={{ padding: "1rem 0" }}>{question}</h5>
-                  <div className="chartCanvas">
+                  <div className="chartCanvas" >
                     <Doughnut
                       data={{
                         labels: Object.keys(questionsToAnswers[question]),

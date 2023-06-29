@@ -55,6 +55,7 @@ const Wrapper = styled.section`
     text-indent: 2rem;
   }
 
+
   /* @media (min-width: 992px) {
     .form-center {
       grid-template-columns: 1fr 1fr;
