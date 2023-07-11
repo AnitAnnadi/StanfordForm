@@ -292,16 +292,33 @@ const Form = () => {
         }
       }
     });
-    submitForm(
+    let code=localStorage.getItem("code")
+    if (info["county"]){
+      submitForm(
+        names,
+      selected,
+      code,
+      info["grade"],
+      info["when"],
+      info["form"],
+      info["school"],
+      info["county"],
+      info["district"],
+      info["city"],
+      info["state"]
+      )
+    }
+    else{
+      submitForm(
       names,
       selected,
-      localStorage.getItem("code"),
+      code,
       info["grade"],
       info["when"],
       info["form"],
       info["school"],
       info["period"]
-    );
+    );}
     successAlert("Form Sucessfully Completed. Redirecting...");
     setTimeout(() => {
       navigate("/success", {});

@@ -6,6 +6,7 @@ import { BadRequestError, UnAuthenticatedError } from '../errors/index.js';
 import attachCookie from '../utils/attachCookie.js';
 import { v4 as uuid } from 'uuid';
 import Question from '../models/Question.js';
+import NoCode from '../models/NoCode.js';
 
 
 const enterCode=async(req,res)=>{
@@ -111,11 +112,21 @@ const logout = async (req, res) => {
 };
 
 const submitForm = async(req,res) =>{
-  const {names,answer,code,grade,when,type,school,period}=req.body;
-  console.log('hi')
-
+  const {names,answer,code,grade,when,type,school,period, county, district, city, state}=req.body;
+  console.log(req.body)
+  if (city){
+    console.log('hi')
+    NoCodeData = await NoCode.create({formCode:code,grade:grade,when:when,formType:type,school:school,state:state,city:city,county:county,district:district})
+    let _id=(NoCodeData["_id"])
+    for (var i=0;i<names.length;i++){
+      if (answer[i]){
+      
+      const question=await Question.create({StudentResponse:_id,Question:names[i],Answer:answer[i]})}
+    }
+  }
+  
+  else{
   const teacher = await User.findOne({ code });
-  console.log(code)
   if (!teacher){
     console.log('here')
     throw new BadRequestError('Invalid Code. Try Again or Ask Teacher for Code');
@@ -139,6 +150,7 @@ const submitForm = async(req,res) =>{
     
     const question=await Question.create({StudentResponse:_id,Question:names[i],Answer:answer[i]})}
   }
+}
   
    
 }

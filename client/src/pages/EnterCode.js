@@ -68,6 +68,7 @@ const EnterCode = () => {
           {showAlert && <Alert />}
           <div className="form">
             <h3>Enter Code</h3>
+            
             <FormRow type="text" name="Teacher Code" handleChange={handleChange} />
 
             <button
@@ -78,6 +79,7 @@ const EnterCode = () => {
             >
               Go To Form
             </button>
+            <a href="/selectStudentLoc">Don't have a code</a>
           </div>
         </form>
       </Wrapper>

@@ -428,18 +428,13 @@ const AppProvider = ({ children }) => {
     }
     clearAlert();
   };
-  const submitForm = async (names,answer,code,grade,when,type,school,period) => {
+  const submitForm = async (names,answer,code,grade,when,type,school,period, county, district, city, state) => {
     
     
     try {
-      const { data } = await axios.post(`/api/v1/auth/submitForm/`, {names,answer,code,grade,when,type,school,period});
+      const { data } = await axios.post(`/api/v1/auth/submitForm/`, {names,answer,code,grade,when,type,school,period, county, district, city, state});
     } catch (error) {
       if (error.response.status !== 401) return;
-      //   dispatch({
-      //     type: UPDATE_USER_ERROR,
-      //     payload: { msg: error.response.data.msg },
-      //   });
-      // }
     }
     clearAlert();
   };
