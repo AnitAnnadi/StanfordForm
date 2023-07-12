@@ -115,7 +115,8 @@ const submitForm = async(req,res) =>{
   const {names,answer,code,grade,when,type,school,period, county, district, city, state}=req.body;
   console.log(req.body)
   if (city){
-    console.log('hi')
+    
+    let NoCodeData=''
     NoCodeData = await NoCode.create({formCode:code,grade:grade,when:when,formType:type,school:school,state:state,city:city,county:county,district:district})
     let _id=(NoCodeData["_id"])
     for (var i=0;i<names.length;i++){

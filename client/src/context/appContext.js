@@ -429,7 +429,7 @@ const AppProvider = ({ children }) => {
     clearAlert();
   };
   const submitForm = async (names,answer,code,grade,when,type,school,period, county, district, city, state) => {
-    
+    console.log(period)
     
     try {
       const { data } = await axios.post(`/api/v1/auth/submitForm/`, {names,answer,code,grade,when,type,school,period, county, district, city, state});

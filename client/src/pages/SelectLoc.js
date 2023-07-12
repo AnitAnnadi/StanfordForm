@@ -93,9 +93,11 @@ const SelectLoc = (student) => {
   const [schools, setSchools] = useState([]);
   const [counties, setCounties] = useState([]);
   const [districts, setDistricts] = useState([]);
+  const [grade, setGrade] = useState("default");
 
   const [multiplePeriods, setMultiplePeriods] = useState(false);
   let adminroles = ["Site Admin", "District Admin", "County Admin", "State Admin", "Standford Staff"];
+  let grades = ["K", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   let adminbool=false
   const [additionalLoc, setAdditionalLoc] = useState(false);
 
@@ -160,7 +162,8 @@ const SelectLoc = (student) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (student){
-      if (state!="default" || county!="default" || city!="default" || district!="default" ||school!=="default"){
+      console.log(grade)
+      if (state!="default" || grade!="default" || county!="default" || city!="default" || district!="default" ||school!=="default"){
         successAlert("Redirecting...");
       setTimeout(() => {
         navigate("/form", {
@@ -171,7 +174,8 @@ const SelectLoc = (student) => {
             school,
             city,
             when,
-            form
+            form,
+            grade
           },
         });
       }, 3000);
@@ -367,6 +371,26 @@ const SelectLoc = (student) => {
                 Smart Talk: Cannabis Prevention & Education Awareness
               </option>
             </select>
+
+            <h4 className="form-title">Grade Level</h4>
+            <select
+              name="grade"
+              value={grade}
+              onChange={(e) => setGrade(e.target.value)}
+              className="form-select"
+            >
+              <option value={"default"} disabled>
+                Grade Level
+              </option>
+              {grades.map((grade, index) => {
+                return (
+                  <option key={index} value={grade}>
+                    {grade}
+                  </option>
+                );
+              })}
+            </select>
+
 
             <h4 className="form-title">When are you taking this form</h4>
             <select

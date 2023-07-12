@@ -294,14 +294,17 @@ const Form = () => {
     });
     let code=localStorage.getItem("code")
     if (info["county"]){
+      console.log(info["grade"])
+      console.log(info)
       submitForm(
-        names,
+      names,
       selected,
       code,
       info["grade"],
       info["when"],
       info["form"],
       info["school"],
+      info["period"],
       info["county"],
       info["district"],
       info["city"],
