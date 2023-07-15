@@ -117,8 +117,10 @@ const submitForm = async(req,res) =>{
   if (city){
     
     let NoCodeData=''
-    NoCodeData = await NoCode.create({formCode:code,grade:grade,when:when,formType:type,school:school,state:state,city:city,county:county,district:district})
+    console.log( grade, when,type, school, state, city, county, district)
+    NoCodeData = await NoCode.create({grade:grade,when:when,formType:type,school:school,state:state,city:city,county:county,district:district})
     let _id=(NoCodeData["_id"])
+    console.log(_id)
     for (var i=0;i<names.length;i++){
       if (answer[i]){
       

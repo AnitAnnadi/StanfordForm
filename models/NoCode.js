@@ -2,10 +2,6 @@ import mongoose from 'mongoose'
 
 const NoCodeSchema = new mongoose.Schema(
   {
-    formCode: {
-      type: String,
-      required: [true, 'Please provide code'],
-    },
     grade: {
       type: String,
       required: [true, 'Please provide grade'],

@@ -14,7 +14,7 @@ import {
   getDistrictCounty,
 } from "../utils/schoolDataFetch";
 
-const SelectLoc = (student) => {
+const SelectLoc = (noCode) => {
   const {
     user,
     userLocations,
@@ -104,17 +104,18 @@ const SelectLoc = (student) => {
   const [numOfLocations, setNumOfLocations] = useState(
     userLocations ? userLocations.length + 1 : 1
   );
+  
 
   const showCounty =
-    user.role === "District Admin" || user.role === "County Admin";
-  const showCity = user.role === "Site Admin" || user.role === "Teacher";
-  const showDistrict = user.role === "District Admin";
-  const showSchool = user.role === "Site Admin" || user.role === "Teacher";
-  const showMultiplePeriods = user.role === "Teacher";
-  const showAdditionalLoc = user.role === "Teacher";
+    user?.role === "District Admin" || user?.role === "County Admin" || noCode;
+  const showCity = user?.role === "Site Admin" || user?.role === "Teacher" || noCode;
+  const showDistrict = user?.role === "District Admin" || noCode;
+  const showSchool = user?.role === "Site Admin" || user?.role === "Teacher" || noCode;
+  const showMultiplePeriods = user?.role === "Teacher";
+  const showAdditionalLoc = user?.role === "Teacher";
 
   useEffect(() => {
-    if (user.role === "Site Admin" || user.role === "Teacher") {
+    if (user?.role === "Site Admin" || user?.role === "Teacher") {
       if (state !== "default" && city !== "default" && school !== "default") {
         const { foundDistrict, foundCounty } = getDistrictCounty(
           state,
@@ -161,10 +162,18 @@ const SelectLoc = (student) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (student){
+    if (noCode){
       console.log(grade)
       if (state!="default" || grade!="default" || county!="default" || city!="default" || district!="default" ||school!=="default"){
         successAlert("Redirecting...");
+      console.log(state,
+        county,
+        district,
+        school,
+        city,
+        when,
+        form,
+        grade)
       setTimeout(() => {
         navigate("/form", {
           state: {
@@ -252,7 +261,7 @@ const SelectLoc = (student) => {
           {showAlert && <Alert />}
           <div className="form">
             <h3 className="form-title">
-              Select Location {numOfLocations > 1 && !student ? numOfLocations : ""}
+              Select Location {numOfLocations > 1 && !noCode ? numOfLocations : ""}
             </h3>
             <h4 className="form-title">State</h4>
             <select
@@ -350,7 +359,7 @@ const SelectLoc = (student) => {
                 </select>
               </>
             )}
-            {student?(
+            {noCode?(
             <div>
             <h4 className="form-title">Form Type</h4>
             <select
@@ -407,7 +416,7 @@ const SelectLoc = (student) => {
             </select>
             </div>): null}
 
-            {!student && showMultiplePeriods && (
+            {!noCode && showMultiplePeriods && (
               <>
                 <hr />
                 <label className="checkbox-container">
@@ -423,7 +432,7 @@ const SelectLoc = (student) => {
                 </label>
               </>
             )}
-            {!student && showAdditionalLoc && (
+            {!noCode && showAdditionalLoc && (
               <>
                 <hr />
                 <label className="checkbox-container">
