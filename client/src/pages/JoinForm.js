@@ -171,6 +171,9 @@ const JoinForm = () => {
               >
                 Smart Talk: Cannabis Prevention & Education Awareness
               </option>
+              <option value={"Safety First"}>
+                Safety First
+              </option>
             </select>
 
             <h4 className="form-title">When are you taking this form</h4>

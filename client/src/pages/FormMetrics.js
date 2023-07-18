@@ -13,6 +13,8 @@ import {
 import { AiOutlineForm, AiOutlineNumber } from "react-icons/ai";
 import { TbListNumbers, TbNumbers } from "react-icons/tb";
 import { useAppContext } from "../context/appContext";
+import { utils as XLSXUtils, writeFile as writeXLSXFile } from 'xlsx';
+
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -45,6 +47,24 @@ const FormMetrics = () => {
   const navigate = useNavigate();
 
   const location = useLocation();
+  let data =[]
+  const createExcelSheet = () => {
+    data=[]
+    Object.keys(questionsToAnswers).forEach((question) => {
+      console.log('hi')
+      const answers = questionsToAnswers[question];
+      const newData = { question: question, ...answers };
+      data.push(newData);
+    });
+  
+    console.log(data)
+    const worksheet = XLSXUtils.json_to_sheet(data);
+    const workbook = XLSXUtils.book_new();
+    XLSXUtils.book_append_sheet(workbook, worksheet, 'Sheet1');
+    writeXLSXFile(workbook, 'data.xlsx');
+  };
+
+  
 
   useEffect(() => {
     if (!location.search) {
@@ -108,7 +128,9 @@ const FormMetrics = () => {
               <h3>Overall Form Metrics</h3>
             </div>
           </header>
+          
           <div className="content">
+          <button onClick={() => createExcelSheet()}>Export to Excel</button>
             <div className="content-center">
               <ResponseGroupInfo
                 icon={<AiOutlineNumber />}
@@ -189,6 +211,7 @@ const FormMetrics = () => {
           </header>
           <div className="content">
             <div className="content-center">
+            <button onClick={() => createExcelSheet()}>Export to Excel</button>
               <ResponseGroupInfo
                 icon={<FaChalkboardTeacher />}
                 text={teacher.name}
@@ -228,7 +251,9 @@ const FormMetrics = () => {
           <div className="content">
             <div className="content-center">
               {Object.keys(questionsToAnswers).map((question, index) => (
+                
                 <div key={index}>
+                  {console.log(question, questionsToAnswers[question])},
                   <h5 style={{ padding: "1rem 0" }}>{question}</h5>
                   <div className="chartCanvas" >
                     <Doughnut

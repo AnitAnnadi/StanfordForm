@@ -112,24 +112,11 @@ const logout = async (req, res) => {
 };
 
 const submitForm = async(req,res) =>{
-  const {names,answer,code,grade,when,type,school,period, county, district, city, state}=req.body;
-  console.log(req.body)
-  if (city){
-    
-    let NoCodeData=''
-    console.log( grade, when,type, school, state, city, county, district)
-    NoCodeData = await NoCode.create({grade:grade,when:when,formType:type,school:school,state:state,city:city,county:county,district:district})
-    let _id=(NoCodeData["_id"])
-    console.log(_id)
-    for (var i=0;i<names.length;i++){
-      if (answer[i]){
-      
-      const question=await Question.create({StudentResponse:_id,Question:names[i],Answer:answer[i]})}
-    }
-  }
-  
-  else{
+  const {formData,code,grade,when,type,school,period}=req.body;
+  console.log('hi')
+
   const teacher = await User.findOne({ code });
+  console.log(code)
   if (!teacher){
     console.log('here')
     throw new BadRequestError('Invalid Code. Try Again or Ask Teacher for Code');
@@ -148,13 +135,17 @@ const submitForm = async(req,res) =>{
   console.log(StudentResponseData)
   let _id=(StudentResponseData["_id"])
   
-  for (var i=0;i<names.length;i++){
-    if (answer[i]){
-    
-    const question=await Question.create({StudentResponse:_id,Question:names[i],Answer:answer[i]})}
-  }
-}
+  formData.forEach(async (item) => {
+    const { question, answers } = item;
+  
+    for (const answer of answers) {
+      await Question.create({ StudentResponse: _id, Question: question, Answer: answer });
+    }
+  });
+  
+  
   
    
 }
+
 export { register, login, updateUser, getCurrentUser, logout , enterCode, submitForm };
