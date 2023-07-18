@@ -63,12 +63,17 @@ const EnterCode = () => {
       className="full-page"
       style={{ display: "grid", alignItems: "center", padding: "0 1.5rem" }}
     >
-      <Wrapper>
+      <Wrapper style={{ paddingBottom: "1.75rem" }}>
         <form className="form" onSubmit={handleSubmit}>
           {showAlert && <Alert />}
           <div className="form">
             <h3>Enter Code</h3>
-            <FormRow type="text" name="Teacher Code" handleChange={handleChange} />
+
+            <FormRow
+              type="text"
+              name="Teacher Code"
+              handleChange={handleChange}
+            />
 
             <button
               type="submit"
@@ -78,6 +83,12 @@ const EnterCode = () => {
             >
               Go To Form
             </button>
+            <p>
+              Don't have a teacher code?{" "}
+              <a className="link" href="/selectStudentLoc">
+                Click here
+              </a>
+            </p>
           </div>
         </form>
       </Wrapper>

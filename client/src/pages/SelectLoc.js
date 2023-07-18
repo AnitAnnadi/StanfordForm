@@ -3,7 +3,6 @@ import { FormRow, Alert } from "../components";
 import { useAppContext } from "../context/appContext";
 import Wrapper from "../assets/wrappers/DashboardFormPage";
 import Dropdown from "react-dropdown";
-import { v4 as uuid } from "uuid";
 import { useEffect } from "react";
 import Logo2 from "../assets/images/logo.png";
 import { useNavigate } from "react-router-dom";
@@ -15,7 +14,7 @@ import {
   getDistrictCounty,
 } from "../utils/schoolDataFetch";
 
-const SelectLoc = () => {
+const SelectLoc = (noCode) => {
   const {
     user,
     userLocations,
@@ -23,6 +22,7 @@ const SelectLoc = () => {
     displayAlert,
     addLocation,
     isLoading,
+    successAlert
   } = useAppContext();
   const navigate = useNavigate();
 
@@ -31,6 +31,9 @@ const SelectLoc = () => {
   const [school, setSchool] = useState("default");
   const [district, setDistrict] = useState("default");
   const [county, setCounty] = useState("default");
+  const [form, setForm] = useState("default");
+  const [when, setWhen] = useState("default");
+
 
   const states = [
     "Alabama",
@@ -90,26 +93,29 @@ const SelectLoc = () => {
   const [schools, setSchools] = useState([]);
   const [counties, setCounties] = useState([]);
   const [districts, setDistricts] = useState([]);
+  const [grade, setGrade] = useState("default");
 
   const [multiplePeriods, setMultiplePeriods] = useState(false);
   let adminroles = ["Site Admin", "District Admin", "County Admin", "State Admin", "Standford Staff"];
+  let grades = ["K", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   let adminbool=false
   const [additionalLoc, setAdditionalLoc] = useState(false);
 
   const [numOfLocations, setNumOfLocations] = useState(
     userLocations ? userLocations.length + 1 : 1
   );
+  
 
   const showCounty =
-    user.role === "District Admin" || user.role === "County Admin";
-  const showCity = user.role === "Site Admin" || user.role === "Teacher";
-  const showDistrict = user.role === "District Admin";
-  const showSchool = user.role === "Site Admin" || user.role === "Teacher";
-  const showMultiplePeriods = user.role === "Teacher";
-  const showAdditionalLoc = user.role === "Teacher";
+    user?.role === "District Admin" || user?.role === "County Admin" || noCode;
+  const showCity = user?.role === "Site Admin" || user?.role === "Teacher" || noCode;
+  const showDistrict = user?.role === "District Admin" || noCode;
+  const showSchool = user?.role === "Site Admin" || user?.role === "Teacher" || noCode;
+  const showMultiplePeriods = user?.role === "Teacher";
+  const showAdditionalLoc = user?.role === "Teacher";
 
   useEffect(() => {
-    if (user.role === "Site Admin" || user.role === "Teacher") {
+    if (user?.role === "Site Admin" || user?.role === "Teacher") {
       if (state !== "default" && city !== "default" && school !== "default") {
         const { foundDistrict, foundCounty } = getDistrictCounty(
           state,
@@ -156,7 +162,39 @@ const SelectLoc = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (noCode){
+      console.log(grade)
+      if (state!="default" || grade!="default" || county!="default" || city!="default" || district!="default" ||school!=="default"){
+        successAlert("Redirecting...");
+      console.log(state,
+        county,
+        district,
+        school,
+        city,
+        when,
+        form,
+        grade)
+      setTimeout(() => {
+        navigate("/form", {
+          state: {
+            state,
+            county,
+            district,
+            school,
+            city,
+            when,
+            form,
+            grade
+          },
+        });
+      }, 3000);
+    } else {
+      displayAlert();
+    }
+    }
+    else{
 
+    
     if (user.role === "Standford Staff") {
       setTimeout(() => {
         navigate("/");
@@ -210,7 +248,7 @@ const SelectLoc = () => {
           navigate("/");
         }, 1000);
       }
-    }
+    }}
   };
 
   return (
@@ -223,7 +261,7 @@ const SelectLoc = () => {
           {showAlert && <Alert />}
           <div className="form">
             <h3 className="form-title">
-              Select Location {numOfLocations > 1 ? numOfLocations : ""}
+              Select Location {numOfLocations > 1 && !noCode ? numOfLocations : ""}
             </h3>
             <h4 className="form-title">State</h4>
             <select
@@ -321,8 +359,64 @@ const SelectLoc = () => {
                 </select>
               </>
             )}
+            {noCode?(
+            <div>
+            <h4 className="form-title">Form Type</h4>
+            <select
+              name="type"
+              value={form}
+              onChange={(e) => setForm(e.target.value)}
+              className="form-select"
+            >
+              <option value={"default"} disabled>
+                Choose your Form
+              </option>
+              <option value={"You and Me, Together Vape-Free"}>
+                You and Me, Together Vape-Free
+              </option>
+              <option
+                value={"Smart Talk: Cannabis Prevention & Education Awareness"}
+              >
+                Smart Talk: Cannabis Prevention & Education Awareness
+              </option>
+            </select>
 
-            {showMultiplePeriods && (
+            <h4 className="form-title">Grade Level</h4>
+            <select
+              name="grade"
+              value={grade}
+              onChange={(e) => setGrade(e.target.value)}
+              className="form-select"
+            >
+              <option value={"default"} disabled>
+                Grade Level
+              </option>
+              {grades.map((grade, index) => {
+                return (
+                  <option key={index} value={grade}>
+                    {grade}
+                  </option>
+                );
+              })}
+            </select>
+
+
+            <h4 className="form-title">When are you taking this form</h4>
+            <select
+              name="when"
+              value={when}
+              onChange={(e) => setWhen(e.target.value)}
+              className="form-select"
+            >
+              <option value={"default"} disabled>
+                Choose When
+              </option>
+              <option value={"before"}>Before Lesson</option>
+              <option value={"after"}>After Lesson</option>
+            </select>
+            </div>): null}
+
+            {!noCode && showMultiplePeriods && (
               <>
                 <hr />
                 <label className="checkbox-container">
@@ -338,7 +432,7 @@ const SelectLoc = () => {
                 </label>
               </>
             )}
-            {showAdditionalLoc && (
+            {!noCode && showAdditionalLoc && (
               <>
                 <hr />
                 <label className="checkbox-container">

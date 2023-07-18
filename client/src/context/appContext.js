@@ -428,18 +428,14 @@ const AppProvider = ({ children }) => {
     }
     clearAlert();
   };
-  const submitForm = async (formData,code,grade,when,type,school,period) => {
+ const submitForm = async (formData,code,grade,when,type,school,period) => {
     console.log(formData)
     
     try {
       const { data } = await axios.post(`/api/v1/auth/submitForm/`, {formData,code,grade,when,type,school,period});
+
     } catch (error) {
       if (error.response.status !== 401) return;
-      //   dispatch({
-      //     type: UPDATE_USER_ERROR,
-      //     payload: { msg: error.response.data.msg },
-      //   });
-      // }
     }
     clearAlert();
   };

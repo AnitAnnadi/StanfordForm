@@ -320,15 +320,16 @@ li {
     bottom: 5%;
     right: 5%;
     z-index: 5;
-  }}
-  @media (min-width: 375px) {
-    .corner-logo {
-      position: absolute;
-      bottom: 5%;
-      right: 5%;
-      z-index: 5;
-    }}
-
+  }
+}
+@media (min-width: 375px) {
+  .corner-logo {
+    position: absolute;
+    bottom: 5%;
+    right: 5%;
+    z-index: 5;
+  }
+}
 
 .coffee-info {
   text-align: center;
@@ -426,6 +427,16 @@ li {
   font-size: 1.1rem;
 }
 
+.link {
+  color: var(--primary-500);
+  letter-spacing: normal;
+  transition: var(--transition);
+}
+
+.link:hover {
+  color: var(--primary-700);
+}
+
 /* Customize the label (the container) */
 .checkbox-container {
   display: block;
@@ -501,16 +512,17 @@ li {
     width: 400px;
     height: 400px;
     margin: 0 auto;
-  }}
+  }
+}
 @media (max-width: 500px) {
   .chartCanvas {
     width: 40vh;
     height: 80vw;
     margin: 0 auto;
-  }}
+  }
+}
 
-
-.form-container{
+.form-container {
   margin: "2rem auto";
   width: 90%;
 }

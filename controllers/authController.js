@@ -6,6 +6,7 @@ import { BadRequestError, UnAuthenticatedError } from '../errors/index.js';
 import attachCookie from '../utils/attachCookie.js';
 import { v4 as uuid } from 'uuid';
 import Question from '../models/Question.js';
+import NoCode from '../models/NoCode.js';
 
 
 const enterCode=async(req,res)=>{
@@ -137,9 +138,6 @@ const submitForm = async(req,res) =>{
   formData.forEach(async (item) => {
     const { question, answers } = item;
   
-    console.log("Question:", question);
-    console.log("Answers:", answers);
-  
     for (const answer of answers) {
       await Question.create({ StudentResponse: _id, Question: question, Answer: answer });
     }
@@ -149,4 +147,5 @@ const submitForm = async(req,res) =>{
   
    
 }
+
 export { register, login, updateUser, getCurrentUser, logout , enterCode, submitForm };
