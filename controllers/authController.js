@@ -111,7 +111,7 @@ const logout = async (req, res) => {
 };
 
 const submitForm = async(req,res) =>{
-  const {names,answer,code,grade,when,type,school,period}=req.body;
+  const {formData,code,grade,when,type,school,period}=req.body;
   console.log('hi')
 
   const teacher = await User.findOne({ code });
@@ -134,11 +134,18 @@ const submitForm = async(req,res) =>{
   console.log(StudentResponseData)
   let _id=(StudentResponseData["_id"])
   
-  for (var i=0;i<names.length;i++){
-    if (answer[i]){
-    
-    const question=await Question.create({StudentResponse:_id,Question:names[i],Answer:answer[i]})}
-  }
+  formData.forEach(async (item) => {
+    const { question, answers } = item;
+  
+    console.log("Question:", question);
+    console.log("Answers:", answers);
+  
+    for (const answer of answers) {
+      await Question.create({ StudentResponse: _id, Question: question, Answer: answer });
+    }
+  });
+  
+  
   
    
 }
