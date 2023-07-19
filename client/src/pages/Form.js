@@ -515,17 +515,43 @@ const Form = () => {
       formData.push({ question, answers });
     });
     console.log(formData)
-  
+    let grade = info["grade"]
+    let when = info["when"]
+    let type = info["form"]
+    let school = info["school"]
     // Rest of the code
+    if (info["noCode"]){
+      let state = info["state"]
+      let city = info["city"]
+      let county = info["county"]
+      let district = info["district"]
+      submitForm(
+        formData,
+        null,
+        grade,
+        when,
+        type,
+        school,
+        null,
+        state,
+        city,
+        county, 
+        district
+
+      )
+    }
+    else{
+    let period = info["period"]
+    let code  = localStorage.getItem("code")
     submitForm(
       formData,
-      localStorage.getItem("code"),
-      info["grade"],
-      info["when"],
-      info["form"],
-      info["school"],
-      info["period"]
-    );
+      code,
+      grade,
+      when,
+      type,
+      school,
+      period
+    );}
     successAlert("Form Sucessfully Completed. Redirecting...");
     setTimeout(() => {
       navigate("/success", {});

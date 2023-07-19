@@ -428,11 +428,11 @@ const AppProvider = ({ children }) => {
     }
     clearAlert();
   };
- const submitForm = async (formData,code,grade,when,type,school,period) => {
-    console.log(formData)
+ const submitForm = async (formData,code,grade,when,type,school,period,state, city, county, district) => {
+    console.log(formData,code,grade,when,type,school,period,state, city, county, district)
     
     try {
-      const { data } = await axios.post(`/api/v1/auth/submitForm/`, {formData,code,grade,when,type,school,period});
+      const { data } = await axios.post(`/api/v1/auth/submitForm/`, {formData,code,grade,when,type,school,period,state, city, county, district});
 
     } catch (error) {
       if (error.response.status !== 401) return;

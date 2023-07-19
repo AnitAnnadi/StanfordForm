@@ -112,9 +112,9 @@ const logout = async (req, res) => {
 };
 
 const submitForm = async(req,res) =>{
-  const {formData,code,grade,when,type,school,period}=req.body;
-  console.log('hi')
+  const {formData,code,grade,when,type,school,period,state, city, county, district}=req.body;
 
+  if (code){
   const teacher = await User.findOne({ code });
   console.log(code)
   if (!teacher){
@@ -141,7 +141,28 @@ const submitForm = async(req,res) =>{
     for (const answer of answers) {
       await Question.create({ StudentResponse: _id, Question: question, Answer: answer });
     }
-  });
+  }
+  
+  );}
+
+  else{
+    console.log(grade,when,type,school,state, city, county, district)
+    let NoCodeData=''
+    try{
+    NoCodeData = await NoCode.create({grade: grade, when:when, formType:type, school:school, state:state, city:city, county:county, district:district })
+    let _id=(NoCodeData["_id"])
+    console.log(_id)
+    formData.forEach(async (item) => {
+      const { question, answers } = item;
+    
+      for (const answer of answers) {
+        await Question.create({ StudentResponse: _id, Question: question, Answer: answer });
+      }
+    })}
+    catch(error){
+      console.log(error)
+    }
+  }
   
   
   

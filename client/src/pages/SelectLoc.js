@@ -175,16 +175,14 @@ const SelectLoc = ({noCode}) => {
         form,
         grade)
       setTimeout(() => {
-        navigate("/form", {
+        navigate("/joinedForm", {
           state: {
             state,
             county,
             district,
             school,
             city,
-            when,
-            form,
-            grade
+            noCode
           },
         });
       }, 3000);

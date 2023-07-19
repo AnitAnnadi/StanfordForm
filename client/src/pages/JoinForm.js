@@ -23,6 +23,7 @@ const JoinForm = () => {
 
   const navigate = useNavigate();
 
+
   let teacher_name = localStorage.getItem("teacher_name");
   const [form, setForm] = useState("default");
   const [grade, setGrade] = useState("default");
@@ -30,10 +31,16 @@ const JoinForm = () => {
   const [school, setSchool] = useState("default");
   const [period, setPeriod] = useState("default");
   let location = useLocation();
-  let schools = location.state;
+  let info = location.state;
   let grades = ["K", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   let periods = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-  schools = schools["schools"];
+  let schools = null;
+  console.log(info["noCode"])
+  console.log(info)
+  if (!info["noCode"]){
+    schools = info["schools"];
+  }
+
   const MultipleSchools = () => {
     if (schools.length > 1) {
       return (
@@ -99,6 +106,39 @@ const JoinForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (info["noCode"]){
+      if (
+        form !== "default" &&
+        grade !== "default" &&
+        when !== "default" 
+      ) {
+        let county = info["county"]
+        let school = info["school"]
+        let district = info["district"]
+        let state = info["state"]
+        let city = info["city"]
+        let noCode= info["noCode"]
+        successAlert("Redirecting...");
+        setTimeout(() => {
+          navigate("/form", {
+            state: {
+              form,
+              grade,
+              when,
+              school,
+              state,
+              county,
+              district,
+              city,
+              noCode
+            },
+          });
+        }, 3000);
+      } else {
+        displayAlert();
+      }
+    }
+    else{
     if (
       form !== "default" &&
       grade !== "default" &&
@@ -120,8 +160,9 @@ const JoinForm = () => {
     } else {
       displayAlert();
     }
+  }
   };
-
+  console.log(info["noCode"])
   return (
     <div
       className="full-page"
@@ -132,8 +173,12 @@ const JoinForm = () => {
           {showAlert && <Alert />}
           <h4>You have joined {teacher_name}'s class</h4>
           <div className="form">
+            {info["noCode"]?null
+            :
+            <div>
             <MultipleSchools />
             <MultiplePeriods />
+            </div>}
             <h4 className="form-title">Grade Level</h4>
             <select
               name="grade"
