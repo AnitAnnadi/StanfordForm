@@ -14,7 +14,7 @@ import {
   getDistrictCounty,
 } from "../utils/schoolDataFetch";
 
-const SelectLoc = (noCode) => {
+const SelectLoc = ({noCode}) => {
   const {
     user,
     userLocations,
@@ -107,15 +107,15 @@ const SelectLoc = (noCode) => {
   
 
   const showCounty =
-    user?.role === "District Admin" || user?.role === "County Admin" || noCode;
+    user?.role === "District Admin" || user?.role === "County Admin" ;
   const showCity = user?.role === "Site Admin" || user?.role === "Teacher" || noCode;
-  const showDistrict = user?.role === "District Admin" || noCode;
+  const showDistrict = user?.role === "District Admin" ;
   const showSchool = user?.role === "Site Admin" || user?.role === "Teacher" || noCode;
   const showMultiplePeriods = user?.role === "Teacher";
   const showAdditionalLoc = user?.role === "Teacher";
 
   useEffect(() => {
-    if (user?.role === "Site Admin" || user?.role === "Teacher") {
+    if (user?.role === "Site Admin" || user?.role === "Teacher" || noCode) {
       if (state !== "default" && city !== "default" && school !== "default") {
         const { foundDistrict, foundCounty } = getDistrictCounty(
           state,
@@ -163,7 +163,7 @@ const SelectLoc = (noCode) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (noCode){
-      console.log(grade)
+      console.log(district,county)
       if (state!="default" || grade!="default" || county!="default" || city!="default" || district!="default" ||school!=="default"){
         successAlert("Redirecting...");
       console.log(state,
@@ -359,8 +359,10 @@ const SelectLoc = (noCode) => {
                 </select>
               </>
             )}
-            {noCode?(
+            {/* {noCode?(
+              
             <div>
+              {console.log(noCode)}
             <h4 className="form-title">Form Type</h4>
             <select
               name="type"
@@ -414,7 +416,7 @@ const SelectLoc = (noCode) => {
               <option value={"before"}>Before Lesson</option>
               <option value={"after"}>After Lesson</option>
             </select>
-            </div>): null}
+            </div>): null} */}
 
             {!noCode && showMultiplePeriods && (
               <>
