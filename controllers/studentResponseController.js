@@ -7,7 +7,7 @@ import StudentResponse from "../models/StudentResponse.js";
 
 const getStudentResponses = async(req, res) => {
   const user = await User.findOne({ _id: req.user.userId });
-
+  
   const token = user.createJWT();
   attachCookie({ res, token });
 
@@ -40,7 +40,6 @@ const getStudentResponses = async(req, res) => {
   }
 
   const studentResponses = await StudentResponse.find(queryObject)
-
   res.status(StatusCodes.OK).json({ teacherName: teacher.name, studentResponses });
 }
 

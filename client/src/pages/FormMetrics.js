@@ -50,7 +50,7 @@ const FormMetrics = () => {
     if (!location.search) {
       console.log("No location search");
       setIsOverall(true);
-
+      console.log(responseGroups)
       responseGroups.forEach((responseGroup) => {
         const { school, uniqueResponseType } = responseGroup;
 
@@ -61,7 +61,9 @@ const FormMetrics = () => {
           grade: uniqueResponseType.grade,
           formType: uniqueResponseType.formType,
           when: uniqueResponseType.when,
+          overall:isOverall
         });
+        
 
         fetch(
           `/api/v1/form/${
@@ -70,6 +72,7 @@ const FormMetrics = () => {
         )
           .then((res) => res.json())
           .then((data) => {
+            console.log(data)
             setQuestionsToAnswers(data.questionsToAnswers);
             setNumberOfResponses(data.numberOfResponses);
           })
@@ -80,7 +83,7 @@ const FormMetrics = () => {
     } else {
       console.log("No location search");
       setIsOverall(false);
-
+      console.log(location)
       const queryParameters = new URLSearchParams(location.search);
 
       fetch(`/api/v1/form/${formCode}?${queryParameters.toString()}`)
@@ -89,6 +92,7 @@ const FormMetrics = () => {
           setSchool(data.school);
           setTeacher(data.teacher);
           setQuestionsToAnswers(data.questionsToAnswers);
+          // console.log(data.questionsToAnswers)
           setNumberOfResponses(data.numberOfResponses);
           setResponseType(data.responseType);
           setIsLoading(false);
@@ -104,6 +108,7 @@ const FormMetrics = () => {
       {isOverall ? (
         <>
           <header>
+            {console.log('hi')}
             <div className="info">
               <h3>Overall Form Metrics</h3>
             </div>
