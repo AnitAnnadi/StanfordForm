@@ -37,6 +37,9 @@ function App() {
             <SelectLoc />
           </ProtectedRoute>
         } />
+        <Route path="/selectStudentLoc" element={
+            <SelectLoc noCode={true}/>
+        } />
         <Route path="/joinedForm" element={<JoinForm />} />
         <Route path="/form" element={<Form />} />
         <Route path="/register" element={<Register />} />

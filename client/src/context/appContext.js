@@ -93,7 +93,7 @@ const initialState = {
   searchPeriod: 'all',
   teacherOptions: [], // [[teacherName, teacherId], [teacherName, teacherId], ...]
   searchTeacher: 'all',
-  typeOptions: ['You and Me, Together Vape-Free', 'Smart Talk: Cannabis Prevention & Education Awareness'],
+  typeOptions: ['You and Me, Together Vape-Free', 'Smart Talk: Cannabis Prevention & Education Awareness', 'Safety First'],
   searchType: 'You and Me, Together Vape-Free',
   beforeAfterOptions: ['all', 'before', 'after'],
   searchBeforeAfter: 'all',
@@ -428,18 +428,14 @@ const AppProvider = ({ children }) => {
     }
     clearAlert();
   };
-  const submitForm = async (names,answer,code,grade,when,type,school,period) => {
-    
+ const submitForm = async (formData,code,grade,when,type,school,period,state, city, county, district) => {
+    console.log(formData,code,grade,when,type,school,period,state, city, county, district)
     
     try {
-      const { data } = await axios.post(`/api/v1/auth/submitForm/`, {names,answer,code,grade,when,type,school,period});
+      const { data } = await axios.post(`/api/v1/auth/submitForm/`, {formData,code,grade,when,type,school,period,state, city, county, district});
+
     } catch (error) {
       if (error.response.status !== 401) return;
-      //   dispatch({
-      //     type: UPDATE_USER_ERROR,
-      //     payload: { msg: error.response.data.msg },
-      //   });
-      // }
     }
     clearAlert();
   };
