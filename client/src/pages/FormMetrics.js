@@ -162,8 +162,15 @@ const FormMetrics = () => {
           </header>
 
           <div className="content">
-            <button className="btn" Click={() => createExcelSheet()}>
-              Export to Excel <BiExport />
+            <button
+              className="btn"
+              style={{ display: "flex" }}
+              onClick={() => createExcelSheet()}
+            >
+              <span className="icon-css">
+                <BiExport />
+              </span>
+              Export to Excel
             </button>
             <div className="content-center">
               <ResponseGroupInfo
