@@ -202,6 +202,14 @@ li {
   background: var(--red-dark);
   color: var(--white);
 }
+
+.icon-css {
+  font-size: 1rem;
+  margin-right: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
 /* alerts */
 .alert {
   padding: 0.375rem 0.75rem;
