@@ -10,6 +10,11 @@ export const ENTER_CODE = 'ENTER_CODE';
 export const GET_TOTAL='GET_TOTAL'
 
 export const TOGGLE_SIDEBAR = 'TOGGLE_SIDEBAR';
+
+export const GET_EXPORT_SUCCESS = 'GET_EXPORT_SUCCESS';
+export const GET_EXPORT_BEGIN = 'GET_EXPORT_BEGIN';
+export const GET_EXPORT_FAIL = 'GET_EXPORT_FAIL';
+
 export const LOGOUT_USER = 'LOGOUT_USER';
 
 export const UPDATE_USER_BEGIN = 'UPDATE_USER_BEGIN';

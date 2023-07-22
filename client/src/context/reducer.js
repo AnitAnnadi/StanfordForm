@@ -5,6 +5,9 @@ import {
   SETUP_USER_SUCCESS,
   SETUP_USER_ERROR,
   TOGGLE_SIDEBAR,
+  GET_EXPORT_SUCCESS,
+  GET_EXPORT_FAIL,
+  GET_EXPORT_BEGIN,
   LOGOUT_USER,
   UPDATE_USER_BEGIN,
   UPDATE_USER_SUCCESS,
@@ -100,6 +103,39 @@ const reducer = (state, action) => {
       showSidebar: !state.showSidebar,
     };
   }
+
+  if (action.type === GET_EXPORT_SUCCESS) {
+    console.log(action.payload)
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: true,
+      alertType: 'success',
+      alertText: action.payload.msg,
+      exportData: action.payload.exportData
+    };
+  }
+
+  if (action.type === GET_EXPORT_BEGIN) {
+    console.log(action.payload)
+    return {
+      ...state,
+      exportData: null
+    };
+  }
+
+  if (action.type === GET_EXPORT_FAIL) {
+    console.log(action.payload)
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: true,
+      alertType: 'danger',
+      alertText: action.payload.msg,
+      exportData: null
+    };
+  }
+
   if (action.type === LOGOUT_USER) {
     return {
       ...initialState,

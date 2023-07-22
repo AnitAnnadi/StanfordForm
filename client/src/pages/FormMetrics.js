@@ -31,6 +31,8 @@ const FormMetrics = () => {
     searchType,
     searchTeacher,
     searchBeforeAfter,
+    getExport,
+    exportData
   } = useAppContext();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -48,79 +50,103 @@ const FormMetrics = () => {
 
   const location = useLocation();
   let data =[]
+  let formTypeForName = null
+  let whenForName = null
+
   const createExcelSheet = () => {
-    data=[]
-    Object.keys(questionsToAnswers).forEach((question) => {
+    if (location.search){
       console.log('hi')
-      const answers = questionsToAnswers[question];
-      const newData = { question: question, ...answers };
-      data.push(newData);
-    });
-  
-    console.log(data)
-    const worksheet = XLSXUtils.json_to_sheet(data);
-    const workbook = XLSXUtils.book_new();
-    XLSXUtils.book_append_sheet(workbook, worksheet, 'Sheet1');
-    writeXLSXFile(workbook, 'data.xlsx');
+      const urlParams = new URLSearchParams(window.location.search);
+      formTypeForName = urlParams.get("formType");
+      whenForName = urlParams.get("when");
+      // getExport(location.search,formCode);
+    }
+    else{
+      getExport(false, null)
+    }
+    if (exportData){
+      const worksheet = XLSXUtils.json_to_sheet(exportData);
+      const workbook = XLSXUtils.book_new();
+      XLSXUtils.book_append_sheet(workbook, worksheet, 'Sheet1');
+      writeXLSXFile(workbook, `data.xlsx`);
+    }
+    
+    
   };
 
   
 
   useEffect(() => {
+    let combinedQuestionsToAnswers = {};
+  
+    const fetchDataForResponseGroups = () => {
+      return Promise.all(
+        responseGroups.map((responseGroup) => {
+          const { school, uniqueResponseType } = responseGroup;
+          const queryParameters = new URLSearchParams({
+            teacherId: school.teacher,
+            schoolId: school._id,
+            period: uniqueResponseType.period,
+            grade: uniqueResponseType.grade,
+            formType: uniqueResponseType.formType,
+            when: uniqueResponseType.when,
+          });
+  
+          return fetch(`/api/v1/form/${uniqueResponseType.formCode}?${queryParameters.toString()}`)
+            .then((res) => res.json());
+        })
+      );
+    };
+  
     if (!location.search) {
-      console.log("No location search");
       setIsOverall(true);
-      console.log(responseGroups)
-      responseGroups.forEach((responseGroup) => {
-        const { school, uniqueResponseType } = responseGroup;
-
-        const queryParameters = new URLSearchParams({
-          teacherId: school.teacher,
-          schoolId: school._id,
-          period: uniqueResponseType.period,
-          grade: uniqueResponseType.grade,
-          formType: uniqueResponseType.formType,
-          when: uniqueResponseType.when,
-          overall:isOverall
-        });
-        
-
-        fetch(
-          `/api/v1/form/${
-            uniqueResponseType.formCode
-          }?${queryParameters.toString()}`
-        )
-          .then((res) => res.json())
-          .then((data) => {
-            console.log(data)
-            setQuestionsToAnswers(data.questionsToAnswers);
-            setNumberOfResponses(data.numberOfResponses);
-          })
-          .catch((error) => console.error(error));
-      });
-
-      setIsLoading(false);
-    } else {
-      console.log("No location search");
+      setIsLoading(true);
+  
+      fetchDataForResponseGroups()
+        .then((responses) => {
+          responses.forEach((data) => {
+            const currentQuestionsToAnswers = data.questionsToAnswers;
+            Object.keys(currentQuestionsToAnswers).forEach((question) => {
+              if (!combinedQuestionsToAnswers[question]) {
+                combinedQuestionsToAnswers[question] = currentQuestionsToAnswers[question];
+              } else {
+                // Add the counts of each answer from the current response to the combinedQuestionsToAnswers
+                const currentAnswers = currentQuestionsToAnswers[question];
+                const combinedAnswers = combinedQuestionsToAnswers[question];
+                Object.keys(currentAnswers).forEach((answer) => {
+                  combinedAnswers[answer] = (combinedAnswers[answer] || 0) + currentAnswers[answer];
+                });
+              }
+            });
+          });
+          // Calculate the total number of responses
+          const totalResponses = responses.reduce((total, data) => total + data.numberOfResponses, 0);
+          setNumberOfResponses(totalResponses);
+          setQuestionsToAnswers(combinedQuestionsToAnswers);
+          setIsLoading(false);
+        })
+        .catch((error) => console.error(error));
+    } 
+    
+    else {
       setIsOverall(false);
-      console.log(location)
+      setIsLoading(true);
       const queryParameters = new URLSearchParams(location.search);
-
+  
       fetch(`/api/v1/form/${formCode}?${queryParameters.toString()}`)
         .then((res) => res.json())
         .then((data) => {
           setSchool(data.school);
           setTeacher(data.teacher);
           setQuestionsToAnswers(data.questionsToAnswers);
-          // console.log(data.questionsToAnswers)
           setNumberOfResponses(data.numberOfResponses);
           setResponseType(data.responseType);
-          setIsLoading(false);
         })
-        .catch((error) => console.error(error));
+        .catch((error) => console.error(error))
+        .finally(() => setIsLoading(false));
     }
-  }, [formCode, location.search, responseGroups]);
-
+  }, [location.search, formCode, responseGroups]);
+      
   if (isLoading) return <Loading center />;
 
   return (
@@ -258,7 +284,6 @@ const FormMetrics = () => {
               {Object.keys(questionsToAnswers).map((question, index) => (
                 
                 <div key={index}>
-                  {console.log(question, questionsToAnswers[question])},
                   <h5 style={{ padding: "1rem 0" }}>{question}</h5>
                   <div className="chartCanvas" >
                     <Doughnut

@@ -7,6 +7,9 @@ import {
   narrowSchools
 } from "../utils/schoolDataFetch";
 
+import { tobacco,postTobacco, cannabis, postCannabis, safety  } from "../utils/questions";
+
+
 import reducer from './reducer';
 import axios from 'axios';
 import {
@@ -16,6 +19,9 @@ import {
   SETUP_USER_SUCCESS,
   SETUP_USER_ERROR,
   TOGGLE_SIDEBAR,
+  GET_EXPORT_FAIL,
+  GET_EXPORT_BEGIN,
+  GET_EXPORT_SUCCESS,
   LOGOUT_USER,
   UPDATE_USER_BEGIN,
   UPDATE_USER_SUCCESS,
@@ -100,6 +106,7 @@ const initialState = {
   teacher:'',
   totalResponses:null,
   hasLocation:null,
+  exportData:null
 };
 
 const configureFormStates = (userLocations, user, formStates) => {
@@ -635,6 +642,64 @@ const AppProvider = ({ children }) => {
     clearAlert();
   };
 
+  const getExport = async  (search, formCode ) =>{
+    const {exportData, responseGroups} = state
+    
+    if (search){
+    try
+    {
+    dispatch({type:GET_EXPORT_BEGIN, payload:{exportData:null, msg: "Export Successful"}})
+    const queryParameters = new URLSearchParams({search})
+    const data = await authFetch.get(`/export/${formCode}${search}`);
+    const exportData = data.data.exportData
+    dispatch({type:GET_EXPORT_SUCCESS, payload:{exportData:exportData, msg: "Export Successful"}})
+
+  }
+
+    catch(error){
+      dispatch({type:GET_EXPORT_FAIL, payload:{msg:"Export Failed"} })
+    }
+    }
+    else {
+      dispatch({ type: GET_EXPORT_BEGIN, payload: { exportData: null } });
+    
+      const allExportData = [];
+    
+      // Sequentially iterate over the responseGroups array using a for...of loop
+      for (const responseGroup of responseGroups) {
+        const { school, uniqueResponseType } = responseGroup;
+        const queryParameters = new URLSearchParams({
+          teacherId: school.teacher,
+          schoolId: school._id,
+          period: uniqueResponseType.period,
+          grade: uniqueResponseType.grade,
+          formType: uniqueResponseType.formType,
+          when: uniqueResponseType.when,
+        });
+    
+        try {
+          const data = await authFetch.get(`/export/${uniqueResponseType.formCode}?${queryParameters}`);
+          const exportDatas = data.data.exportData;
+          console.log(exportDatas);
+          exportDatas.map((exportData=>{
+            allExportData.push(exportData);
+          }))
+          console.log(allExportData)
+        } catch (error) {
+          console.error(`Error fetching data for responseGroup: ${responseGroup}`, error);
+          dispatch({ type: GET_EXPORT_FAIL, payload: { msg: "Export Failed" } });
+          return; // Exit the function early since there was an error
+        }
+      }
+    
+      // Dispatch the success action with the complete allExportData array
+      dispatch({ type: GET_EXPORT_SUCCESS, payload: { exportData: allExportData, msg: "Export Successful" } });
+    }
+    
+  };
+
+  
+
   // const setEditJob = (id) => {
   //   dispatch({ type: SET_EDIT_JOB, payload: { id } });
   // };
@@ -701,32 +766,13 @@ const AppProvider = ({ children }) => {
     }
     clearAlert();
   };
-  // const clearFilters = () => {
-  //   dispatch({ type: CLEAR_FILTERS });
-  // };
+
+
   const changePage = (page) => {
     dispatch({ type: CHANGE_PAGE, payload: { page } });
   };
 
-  // const getCurrentUser = async () => {
-  //   dispatch({ type: GET_CURRENT_USER_BEGIN });
-  //   try {
-  //     const { data } = await authFetch('/auth/getCurrentUser');
-  //     const { user, location, hasLocation } = data;
-  //     console.log(hasLocation)
-  //     dispatch({
-  //       type: GET_CURRENT_USER_SUCCESS,
-  //       payload: { user, location, hasLocation },
-  //     });
-  //   } catch (error) {
-  //     console.log(error)
-  //     if (error.response.status === 401) return;
-  //     logoutUser();
-  //   }
-  // };
-  // useEffect(() => {
-  //   getCurrentUser();
-  // }, []);
+
 
   return (
     <AppContext.Provider
@@ -744,6 +790,7 @@ const AppProvider = ({ children }) => {
         getResponseGroups,
         // setEditJob,
         // deleteJob,
+        getExport,
         successAlert,
         showStats,
         changePage,

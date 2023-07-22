@@ -23,6 +23,7 @@ import jobsRouter from './routes/jobsRoutes.js';
 import schoolRouter from './routes/schoolRoutes.js';
 import studentResponseRouter from './routes/studentResponseRoutes.js';
 import formRouter from './routes/formRoutes.js';
+import exportRouter from './routes/exportRoutes.js';
 
 // middleware
 import notFoundMiddleware from './middleware/not-found.js';
@@ -49,6 +50,8 @@ app.use('/api/v1/jobs', authenticateUser, jobsRouter);
 app.use('/api/v1/schools', authenticateUser, schoolRouter);
 app.use('/api/v1/studentResponses', authenticateUser, studentResponseRouter);
 app.use('/api/v1/form', authenticateUser, formRouter);
+app.use('/api/v1/export', authenticateUser, exportRouter);
+
 
 // only when ready to deploy
 app.get('*', (req, res) => {
