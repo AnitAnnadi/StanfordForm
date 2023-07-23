@@ -20,7 +20,6 @@ const createJob = async (req, res) => {
   const { position, company } = req.body;
 
   if (!position || !company) {
-    throw new BadRequestError('Please provide all values');
   }
   req.body.createdBy = req.user.userId;
   const job = await Job.create(req.body);

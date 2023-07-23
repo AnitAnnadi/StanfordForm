@@ -16,15 +16,14 @@ let exportData = [];
 
 const findResponse = (list, questions, obj) => {
   list.map((block) => {
-    let found = questions.find((object) => object.Question === block.question);
-    if (found) {
-      obj[block.question] = found.Answer;
+    let foundQuestions = questions.filter((object) => object.Question === block.question);
+    if (foundQuestions.length > 0) {
+      obj[block.question] = foundQuestions.map((q) => q.Answer).join(", "); // Combine answers if there are multiple matches
     } else {
       obj[block.question] = "n/a";
     }
   });
   exportData.push(obj);
-  console.log(exportData);
 };
 
 const getExport = async (req, res) => {

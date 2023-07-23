@@ -86,15 +86,6 @@ const FormMetrics = () => {
   
   };
 
-  const exportToExcel = () => {
-    if (exportData) {
-      console.log(exportData)
-      const worksheet = XLSXUtils.json_to_sheet(exportData);
-      const workbook = XLSXUtils.book_new();
-      XLSXUtils.book_append_sheet(workbook, worksheet, "Sheet1");
-      writeXLSXFile(workbook, `data.xlsx`);
-    }
-  };
   
 
   const createQuestionsToAnswersMap = (array, questionsToAnswers) => {
@@ -114,7 +105,7 @@ const FormMetrics = () => {
       return when === "before" ? createQuestionsToAnswersMap(cannabis, data) : createQuestionsToAnswersMap(cannabis.concat(postCannabis),data);
     }
     else if (formType === "Safety First"){
-      return createQuestionsToAnswersMap(cannabis, data)
+      return createQuestionsToAnswersMap(safety, data)
     }
   };
 
