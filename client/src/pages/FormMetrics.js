@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from "chart.js";
-import { BiExport } from "react-icons/bi";
 import { Pie, Doughnut } from "react-chartjs-2";
+import { BiExport } from "react-icons/bi";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Loading } from "../components";
 import Wrapper from "../assets/wrappers/DashboardFormPage";
@@ -14,7 +14,10 @@ import {
 import { AiOutlineForm, AiOutlineNumber } from "react-icons/ai";
 import { TbListNumbers, TbNumbers } from "react-icons/tb";
 import { useAppContext } from "../context/appContext";
-import { utils as XLSXUtils, writeFile as writeXLSXFile } from "xlsx";
+import { utils as XLSXUtils, writeFile as writeXLSXFile } from 'xlsx';
+import { tobacco, postTobacco, cannabis, postCannabis, safety
+} from "../utils/questions";
+
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -32,7 +35,7 @@ const FormMetrics = () => {
     searchTeacher,
     searchBeforeAfter,
     getExport,
-    exportData,
+    exportData
   } = useAppContext();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -44,36 +47,63 @@ const FormMetrics = () => {
   const [questionsToAnswers, setQuestionsToAnswers] = useState({});
   const [responseType, setResponseType] = useState({});
   const [numberOfResponses, setNumberOfResponses] = useState(0);
+  let reorderedQuestionsToAnswers = {};
 
   const { formCode } = useParams();
   const navigate = useNavigate();
 
   const location = useLocation();
-  let data = [];
-  let formTypeForName = null;
-  let whenForName = null;
+  let data =[]
+  let formTypeForName = null
+  let whenForName = null
 
   const createExcelSheet = () => {
-    if (location.search) {
-      console.log("hi");
+    if (location.search){
       const urlParams = new URLSearchParams(window.location.search);
       formTypeForName = urlParams.get("formType");
       whenForName = urlParams.get("when");
-      // getExport(location.search,formCode);
-    } else {
-      getExport(false, null);
+      getExport(location.search,formCode);
     }
-    if (exportData) {
+    else{
+      getExport(false, null)
+    }
+    if (exportData){
       const worksheet = XLSXUtils.json_to_sheet(exportData);
       const workbook = XLSXUtils.book_new();
-      XLSXUtils.book_append_sheet(workbook, worksheet, "Sheet1");
+      XLSXUtils.book_append_sheet(workbook, worksheet, 'Sheet1');
       writeXLSXFile(workbook, `data.xlsx`);
+    }
+    
+    
+  };
+
+  const createQuestionsToAnswersMap = (array, questionsToAnswers) => {
+    reorderedQuestionsToAnswers = {};
+    array.forEach((question) => {
+      if ((questionsToAnswers).hasOwnProperty(question.question)) {
+        reorderedQuestionsToAnswers[question.question] = questionsToAnswers[question.question];
+      }
+    });
+    setQuestionsToAnswers(reorderedQuestionsToAnswers);
+  };
+
+  const formTimeType = (formType, when, data) => {
+    if (formType === "You and Me, Together Vape-Free") {
+      return when === "before" ? createQuestionsToAnswersMap(tobacco, data) : createQuestionsToAnswersMap(tobacco.concat(postTobacco), data);
+    } else if (formType === "Smart Talk: Cannabis Prevention & Education Awareness") {
+      return when === "before" ? createQuestionsToAnswersMap(cannabis, data) : createQuestionsToAnswersMap(cannabis.concat(postCannabis),data);
+    }
+    else if (formType === "Safety First"){
+      return createQuestionsToAnswersMap(cannabis, data)
     }
   };
 
+
+  
+
   useEffect(() => {
     let combinedQuestionsToAnswers = {};
-
+  
     const fetchDataForResponseGroups = () => {
       return Promise.all(
         responseGroups.map((responseGroup) => {
@@ -86,60 +116,56 @@ const FormMetrics = () => {
             formType: uniqueResponseType.formType,
             when: uniqueResponseType.when,
           });
-
-          return fetch(
-            `/api/v1/form/${
-              uniqueResponseType.formCode
-            }?${queryParameters.toString()}`
-          ).then((res) => res.json());
+  
+          return fetch(`/api/v1/form/${uniqueResponseType.formCode}?${queryParameters.toString()}`)
+            .then((res) => res.json());
         })
       );
     };
-
+  
     if (!location.search) {
       setIsOverall(true);
       setIsLoading(true);
-
+  
       fetchDataForResponseGroups()
         .then((responses) => {
           responses.forEach((data) => {
             const currentQuestionsToAnswers = data.questionsToAnswers;
             Object.keys(currentQuestionsToAnswers).forEach((question) => {
               if (!combinedQuestionsToAnswers[question]) {
-                combinedQuestionsToAnswers[question] =
-                  currentQuestionsToAnswers[question];
+                combinedQuestionsToAnswers[question] = currentQuestionsToAnswers[question];
               } else {
                 // Add the counts of each answer from the current response to the combinedQuestionsToAnswers
                 const currentAnswers = currentQuestionsToAnswers[question];
                 const combinedAnswers = combinedQuestionsToAnswers[question];
                 Object.keys(currentAnswers).forEach((answer) => {
-                  combinedAnswers[answer] =
-                    (combinedAnswers[answer] || 0) + currentAnswers[answer];
+                  combinedAnswers[answer] = (combinedAnswers[answer] || 0) + currentAnswers[answer];
                 });
               }
             });
           });
           // Calculate the total number of responses
-          const totalResponses = responses.reduce(
-            (total, data) => total + data.numberOfResponses,
-            0
-          );
+          const totalResponses = responses.reduce((total, data) => total + data.numberOfResponses, 0);
           setNumberOfResponses(totalResponses);
-          setQuestionsToAnswers(combinedQuestionsToAnswers);
+          formTimeType(searchType, searchBeforeAfter, combinedQuestionsToAnswers )
+          // setQuestionsToAnswers(combinedQuestionsToAnswers);
           setIsLoading(false);
         })
         .catch((error) => console.error(error));
-    } else {
+    } 
+    
+    else {
       setIsOverall(false);
       setIsLoading(true);
       const queryParameters = new URLSearchParams(location.search);
-
+      const formType = queryParameters.get("formType");
+      const when = queryParameters.get("when");
       fetch(`/api/v1/form/${formCode}?${queryParameters.toString()}`)
         .then((res) => res.json())
         .then((data) => {
           setSchool(data.school);
           setTeacher(data.teacher);
-          setQuestionsToAnswers(data.questionsToAnswers);
+          formTimeType(formType, when, data.questionsToAnswers)
           setNumberOfResponses(data.numberOfResponses);
           setResponseType(data.responseType);
         })
@@ -147,7 +173,7 @@ const FormMetrics = () => {
         .finally(() => setIsLoading(false));
     }
   }, [location.search, formCode, responseGroups]);
-
+      
   if (isLoading) return <Loading center />;
 
   return (
@@ -155,14 +181,13 @@ const FormMetrics = () => {
       {isOverall ? (
         <>
           <header>
-            {console.log("hi")}
             <div className="info">
               <h3>Overall Form Metrics</h3>
             </div>
           </header>
-
+          
           <div className="content">
-            <button
+          <button
               className="btn"
               style={{ display: "flex" }}
               onClick={() => createExcelSheet()}
@@ -177,7 +202,7 @@ const FormMetrics = () => {
                 icon={<AiOutlineNumber />}
                 text={`${numberOfResponses} response(s)`}
               />
-              <div>
+              <div >
                 <ResponseGroupInfo
                   icon={<FaLocationArrow />}
                   text={
@@ -192,7 +217,9 @@ const FormMetrics = () => {
                   }
                 />
                 <ResponseGroupInfo
-                  text={searchCity === "all" ? "All cities," : searchCity + ","}
+                  text={
+                    searchCity === "all" ? "All cities," : (searchCity + ",")
+                  }
                 />
                 <ResponseGroupInfo
                   text={
@@ -250,16 +277,16 @@ const FormMetrics = () => {
           </header>
           <div className="content">
             <div className="content-center">
-              <button
-                className="btn"
-                style={{ display: "flex" }}
-                onClick={() => createExcelSheet()}
-              >
-                <span className="icon-css">
-                  <BiExport />
-                </span>
-                Export to Excel
-              </button>
+            <button
+              className="btn"
+              style={{ display: "flex" }}
+              onClick={() => createExcelSheet()}
+            >
+              <span className="icon-css">
+                <BiExport />
+              </span>
+              Export to Excel
+            </button>
               <ResponseGroupInfo
                 icon={<FaChalkboardTeacher />}
                 text={teacher.name}
@@ -299,9 +326,10 @@ const FormMetrics = () => {
           <div className="content">
             <div className="content-center">
               {Object.keys(questionsToAnswers).map((question, index) => (
+                
                 <div key={index}>
                   <h5 style={{ padding: "1rem 0" }}>{question}</h5>
-                  <div className="chartCanvas">
+                  <div className="chartCanvas" >
                     <Doughnut
                       data={{
                         labels: Object.keys(questionsToAnswers[question]),
