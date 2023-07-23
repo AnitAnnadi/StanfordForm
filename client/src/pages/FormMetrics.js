@@ -38,7 +38,11 @@ const FormMetrics = () => {
     exportData
   } = useAppContext();
 
+
+
+
   const [isLoading, setIsLoading] = useState(true);
+  const [exportClicked, setExportClicked] = useState(false);
 
   const [isOverall, setIsOverall] = useState(false);
 
@@ -57,25 +61,41 @@ const FormMetrics = () => {
   let formTypeForName = null
   let whenForName = null
 
-  const createExcelSheet = () => {
-    if (location.search){
+  useEffect(() => {
+    console.log(exportClicked,exportData)
+    if (exportClicked && exportData) {
+      const worksheet = XLSXUtils.json_to_sheet(exportData);
+      const workbook = XLSXUtils.book_new();
+      XLSXUtils.book_append_sheet(workbook, worksheet, "Sheet1");
+      writeXLSXFile(workbook, `data.xlsx`);
+
+      setExportClicked(false);
+    }
+  }, [exportData, exportClicked]);
+
+  const createExcelSheet = async () => {
+    setExportClicked(true)
+    if (location.search) {
       const urlParams = new URLSearchParams(window.location.search);
       formTypeForName = urlParams.get("formType");
       whenForName = urlParams.get("when");
-      getExport(location.search,formCode);
+      await getExport(location.search, formCode);
+    } else {
+      await getExport(false, null);
     }
-    else{
-      getExport(false, null)
-    }
-    if (exportData){
+  
+  };
+
+  const exportToExcel = () => {
+    if (exportData) {
+      console.log(exportData)
       const worksheet = XLSXUtils.json_to_sheet(exportData);
       const workbook = XLSXUtils.book_new();
-      XLSXUtils.book_append_sheet(workbook, worksheet, 'Sheet1');
+      XLSXUtils.book_append_sheet(workbook, worksheet, "Sheet1");
       writeXLSXFile(workbook, `data.xlsx`);
     }
-    
-    
   };
+  
 
   const createQuestionsToAnswersMap = (array, questionsToAnswers) => {
     reorderedQuestionsToAnswers = {};
