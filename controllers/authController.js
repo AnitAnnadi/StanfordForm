@@ -76,8 +76,6 @@ const login = async (req, res) => {
 
   let hasLocation = userLocations.length > 0;
 
-  // console.log(hasLocation)
-  // console.log({userLocations})
 
   res.status(StatusCodes.OK).json({ user,hasLocation, userLocations });
 };
@@ -116,9 +114,7 @@ const submitForm = async(req,res) =>{
 
   if (code){
   const teacher = await User.findOne({ code });
-  console.log(code)
   if (!teacher){
-    console.log('here')
     throw new BadRequestError('Invalid Code. Try Again or Ask Teacher for Code');
   }
 
@@ -132,7 +128,6 @@ const submitForm = async(req,res) =>{
     StudentResponseData= await StudentResponse.create({formCode:code,teacher:teacher._id,grade:grade,when:when,formType:type,school:school})
     
   }
-  console.log(StudentResponseData)
   let _id=(StudentResponseData["_id"])
   
   formData.forEach(async (item) => {
@@ -146,12 +141,10 @@ const submitForm = async(req,res) =>{
   );}
 
   else{
-    console.log(grade,when,type,school,state, city, county, district)
     let NoCodeData=''
     try{
     NoCodeData = await NoCode.create({grade: grade, when:when, formType:type, school:school, state:state, city:city, county:county, district:district })
     let _id=(NoCodeData["_id"])
-    console.log(_id)
     formData.forEach(async (item) => {
       const { question, answers } = item;
     

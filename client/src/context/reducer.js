@@ -15,18 +15,9 @@ import {
   HANDLE_CHANGE,
   HANDLE_MULTIPLE_CHANGES,
   CLEAR_VALUES,
-  CREATE_JOB_BEGIN,
-  CREATE_JOB_SUCCESS,
-  CREATE_JOB_ERROR,
   GET_RESPONSE_GROUPS_BEGIN,
   GET_RESPONSE_GROUPS_SUCCESS,
   GET_RESPONSE_GROUPS_ERROR,
-  SET_EDIT_JOB,
-  DELETE_JOB_BEGIN,
-  DELETE_JOB_ERROR,
-  EDIT_JOB_BEGIN,
-  EDIT_JOB_SUCCESS,
-  EDIT_JOB_ERROR,
   SHOW_STATS_BEGIN,
   SHOW_STATS_SUCCESS,
   CLEAR_FILTERS,
@@ -105,7 +96,6 @@ const reducer = (state, action) => {
   }
 
   if (action.type === GET_EXPORT_SUCCESS) {
-    console.log(action.payload)
     return {
       ...state,
       isLoading: false,
@@ -117,7 +107,6 @@ const reducer = (state, action) => {
   }
 
   if (action.type === GET_EXPORT_BEGIN) {
-    console.log(action.payload)
     return {
       ...state,
       exportData: null
@@ -125,7 +114,6 @@ const reducer = (state, action) => {
   }
 
   if (action.type === GET_EXPORT_FAIL) {
-    console.log(action.payload)
     return {
       ...state,
       isLoading: false,
@@ -199,28 +187,7 @@ const reducer = (state, action) => {
       ...initialState,
     };
   }
-  if (action.type === CREATE_JOB_BEGIN) {
-    return { ...state, isLoading: true };
-  }
-
-  if (action.type === CREATE_JOB_SUCCESS) {
-    return {
-      ...state,
-      isLoading: false,
-      showAlert: true,
-      alertType: 'success',
-      alertText: 'New Job Created!',
-    };
-  }
-  if (action.type === CREATE_JOB_ERROR) {
-    return {
-      ...state,
-      isLoading: false,
-      showAlert: true,
-      alertType: 'danger',
-      alertText: action.payload.msg,
-    };
-  }
+ 
   if (action.type === ENTER_CODE) {
     return {
     // ...state,
@@ -262,56 +229,7 @@ const reducer = (state, action) => {
       alertText: action.payload.msg,
     };
   }
-  if (action.type === SET_EDIT_JOB) {
-    const job = state.jobs.find((job) => job._id === action.payload.id);
-    const { _id, position, company, jobLocation, jobType, status } = job;
-    return {
-      ...state,
-      isEditing: true,
-      editJobId: _id,
-      position,
-      company,
-      jobLocation,
-      jobType,
-      status,
-    };
-  }
-  if (action.type === DELETE_JOB_BEGIN) {
-    return { ...state, isLoading: true };
-  }
-  if (action.type === DELETE_JOB_ERROR) {
-    return {
-      ...state,
-      isLoading: false,
-      showAlert: true,
-      alertType: 'danger',
-      alertText: action.payload.msg,
-    };
-  }
-  if (action.type === EDIT_JOB_BEGIN) {
-    return {
-      ...state,
-      isLoading: true,
-    };
-  }
-  if (action.type === EDIT_JOB_SUCCESS) {
-    return {
-      ...state,
-      isLoading: false,
-      showAlert: true,
-      alertType: 'success',
-      alertText: 'Job Updated!',
-    };
-  }
-  if (action.type === EDIT_JOB_ERROR) {
-    return {
-      ...state,
-      isLoading: false,
-      showAlert: true,
-      alertType: 'danger',
-      alertText: action.payload.msg,
-    };
-  }
+
   if (action.type === SHOW_STATS_BEGIN) {
     return {
       ...state,
@@ -362,7 +280,6 @@ const reducer = (state, action) => {
       userLoading: false,
       user: action.payload.user,
       userLocation: action.payload.location,
-      jobLocation: action.payload.location,
       hasLocation: action.payload.hasLocation
     };
   }

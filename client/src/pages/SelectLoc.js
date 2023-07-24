@@ -163,17 +163,9 @@ const SelectLoc = ({noCode}) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (noCode){
-      console.log(district,county)
       if (state!="default" || grade!="default" || county!="default" || city!="default" || district!="default" ||school!=="default"){
         successAlert("Redirecting...");
-      console.log(state,
-        county,
-        district,
-        school,
-        city,
-        when,
-        form,
-        grade)
+
       setTimeout(() => {
         navigate("/joinedForm", {
           state: {
@@ -357,65 +349,7 @@ const SelectLoc = ({noCode}) => {
                 </select>
               </>
             )}
-            {/* {noCode?(
-              
-            <div>
-              {console.log(noCode)}
-            <h4 className="form-title">Form Type</h4>
-            <select
-              name="type"
-              value={form}
-              onChange={(e) => setForm(e.target.value)}
-              className="form-select"
-            >
-              <option value={"default"} disabled>
-                Choose your Form
-              </option>
-              <option value={"You and Me, Together Vape-Free"}>
-                You and Me, Together Vape-Free
-              </option>
-              <option
-                value={"Smart Talk: Cannabis Prevention & Education Awareness"}
-              >
-                Smart Talk: Cannabis Prevention & Education Awareness
-              </option>
-            </select>
-
-            <h4 className="form-title">Grade Level</h4>
-            <select
-              name="grade"
-              value={grade}
-              onChange={(e) => setGrade(e.target.value)}
-              className="form-select"
-            >
-              <option value={"default"} disabled>
-                Grade Level
-              </option>
-              {grades.map((grade, index) => {
-                return (
-                  <option key={index} value={grade}>
-                    {grade}
-                  </option>
-                );
-              })}
-            </select>
-
-
-            <h4 className="form-title">When are you taking this form</h4>
-            <select
-              name="when"
-              value={when}
-              onChange={(e) => setWhen(e.target.value)}
-              className="form-select"
-            >
-              <option value={"default"} disabled>
-                Choose When
-              </option>
-              <option value={"before"}>Before Lesson</option>
-              <option value={"after"}>After Lesson</option>
-            </select>
-            </div>): null} */}
-
+            
             {!noCode && showMultiplePeriods && (
               <>
                 <hr />

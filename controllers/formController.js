@@ -71,5 +71,15 @@ const getFormMetrics = async(req,res) => {
 
 }
 
+const getTotal=async(req,res)=>{
+  const {code}=req.body
+  const result=StudentResponse.find({formCode:code})
+  const total = await result;
+  let totalResponses=total.length
+  res.status(StatusCodes.OK).json({ totalResponses });
 
-export { getFormMetrics }
+  
+}
+
+
+export { getFormMetrics, getTotal }

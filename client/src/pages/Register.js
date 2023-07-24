@@ -23,7 +23,6 @@ const Register = () => {
   const location = useLocation();
   const { type } = location.state;
   let adminbool=false
-  // console.log(type)
   const [values, setValues] = useState(initialState);
   const [adminRole, setAdminRole] = useState("default");
   const { user, isLoading, showAlert, displayAlert, setupUser, hasLocation } =
@@ -96,8 +95,6 @@ const Register = () => {
   };
 
   useEffect(() => {
-    // console.log(hasLocation)
-    console.log(user)
     if ((user && hasLocation) || (user?.role === 'Standford Staff')) {
       adminroles.map((role=>{
         if (role==user.role){

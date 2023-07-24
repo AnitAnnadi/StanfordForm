@@ -28,24 +28,15 @@ import {
   UPDATE_USER_ERROR,
   HANDLE_CHANGE,
   CLEAR_VALUES,
-  // CREATE_JOB_BEGIN,
-  // CREATE_JOB_SUCCESS,
-  // CREATE_JOB_ERROR,
+
   GET_RESPONSE_GROUPS_BEGIN,
   GET_RESPONSE_GROUPS_SUCCESS,
   GET_RESPONSE_GROUPS_ERROR,
-  // SET_EDIT_JOB,
-  // DELETE_JOB_BEGIN,
-  // DELETE_JOB_ERROR,
-  // EDIT_JOB_BEGIN,
-  // EDIT_JOB_SUCCESS,
-  // EDIT_JOB_ERROR,
   SHOW_STATS_BEGIN,
   SHOW_STATS_SUCCESS,
   CLEAR_FILTERS,
   CHANGE_PAGE,
-  // GET_CURRENT_USER_BEGIN,
-  // GET_CURRENT_USER_SUCCESS,
+
   ENTER_CODE,
   GET_TOTAL,
   ADD_LOCATION_SUCCESS, HANDLE_MULTIPLE_CHANGES, SUCCESS_ALERT
@@ -73,10 +64,6 @@ const initialState = {
   userLocations: LSUserLocations ? (LSUserLocations !== 'undefined' ? LSUserLocations : []) : [],
   showSidebar: false,
   isEditing: false,
-  editJobId: '',
-  position: '',
-  company: '',
-  jobLocation: '',
   responseGroups: [],
   totalResponseGroups: 0,
   numOfPages: 1,
@@ -253,7 +240,6 @@ const AppProvider = ({ children }) => {
       return response;
     },
     (error) => {
-      // console.log(error.response)
       if (error.response.status === 401) {
         logoutUser();
       }
@@ -407,7 +393,6 @@ const AppProvider = ({ children }) => {
         }
       });
     } catch (error) {
-      console.log(error)
       if (error.response.status !== 401) {
         dispatch({
           type: UPDATE_USER_ERROR,
@@ -436,7 +421,6 @@ const AppProvider = ({ children }) => {
     clearAlert();
   };
  const submitForm = async (formData,code,grade,when,type,school,period,state, city, county, district) => {
-    console.log(formData,code,grade,when,type,school,period,state, city, county, district)
     
     try {
       const { data } = await axios.post(`/api/v1/auth/submitForm/`, {formData,code,grade,when,type,school,period,state, city, county, district});
@@ -459,28 +443,7 @@ const AppProvider = ({ children }) => {
   const clearValues = () => {
     dispatch({ type: CLEAR_VALUES });
   };
-  // const createJob = async () => {
-  //   dispatch({ type: CREATE_JOB_BEGIN });
-  //   try {
-  //     const { position, company, jobLocation, jobType, status } = state;
-  //     await authFetch.post('/jobs', {
-  //       position,
-  //       company,
-  //       jobLocation,
-  //       jobType,
-  //       status,
-  //     });
-  //     dispatch({ type: CREATE_JOB_SUCCESS });
-  //     dispatch({ type: CLEAR_VALUES });
-  //   } catch (error) {
-  //     if (error.response.status === 401) return;
-  //     dispatch({
-  //       type: CREATE_JOB_ERROR,
-  //       payload: { msg: error.response.data.msg },
-  //     });
-  //   }
-  //   clearAlert();
-  // };
+
   const getResponseGroups = async () => {
     const {
       user,
@@ -598,21 +561,6 @@ const AppProvider = ({ children }) => {
         }
 
 
-        // const periods = [...new Set(studentResponses.map((response) => response.period))];
-        //
-        // console.log({periods})
-        //
-        // for (const periodIndex in periods) {
-        //   const studentResponsesByPeriod = studentResponses.filter((response) => response.period === periods[periodIndex]);
-        //
-        //   console.log({studentResponsesByPeriod})
-        //   responseGroups.push({
-        //     school: filteredSchools[schoolIndex],
-        //     teacherName,
-        //     period: periods[periodIndex],
-        //     studentResponsesByPeriod,
-        //   });
-        // }
       }
 
 
@@ -680,11 +628,9 @@ const AppProvider = ({ children }) => {
         try {
           const data = await authFetch.get(`/export/${uniqueResponseType.formCode}?${queryParameters}`);
           const exportDatas = data.data.exportData;
-          console.log(exportDatas);
           exportDatas.map((exportData=>{
             allExportData.push(exportData);
           }))
-          console.log(allExportData)
         } catch (error) {
           console.error(`Error fetching data for responseGroup: ${responseGroup}`, error);
           dispatch({ type: GET_EXPORT_FAIL, payload: { msg: "Export Failed" } });
@@ -700,73 +646,15 @@ const AppProvider = ({ children }) => {
 
   
 
-  // const setEditJob = (id) => {
-  //   dispatch({ type: SET_EDIT_JOB, payload: { id } });
-  // };
-  // const editJob = async () => {
-  //   dispatch({ type: EDIT_JOB_BEGIN });
-  //
-  //   try {
-  //     const { position, company, jobLocation, jobType, status } = state;
-  //     await authFetch.patch(`/jobs/${state.editJobId}`, {
-  //       company,
-  //       position,
-  //       jobLocation,
-  //       jobType,
-  //       status,
-  //     });
-  //     dispatch({ type: EDIT_JOB_SUCCESS });
-  //     dispatch({ type: CLEAR_VALUES });
-  //   } catch (error) {
-  //     if (error.response.status === 401) return;
-  //     dispatch({
-  //       type: EDIT_JOB_ERROR,
-  //       payload: { msg: error.response.data.msg },
-  //     });
-  //   }
-  //   clearAlert();
-  // };
-  // const deleteJob = async (jobId) => {
-  //   dispatch({ type: DELETE_JOB_BEGIN });
-  //   try {
-  //     await authFetch.delete(`/jobs/${jobId}`);
-  //     getJobs();
-  //   } catch (error) {
-  //     if (error.response.status === 401) return;
-  //     dispatch({
-  //       type: DELETE_JOB_ERROR,
-  //       payload: { msg: error.response.data.msg },
-  //     });
-  //   }
-  //   clearAlert();
-  // };
-
   const getTotal = async(user)=>{
     let code=user.code
-    const {data}=await authFetch.post('/jobs/responses', {
+    const {data}=await authFetch.post('/form/responses', {
       code
     });
     let total=(data["totalResponses"])
     dispatch({ type: GET_TOTAL , payload:{total}});
     
   }
-  const showStats = async () => {
-    dispatch({ type: SHOW_STATS_BEGIN });
-    try {
-      const { data } = await authFetch('/jobs/stats');
-      dispatch({
-        type: SHOW_STATS_SUCCESS,
-        payload: {
-          stats: data.defaultStats,
-          monthlyApplications: data.monthlyApplications,
-        },
-      });
-    } catch (error) {
-      logoutUser();
-    }
-    clearAlert();
-  };
-
 
   const changePage = (page) => {
     dispatch({ type: CHANGE_PAGE, payload: { page } });
@@ -786,13 +674,9 @@ const AppProvider = ({ children }) => {
         handleChange,
         handleChanges,
         clearValues,
-        // createJob,
         getResponseGroups,
-        // setEditJob,
-        // deleteJob,
         getExport,
         successAlert,
-        showStats,
         changePage,
         addLocation,
         enterCode,

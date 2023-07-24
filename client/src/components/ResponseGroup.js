@@ -5,7 +5,7 @@ import { FaRegCalendarAlt } from 'react-icons/fa'
 import { AiOutlineForm, AiOutlineNumber } from 'react-icons/ai'
 import {json, Link} from 'react-router-dom'
 import { useAppContext } from '../context/appContext'
-import Wrapper from '../assets/wrappers/Job'
+import Wrapper from '../assets/wrappers/ResponseGroup'
 import ResponseGroupInfo from './ResponseGroupInfo'
 
 const ResponseGroup = ({
@@ -14,7 +14,6 @@ const ResponseGroup = ({
   uniqueResponseType,
   numberOfResponses,
 }) => {
-  const { setEditJob, deleteJob } = useAppContext()
 
   const formCode = uniqueResponseType.formCode
 

@@ -65,7 +65,6 @@ const getExport = async (req, res) => {
         let questions = await Question.find({
           StudentResponse: studentResponse._id,
         });
-        console.log(studentResponse.formType);
         if (studentResponse.formType === "You and Me, Together Vape-Free") {
           if (studentResponse.when === "before") {
             findResponse(tobacco, questions, obj);
@@ -86,7 +85,6 @@ const getExport = async (req, res) => {
         }
       })
     );
-    // console.log(exportData)
 
     res.status(StatusCodes.OK).json({ exportData });
   } catch (error) {

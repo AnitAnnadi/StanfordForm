@@ -10,12 +10,7 @@ import {
 const Home = () => {
   const { user, showStats, isLoading, monthlyApplications } = useAppContext();
 
-  useEffect(() => {
-    if (user && user.role === "Teacher") {
-      showStats();
-    }
-    // eslint-disable-next-line
-  }, []);
+
   if (isLoading) {
     return <Loading center />;
   }

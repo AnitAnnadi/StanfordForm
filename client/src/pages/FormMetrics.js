@@ -62,7 +62,6 @@ const FormMetrics = () => {
   let whenForName = null
 
   useEffect(() => {
-    console.log(exportClicked,exportData)
     if (exportClicked && exportData) {
       const worksheet = XLSXUtils.json_to_sheet(exportData);
       const workbook = XLSXUtils.book_new();

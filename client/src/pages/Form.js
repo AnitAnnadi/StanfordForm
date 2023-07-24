@@ -54,7 +54,6 @@ const Form = () => {
   
       formData.push({ question, answers });
     });
-    console.log(formData)
     let grade = info["grade"]
     let when = info["when"]
     let type = info["form"]

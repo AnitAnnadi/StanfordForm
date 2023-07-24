@@ -35,8 +35,7 @@ const JoinForm = () => {
   let grades = ["K", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   let periods = [0, 1, 2, 3, 4, 5, 6, 7, 8];
   let schools = null;
-  console.log(info["noCode"])
-  console.log(info)
+
   if (!info["noCode"]){
     schools = info["schools"];
   }
@@ -66,7 +65,6 @@ const JoinForm = () => {
         </div>
       );
     } else {
-      // console.log(schools[0]["school"])
       setSchool(schools[0]["school"]);
     }
   };
@@ -78,7 +76,6 @@ const JoinForm = () => {
       }
     });
     if (current["multiplePeriods"]) {
-      // console.log('here')
       return (
         <div>
           <h4 className="form-title">Period</h4>
@@ -162,7 +159,6 @@ const JoinForm = () => {
     }
   }
   };
-  console.log(info["noCode"])
   return (
     <div
       className="full-page"
