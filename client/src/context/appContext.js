@@ -499,7 +499,7 @@ const AppProvider = ({ children }) => {
         }
       });
 
-      let responseGroups = [];
+      let totalResponseGroups = [];
 
       let teacherNames = [];
 
@@ -548,7 +548,7 @@ const AppProvider = ({ children }) => {
         }
 
         for (const responseTypeIndex in uniqueResponseTypes) {
-          responseGroups.push({
+          totalResponseGroups.push({
             school: filteredSchools[schoolIndex],
             teacherName,
             uniqueResponseType: uniqueResponseTypes[responseTypeIndex],
@@ -567,15 +567,15 @@ const AppProvider = ({ children }) => {
       const limit = 10;
       const skip = (page - 1) * limit;
 
-      responseGroups = responseGroups.slice(skip, skip + limit + 1);
+      let responseGroups = totalResponseGroups.slice(skip, skip + limit);
 
-      const numOfPages = Math.ceil(responseGroups.length / limit);
+      const numOfPages = Math.ceil(totalResponseGroups.length / limit);
 
       dispatch({
         type: GET_RESPONSE_GROUPS_SUCCESS,
         payload: {
           responseGroups,
-          totalResponseGroups: responseGroups.length,
+          totalResponseGroups: totalResponseGroups.length,
           numOfPages,
           teacherOptions: searchTeacher === 'all' ? teacherNames : state.teacherOptions,
         },

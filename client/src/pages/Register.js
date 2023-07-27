@@ -75,7 +75,17 @@ const Register = () => {
       role = "Teacher";
     }
     if (type == "admin") {
-      role = adminRole;
+      console.log(adminRole)
+      if (adminRole=="default"){
+        
+        displayAlert();
+        return;
+
+      }
+      else{
+        role = adminRole;
+      }
+      
     }
     const currentUser = { name, email, password, role, state, city, school };
 

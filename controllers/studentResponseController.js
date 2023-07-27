@@ -6,6 +6,7 @@ import {StatusCodes} from "http-status-codes";
 import StudentResponse from "../models/StudentResponse.js";
 
 const getStudentResponses = async(req, res) => {
+  console.log('hi')
   const user = await User.findOne({ _id: req.user.userId });
   
   const token = user.createJWT();

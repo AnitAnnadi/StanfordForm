@@ -31,6 +31,7 @@ const SchoolsContainer = ({shouldReload, stopReload}) => {
   useEffect(() => {
     // use timeout to prevent multiple requests
     const timeout = setTimeout(() => {
+      console.log('req')
       getResponseGroups();
     }, 500);
 
