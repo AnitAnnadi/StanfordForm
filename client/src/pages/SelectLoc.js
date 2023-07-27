@@ -14,7 +14,7 @@ import {
   getDistrictCounty,
 } from "../utils/schoolDataFetch";
 
-const SelectLoc = ({noCode}) => {
+const SelectLoc = ({ noCode }) => {
   const {
     user,
     userLocations,
@@ -22,7 +22,7 @@ const SelectLoc = ({noCode}) => {
     displayAlert,
     addLocation,
     isLoading,
-    successAlert
+    successAlert,
   } = useAppContext();
   const navigate = useNavigate();
 
@@ -33,7 +33,6 @@ const SelectLoc = ({noCode}) => {
   const [county, setCounty] = useState("default");
   const [form, setForm] = useState("default");
   const [when, setWhen] = useState("default");
-
 
   const states = [
     "Alabama",
@@ -96,21 +95,28 @@ const SelectLoc = ({noCode}) => {
   const [grade, setGrade] = useState("default");
 
   const [multiplePeriods, setMultiplePeriods] = useState(false);
-  let adminroles = ["Site Admin", "District Admin", "County Admin", "State Admin", "Standford Staff"];
+  let adminroles = [
+    "Site Admin",
+    "District Admin",
+    "County Admin",
+    "State Admin",
+    "Standford Staff",
+  ];
   let grades = ["K", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-  let adminbool=false
+  let adminbool = false;
   const [additionalLoc, setAdditionalLoc] = useState(false);
 
   const [numOfLocations, setNumOfLocations] = useState(
     userLocations ? userLocations.length + 1 : 1
   );
-  
 
   const showCounty =
-    user?.role === "District Admin" || user?.role === "County Admin" ;
-  const showCity = user?.role === "Site Admin" || user?.role === "Teacher" || noCode;
-  const showDistrict = user?.role === "District Admin" ;
-  const showSchool = user?.role === "Site Admin" || user?.role === "Teacher" || noCode;
+    user?.role === "District Admin" || user?.role === "County Admin";
+  const showCity =
+    user?.role === "Site Admin" || user?.role === "Teacher" || noCode;
+  const showDistrict = user?.role === "District Admin";
+  const showSchool =
+    user?.role === "Site Admin" || user?.role === "Teacher" || noCode;
   const showMultiplePeriods = user?.role === "Teacher";
   const showAdditionalLoc = user?.role === "Teacher";
 
@@ -137,7 +143,7 @@ const SelectLoc = ({noCode}) => {
 
       if (value !== "default") {
         setCities(narrowCities({ state: value }));
-        setCounties(narrowCounties({ state: value}));
+        setCounties(narrowCounties({ state: value }));
       }
     } else if (field === "county") {
       setCounty(value);
@@ -162,96 +168,102 @@ const SelectLoc = ({noCode}) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (noCode){
-      if (state!="default" || grade!="default" || county!="default" || city!="default" || district!="default" ||school!=="default"){
+    if (noCode) {
+      if (
+        state != "default" ||
+        grade != "default" ||
+        county != "default" ||
+        city != "default" ||
+        district != "default" ||
+        school !== "default"
+      ) {
         successAlert("Redirecting...");
 
-      setTimeout(() => {
-        navigate("/joinedForm", {
-          state: {
-            state,
-            county,
-            district,
-            school,
-            city,
-            noCode
-          },
-        });
-      }, 3000);
-    } else {
-      displayAlert();
-    }
-    }
-    else{
-
-    
-    if (user.role === "Standford Staff") {
-      setTimeout(() => {
-        navigate("/");
-      }, 1000);
-
-      return;
-    }
-
-    if (
-      state === "default" ||
-      (showCounty && county === "default") ||
-      (showCity && city === "default") ||
-      (showDistrict && district === "default") ||
-      (showSchool && school === "default")
-    ) {
-      displayAlert();
-      return;
-    }
-
-    addLocation({
-      multiplePeriods: multiplePeriods,
-      state: state,
-      county: county !== "default" ? county : null,
-      city: city !== "default" ? city : null,
-      district: district !== "default" ? district : null,
-      school: school !== "default" ? school : null,
-    });
-
-    adminroles.map((role=>{
-      if (role === user.role){
-        adminbool=true
-      }
-    }))
-
-    if (additionalLoc) {
-      setState("default");
-      setCounty("default");
-      setCity("default");
-      setDistrict("default");
-      setSchool("default");
-      setMultiplePeriods(false);
-      setAdditionalLoc(false);
-      setNumOfLocations(numOfLocations + 1);
-    } else {
-      if (adminbool){
         setTimeout(() => {
-          navigate("/metrics");
+          navigate("/joinedForm", {
+            state: {
+              state,
+              county,
+              district,
+              school,
+              city,
+              noCode,
+            },
+          });
         }, 3000);
       } else {
+        displayAlert();
+      }
+    } else {
+      if (user.role === "Standford Staff") {
         setTimeout(() => {
           navigate("/");
         }, 1000);
+
+        return;
       }
-    }}
+
+      if (
+        state === "default" ||
+        (showCounty && county === "default") ||
+        (showCity && city === "default") ||
+        (showDistrict && district === "default") ||
+        (showSchool && school === "default")
+      ) {
+        displayAlert();
+        return;
+      }
+
+      addLocation({
+        multiplePeriods: multiplePeriods,
+        state: state,
+        county: county !== "default" ? county : null,
+        city: city !== "default" ? city : null,
+        district: district !== "default" ? district : null,
+        school: school !== "default" ? school : null,
+      });
+
+      adminroles.map((role) => {
+        if (role === user.role) {
+          adminbool = true;
+        }
+      });
+
+      if (additionalLoc) {
+        setState("default");
+        setCounty("default");
+        setCity("default");
+        setDistrict("default");
+        setSchool("default");
+        setMultiplePeriods(false);
+        setAdditionalLoc(false);
+        setNumOfLocations(numOfLocations + 1);
+      } else {
+        if (adminbool) {
+          setTimeout(() => {
+            navigate("/metrics");
+          }, 3000);
+        } else {
+          setTimeout(() => {
+            navigate("/");
+          }, 1000);
+        }
+      }
+    }
   };
 
   return (
     <div
       className="full-page"
-      style={{ display: "grid", alignItems: "center", padding: "0 1.5rem" }}
+      style={{ display: "grid", alignItems: "center", padding: "0 1rem" }}
     >
-      <Wrapper>
+      <Wrapper style={{ paddingBottom: "1.5rem" }}>
         <form className="form" onSubmit={handleSubmit}>
           {showAlert && <Alert />}
           <div className="form">
             <h3 className="form-title">
-              Select Location {numOfLocations > 1 && !noCode ? numOfLocations : ""}
+              Select Location{" "}
+              {numOfLocations > 1 && !noCode ? numOfLocations : ""}
             </h3>
             <h4 className="form-title">State</h4>
             <select
@@ -349,7 +361,7 @@ const SelectLoc = ({noCode}) => {
                 </select>
               </>
             )}
-            
+
             {!noCode && showMultiplePeriods && (
               <>
                 <hr />
@@ -391,6 +403,16 @@ const SelectLoc = ({noCode}) => {
             >
               {isLoading ? "Please Wait..." : "submit"}
             </button>
+            <p>
+              Don't see your school?{" "}
+              <a
+                className="link"
+                target="_blank"
+                href="https://forms.gle/aTaBwDWmhRV7iDAT6"
+              >
+                Click here
+              </a>
+            </p>
           </div>
         </form>
       </Wrapper>
