@@ -74,8 +74,7 @@ const Register = () => {
     if (type == "teacher") {
       role = "Teacher";
     }
-    if (type == "admin") {
-      console.log(adminRole)
+    if (!isMember && type == "admin") {
       if (adminRole=="default"){
         
         displayAlert();

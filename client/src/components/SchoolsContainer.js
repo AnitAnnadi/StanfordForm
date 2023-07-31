@@ -1,12 +1,11 @@
 import { useAppContext } from '../context/appContext';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import Loading from './Loading';
 import ResponseGroup from './ResponseGroup';
 import Alert from './Alert';
 import Wrapper from '../assets/wrappers/JobsContainer';
-import PageBtnContainer from './PageBtnContainer';
 
-const SchoolsContainer = ({shouldReload, stopReload}) => {
+const SchoolsContainer = ({ shouldReload, stopReload }) => {
   const {
     getResponseGroups,
     responseGroups,
@@ -26,34 +25,69 @@ const SchoolsContainer = ({shouldReload, stopReload}) => {
     changePage,
     numOfPages,
     showAlert,
+    currentSchoolIndex
   } = useAppContext();
 
+  const endDivRef = useRef(null);
+  const currentSchoolIndexRef = useRef(currentSchoolIndex);
+
+  const handleEndDivIntersection = (entries) => {
+    const [entry] = entries;
+    if (entry.isIntersecting) {
+      console.log(currentSchoolIndexRef.current);
+      getResponseGroups(currentSchoolIndexRef.current);
+    }
+  };
+
   useEffect(() => {
-    // use timeout to prevent multiple requests
+    currentSchoolIndexRef.current = currentSchoolIndex;
+  }, [currentSchoolIndex]);
+
+  useEffect(() => {
+    const options = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.1,
+    };
+    const observer = new IntersectionObserver(handleEndDivIntersection, options);
+
+    if (endDivRef.current) {
+      observer.observe(endDivRef.current);
+    }
+
+    return () => {
+      if (endDivRef.current) {
+        observer.unobserve(endDivRef.current);
+      }
+    };
+  }, [endDivRef.current]);
+
+  useEffect(() => {
     const timeout = setTimeout(() => {
-      console.log('req')
-      getResponseGroups();
+      getResponseGroups(currentSchoolIndexRef.current);
     }, 500);
 
     return () => {
       clearTimeout(timeout);
-    }
-  }, [page]);
+    };
+  }, []);
 
   useEffect(() => {
     if (shouldReload) {
       const timeout = setTimeout(() => {
         stopReload();
-        changePage(1);
-        getResponseGroups();
+        getResponseGroups(0, shouldReload);
       }, 500);
       return () => {
         clearTimeout(timeout);
-      }
+      };
     }
   }, [shouldReload]);
 
-  if (isLoading) {
+
+
+
+  if (isLoading &&responseGroups.length === 0 ) {
     return <Loading center />;
   }
 
@@ -69,14 +103,17 @@ const SchoolsContainer = ({shouldReload, stopReload}) => {
     <Wrapper>
       {showAlert && <Alert />}
       <h5>
-        {totalResponseGroups} class{responseGroups.length > 1 && 'es'} found
+        {/* {totalResponseGroups} class{responseGroups.length > 1 && 'es'} found */}
       </h5>
       <div className='jobs'>
-        {responseGroups.map((ResponseGroupItem, index) => {
-          return <ResponseGroup key={index} {...ResponseGroupItem} />;
-        })}
+        {responseGroups.map((ResponseGroupItem, index) => (
+          <ResponseGroup key={index} {...ResponseGroupItem} />
+        ))}
       </div>
-      {numOfPages > 1 && <PageBtnContainer />}
+      <div ref={endDivRef} className='end'>
+        {currentSchoolIndex}
+      </div>
+      {isLoading?<Loading center />:null}
     </Wrapper>
   );
 };
