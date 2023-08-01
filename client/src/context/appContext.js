@@ -31,6 +31,7 @@ import {
 
   GET_RESPONSE_GROUPS_BEGIN,
   GET_RESPONSE_GROUPS_SUCCESS,
+  PAGE_FULL,
   GET_RESPONSE_GROUPS_ERROR,
   SHOW_STATS_BEGIN,
   SHOW_STATS_SUCCESS,
@@ -93,7 +94,8 @@ const initialState = {
   teacher:'',
   totalResponses:null,
   hasLocation:null,
-  exportData:null
+  exportData:null,
+  currentSchoolIndex:null
 };
 
 const configureFormStates = (userLocations, user, formStates) => {
@@ -444,7 +446,7 @@ const AppProvider = ({ children }) => {
     dispatch({ type: CLEAR_VALUES });
   };
 
-  const getResponseGroups = async () => {
+  const getResponseGroups = async (currentSchoolIndex, shouldReload) => {
     const {
       user,
       userLocations,
@@ -459,10 +461,10 @@ const AppProvider = ({ children }) => {
       searchTeacher,
       searchType,
       searchBeforeAfter,
+      responseGroups
     } = state;
-
-
-    dispatch({ type: GET_RESPONSE_GROUPS_BEGIN });
+    console.log(currentSchoolIndex)
+    dispatch({ type: GET_RESPONSE_GROUPS_BEGIN, payload:{shouldReload} });
 
     try {
       const { data } = await authFetch.get('/schools', {
@@ -499,11 +501,12 @@ const AppProvider = ({ children }) => {
         }
       });
 
-      let totalResponseGroups = [];
-
+      let newResponses = [];
       let teacherNames = [];
+      let schoolIndex = currentSchoolIndex?currentSchoolIndex:0
+      while ( schoolIndex<filteredSchools.length) {
+        console.log(schoolIndex)
 
-      for (const schoolIndex in filteredSchools) {
         const { data: data2 } = await authFetch.get('/studentResponses', {
           params: {
             school: filteredSchools[schoolIndex].school,
@@ -548,7 +551,7 @@ const AppProvider = ({ children }) => {
         }
 
         for (const responseTypeIndex in uniqueResponseTypes) {
-          totalResponseGroups.push({
+          newResponses.push({
             school: filteredSchools[schoolIndex],
             teacherName,
             uniqueResponseType: uniqueResponseTypes[responseTypeIndex],
@@ -559,31 +562,37 @@ const AppProvider = ({ children }) => {
             }).length,
           });
         }
-
-
+        schoolIndex++
+        if (newResponses.length>=4){
+          console.log("inex"+schoolIndex)
+          break
+        }
+        
       }
 
 
-      const limit = 10;
-      const skip = (page - 1) * limit;
+      dispatch({
+        type: PAGE_FULL,
+        payload: {
+        schoolIndex,
+        },
+      });
 
-      let responseGroups = totalResponseGroups.slice(skip, skip + limit);
-
-      const numOfPages = Math.ceil(totalResponseGroups.length / limit);
-
+      console.log(responseGroups)
       dispatch({
         type: GET_RESPONSE_GROUPS_SUCCESS,
         payload: {
-          responseGroups,
-          totalResponseGroups: totalResponseGroups.length,
-          numOfPages,
+          newResponses,
+          // totalResponseGroups: totalResponseGroups.length,
+          // numOfPages,
           teacherOptions: searchTeacher === 'all' ? teacherNames : state.teacherOptions,
         },
       });
     } catch (error) {
+      console.log(error)
       dispatch({
         type: GET_RESPONSE_GROUPS_ERROR,
-        payload: { msg: error.response.data.msg },
+        payload: { msg: error.response },
       });
       logoutUser();
     }

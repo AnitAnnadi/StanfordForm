@@ -1,12 +1,11 @@
 import { useAppContext } from '../context/appContext';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import Loading from './Loading';
 import ResponseGroup from './ResponseGroup';
 import Alert from './Alert';
 import Wrapper from '../assets/wrappers/JobsContainer';
-import PageBtnContainer from './PageBtnContainer';
 
-const SchoolsContainer = ({shouldReload, stopReload}) => {
+const SchoolsContainer = ({ shouldReload, stopReload }) => {
   const {
     getResponseGroups,
     responseGroups,
@@ -26,34 +25,55 @@ const SchoolsContainer = ({shouldReload, stopReload}) => {
     changePage,
     numOfPages,
     showAlert,
+    currentSchoolIndex
   } = useAppContext();
 
+  const endDivRef = useRef(null);
+
   useEffect(() => {
-    // use timeout to prevent multiple requests
-    const timeout = setTimeout(() => {
-      console.log('req')
-      getResponseGroups();
-    }, 500);
+    const options = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.1,
+    };
+
+    const handleEndDivIntersection = (entries) => {
+      const [entry] = entries;
+      if (entry.isIntersecting) {
+        getResponseGroups(currentSchoolIndex);
+      }
+    };
+
+    const observer = new IntersectionObserver(handleEndDivIntersection, options);
+
+    if (endDivRef.current) {
+      observer.observe(endDivRef.current);
+    }
 
     return () => {
-      clearTimeout(timeout);
-    }
-  }, [page]);
+      if (endDivRef.current) {
+        observer.unobserve(endDivRef.current);
+      }
+    };
+  }, [endDivRef.current, currentSchoolIndex]);
 
   useEffect(() => {
     if (shouldReload) {
       const timeout = setTimeout(() => {
         stopReload();
-        changePage(1);
-        getResponseGroups();
+        getResponseGroups(0, shouldReload);
       }, 500);
       return () => {
         clearTimeout(timeout);
-      }
+      };
     }
   }, [shouldReload]);
 
-  if (isLoading) {
+  useEffect(() => {
+    getResponseGroups(currentSchoolIndex); // Call the function on mount
+  }, []);
+
+  if (isLoading && responseGroups.length === 0) {
     return <Loading center />;
   }
 
@@ -69,14 +89,16 @@ const SchoolsContainer = ({shouldReload, stopReload}) => {
     <Wrapper>
       {showAlert && <Alert />}
       <h5>
-        {totalResponseGroups} class{responseGroups.length > 1 && 'es'} found
+        {/* {totalResponseGroups} class{responseGroups.length > 1 && 'es'} found */}
       </h5>
       <div className='jobs'>
-        {responseGroups.map((ResponseGroupItem, index) => {
-          return <ResponseGroup key={index} {...ResponseGroupItem} />;
-        })}
+        {responseGroups.map((ResponseGroupItem, index) => (
+          <ResponseGroup key={index} {...ResponseGroupItem} />
+        ))}
       </div>
-      {numOfPages > 1 && <PageBtnContainer />}
+      <div ref={endDivRef} className='end'>
+      </div>
+      {isLoading ? <Loading center /> : null}
     </Wrapper>
   );
 };

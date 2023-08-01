@@ -17,6 +17,7 @@ import {
   CLEAR_VALUES,
   GET_RESPONSE_GROUPS_BEGIN,
   GET_RESPONSE_GROUPS_SUCCESS,
+  PAGE_FULL,
   GET_RESPONSE_GROUPS_ERROR,
   SHOW_STATS_BEGIN,
   SHOW_STATS_SUCCESS,
@@ -208,18 +209,32 @@ const reducer = (state, action) => {
   //   return { ...state, isLoading: true, showAlert: false };
   // }
   if (action.type === GET_RESPONSE_GROUPS_BEGIN) {
-    return { ...state, isLoading: true, showAlert: false };
+    if (action.payload.shouldReload){
+      return { ...state, isLoading: true, showAlert: false, responseGroups:[]};
+    }
+    else{
+      return { ...state, isLoading: true, showAlert: false };
+    }
+  }
+
+  if (action.type === PAGE_FULL) {
+    console.log(action.payload.schoolIndex)
+    return { ...state,currentSchoolIndex: action.payload.schoolIndex};
   }
   if (action.type === GET_RESPONSE_GROUPS_SUCCESS) {
+    // Filter out duplicate responses from action.payload.newResponses
+    const uniqueNewResponses = action.payload.newResponses.filter((newResponse) => {
+      return !state.responseGroups.some((existingResponse) => JSON.stringify(existingResponse) === JSON.stringify(newResponse));
+    });
+  
     return {
       ...state,
-      isLoading: false,
-      responseGroups: action.payload.responseGroups,
-      totalResponseGroups: action.payload.totalResponseGroups,
-      numOfPages: action.payload.numOfPages,
+      responseGroups: [...state.responseGroups, ...uniqueNewResponses], // Append unique new responses to the end
       teacherOptions: action.payload.teacherOptions,
+      isLoading: false
     };
   }
+  
   if (action.type === GET_RESPONSE_GROUPS_ERROR) {
     return {
       ...state,
