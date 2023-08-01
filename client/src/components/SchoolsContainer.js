@@ -29,19 +29,6 @@ const SchoolsContainer = ({ shouldReload, stopReload }) => {
   } = useAppContext();
 
   const endDivRef = useRef(null);
-  const currentSchoolIndexRef = useRef(currentSchoolIndex);
-
-  const handleEndDivIntersection = (entries) => {
-    const [entry] = entries;
-    if (entry.isIntersecting) {
-      console.log(currentSchoolIndexRef.current);
-      getResponseGroups(currentSchoolIndexRef.current);
-    }
-  };
-
-  useEffect(() => {
-    currentSchoolIndexRef.current = currentSchoolIndex;
-  }, [currentSchoolIndex]);
 
   useEffect(() => {
     const options = {
@@ -49,6 +36,14 @@ const SchoolsContainer = ({ shouldReload, stopReload }) => {
       rootMargin: '0px',
       threshold: 0.1,
     };
+
+    const handleEndDivIntersection = (entries) => {
+      const [entry] = entries;
+      if (entry.isIntersecting) {
+        getResponseGroups(currentSchoolIndex);
+      }
+    };
+
     const observer = new IntersectionObserver(handleEndDivIntersection, options);
 
     if (endDivRef.current) {
@@ -60,17 +55,7 @@ const SchoolsContainer = ({ shouldReload, stopReload }) => {
         observer.unobserve(endDivRef.current);
       }
     };
-  }, [endDivRef.current]);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      getResponseGroups(currentSchoolIndexRef.current);
-    }, 500);
-
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, []);
+  }, [endDivRef.current, currentSchoolIndex]);
 
   useEffect(() => {
     if (shouldReload) {
@@ -84,10 +69,11 @@ const SchoolsContainer = ({ shouldReload, stopReload }) => {
     }
   }, [shouldReload]);
 
+  useEffect(() => {
+    getResponseGroups(currentSchoolIndex); // Call the function on mount
+  }, []);
 
-
-
-  if (isLoading &&responseGroups.length === 0 ) {
+  if (isLoading && responseGroups.length === 0) {
     return <Loading center />;
   }
 
@@ -111,9 +97,8 @@ const SchoolsContainer = ({ shouldReload, stopReload }) => {
         ))}
       </div>
       <div ref={endDivRef} className='end'>
-        {currentSchoolIndex}
       </div>
-      {isLoading?<Loading center />:null}
+      {isLoading ? <Loading center /> : null}
     </Wrapper>
   );
 };

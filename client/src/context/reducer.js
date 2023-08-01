@@ -222,13 +222,19 @@ const reducer = (state, action) => {
     return { ...state,currentSchoolIndex: action.payload.schoolIndex};
   }
   if (action.type === GET_RESPONSE_GROUPS_SUCCESS) {
+    // Filter out duplicate responses from action.payload.newResponses
+    const uniqueNewResponses = action.payload.newResponses.filter((newResponse) => {
+      return !state.responseGroups.some((existingResponse) => JSON.stringify(existingResponse) === JSON.stringify(newResponse));
+    });
+  
     return {
       ...state,
-      responseGroups: [...state.responseGroups, ...action.payload.newResponses], // Append new responses to the end
+      responseGroups: [...state.responseGroups, ...uniqueNewResponses], // Append unique new responses to the end
       teacherOptions: action.payload.teacherOptions,
-      isLoading:false
+      isLoading: false
     };
   }
+  
   if (action.type === GET_RESPONSE_GROUPS_ERROR) {
     return {
       ...state,
