@@ -70,6 +70,7 @@ const initialState = {
   numOfPages: 1,
   page: 1,
   stats: {},
+  allResponseGroups:[],
   monthlyApplications: [],
   stateOptions: localStorage.getItem("stateOptions") ? (localStorage.getItem("stateOptions") !== "undefined" ? JSON.parse(localStorage.getItem("stateOptions")): stateList) : stateList,
   searchState: localStorage.getItem("searchState") ? (localStorage.getItem("searchState") !== "undefined" ? JSON.parse(localStorage.getItem("searchState")): 'al'): 'all',
@@ -446,7 +447,7 @@ const AppProvider = ({ children }) => {
     dispatch({ type: CLEAR_VALUES });
   };
 
-  const getResponseGroups = async (currentSchoolIndex, shouldReload) => {
+  const getResponseGroups = async (currentSchoolIndex, shouldReload, all=false, overallBreakdown= false) => {
     const {
       user,
       userLocations,
@@ -463,7 +464,6 @@ const AppProvider = ({ children }) => {
       searchBeforeAfter,
       responseGroups
     } = state;
-    console.log(currentSchoolIndex)
     dispatch({ type: GET_RESPONSE_GROUPS_BEGIN, payload:{shouldReload} });
 
     try {
@@ -481,7 +481,6 @@ const AppProvider = ({ children }) => {
       });
 
       const { schools } = data;
-
       const filteredSchools = schools.filter((obj) => {
         switch (user.role) {
           case "Site Admin":
@@ -500,10 +499,14 @@ const AppProvider = ({ children }) => {
             return false;
         }
       });
+      console.log(filteredSchools)
+
 
       let newResponses = [];
       let teacherNames = [];
-      let schoolIndex = currentSchoolIndex?currentSchoolIndex:0
+      console.log(all)
+      let schoolIndex = currentSchoolIndex&&!all?currentSchoolIndex:0
+      
       while ( schoolIndex<filteredSchools.length) {
         console.log(schoolIndex)
 
@@ -515,6 +518,7 @@ const AppProvider = ({ children }) => {
             period: searchPeriod,
             formType: searchType,
             when: searchBeforeAfter,
+            all
           }
         });
         const { teacherName, studentResponses } = data2;
@@ -563,13 +567,16 @@ const AppProvider = ({ children }) => {
           });
         }
         schoolIndex++
-        if (newResponses.length>=4){
-          console.log("inex"+schoolIndex)
+        if (!overallBreakdown && !all && newResponses.length>=4){
           break
         }
         
+        
       }
 
+      if (all){
+        getExport(false, null, newResponses);
+      }
 
       dispatch({
         type: PAGE_FULL,
@@ -578,16 +585,15 @@ const AppProvider = ({ children }) => {
         },
       });
 
-      console.log(responseGroups)
       dispatch({
         type: GET_RESPONSE_GROUPS_SUCCESS,
         payload: {
           newResponses,
-          // totalResponseGroups: totalResponseGroups.length,
-          // numOfPages,
+          all,
           teacherOptions: searchTeacher === 'all' ? teacherNames : state.teacherOptions,
         },
       });
+      return Promise.resolve();
     } catch (error) {
       console.log(error)
       dispatch({
@@ -599,31 +605,40 @@ const AppProvider = ({ children }) => {
     clearAlert();
   };
 
-  const getExport = async  (search, formCode ) =>{
-    const {exportData, responseGroups} = state
-    
-    if (search){
-    try
-    {
-    dispatch({type:GET_EXPORT_BEGIN, payload:{exportData:null, msg: "Export Successful"}})
-    const queryParameters = new URLSearchParams({search})
-    const data = await authFetch.get(`/export/${formCode}${search}`);
-    const exportData = data.data.exportData
-    dispatch({type:GET_EXPORT_SUCCESS, payload:{exportData:exportData, msg: "Export Successful"}})
+  const getExport = async (search, formCode, allResponseGroups) => {
+    const {
+        responseGroups,
+        currentSchoolIndex,
+        shouldReload,
+    } = state;
 
-  }
+    if (search) {
+        try {
+            dispatch({
+                type: GET_EXPORT_BEGIN,
+                payload: { exportData: null, msg: "Export Successful" },
+            });
 
-    catch(error){
-      dispatch({type:GET_EXPORT_FAIL, payload:{msg:"Export Failed"} })
-    }
-    }
-    else {
-      dispatch({ type: GET_EXPORT_BEGIN, payload: { exportData: null } });
-    
-      const allExportData = [];
-    
-      // Sequentially iterate over the responseGroups array using a for...of loop
-      for (const responseGroup of responseGroups) {
+            const data = await authFetch.get(`/export/${formCode}${search}`);
+            const exportData = data.data.exportData;
+            
+            console.log(exportData);
+            
+            dispatch({
+                type: GET_EXPORT_SUCCESS,
+                payload: { exportData: exportData, msg: "Export Successful" },
+            });
+        } catch (error) {
+            dispatch({ type: GET_EXPORT_FAIL, payload: { msg: "Export Failed" } });
+        }
+    } else {
+
+        
+        dispatch({ type: GET_EXPORT_BEGIN, payload: { exportData: null } });
+
+        const allExportData = [];
+        console.log(allResponseGroups)
+        for (const responseGroup of (allResponseGroups ? allResponseGroups : responseGroups)) {
         const { school, uniqueResponseType } = responseGroup;
         const queryParameters = new URLSearchParams({
           teacherId: school.teacher,
@@ -633,25 +648,34 @@ const AppProvider = ({ children }) => {
           formType: uniqueResponseType.formType,
           when: uniqueResponseType.when,
         });
-    
+  
         try {
-          const data = await authFetch.get(`/export/${uniqueResponseType.formCode}?${queryParameters}`);
+          const data = await authFetch.get(
+            `/export/${uniqueResponseType.formCode}?${queryParameters}`
+          );
           const exportDatas = data.data.exportData;
-          exportDatas.map((exportData=>{
+          exportDatas.forEach((exportData) => {
             allExportData.push(exportData);
-          }))
+          });
         } catch (error) {
           console.error(`Error fetching data for responseGroup: ${responseGroup}`, error);
           dispatch({ type: GET_EXPORT_FAIL, payload: { msg: "Export Failed" } });
           return; // Exit the function early since there was an error
         }
+        
       }
-    
-      // Dispatch the success action with the complete allExportData array
-      dispatch({ type: GET_EXPORT_SUCCESS, payload: { exportData: allExportData, msg: "Export Successful" } });
+      console.log(allExportData)
+
+        dispatch({
+            type: GET_EXPORT_SUCCESS,
+            payload: { exportData: allExportData, msg: "Export Successful" },
+        });
+        clearAlert();
     }
-    
-  };
+};
+
+
+  
 
   
 

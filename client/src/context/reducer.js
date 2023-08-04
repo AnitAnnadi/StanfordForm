@@ -97,6 +97,7 @@ const reducer = (state, action) => {
   }
 
   if (action.type === GET_EXPORT_SUCCESS) {
+    console.log(action.payload.exportData)
     return {
       ...state,
       isLoading: false,
@@ -108,6 +109,7 @@ const reducer = (state, action) => {
   }
 
   if (action.type === GET_EXPORT_BEGIN) {
+    console.log('begin')
     return {
       ...state,
       exportData: null
@@ -226,13 +228,26 @@ const reducer = (state, action) => {
     const uniqueNewResponses = action.payload.newResponses.filter((newResponse) => {
       return !state.responseGroups.some((existingResponse) => JSON.stringify(existingResponse) === JSON.stringify(newResponse));
     });
+
+    // console.log(action.payload.all)
+    if (action.payload.all){
+      console.log(action.payload.newResponses)
+      return {
+        ...state,
+        allResponseGroups: action.payload.newResponses,
+        teacherOptions: action.payload.teacherOptions,
+        isLoading: false
+      };
+    }
   
+    else{
     return {
       ...state,
       responseGroups: [...state.responseGroups, ...uniqueNewResponses], // Append unique new responses to the end
       teacherOptions: action.payload.teacherOptions,
       isLoading: false
     };
+  }
   }
   
   if (action.type === GET_RESPONSE_GROUPS_ERROR) {

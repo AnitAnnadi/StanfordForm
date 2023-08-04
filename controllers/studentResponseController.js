@@ -6,7 +6,6 @@ import {StatusCodes} from "http-status-codes";
 import StudentResponse from "../models/StudentResponse.js";
 
 const getStudentResponses = async(req, res) => {
-  console.log('hi')
   const user = await User.findOne({ _id: req.user.userId });
   
   const token = user.createJWT();
@@ -18,17 +17,23 @@ const getStudentResponses = async(req, res) => {
     grade,
     period,
     formType,
-    when
+    when,
+    all,
+    overallBreakdown
   } = req.query;
-
+  let form = all=='true' ? 'all' : formType
+  console.log(req.query)
   const teacher = await User.findOne({ _id: teacherId })
 
 
   const queryObject = {
     school,
     teacher: teacherId,
-    formType,
   };
+
+  if (form && form !== 'all') {
+    queryObject.formType = form;
+  }
 
   if (grade && grade !== 'all') {
     queryObject.grade = grade;
@@ -40,6 +45,7 @@ const getStudentResponses = async(req, res) => {
     queryObject.when = when;
   }
 
+  console.log(queryObject)
   const studentResponses = await StudentResponse.find(queryObject)
   res.status(StatusCodes.OK).json({ teacherName: teacher.name, studentResponses });
 }

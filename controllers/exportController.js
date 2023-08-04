@@ -52,9 +52,14 @@ const getExport = async (req, res) => {
       studentResponses.map(async (studentResponse) => {
         let obj = {
           teacher: teacher.name,
+          school: school.school,
           county: school.county,
           district: school.district,
+          state:school.state,
           city: school.city,
+          
+          
+          
         };
         obj.when = studentResponse.when;
         obj.grade = studentResponse.grade;
@@ -85,6 +90,7 @@ const getExport = async (req, res) => {
         }
       })
     );
+    console.log(exportData)
 
     res.status(StatusCodes.OK).json({ exportData });
   } catch (error) {

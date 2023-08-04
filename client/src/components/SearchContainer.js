@@ -9,6 +9,11 @@ import {
   narrowSchools,
 } from "../utils/schoolDataFetch";
 import { Link } from "react-router-dom";
+import { utils as XLSXUtils, writeFile as writeXLSXFile } from 'xlsx';
+import { tobacco, postTobacco, cannabis, postCannabis, safety
+} from "../utils/questions";
+
+
 const SearchContainer = ({ startReload }) => {
   const {
     user,
@@ -36,7 +41,55 @@ const SearchContainer = ({ startReload }) => {
     handleChanges,
     getResponseGroups,
     userLocations,
+    currentSchoolIndex,
+    shouldReload,
+    allResponseGroups,
+    getExport,
+    exportData
   } = useAppContext();
+  const [exportClicked, setExportClicked] = useState(false);
+  const [questionsToAnswers, setQuestionsToAnswers] = useState({});
+  let reorderedQuestionsToAnswers = {};
+
+  useEffect(() => {
+    console.log(exportClicked , exportData)
+    if (exportClicked && exportData) {
+      const worksheet = XLSXUtils.json_to_sheet(exportData);
+      const workbook = XLSXUtils.book_new();
+      XLSXUtils.book_append_sheet(workbook, worksheet, "Sheet1");
+      writeXLSXFile(workbook, `data.xlsx`);
+
+      setExportClicked(false);
+    }
+  }, [exportData, exportClicked]);
+
+  const createExcelSheet = async () => {
+    setExportClicked(true);
+    
+    await getResponseGroups(currentSchoolIndex, shouldReload, true)
+  };
+  
+  
+  const createQuestionsToAnswersMap = (array, questionsToAnswers) => {
+    reorderedQuestionsToAnswers = {};
+    array.forEach((question) => {
+      if ((questionsToAnswers).hasOwnProperty(question.question)) {
+        reorderedQuestionsToAnswers[question.question] = questionsToAnswers[question.question];
+      }
+    });
+    setQuestionsToAnswers(reorderedQuestionsToAnswers);
+  };
+
+  const formTimeType = (formType, when, data) => {
+    if (formType === "You and Me, Together Vape-Free") {
+      return when === "before" ? createQuestionsToAnswersMap(tobacco, data) : createQuestionsToAnswersMap(tobacco.concat(postTobacco), data);
+    } else if (formType === "Smart Talk: Cannabis Prevention & Education Awareness") {
+      return when === "before" ? createQuestionsToAnswersMap(cannabis, data) : createQuestionsToAnswersMap(cannabis.concat(postCannabis),data);
+    }
+    else if (formType === "Safety First"){
+      return createQuestionsToAnswersMap(safety, data)
+    }
+  };
 
   const narrowAllowedOptions = (searchType, searchValues) => {
     let values;
@@ -284,6 +337,13 @@ const SearchContainer = ({ startReload }) => {
             onClick={handleSubmit}
           >
             search forms
+          </button>
+          <button
+            className="btn btn-block btn-apply"
+            disabled={isLoading}
+            onClick={createExcelSheet}
+            >
+            export all
           </button>
           <Link
             className="btn btn-block btn-obreak"
