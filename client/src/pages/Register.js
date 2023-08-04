@@ -13,7 +13,7 @@ const initialState = {
   state: "",
   city: "",
   school: "",
-  isMember: true,
+  isMember: false,
 };
 
 const Register = () => {
