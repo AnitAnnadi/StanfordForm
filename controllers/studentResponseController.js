@@ -18,7 +18,8 @@ const getStudentResponses = async(req, res) => {
     period,
     formType,
     when,
-    all
+    all,
+    overallBreakdown
   } = req.query;
   let form = all=='true' ? 'all' : formType
   console.log(req.query)

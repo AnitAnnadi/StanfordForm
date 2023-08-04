@@ -447,7 +447,7 @@ const AppProvider = ({ children }) => {
     dispatch({ type: CLEAR_VALUES });
   };
 
-  const getResponseGroups = async (currentSchoolIndex, shouldReload, all=false) => {
+  const getResponseGroups = async (currentSchoolIndex, shouldReload, all=false, overallBreakdown= false) => {
     const {
       user,
       userLocations,
@@ -567,12 +567,16 @@ const AppProvider = ({ children }) => {
           });
         }
         schoolIndex++
-        if (!all && newResponses.length>=4){
+        if (!overallBreakdown && !all && newResponses.length>=4){
           break
         }
         
+        
       }
 
+      if (all){
+        getExport(false, null, newResponses);
+      }
 
       dispatch({
         type: PAGE_FULL,
@@ -581,7 +585,6 @@ const AppProvider = ({ children }) => {
         },
       });
 
-      console.log(newResponses)
       dispatch({
         type: GET_RESPONSE_GROUPS_SUCCESS,
         payload: {
@@ -590,6 +593,7 @@ const AppProvider = ({ children }) => {
           teacherOptions: searchTeacher === 'all' ? teacherNames : state.teacherOptions,
         },
       });
+      return Promise.resolve();
     } catch (error) {
       console.log(error)
       dispatch({
@@ -601,40 +605,40 @@ const AppProvider = ({ children }) => {
     clearAlert();
   };
 
-  const getExport = async (search, formCode, all) => {
+  const getExport = async (search, formCode, allResponseGroups) => {
     const {
-      allResponseGroups,
-      responseGroups,
-      currentSchoolIndex,
-      shouldReload,
+        responseGroups,
+        currentSchoolIndex,
+        shouldReload,
     } = state;
-  
+
     if (search) {
-      try {
-        dispatch({
-          type: GET_EXPORT_BEGIN,
-          payload: { exportData: null, msg: "Export Successful" },
-        });
-        const data = await authFetch.get(`/export/${formCode}${search}`);
-        const exportData = data.data.exportData;
-        console.log(exportData)
-        dispatch({
-          type: GET_EXPORT_SUCCESS,
-          payload: { exportData: exportData, msg: "Export Successful" },
-        });
-      } catch (error) {
-        dispatch({ type: GET_EXPORT_FAIL, payload: { msg: "Export Failed" } });
-      }
+        try {
+            dispatch({
+                type: GET_EXPORT_BEGIN,
+                payload: { exportData: null, msg: "Export Successful" },
+            });
+
+            const data = await authFetch.get(`/export/${formCode}${search}`);
+            const exportData = data.data.exportData;
+            
+            console.log(exportData);
+            
+            dispatch({
+                type: GET_EXPORT_SUCCESS,
+                payload: { exportData: exportData, msg: "Export Successful" },
+            });
+        } catch (error) {
+            dispatch({ type: GET_EXPORT_FAIL, payload: { msg: "Export Failed" } });
+        }
     } else {
-      if (all) {
-        await getResponseGroups(currentSchoolIndex, shouldReload, true); // Wait for getResponseGroups to complete
-      }
-  
-      dispatch({ type: GET_EXPORT_BEGIN, payload: { exportData: null } });
-  
-      const allExportData = [];
-      console.log(allResponseGroups)
-      for (const responseGroup of (all ? allResponseGroups : responseGroups)) {
+
+        
+        dispatch({ type: GET_EXPORT_BEGIN, payload: { exportData: null } });
+
+        const allExportData = [];
+        console.log(allResponseGroups)
+        for (const responseGroup of (allResponseGroups ? allResponseGroups : responseGroups)) {
         const { school, uniqueResponseType } = responseGroup;
         const queryParameters = new URLSearchParams({
           teacherId: school.teacher,
@@ -658,15 +662,19 @@ const AppProvider = ({ children }) => {
           dispatch({ type: GET_EXPORT_FAIL, payload: { msg: "Export Failed" } });
           return; // Exit the function early since there was an error
         }
+        
       }
       console.log(allExportData)
-      dispatch({
-        type: GET_EXPORT_SUCCESS,
-        payload: { exportData: allExportData, msg: "Export Successful" },
-      });
-      clearAlert();
+
+        dispatch({
+            type: GET_EXPORT_SUCCESS,
+            payload: { exportData: allExportData, msg: "Export Successful" },
+        });
+        clearAlert();
     }
-  };
+};
+
+
   
 
   

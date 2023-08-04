@@ -35,7 +35,10 @@ const FormMetrics = () => {
     searchTeacher,
     searchBeforeAfter,
     getExport,
-    exportData
+    exportData,
+    getResponseGroups,
+    shouldReload,
+    currentSchoolIndex
   } = useAppContext();
 
 
@@ -109,12 +112,17 @@ const FormMetrics = () => {
   };
 
 
-  
+  useEffect(()=>{
+    if (isOverall){
+      getResponseGroups(currentSchoolIndex,shouldReload, false, true);
+    }
+  },[isOverall])
 
   useEffect(() => {
     let combinedQuestionsToAnswers = {};
   
     const fetchDataForResponseGroups = () => {
+      // getResponseGroups(currentSchoolIndex,shouldReload, false, true)
       return Promise.all(
         responseGroups.map((responseGroup) => {
           const { school, uniqueResponseType } = responseGroup;
@@ -125,6 +133,7 @@ const FormMetrics = () => {
             grade: uniqueResponseType.grade,
             formType: uniqueResponseType.formType,
             when: uniqueResponseType.when,
+            overallBreakdown:true
           });
   
           return fetch(`/api/v1/form/${uniqueResponseType.formCode}?${queryParameters.toString()}`)
@@ -136,7 +145,7 @@ const FormMetrics = () => {
     if (!location.search) {
       setIsOverall(true);
       setIsLoading(true);
-  
+      
       fetchDataForResponseGroups()
         .then((responses) => {
           responses.forEach((data) => {
@@ -184,7 +193,13 @@ const FormMetrics = () => {
     }
   }, [location.search, formCode, responseGroups]);
       
-  if (isLoading) return <Loading center />;
+  if (isLoading) return (
+  <div>
+    {isOverall?<p >This may take a while. We have to retrieve all your data</p>:null}
+  <Loading center />
+  </div>
+  
+  );
 
   return (
     <Wrapper style={{ maxWidth: "800px" }}>

@@ -109,6 +109,7 @@ const reducer = (state, action) => {
   }
 
   if (action.type === GET_EXPORT_BEGIN) {
+    console.log('begin')
     return {
       ...state,
       exportData: null
@@ -228,9 +229,9 @@ const reducer = (state, action) => {
       return !state.responseGroups.some((existingResponse) => JSON.stringify(existingResponse) === JSON.stringify(newResponse));
     });
 
-    console.log(action.payload.all)
+    // console.log(action.payload.all)
     if (action.payload.all){
-      console.log(uniqueNewResponses)
+      console.log(action.payload.newResponses)
       return {
         ...state,
         allResponseGroups: action.payload.newResponses,

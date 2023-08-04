@@ -66,7 +66,7 @@ const SearchContainer = ({ startReload }) => {
   const createExcelSheet = async () => {
     setExportClicked(true);
     
-    await getExport(false, null, true);
+    await getResponseGroups(currentSchoolIndex, shouldReload, true)
   };
   
   
