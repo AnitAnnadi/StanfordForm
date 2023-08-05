@@ -343,7 +343,7 @@ const SearchContainer = ({ startReload }) => {
             disabled={isLoading}
             onClick={createExcelSheet}
             >
-            export all
+            export all data
           </button>
           <Link
             className="btn btn-block btn-obreak"
