@@ -1,6 +1,7 @@
 import Wrapper from "../assets/wrappers/Success";
 import YAMTVF from "../assets/images/YAMTVF.png";
 import cannabis from "../assets/images/smart-talk-cannabis.png";
+import safety from "../assets/images/SafetyFirst-logo-square.png";
 
 const Success = () => {
   return (
@@ -10,6 +11,7 @@ const Success = () => {
         <div className="success-logo-container">
           <img src={YAMTVF} alt="" />
           <img src={cannabis} alt="" />
+          <img src={safety} alt="" />
         </div>
       </div>
     </Wrapper>
