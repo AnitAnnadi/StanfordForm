@@ -52,19 +52,22 @@ const narrowCities = ({state, county}) => {
 const narrowSchools = ({state, county, city, district}) => {
     const schools = schoolData
         .filter((school) => {
-            if (state && city) {
-                return (school.state.toUpperCase() === state.toUpperCase() && school.city === city)
-            } else if (state) {
-                return (school.state.toUpperCase() === state.toUpperCase())
-            } else if (county) {
-                return (school.county === county)
-            } else if (city) {
-                return (school.city === city)
-            } else if (district) {
-                return (school.district === district)
-            } else {
-                return school
-            }
+          // Seems like there should be a better way to do this but I can't think of it right now
+          if (state && county && district) {
+              return (school.state.toUpperCase() === state.toUpperCase() && school.county === county && school.district === district)
+          } else if (state && city) {
+              return (school.state.toUpperCase() === state.toUpperCase() && school.city === city)
+          } else if (state) {
+              return (school.state.toUpperCase() === state.toUpperCase())
+          } else if (county) {
+              return (school.county === county)
+          } else if (city) {
+              return (school.city === city)
+          } else if (district) {
+              return (school.district === district)
+          } else {
+              return school
+          }
         })
         .map((school) => school.name)
         .sort();
