@@ -250,8 +250,8 @@ const AppProvider = ({ children }) => {
     }
   );
 
-  const displayAlert = () => {
-    dispatch({ type: DISPLAY_ALERT });
+  const displayAlert = (diff) => {
+    dispatch({ type: DISPLAY_ALERT, payload:{diff} });
     clearAlert();
   };
   const successAlert = (text) => {

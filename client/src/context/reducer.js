@@ -35,12 +35,24 @@ import { initialState } from './appContext';
 
 const reducer = (state, action) => {
   if (action.type === DISPLAY_ALERT) {
-    return {
-      ...state,
-      showAlert: true,
-      alertType: 'danger',
-      alertText: 'Please provide all values!',
-    };
+    if (action.payload.diff){
+      return {
+        ...state,
+        showAlert: true,
+        alertType: 'danger',
+        alertText: 'Passwords must match',
+      };
+    }
+    else{
+      return {
+        ...state,
+        showAlert: true,
+        alertType: 'danger',
+        alertText: 'Please provide all values!',
+      };
+
+    }
+    
   }
   if (action.type === SUCCESS_ALERT) {
     return {

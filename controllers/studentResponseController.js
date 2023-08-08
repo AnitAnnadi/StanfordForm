@@ -22,7 +22,6 @@ const getStudentResponses = async(req, res) => {
     overallBreakdown
   } = req.query;
   let form = all=='true' ? 'all' : formType
-  console.log(req.query)
   const teacher = await User.findOne({ _id: teacherId })
 
 
@@ -45,7 +44,6 @@ const getStudentResponses = async(req, res) => {
     queryObject.when = when;
   }
 
-  console.log(queryObject)
   const studentResponses = await StudentResponse.find(queryObject)
   res.status(StatusCodes.OK).json({ teacherName: teacher.name, studentResponses });
 }

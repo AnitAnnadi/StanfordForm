@@ -14,6 +14,7 @@ const initialState = {
   city: "",
   school: "",
   isMember: false,
+  confirm:""
 };
 
 const Register = () => {
@@ -66,9 +67,14 @@ const Register = () => {
   };
   const onSubmit = (e) => {
     e.preventDefault();
-    const { name, email, password, isMember, state, city, school } = values;
+    const { name, email, password, isMember, state, city, school,confirm } = values;
     if (!email || !password || (!isMember && !name)) {
       displayAlert();
+      return;
+    }
+    if (password!==confirm &&!isMember){
+      console.log(password,confirm)
+      displayAlert(true);
       return;
     }
     if (type == "teacher") {
@@ -158,6 +164,15 @@ const Register = () => {
           value={values.password}
           handleChange={handleChange}
         />
+        {!values.isMember && (
+          <FormRow
+            type="password"
+            labelText="Confirm Password"
+            name="confirm"
+            value={values.confirm}
+            handleChange={handleChange}
+          />
+        )}
 
         {!values.isMember && <AdminRole />}
 
