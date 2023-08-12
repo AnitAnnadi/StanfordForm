@@ -16,32 +16,32 @@ function SelectRole() {
 
   return (
     // <React.Fragment>
-      <Wrapper>
-        <div className="content">
-          <h2>I am a...</h2>
-          <div className="landing-btns">
-            <Link
-              to="/register"
-              className="btn btn-hero"
-              state={{ type: "teacher" }}
-              onClick={handleClick}
-              value={"teacher"}
-            >
-              Teacher
-            </Link>
-            <Link
-              to="/register"
-              state={{ type: "admin" }}
-              className="btn btn-hero"
-              onClick={handleClick}
-              value={"admin"}
-            >
-              Admin
-            </Link>
-          </div>
+    <Wrapper>
+      <div className="content">
+        <h2>I am a...</h2>
+        <div className="landing-btns">
+          <Link
+            to="/register"
+            className="btn btn-hero"
+            state={{ type: "teacher" }}
+            onClick={handleClick}
+            value={"teacher"}
+          >
+            Teacher
+          </Link>
+          <Link
+            to="/register"
+            state={{ type: "admin" }}
+            className="btn btn-hero"
+            onClick={handleClick}
+            value={"admin"}
+          >
+            Admin
+          </Link>
         </div>
-        <img width="200" height="100" src={Logo2} className="corner-logo" />
-      </Wrapper>
+      </div>
+      <img width="200" height="100" src={Logo2} className="corner-home-logo" />
+    </Wrapper>
   );
 }
 
