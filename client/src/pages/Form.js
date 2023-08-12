@@ -109,7 +109,7 @@ const Form = () => {
 
   return (
     <Wrapper
-      style={{ margin: "2rem auto", maxWidth: "90%", maxWidth: "700px" }}
+      style={{ margin: "2rem auto", maxWidth: "90%", width: "700px" }}
     >
       <form className="form" onSubmit={handleSubmit}>
         <h3>{`${info.form}`}</h3>
