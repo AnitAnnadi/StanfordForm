@@ -6,8 +6,13 @@ import Dropdown from "react-dropdown";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import { tobacco,postTobacco, cannabis, postCannabis, safety  } from "../utils/questions";
-
+import {
+  tobacco,
+  postTobacco,
+  cannabis,
+  postCannabis,
+  safety,
+} from "../utils/questions";
 
 const Form = () => {
   const {
@@ -38,32 +43,32 @@ const Form = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-  
+
     const formData = [];
-  
+
     names.forEach((name) => {
       const question = name;
       const answers = [];
-  
+
       let checks = document.getElementsByName(name);
       for (var check of checks) {
         if (check.checked) {
           answers.push(check.value);
         }
       }
-  
+
       formData.push({ question, answers });
     });
-    let grade = info["grade"]
-    let when = info["when"]
-    let type = info["form"]
-    let school = info["school"]
+    let grade = info["grade"];
+    let when = info["when"];
+    let type = info["form"];
+    let school = info["school"];
     // Rest of the code
-    if (info["noCode"]){
-      let state = info["state"]
-      let city = info["city"]
-      let county = info["county"]
-      let district = info["district"]
+    if (info["noCode"]) {
+      let state = info["state"];
+      let city = info["city"];
+      let county = info["county"];
+      let district = info["district"];
       submitForm(
         formData,
         null,
@@ -74,23 +79,14 @@ const Form = () => {
         null,
         state,
         city,
-        county, 
+        county,
         district
-
-      )
+      );
+    } else {
+      let period = info["period"];
+      let code = localStorage.getItem("code");
+      submitForm(formData, code, grade, when, type, school, period);
     }
-    else{
-    let period = info["period"]
-    let code  = localStorage.getItem("code")
-    submitForm(
-      formData,
-      code,
-      grade,
-      when,
-      type,
-      school,
-      period
-    );}
     successAlert("Form Sucessfully Completed. Redirecting...");
     setTimeout(() => {
       navigate("/success", {});
@@ -100,16 +96,21 @@ const Form = () => {
   const [usedForm, setUsedForm] = useState(() => {
     if (info["form"] === "You and Me, Together Vape-Free") {
       return info["when"] === "before" ? tobacco : tobacco.concat(postTobacco);
-    } else if (info["form"] === "Smart Talk: Cannabis Prevention & Education Awareness") {
-      return info["when"] === "before" ? cannabis : cannabis.concat(postCannabis);
-    }
-    else if (info["form"] === "Safety First"){
-      return safety
+    } else if (
+      info["form"] === "Smart Talk: Cannabis Prevention & Education Awareness"
+    ) {
+      return info["when"] === "before"
+        ? cannabis
+        : cannabis.concat(postCannabis);
+    } else if (info["form"] === "Safety First") {
+      return safety;
     }
   });
 
   return (
-    <Wrapper style={{ margin: "2rem auto",  maxWidth: "700px" }}>
+    <Wrapper
+      style={{ margin: "2rem auto", maxWidth: "90%", maxWidth: "700px" }}
+    >
       <form className="form" onSubmit={handleSubmit}>
         <h3>{`${info.form}`}</h3>
         {usedForm.map((element, index) => (
@@ -118,23 +119,29 @@ const Form = () => {
               <p>{names.push(element["question"])}.</p>
               <p>{element["question"]}</p>
             </div>
-            {element["question"].includes("check all that apply") ? (
-              element["answers"].map((answer, index) => (
-                <label key={index} className="container">
-                  <span>{answer}</span>
-                  <input type="checkbox" name={element["question"]} value={answer} />
-                  <span className="checkmark"></span>
-                </label>
-              ))
-            ) : (
-              element["answers"].map((answer, index) => (
-                <label key={index} className="container">
-                  <span>{answer}</span>
-                  <input type="radio" value={answer} name={element["question"]} />
-                  <span className="checkmark"></span>
-                </label>
-              ))
-            )}
+            {element["question"].includes("check all that apply")
+              ? element["answers"].map((answer, index) => (
+                  <label key={index} className="container">
+                    <span>{answer}</span>
+                    <input
+                      type="checkbox"
+                      name={element["question"]}
+                      value={answer}
+                    />
+                    <span className="checkmark"></span>
+                  </label>
+                ))
+              : element["answers"].map((answer, index) => (
+                  <label key={index} className="container">
+                    <span>{answer}</span>
+                    <input
+                      type="radio"
+                      value={answer}
+                      name={element["question"]}
+                    />
+                    <span className="checkmark"></span>
+                  </label>
+                ))}
           </div>
         ))}
 
@@ -151,4 +158,4 @@ const Form = () => {
     </Wrapper>
   );
 };
-export default Form; 
+export default Form;
