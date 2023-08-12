@@ -542,6 +542,11 @@ li {
   margin: "2rem auto";
   width: 90%;
 }
+
+.faq-btn {
+  color: var(--white);
+}
+
 /* @media screen and (min-width: 992px) {
   .coffee-info {
     text-align: left;
