@@ -21,8 +21,7 @@ const Faq = () => {
     },
     {
       id: 4,
-      title:
-        "How do I edit my state, city, school, and other account information?",
+      title: "How do I edit my name, email, and other account information?",
       info: "You can edit all profile information on the profile page.",
     },
     {
