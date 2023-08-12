@@ -321,7 +321,7 @@ li {
 .full-page {
   min-height: 100vh;
 }
-@media (max-width: 400px) {
+@media (max-width: 550px) {
   .corner-logo {
     display: none;
     position: absolute;
@@ -337,6 +337,13 @@ li {
     right: 5%;
     z-index: 5;
   }
+}
+
+.corner-home-logo {
+  position: absolute;
+  bottom: 5%;
+  right: 5%;
+  z-index: 5;
 }
 
 .coffee-info {
