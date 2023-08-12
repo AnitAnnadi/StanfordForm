@@ -66,6 +66,13 @@ const Wrapper = styled.nav`
     display: block;
     margin: 0;
   }
+
+  @media (max-width: 550px) {
+    .logo-text {
+      display: none;
+    }
+  }
+
   @media (min-width: 992px) {
     position: sticky;
     top: 0;
