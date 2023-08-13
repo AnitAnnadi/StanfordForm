@@ -28,5 +28,5 @@ router.route('/submitForm').post(submitForm)
 
 router.route('/updateUser').patch(authenticateUser, testUser, updateUser);
 router.route('/getCurrentUser').get(authenticateUser, getCurrentUser);
-// router.route('/createLocation').post(authenticateUser, createLocation)
+// router.route('/createSchool').post(authenticateUser, createSchool)
 export default router;

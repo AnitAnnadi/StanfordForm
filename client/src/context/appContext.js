@@ -406,6 +406,32 @@ const AppProvider = ({ children }) => {
     clearAlert();
   };
 
+  const addNewLocation = async (locationData) => {
+    try {
+      const {data} = await authFetch.post('/locations', locationData);
+      const {location} = data;
+
+      const { multiplePeriods } = locationData;
+
+      await addLocation({
+        multiplePeriods,
+        state: location.state,
+        county: location.county,
+        district: location.district,
+        city: location.city,
+        school: location.name
+      });
+
+    } catch (error) {
+      if (error.response.status !== 401) {
+        dispatch({
+          type: UPDATE_USER_ERROR,
+          payload: { msg: error.response.data.msg },
+        });
+      }
+    }
+  };
+
   const enterCode = async (code) => {
     
     
@@ -712,6 +738,7 @@ const AppProvider = ({ children }) => {
         successAlert,
         changePage,
         addLocation,
+        addNewLocation,
         enterCode,
         submitForm,
         getTotal

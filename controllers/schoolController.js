@@ -4,7 +4,7 @@ import School from "../models/School.js";
 import attachCookie from "../utils/attachCookie.js";
 import {StatusCodes} from "http-status-codes";
 
-const createLocation = async(req,res) =>{
+const createSchool = async(req, res) =>{
   const { multiplePeriods, state, county, city, district, school } = req.body;
   if (!state) {
     throw new BadRequestError('State is required');
@@ -20,7 +20,7 @@ const createLocation = async(req,res) =>{
   res.status(StatusCodes.CREATED).json({ user, location });
 }
 
-const getUserLocations = async(req, res) => {
+const getUserSchools = async(req, res) => {
   const user = await User.findOne({ _id: req.user.userId });
   const userLocations = await School.find({ teacher: user._id });
 
@@ -30,7 +30,7 @@ const getUserLocations = async(req, res) => {
   res.status(StatusCodes.OK).json({ user, userLocations });
 }
 
-const getLocations = async(req, res) =>{
+const getSchools = async(req, res) =>{
   const user = await User.findOne({ _id: req.user.userId });
 
   const token = user.createJWT();
@@ -71,4 +71,4 @@ const getLocations = async(req, res) =>{
   res.status(StatusCodes.OK).json({ schools });
 }
 
-export { createLocation, getUserLocations, getLocations }
+export { createSchool, getUserSchools, getSchools }

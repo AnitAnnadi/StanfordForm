@@ -5,7 +5,7 @@ import Wrapper from "../assets/wrappers/DashboardFormPage";
 import Dropdown from "react-dropdown";
 import { useEffect } from "react";
 import Logo2 from "../assets/images/logo.png";
-import { useNavigate } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {
   narrowDistricts,
   narrowCities,
@@ -403,16 +403,14 @@ const SelectLoc = ({ noCode }) => {
             >
               {isLoading ? "Please Wait..." : "submit"}
             </button>
-            <p>
-              Don't see your school?{" "}
-              <a
-                className="link"
-                target="_blank"
-                href="https://forms.gle/aTaBwDWmhRV7iDAT6"
-              >
-                Click here
-              </a>
-            </p>
+            {!noCode && (
+              <p>
+                Don't see your school?{" "}
+                <Link to="/createLoc" className="link">
+                  Click here
+                </Link>
+              </p>
+            )}
           </div>
         </form>
       </Wrapper>
