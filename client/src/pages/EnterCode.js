@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useRef } from "react";
 import { FormRow, Alert } from "../components";
 import { useAppContext } from "../context/appContext";
 import Wrapper from "../assets/wrappers/DashboardFormPage";
@@ -6,6 +6,8 @@ import Dropdown from "react-dropdown";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Logo2 from "../assets/images/logo.png";
+
+
 
 const EnterCode = () => {
   const {
@@ -39,6 +41,7 @@ const EnterCode = () => {
       }
     }
   }, [teacher]);
+
 
   const navigate = useNavigate();
 
@@ -74,6 +77,8 @@ const EnterCode = () => {
               name="Teacher Code"
               handleChange={handleChange}
             />
+            {/* <p>ji</p> */}
+
 
             <button
               type="submit"

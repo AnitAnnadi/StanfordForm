@@ -26,6 +26,8 @@ import {
   UPDATE_USER_BEGIN,
   UPDATE_USER_SUCCESS,
   UPDATE_USER_ERROR,
+  FORM_SUCCESS,
+  FORM_FAIL,
   HANDLE_CHANGE,
   CLEAR_VALUES,
 
@@ -96,7 +98,8 @@ const initialState = {
   totalResponses:null,
   hasLocation:null,
   exportData:null,
-  currentSchoolIndex:null
+  currentSchoolIndex:null,
+  nextPg:false
 };
 
 const configureFormStates = (userLocations, user, formStates) => {
@@ -407,10 +410,11 @@ const AppProvider = ({ children }) => {
   };
 
   const enterCode = async (code) => {
-    
-    
     try {
+      console.log(code)
       const { data } = await axios.post(`/api/v1/auth/enterCode/`, {code});
+      
+      // console.log(response)
       const {id, name, email, state, city, school} = data;
       dispatch({ type: ENTER_CODE , payload:{teacher:data["user"],schools:data["schools"]}});
     } catch (error) {
@@ -423,15 +427,25 @@ const AppProvider = ({ children }) => {
     }
     clearAlert();
   };
- const submitForm = async (formData,code,grade,when,type,school,period,state, city, county, district) => {
-    
+ const submitForm = async (formData,code,grade,when,type,school,period,state, city, county, district, captcha) => {
     try {
-      const { data } = await axios.post(`/api/v1/auth/submitForm/`, {formData,code,grade,when,type,school,period,state, city, county, district});
+      const { data } = await axios.post(`/api/v1/auth/submitForm/`, {formData,code,grade,when,type,school,period,state, city, county, district,captcha});
+      console.log('hi')
+      dispatch({
+        type: FORM_SUCCESS,
 
+      });
+      
     } catch (error) {
-      if (error.response.status !== 401) return;
+      if (error.response.status !== 401) {
+        dispatch({
+          type: FORM_FAIL,
+          payload: { msg: error.response.data.msg },
+        });
+      }
     }
     clearAlert();
+    // clearAlert();
   };
 
   const handleChange = ({ name, value }) => {

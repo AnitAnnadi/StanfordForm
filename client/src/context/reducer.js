@@ -28,7 +28,10 @@ import {
   GET_CURRENT_USER_SUCCESS,
   GET_TOTAL,
   ADD_LOCATION_SUCCESS,
-  SUCCESS_ALERT
+  SUCCESS_ALERT,
+  FORM_SUCCESS,
+  FORM_FAIL,
+  FORM_BEGIN
 } from './actions';
 
 import { initialState } from './appContext';
@@ -171,6 +174,35 @@ const reducer = (state, action) => {
       showAlert: true,
       alertType: 'danger',
       alertText: action.payload.msg,
+    };
+  }
+  if (action.type === FORM_FAIL) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: true,
+      alertType: 'danger',
+      alertText: action.payload.msg,
+      nextPg:false
+    };
+  }
+  if (action.type === FORM_BEGIN) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: false,
+      nextPg:false
+    };
+  }
+  if (action.type === FORM_SUCCESS) {
+    console.log('hi')
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: true,
+      alertType: 'success',
+      alertText: "Form Sucessfully Completed. Redirecting...",
+      nextPg:true
     };
   }
   if (action.type === HANDLE_CHANGE) {
