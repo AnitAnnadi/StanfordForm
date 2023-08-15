@@ -26,6 +26,8 @@ import {
   UPDATE_USER_BEGIN,
   UPDATE_USER_SUCCESS,
   UPDATE_USER_ERROR,
+  FORM_SUCCESS,
+  FORM_FAIL,
   HANDLE_CHANGE,
   CLEAR_VALUES,
 
@@ -96,7 +98,8 @@ const initialState = {
   totalResponses:null,
   hasLocation:null,
   exportData:null,
-  currentSchoolIndex:null
+  currentSchoolIndex:null,
+  nextPg:false
 };
 
 const configureFormStates = (userLocations, user, formStates) => {
@@ -265,13 +268,14 @@ const AppProvider = ({ children }) => {
     }, 3000);
   };
 
-  const setupUser = async ({ currentUser, endPoint, alertText }) => {
+  const setupUser = async ({ currentUser, captcha, endPoint, alertText }) => {
     localStorage.clear()
     dispatch({ type: SETUP_USER_BEGIN });
     try {
       const { data } = await axios.post(
         `/api/v1/auth/${endPoint}`,
-        currentUser
+        {currentUser,
+        captcha}
       );
 
       const { user, hasLocation, userLocations } = data;
@@ -433,10 +437,11 @@ const AppProvider = ({ children }) => {
   };
 
   const enterCode = async (code) => {
-    
-    
     try {
+      console.log(code)
       const { data } = await axios.post(`/api/v1/auth/enterCode/`, {code});
+      
+      // console.log(response)
       const {id, name, email, state, city, school} = data;
       dispatch({ type: ENTER_CODE , payload:{teacher:data["user"],schools:data["schools"]}});
     } catch (error) {
@@ -449,15 +454,24 @@ const AppProvider = ({ children }) => {
     }
     clearAlert();
   };
- const submitForm = async (formData,code,grade,when,type,school,period,state, city, county, district) => {
-    
+ const submitForm = async (formData,code,grade,when,type,school,period,state, city, county, district, captcha) => {
     try {
-      const { data } = await axios.post(`/api/v1/auth/submitForm/`, {formData,code,grade,when,type,school,period,state, city, county, district});
+      const { data } = await axios.post(`/api/v1/auth/submitForm/`, {formData,code,grade,when,type,school,period,state, city, county, district,captcha});
+      dispatch({
+        type: FORM_SUCCESS,
 
+      });
+      
     } catch (error) {
-      if (error.response.status !== 401) return;
+      if (error.response.status !== 401) {
+        dispatch({
+          type: FORM_FAIL,
+          payload: { msg: error.response.data.msg },
+        });
+      }
     }
     clearAlert();
+    // clearAlert();
   };
 
   const handleChange = ({ name, value }) => {
@@ -525,16 +539,13 @@ const AppProvider = ({ children }) => {
             return false;
         }
       });
-      console.log(filteredSchools)
 
 
       let newResponses = [];
       let teacherNames = [];
-      console.log(all)
       let schoolIndex = currentSchoolIndex&&!all?currentSchoolIndex:0
       
       while ( schoolIndex<filteredSchools.length) {
-        console.log(schoolIndex)
 
         const { data: data2 } = await authFetch.get('/studentResponses', {
           params: {
@@ -621,7 +632,6 @@ const AppProvider = ({ children }) => {
       });
       return Promise.resolve();
     } catch (error) {
-      console.log(error)
       dispatch({
         type: GET_RESPONSE_GROUPS_ERROR,
         payload: { msg: error.response },
@@ -648,7 +658,6 @@ const AppProvider = ({ children }) => {
             const data = await authFetch.get(`/export/${formCode}${search}`);
             const exportData = data.data.exportData;
             
-            console.log(exportData);
             
             dispatch({
                 type: GET_EXPORT_SUCCESS,
@@ -663,7 +672,6 @@ const AppProvider = ({ children }) => {
         dispatch({ type: GET_EXPORT_BEGIN, payload: { exportData: null } });
 
         const allExportData = [];
-        console.log(allResponseGroups)
         for (const responseGroup of (allResponseGroups ? allResponseGroups : responseGroups)) {
         const { school, uniqueResponseType } = responseGroup;
         const queryParameters = new URLSearchParams({
@@ -690,7 +698,6 @@ const AppProvider = ({ children }) => {
         }
         
       }
-      console.log(allExportData)
 
         dispatch({
             type: GET_EXPORT_SUCCESS,

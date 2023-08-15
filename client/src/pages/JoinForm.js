@@ -167,7 +167,8 @@ const JoinForm = () => {
       <Wrapper>
         <form className="form" onSubmit={handleSubmit}>
           {showAlert && <Alert />}
-          <h4>You have joined {teacher_name}'s class</h4>
+          {info["noCode"]?null:
+          <h4>You have joined {teacher_name}'s class</h4>}
           <div className="form">
             {info["noCode"]?null
             :

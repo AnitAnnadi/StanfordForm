@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useRef } from "react";
 import { FormRow, Alert } from "../components";
 import { useAppContext } from "../context/appContext";
 import Wrapper from "../assets/wrappers/DashboardFormPage";
@@ -13,6 +13,7 @@ import {
   postCannabis,
   safety,
 } from "../utils/questions";
+import ReCAPTCHA from "react-google-recaptcha"
 
 const Form = () => {
   const {
@@ -25,6 +26,8 @@ const Form = () => {
     enterCode,
     submitForm,
     successAlert,
+    altertText,
+    nextPg
   } = useAppContext();
 
   const navigate = useNavigate();
@@ -32,18 +35,20 @@ const Form = () => {
   let info = location.state;
   let selected = [];
   let names = [];
+  const captchaRef = useRef(null)
 
-  // const handleOptionChange = (optionValue) => {
-  //   if (selectedOptions.includes(optionValue)) {
-  //     setSelectedOptions(selectedOptions.filter((option) => option !== optionValue));
-  //   } else {
-  //     setSelectedOptions([...selectedOptions, optionValue]);
-  //   }
-  // };
+  useEffect(()=>{
+    if (nextPg){
+      setTimeout(() => {
+        navigate("/success", {});
+      }, 3000);
+      captchaRef.current.reset();
+    }
+  },[nextPg])
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
+    const captcha =  captchaRef.current.getValue();
     const formData = [];
 
     names.forEach((name) => {
@@ -80,17 +85,20 @@ const Form = () => {
         state,
         city,
         county,
-        district
+        district,
+        captcha
       );
     } else {
       let period = info["period"];
       let code = localStorage.getItem("code");
-      submitForm(formData, code, grade, when, type, school, period);
+      console.log(captcha)
+      submitForm(formData, code, grade, when, type, school, null, null, null, null, null, captcha);
+      
     }
-    successAlert("Form Sucessfully Completed. Redirecting...");
-    setTimeout(() => {
-      navigate("/success", {});
-    }, 3000);
+    
+    
+    
+    
   };
 
   const [usedForm, setUsedForm] = useState(() => {
@@ -144,7 +152,9 @@ const Form = () => {
                 ))}
           </div>
         ))}
-
+        <ReCAPTCHA 
+            ref={captchaRef}
+            sitekey={"6LerfqAnAAAAAB86YDhcCf0XanGHJXHQkvyxY6fJ"} />
         {showAlert && <Alert />}
         <button
           className="btn btn-block"

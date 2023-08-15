@@ -90,7 +90,6 @@ const getExport = async (req, res) => {
         }
       })
     );
-    console.log(exportData)
 
     res.status(StatusCodes.OK).json({ exportData });
   } catch (error) {

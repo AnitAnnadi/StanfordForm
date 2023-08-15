@@ -28,7 +28,10 @@ import {
   GET_CURRENT_USER_SUCCESS,
   GET_TOTAL,
   ADD_LOCATION_SUCCESS,
-  SUCCESS_ALERT
+  SUCCESS_ALERT,
+  FORM_SUCCESS,
+  FORM_FAIL,
+  FORM_BEGIN
 } from './actions';
 
 import { initialState } from './appContext';
@@ -109,7 +112,6 @@ const reducer = (state, action) => {
   }
 
   if (action.type === GET_EXPORT_SUCCESS) {
-    console.log(action.payload.exportData)
     return {
       ...state,
       isLoading: false,
@@ -121,7 +123,6 @@ const reducer = (state, action) => {
   }
 
   if (action.type === GET_EXPORT_BEGIN) {
-    console.log('begin')
     return {
       ...state,
       exportData: null
@@ -171,6 +172,34 @@ const reducer = (state, action) => {
       showAlert: true,
       alertType: 'danger',
       alertText: action.payload.msg,
+    };
+  }
+  if (action.type === FORM_FAIL) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: true,
+      alertType: 'danger',
+      alertText: action.payload.msg,
+      nextPg:false
+    };
+  }
+  if (action.type === FORM_BEGIN) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: false,
+      nextPg:false
+    };
+  }
+  if (action.type === FORM_SUCCESS) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: true,
+      alertType: 'success',
+      alertText: "Form Sucessfully Completed. Redirecting...",
+      nextPg:true
     };
   }
   if (action.type === HANDLE_CHANGE) {
@@ -232,7 +261,6 @@ const reducer = (state, action) => {
   }
 
   if (action.type === PAGE_FULL) {
-    console.log(action.payload.schoolIndex)
     return { ...state,currentSchoolIndex: action.payload.schoolIndex};
   }
   if (action.type === GET_RESPONSE_GROUPS_SUCCESS) {
@@ -243,7 +271,6 @@ const reducer = (state, action) => {
 
     // console.log(action.payload.all)
     if (action.payload.all){
-      console.log(action.payload.newResponses)
       return {
         ...state,
         allResponseGroups: action.payload.newResponses,

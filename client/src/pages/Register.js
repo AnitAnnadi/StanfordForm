@@ -5,6 +5,9 @@ import { useAppContext } from "../context/appContext";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import Logo2 from "../assets/images/logo.png";
+import ReCAPTCHA from "react-google-recaptcha"
+;
+import { useRef } from "react";
 // import { Select } from "@mui/material";
 const initialState = {
   name: "",
@@ -28,6 +31,7 @@ const Register = () => {
   const [adminRole, setAdminRole] = useState("default");
   const { user, isLoading, showAlert, displayAlert, setupUser, hasLocation } =
     useAppContext();
+  const captchaRef = useRef(null)
 
   const toggleMember = () => {
     setValues({ ...values, isMember: !values.isMember });
@@ -73,7 +77,6 @@ const Register = () => {
       return;
     }
     if (password!==confirm &&!isMember){
-      console.log(password,confirm)
       displayAlert(true);
       return;
     }
@@ -97,12 +100,15 @@ const Register = () => {
     if (isMember) {
       setupUser({
         currentUser,
+        // null,
         endPoint: "login",
         alertText: "Login Successful! Redirecting...",
       });
     } else {
+      const captcha = captchaRef.current.getValue();
       setupUser({
         currentUser,
+        captcha,
         endPoint: "register",
         alertText: "User Created! Redirecting...",
       });
@@ -175,7 +181,11 @@ const Register = () => {
         )}
 
         {!values.isMember && <AdminRole />}
-
+        {!values.isMember?
+        <ReCAPTCHA 
+            ref={captchaRef}
+            sitekey={"6LerfqAnAAAAAB86YDhcCf0XanGHJXHQkvyxY6fJ"} />
+            :null}
         <button type="submit" className="btn btn-block" disabled={isLoading}>
           submit
         </button>

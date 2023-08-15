@@ -7,13 +7,18 @@ import attachCookie from '../utils/attachCookie.js';
 import { v4 as uuid } from 'uuid';
 import Question from '../models/Question.js';
 import NoCode from '../models/NoCode.js';
+import axios from 'axios';
 
 
 const enterCode=async(req,res)=>{
   const {code} = req.body
+
+
   if (code==null){
+
     throw new BadRequestError('Please Enter a Code');
   }
+
   const user = await User.findOne({ code });
   // if (user)
   
@@ -28,7 +33,14 @@ const enterCode=async(req,res)=>{
 }
 
 const register = async (req, res) => {
-  const { name, email, password, role} = req.body;
+  const { currentUser,captcha} = req.body;
+  const {name, email, password, role} = currentUser
+  const response = await axios.post(
+    `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.REACT_APP_SECRET_KEY}&response=${captcha}`
+  );
+  if (!response.data.success){
+    throw new BadRequestError('Please complete the reCaptcha. ');
+  }
   if (!name || !email || !password  ) {
     throw new BadRequestError('please provide all values');
   }
@@ -55,7 +67,8 @@ const register = async (req, res) => {
   });
 };
 const login = async (req, res) => {
-  const { email, password } = req.body;
+  const { currentUser,captcha} = req.body;
+  const {name, email, password, role} = currentUser
   if (!email || !password) {
     throw new BadRequestError('Please provide all values');
   }
@@ -110,9 +123,15 @@ const logout = async (req, res) => {
 };
 
 const submitForm = async(req,res) =>{
-  const {formData,code,grade,when,type,school,period,state, city, county, district}=req.body;
-
+  const {formData,code,grade,when,type,school,period,state, city, county, district, captcha}=req.body;
+  const response = await axios.post(
+    `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.REACT_APP_SECRET_KEY}&response=${captcha}`
+  );
+  if (!response.data.success){
+    throw new BadRequestError('Please complete the reCaptcha. ');
+  }
   if (code){
+    console.log(code)
   const teacher = await User.findOne({ code });
   if (!teacher){
     throw new BadRequestError('Invalid Code. Try Again or Ask Teacher for Code');
@@ -138,7 +157,10 @@ const submitForm = async(req,res) =>{
     }
   }
   
-  );}
+  );
+  res.status(StatusCodes.OK).json({ msg: 'Form Sucessfully Completed. Redirecting...' });
+
+}
 
   else{
     let NoCodeData=''
@@ -151,7 +173,10 @@ const submitForm = async(req,res) =>{
       for (const answer of answers) {
         await Question.create({ StudentResponse: _id, Question: question, Answer: answer });
       }
-    })}
+      
+    })
+    res.status(StatusCodes.OK).json({ msg: 'Form Sucessfully Completed. Redirecting...' })
+  }
     catch(error){
       console.log(error)
     }
