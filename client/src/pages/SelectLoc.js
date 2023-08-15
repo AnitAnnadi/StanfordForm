@@ -23,6 +23,8 @@ const SelectLoc = ({ noCode }) => {
     addLocation,
     isLoading,
     successAlert,
+    selectLocSchools,
+    setToNarrowSchools,
   } = useAppContext();
   const navigate = useNavigate();
 
@@ -123,14 +125,22 @@ const SelectLoc = ({ noCode }) => {
   useEffect(() => {
     if (user?.role === "Site Admin" || user?.role === "Teacher" || noCode) {
       if (state !== "default" && city !== "default" && school !== "default") {
-        const { foundDistrict, foundCounty } = getDistrictCounty(
-          state,
-          city,
-          school
-        );
 
-        setDistrict(foundDistrict);
-        setCounty(foundCounty);
+        // just do this whole thing in app context later
+
+        try {
+          const {foundDistrict, foundCounty} = getDistrictCounty(
+            state,
+            city,
+            school
+          );
+
+          setDistrict(foundDistrict);
+          setCounty(foundCounty);
+        } catch (err) {
+          setDistrict("custom");
+          setCounty("custom");
+        }
       }
     }
   }, [school]);
@@ -157,7 +167,7 @@ const SelectLoc = ({ noCode }) => {
       setSchool("default");
 
       if (value !== "default") {
-        setSchools(narrowSchools({ state, city: value }));
+        setToNarrowSchools({reactState: "selectLocSchools", state, city: value});
       }
     } else if (field === "district") {
       setDistrict(value);
@@ -165,6 +175,13 @@ const SelectLoc = ({ noCode }) => {
       setSchool(value);
     }
   };
+
+  useEffect(() => {
+    if (selectLocSchools.length > 0) {
+      setSchools(selectLocSchools);
+    }
+  }, [selectLocSchools]);
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -250,6 +267,8 @@ const SelectLoc = ({ noCode }) => {
         }
       }
     }
+
+    handleChange({name: "selectLocSchools", value: []});
   };
 
   return (

@@ -88,7 +88,6 @@ const FormMetrics = () => {
   
   };
 
-  
 
   const createQuestionsToAnswersMap = (array, questionsToAnswers) => {
     reorderedQuestionsToAnswers = {};

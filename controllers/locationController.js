@@ -34,16 +34,27 @@ const createLocation = async(req, res) =>{
 }
 
 const getLocations = async(req, res) => {
-  const { state, county, city, district, school } = req.body;
+  const { state, county, city, district, school } = req.query;
 
-  // check if value exists before converting to uppercase
+  console.log(req.query)
+
   const upperSchool = school ? school.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : undefined;
   const upperDistrict = district ? district.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : undefined;
   const upperCity = city ? city.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : undefined;
   const upperCounty = county ? county.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : undefined;
   const upperState = state ? state.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : undefined;
 
-  const locations = await Location.find({ state: upperState, county: upperCounty, city: upperCity, district: upperDistrict, name: upperSchool });
+  const queryObject = {
+    state: upperState,
+    county: upperCounty,
+    city: upperCity,
+    district: upperDistrict,
+    name: upperSchool,
+  }
+
+  Object.keys(queryObject).forEach(key => queryObject[key] === undefined && delete queryObject[key])
+
+  const locations = await Location.find(queryObject);
 
   const user = await User.findOne({ _id: req.user.userId });
   const token = user.createJWT();

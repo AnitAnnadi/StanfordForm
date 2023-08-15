@@ -99,7 +99,9 @@ const initialState = {
   hasLocation:null,
   exportData:null,
   currentSchoolIndex:null,
-  nextPg:false
+  nextPg:false,
+  selectLocSchools:[],
+  searchContainerSchools:[],
 };
 
 const configureFormStates = (userLocations, user, formStates) => {
@@ -142,7 +144,7 @@ const configureFormStates = (userLocations, user, formStates) => {
       newCountyOptions = [userLocations[0].county];
       newDistrictOptions = [userLocations[0].district];
       newCityOptions = ["all", ...narrowCities({state: userLocations[0].state, county: userLocations[0].county, district: userLocations[0].district})];
-      newSchoolOptions = ["all", ...narrowSchools({state: userLocations[0].state, county: userLocations[0].county, district: userLocations[0].district})];
+      newSchoolOptions = ["all", ...narrowAllSchools({state: userLocations[0].state, county: userLocations[0].county, district: userLocations[0].district})];
       break;
     case "County Admin":
       newSearchState = userLocations[0].state;
@@ -224,6 +226,30 @@ const configureFormStates = (userLocations, user, formStates) => {
     districtOptions: newDistrictOptions,
     cityOptions: newCityOptions,
     schoolOptions: newSchoolOptions,
+  }
+}
+
+const narrowAllSchools = async (getParams) => {
+  try {
+    console.log("right here")
+    console.log(getParams)
+
+
+    const urlSearchParams = new URLSearchParams(
+      Object.entries(getParams).filter(([key, value]) => value !== undefined)
+    );
+
+    console.log(urlSearchParams)
+
+    const {data} = await axios.get(`/api/v1/locations?${urlSearchParams}`);
+    const {locations} = data;
+
+    const schoolNames = narrowSchools(getParams).concat(locations.map((location) => location.name));
+
+    console.log("returniong school names: ",  schoolNames)
+    return schoolNames;
+  } catch (error) {
+    console.log(error);
   }
 }
 
@@ -328,6 +354,7 @@ const AppProvider = ({ children }) => {
     }
     clearAlert();
   };
+
   const toggleSidebar = () => {
     dispatch({ type: TOGGLE_SIDEBAR });
   };
@@ -361,6 +388,25 @@ const AppProvider = ({ children }) => {
 
   const addLocation = async (locationData) => {
     try {
+      const { state, county, district, city, school, multiplePeriods } = locationData;
+
+      let newLocationData = {state, county, district, city, school, multiplePeriods};
+
+      if (district === 'custom' && county === 'custom') {
+        const urlSearchParams = new URLSearchParams(
+          state,
+          city,
+          school,
+        );
+        const {data} = await axios.get(`/api/v1/locations?${urlSearchParams}`);
+        const {locations} = data;
+
+        if (locations.length > 0) {
+          newLocationData.county = locations[0].county;
+          newLocationData.district = locations[0].district;
+        }
+      }
+
       const { data } = await authFetch.post('/schools/user', locationData);
       const { data: data2 } = await authFetch.get('/schools/user', locationData);
 
@@ -435,6 +481,18 @@ const AppProvider = ({ children }) => {
       }
     }
   };
+
+  const setToNarrowSchools = async ({reactState, state, county, city, district}) => {
+    try {
+      const schoolNames = await narrowAllSchools({state, county, city, district});
+
+      console.log("changing:", reactState, schoolNames)
+
+      dispatch({ type: HANDLE_CHANGE, payload: { name: reactState, value: schoolNames } });
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const enterCode = async (code) => {
     try {
@@ -737,6 +795,7 @@ const AppProvider = ({ children }) => {
         toggleSidebar,
         logoutUser,
         updateUser,
+        setToNarrowSchools,
         handleChange,
         handleChanges,
         clearValues,
