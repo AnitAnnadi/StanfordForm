@@ -18,6 +18,7 @@
       "sizes": "512x512"
     }
   ],
+  "content_security_policy": "script-src 'self' https://www.google.com; object-src 'self'",
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#000000",
