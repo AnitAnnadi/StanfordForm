@@ -38,7 +38,6 @@ const Form = () => {
   const captchaRef = useRef(null)
 
   useEffect(()=>{
-    console.log(nextPg)
     if (nextPg){
       setTimeout(() => {
         navigate("/success", {});
@@ -50,7 +49,6 @@ const Form = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const captcha =  captchaRef.current.getValue();
-    console.log(captcha)
     const formData = [];
 
     names.forEach((name) => {

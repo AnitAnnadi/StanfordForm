@@ -37,7 +37,7 @@ const EnterCode = () => {
               schools,
             },
           });
-        }, 3000);
+        }, 2000);
       }
     }
   }, [teacher]);

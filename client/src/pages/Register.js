@@ -77,7 +77,6 @@ const Register = () => {
       return;
     }
     if (password!==confirm &&!isMember){
-      console.log(password,confirm)
       displayAlert(true);
       return;
     }

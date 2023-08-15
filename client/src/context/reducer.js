@@ -112,7 +112,6 @@ const reducer = (state, action) => {
   }
 
   if (action.type === GET_EXPORT_SUCCESS) {
-    console.log(action.payload.exportData)
     return {
       ...state,
       isLoading: false,
@@ -124,7 +123,6 @@ const reducer = (state, action) => {
   }
 
   if (action.type === GET_EXPORT_BEGIN) {
-    console.log('begin')
     return {
       ...state,
       exportData: null
@@ -195,7 +193,6 @@ const reducer = (state, action) => {
     };
   }
   if (action.type === FORM_SUCCESS) {
-    console.log('hi')
     return {
       ...state,
       isLoading: false,
@@ -264,7 +261,6 @@ const reducer = (state, action) => {
   }
 
   if (action.type === PAGE_FULL) {
-    console.log(action.payload.schoolIndex)
     return { ...state,currentSchoolIndex: action.payload.schoolIndex};
   }
   if (action.type === GET_RESPONSE_GROUPS_SUCCESS) {
@@ -275,7 +271,6 @@ const reducer = (state, action) => {
 
     // console.log(action.payload.all)
     if (action.payload.all){
-      console.log(action.payload.newResponses)
       return {
         ...state,
         allResponseGroups: action.payload.newResponses,

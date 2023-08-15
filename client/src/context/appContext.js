@@ -431,7 +431,6 @@ const AppProvider = ({ children }) => {
  const submitForm = async (formData,code,grade,when,type,school,period,state, city, county, district, captcha) => {
     try {
       const { data } = await axios.post(`/api/v1/auth/submitForm/`, {formData,code,grade,when,type,school,period,state, city, county, district,captcha});
-      console.log('hi')
       dispatch({
         type: FORM_SUCCESS,
 
@@ -514,16 +513,13 @@ const AppProvider = ({ children }) => {
             return false;
         }
       });
-      console.log(filteredSchools)
 
 
       let newResponses = [];
       let teacherNames = [];
-      console.log(all)
       let schoolIndex = currentSchoolIndex&&!all?currentSchoolIndex:0
       
       while ( schoolIndex<filteredSchools.length) {
-        console.log(schoolIndex)
 
         const { data: data2 } = await authFetch.get('/studentResponses', {
           params: {
@@ -610,7 +606,6 @@ const AppProvider = ({ children }) => {
       });
       return Promise.resolve();
     } catch (error) {
-      console.log(error)
       dispatch({
         type: GET_RESPONSE_GROUPS_ERROR,
         payload: { msg: error.response },
@@ -637,7 +632,6 @@ const AppProvider = ({ children }) => {
             const data = await authFetch.get(`/export/${formCode}${search}`);
             const exportData = data.data.exportData;
             
-            console.log(exportData);
             
             dispatch({
                 type: GET_EXPORT_SUCCESS,
@@ -652,7 +646,6 @@ const AppProvider = ({ children }) => {
         dispatch({ type: GET_EXPORT_BEGIN, payload: { exportData: null } });
 
         const allExportData = [];
-        console.log(allResponseGroups)
         for (const responseGroup of (allResponseGroups ? allResponseGroups : responseGroups)) {
         const { school, uniqueResponseType } = responseGroup;
         const queryParameters = new URLSearchParams({
@@ -679,7 +672,6 @@ const AppProvider = ({ children }) => {
         }
         
       }
-      console.log(allExportData)
 
         dispatch({
             type: GET_EXPORT_SUCCESS,
