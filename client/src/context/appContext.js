@@ -268,13 +268,14 @@ const AppProvider = ({ children }) => {
     }, 3000);
   };
 
-  const setupUser = async ({ currentUser, endPoint, alertText }) => {
+  const setupUser = async ({ currentUser, captcha, endPoint, alertText }) => {
     localStorage.clear()
     dispatch({ type: SETUP_USER_BEGIN });
     try {
       const { data } = await axios.post(
         `/api/v1/auth/${endPoint}`,
-        currentUser
+        {currentUser,
+        captcha}
       );
 
       const { user, hasLocation, userLocations } = data;

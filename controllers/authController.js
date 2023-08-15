@@ -33,7 +33,15 @@ const enterCode=async(req,res)=>{
 }
 
 const register = async (req, res) => {
-  const { name, email, password, role} = req.body;
+  const { currentUser,captcha} = req.body;
+  const {name, email, password, role} = currentUser
+  console.log(captcha)
+  const response = await axios.post(
+    `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.REACT_APP_SECRET_KEY}&response=${captcha}`
+  );
+  if (!response.data.success){
+    throw new BadRequestError('Please complete the reCaptcha. ');
+  }
   if (!name || !email || !password  ) {
     throw new BadRequestError('please provide all values');
   }
@@ -120,11 +128,7 @@ const submitForm = async(req,res) =>{
     `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.REACT_APP_SECRET_KEY}&response=${captcha}`
   );
   console.log(response.data.success)
-  if (!response.data.success){
-    console.log('hi')
-    throw new BadRequestError('Please complete the reCaptcha. ');
 
-  }
   if (code){
     console.log(code)
   const teacher = await User.findOne({ code });
