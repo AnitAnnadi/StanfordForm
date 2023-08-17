@@ -8,6 +8,6 @@ import {
 
 import authenticateUser from '../middleware/auth.js';
 
-router.route('/').post(authenticateUser, createLocation).get(authenticateUser, getLocations);
+router.route('/').post(authenticateUser, createLocation).get(getLocations);
 
 export default router;

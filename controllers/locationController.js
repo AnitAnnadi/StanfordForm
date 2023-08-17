@@ -56,10 +56,6 @@ const getLocations = async(req, res) => {
 
   const locations = await Location.find(queryObject);
 
-  const user = await User.findOne({ _id: req.user.userId });
-  const token = user.createJWT();
-  attachCookie({ res, token });
-
   res.status(StatusCodes.OK).json({ locations });
 }
 

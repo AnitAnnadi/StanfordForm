@@ -52,8 +52,6 @@ const SearchContainer = ({ startReload }) => {
   const [questionsToAnswers, setQuestionsToAnswers] = useState({});
   let reorderedQuestionsToAnswers = {};
 
-  const [filteredSchoolOptions, setFilteredSchoolOptions] = useState([]);
-
   useEffect(() => {
     if (exportClicked && exportData) {
       const worksheet = XLSXUtils.json_to_sheet(exportData);
@@ -64,19 +62,6 @@ const SearchContainer = ({ startReload }) => {
       setExportClicked(false);
     }
   }, [exportData, exportClicked]);
-
-  useEffect(() => {
-    if (schoolOptions.length > 0) {
-      setFilteredSchoolOptions(
-        narrowAllowedOptions(
-          "school",
-          schoolOptions,
-        )
-      );
-    }
-
-  }, [schoolOptions]);
-
 
   const createExcelSheet = async () => {
     setExportClicked(true);
@@ -164,7 +149,7 @@ const SearchContainer = ({ startReload }) => {
             ),
         });
 
-        setToNarrowSchools({reactState: "schoolOptions", state: e.target.value})
+        setToNarrowSchools({reactState: "schoolOptions", allowed: true, state: e.target.value})
         break;
       case "searchCounty":
         handleChanges({
@@ -187,7 +172,7 @@ const SearchContainer = ({ startReload }) => {
           ),
         });
 
-        setToNarrowSchools({reactState: "schoolOptions", county: e.target.value})
+        setToNarrowSchools({reactState: "schoolOptions", allowed: true, county: e.target.value})
         break;
       case "searchCity":
         handleChanges({
@@ -205,7 +190,7 @@ const SearchContainer = ({ startReload }) => {
           //   ),
         });
 
-        setToNarrowSchools({reactState: "schoolOptions", city: e.target.value, county: searchCounty, state: searchState})
+        setToNarrowSchools({reactState: "schoolOptions", allowed: true, city: e.target.value, county: searchCounty, state: searchState})
         break;
       case "searchDistrict":
         handleChanges({
@@ -218,7 +203,7 @@ const SearchContainer = ({ startReload }) => {
           //   ),
         });
 
-        setToNarrowSchools({reactState: "schoolOptions", district: e.target.value, county: searchCounty, state: searchState, city: searchCity});
+        setToNarrowSchools({reactState: "schoolOptions", allowed: true, district: e.target.value, county: searchCounty, state: searchState, city: searchCity});
         break;
       case "searchSchool":
         handleChanges({
@@ -303,7 +288,7 @@ const SearchContainer = ({ startReload }) => {
             name="searchSchool"
             value={searchSchool}
             handleChange={handleChange}
-            list={filteredSchoolOptions}
+            list={schoolOptions}
           />
           {/* search by teacher */}
           <FormRowSelect

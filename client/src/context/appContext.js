@@ -229,25 +229,49 @@ const configureFormStates = (userLocations, user, formStates) => {
   }
 }
 
-const narrowAllSchools = async (getParams) => {
+const narrowAllSchools = async (getParams, allowed = false) => {
   try {
-    console.log("right here")
-    console.log(getParams)
+    if (allowed) {
+      const {data} = await axios.get(`/api/v1/schools/user`);
+      const { userLocations } = data;
 
+      const { state, county, city, district, school } = getParams;
 
-    const urlSearchParams = new URLSearchParams(
-      Object.entries(getParams).filter(([key, value]) => value !== undefined)
-    );
+      // get all schoolnames that meet the getParams criteria, ignore undefined values
 
-    console.log(urlSearchParams)
+      let userLocationsFiltered = userLocations
 
-    const {data} = await axios.get(`/api/v1/locations?${urlSearchParams}`);
-    const {locations} = data;
+      if (state && state !== "all") {
+        userLocationsFiltered = userLocationsFiltered.filter((location) => location.state === state);
+      }
 
-    const schoolNames = narrowSchools(getParams).concat(locations.map((location) => location.name));
+      if (county && county !== "all") {
+        userLocationsFiltered = userLocationsFiltered.filter((location) => location.county === county);
+      }
 
-    console.log("returniong school names: ",  schoolNames)
-    return schoolNames;
+      if (city && city !== "all") {
+        userLocationsFiltered = userLocationsFiltered.filter((location) => location.city === city);
+      }
+
+      if (district && district !== "all") {
+        userLocationsFiltered = userLocationsFiltered.filter((location) => location.district === district);
+      }
+
+      if (school && school !== "all") {
+        userLocationsFiltered = userLocationsFiltered.filter((location) => location.school === school);
+      }
+
+      return userLocationsFiltered.map((location) => location.school);
+    } else {
+      const urlSearchParams = new URLSearchParams(
+        Object.entries(getParams).filter(([key, value]) => value !== undefined)
+      );
+
+      const {data} = await axios.get(`/api/v1/locations?${urlSearchParams}`);
+      const {locations} = data;
+
+      return narrowSchools(getParams).concat(locations.map((location) => location.name));
+    }
   } catch (error) {
     console.log(error);
   }
@@ -482,13 +506,13 @@ const AppProvider = ({ children }) => {
     }
   };
 
-  const setToNarrowSchools = async ({reactState, state, county, city, district}) => {
+  const setToNarrowSchools = async ({reactState, allowed, state, county, city, district}) => {
     try {
-      const schoolNames = await narrowAllSchools({state, county, city, district});
+      const schoolNames = await narrowAllSchools({state, county, city, district}, allowed);
 
       console.log("changing:", reactState, schoolNames)
 
-      dispatch({ type: HANDLE_CHANGE, payload: { name: reactState, value: schoolNames } });
+      dispatch({ type: HANDLE_CHANGE, payload: { name: reactState, value: ["all", ...schoolNames] } });
     } catch (error) {
       console.log(error)
     }
@@ -496,11 +520,8 @@ const AppProvider = ({ children }) => {
 
   const enterCode = async (code) => {
     try {
-      console.log(code)
       const { data } = await axios.post(`/api/v1/auth/enterCode/`, {code});
-      
-      // console.log(response)
-      const {id, name, email, state, city, school} = data;
+
       dispatch({ type: ENTER_CODE , payload:{teacher:data["user"],schools:data["schools"]}});
     } catch (error) {
       if (error.response.status !== 401) {
@@ -603,7 +624,7 @@ const AppProvider = ({ children }) => {
       let teacherNames = [];
       let schoolIndex = currentSchoolIndex&&!all?currentSchoolIndex:0
       
-      while ( schoolIndex<filteredSchools.length) {
+      while ( schoolIndex < filteredSchools.length) {
 
         const { data: data2 } = await authFetch.get('/studentResponses', {
           params: {
@@ -665,8 +686,6 @@ const AppProvider = ({ children }) => {
         if (!overallBreakdown && !all && newResponses.length>=4){
           break
         }
-        
-        
       }
 
       if (all){

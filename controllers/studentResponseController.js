@@ -4,6 +4,7 @@ import School from "../models/School.js";
 import attachCookie from "../utils/attachCookie.js";
 import {StatusCodes} from "http-status-codes";
 import StudentResponse from "../models/StudentResponse.js";
+import NoCodeSchema from "../models/NoCode.js";
 
 const getStudentResponses = async(req, res) => {
   const user = await User.findOne({ _id: req.user.userId });
@@ -48,4 +49,41 @@ const getStudentResponses = async(req, res) => {
   res.status(StatusCodes.OK).json({ teacherName: teacher.name, studentResponses });
 }
 
-export { getStudentResponses }
+const getNoCodeStudentResponses = async(req, res) => {
+  const user = await User.findOne({ _id: req.user.userId });
+
+  const token = user.createJWT();
+  attachCookie({ res, token });
+
+  const {
+    school,
+    grade,
+    period,
+    formType,
+    when,
+    all,
+  } = req.query;
+  let form = all=='true' ? 'all' : formType
+
+  const queryObject = {
+    school,
+  };
+
+  if (form && form !== 'all') {
+    queryObject.formType = form;
+  }
+  if (grade && grade !== 'all') {
+    queryObject.grade = grade;
+  }
+  if (period && period !== 'all') {
+    queryObject.period = period;
+  }
+  if (when && when !== 'all') {
+    queryObject.when = when;
+  }
+
+  const studentResponses = await NoCodeSchema.find(queryObject)
+  res.status(StatusCodes.OK).json({ studentResponses });
+}
+
+export { getStudentResponses, getNoCodeStudentResponses };

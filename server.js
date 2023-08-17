@@ -47,7 +47,7 @@ app.use(cookieParser());
 
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/schools', authenticateUser, schoolRouter);
-app.use('/api/v1/locations', authenticateUser, locationRouter);
+app.use('/api/v1/locations', locationRouter);
 app.use('/api/v1/studentResponses', authenticateUser, studentResponseRouter);
 app.use('/api/v1/form', authenticateUser, formRouter);
 app.use('/api/v1/export', authenticateUser, exportRouter);
