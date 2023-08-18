@@ -47,7 +47,7 @@ const Register = () => {
             name="adminRole"
             value={adminRole}
             onChange={handleAdminRole}
-            className="form-select"
+            className="form-row form-select"
           >
             <option value={"default"}>Choose your Role</option>
             {adminroles.map((role, index) => {
