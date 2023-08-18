@@ -137,7 +137,6 @@ const CreateLoc = () => {
       state === "default" ||
       (county === "default") ||
       (city === "default") ||
-      (district === "default") ||
       (school === "default")
     ) {
       displayAlert();
@@ -189,7 +188,7 @@ const CreateLoc = () => {
               Create Location{" "}
               {numOfLocations > 1 ? numOfLocations : ""}
             </h3>
-            <h4 className="form-title">State</h4>
+            <h4 className="form-title">State*</h4>
             <select
               name="aliasChoice"
               value={state}
@@ -205,7 +204,7 @@ const CreateLoc = () => {
                 );
               })}
             </select>
-            <h4 className="form-title">County</h4>
+            <h4 className="form-title">County*</h4>
             <select
               name="aliasChoice"
               value={county}
@@ -221,7 +220,7 @@ const CreateLoc = () => {
                 );
               })}
             </select>
-            <h4 className="form-title">City</h4>
+            <h4 className="form-title">City*</h4>
             <select
               name="aliasChoice"
               value={city}
@@ -253,7 +252,7 @@ const CreateLoc = () => {
                 );
               })}
             </select>
-            <h4 className="form-title">School</h4>
+            <h4 className="form-title">School*</h4>
             <input
               name="aliasChoice"
               onChange={(e) => handleChange("school", e.target.value)}

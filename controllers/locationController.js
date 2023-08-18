@@ -6,17 +6,15 @@ import {StatusCodes} from "http-status-codes";
 
 const createLocation = async(req, res) =>{
   const { state, county, city, district, school } = req.body;
-  if (!state || !county || !city || !district || !school) {
-    throw new BadRequestError('All fields are required');
+  if (!state || !county || !city || !school) {
+    throw new BadRequestError('All fields but district are required');
   }
 
   const upperSchool = school.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-  const upperDistrict = district.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  const upperDistrict = district ? district.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : undefined;
   const upperCity = city.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   const upperCounty = county.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   const upperState = state.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-
-  console.log(upperSchool, upperDistrict, upperCity, upperCounty, upperState)
 
   const locationExists = await Location.findOne({ state: upperState, county: upperCounty, city: upperCity, district: upperDistrict, name: upperSchool });
 
