@@ -512,7 +512,7 @@ const AppProvider = ({ children }) => {
 
       console.log("changing:", reactState, schoolNames)
 
-      dispatch({ type: HANDLE_CHANGE, payload: { name: reactState, value: ["all", ...schoolNames] } });
+      dispatch({ type: HANDLE_CHANGE, payload: { name: reactState, value: schoolNames } });
     } catch (error) {
       console.log(error)
     }

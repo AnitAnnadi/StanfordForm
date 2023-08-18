@@ -288,7 +288,7 @@ const SearchContainer = ({ startReload }) => {
             name="searchSchool"
             value={searchSchool}
             handleChange={handleChange}
-            list={schoolOptions}
+            list={["all", ...schoolOptions]}
           />
           {/* search by teacher */}
           <FormRowSelect
