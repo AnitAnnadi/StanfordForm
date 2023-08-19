@@ -34,13 +34,17 @@ const enterCode=async(req,res)=>{
 
 const register = async (req, res) => {
   const { currentUser,captcha} = req.body;
+  console.log(captcha)
   const {name, email, password, role} = currentUser
-  const response = await axios.post(
-    `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.REACT_APP_SECRET_KEY}&response=${captcha}`
-  );
-  if (!response.data.success){
-    throw new BadRequestError('Please complete the reCaptcha. ');
+  if (captcha!=undefined){
+    const response = await axios.post(
+      `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.REACT_APP_SECRET_KEY}&response=${captcha}`
+    );
+    if (!response.data.success){
+      throw new BadRequestError('Please complete the reCaptcha. ');
+    }
   }
+  
   if (!name || !email || !password  ) {
     throw new BadRequestError('please provide all values');
   }
