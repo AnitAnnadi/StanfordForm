@@ -23,7 +23,6 @@ const getFormMetrics = async(req,res) => {
 
   const school = await School.findOne({ _id: schoolId })
   const teacher = await User.findOne({ _id: teacherId })
-  console.log(school, teacher)
   let responseQueryObject={}
   
   responseQueryObject = {
@@ -35,12 +34,10 @@ const getFormMetrics = async(req,res) => {
       school: school.school,
   }
 
-  console.log(period)
   if (period && period !== 'null') {
     responseQueryObject.period = period;
   }
   
-  console.log(responseQueryObject)
 
   const studentResponses = await StudentResponse.find(responseQueryObject);
 

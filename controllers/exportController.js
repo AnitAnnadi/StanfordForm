@@ -42,8 +42,9 @@ const getExport = async (req, res) => {
       when: when,
       school: school.school,
     };
+    console.log(period)
 
-    if (period && period !== "undefined") {
+    if (period && period !== "undefined" && period!='null') {
       responseQueryObject.period = period;
     }
 

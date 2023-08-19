@@ -118,14 +118,16 @@ const reducer = (state, action) => {
       showAlert: true,
       alertType: 'success',
       alertText: action.payload.msg,
-      exportData: action.payload.exportData
+      exportData: action.payload.exportData,
+      isLoading: false
     };
   }
 
   if (action.type === GET_EXPORT_BEGIN) {
     return {
       ...state,
-      exportData: null
+      exportData: null,
+      isLoading: true
     };
   }
 
@@ -261,7 +263,6 @@ const reducer = (state, action) => {
   }
 
   if (action.type === PAGE_FULL) {
-    console.log('payload'+action.payload.schoolIndex)
    return { ...state,currentSchoolIndex: action.payload.schoolIndex};
   }
   if (action.type === GET_RESPONSE_GROUPS_SUCCESS) {
@@ -269,7 +270,6 @@ const reducer = (state, action) => {
     const uniqueNewResponses = action.payload.newResponses.filter((newResponse) => {
       return !state.responseGroups.some((existingResponse) => JSON.stringify(existingResponse) === JSON.stringify(newResponse));
     });
-    console.log(uniqueNewResponses)
 
     // console.log(action.payload.all)
     if (action.payload.all){

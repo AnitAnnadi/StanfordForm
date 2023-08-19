@@ -412,7 +412,6 @@ const AppProvider = ({ children }) => {
 
   const enterCode = async (code) => {
     try {
-      console.log(code)
       const { data } = await axios.post(`/api/v1/auth/enterCode/`, {code});
       
       // console.log(response)
@@ -479,7 +478,6 @@ const AppProvider = ({ children }) => {
       responseGroups
     } = state;
     dispatch({ type: GET_RESPONSE_GROUPS_BEGIN, payload:{shouldReload} });
-
     try {
       const { data } = await authFetch.get('/schools', {
         params: {

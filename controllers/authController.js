@@ -34,7 +34,6 @@ const enterCode=async(req,res)=>{
 
 const register = async (req, res) => {
   const { currentUser,captcha} = req.body;
-  console.log(captcha)
   const {name, email, password, role} = currentUser
   if (captcha!=undefined){
     const response = await axios.post(

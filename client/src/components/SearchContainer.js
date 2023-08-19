@@ -17,6 +17,7 @@ import { tobacco, postTobacco, cannabis, postCannabis, safety
 const SearchContainer = ({ startReload }) => {
   const {
     user,
+    handleChange,
     isLoading,
     searchState,
     searchCounty,
@@ -57,15 +58,16 @@ const SearchContainer = ({ startReload }) => {
       const workbook = XLSXUtils.book_new();
       XLSXUtils.book_append_sheet(workbook, worksheet, "Sheet1");
       writeXLSXFile(workbook, `data.xlsx`);
-
+      handleChange(exportData,[])
       setExportClicked(false);
     }
   }, [exportData, exportClicked]);
 
   const createExcelSheet = async () => {
+    await getResponseGroups(currentSchoolIndex, shouldReload, true)
     setExportClicked(true);
     
-    await getResponseGroups(currentSchoolIndex, shouldReload, true)
+    
   };
   
   
@@ -119,7 +121,7 @@ const SearchContainer = ({ startReload }) => {
     return values;
   };
 
-  const handleChange = (e) => {
+  const handleLocalChange = (e) => {
     switch (e.target.name) {
       case "searchState":
         handleChanges({
@@ -243,7 +245,7 @@ const SearchContainer = ({ startReload }) => {
             labelText="state"
             name="searchState"
             value={searchState}
-            handleChange={handleChange}
+            handleChange={handleLocalChange}
             list={stateOptions}
           />
           {/* search by county */}
@@ -251,7 +253,7 @@ const SearchContainer = ({ startReload }) => {
             labelText="county"
             name="searchCounty"
             value={searchCounty}
-            handleChange={handleChange}
+            handleChange={handleLocalChange}
             list={countyOptions}
           />
           {/* search by city */}
@@ -260,7 +262,7 @@ const SearchContainer = ({ startReload }) => {
             labelText="city"
             name="searchCity"
             value={searchCity}
-            handleChange={handleChange}
+            handleChange={handleLocalChange}
             list={cityOptions}
           />
           )}
@@ -269,7 +271,7 @@ const SearchContainer = ({ startReload }) => {
             labelText="district"
             name="searchDistrict"
             value={searchDistrict}
-            handleChange={handleChange}
+            handleChange={handleLocalChange}
             list={districtOptions}
           />
           {/* search by school */}
@@ -277,7 +279,7 @@ const SearchContainer = ({ startReload }) => {
             labelText="school"
             name="searchSchool"
             value={searchSchool}
-            handleChange={handleChange}
+            handleChange={handleLocalChange}
             list={schoolOptions}
           />
           {/* search by teacher */}
@@ -291,7 +293,7 @@ const SearchContainer = ({ startReload }) => {
                 ? "all"
                 : searchTeacher[0]
             }
-            handleChange={handleChange}
+            handleChange={handleLocalChange}
             list={
               user.role === "Teacher"
                 ? [user.name]
@@ -303,7 +305,7 @@ const SearchContainer = ({ startReload }) => {
             labelText="grade"
             name="searchGrade"
             value={searchGrade}
-            handleChange={handleChange}
+            handleChange={handleLocalChange}
             list={gradeOptions}
           />
           {/* search by period */}
@@ -311,7 +313,7 @@ const SearchContainer = ({ startReload }) => {
             labelText="period"
             name="searchPeriod"
             value={searchPeriod}
-            handleChange={handleChange}
+            handleChange={handleLocalChange}
             list={periodOptions}
           />
           {/* search by type */}
@@ -319,7 +321,7 @@ const SearchContainer = ({ startReload }) => {
             labelText="form type"
             name="searchType"
             value={searchType}
-            handleChange={handleChange}
+            handleChange={handleLocalChange}
             list={typeOptions}
           />
           {/* search by before/after */}
@@ -327,7 +329,7 @@ const SearchContainer = ({ startReload }) => {
             labelText="beforeAfter"
             name="searchBeforeAfter"
             value={searchBeforeAfter}
-            handleChange={handleChange}
+            handleChange={handleLocalChange}
             list={beforeAfterOptions}
           />
           <button
@@ -346,6 +348,7 @@ const SearchContainer = ({ startReload }) => {
           </button>
           <Link
             className="btn btn-block btn-obreak"
+            disabled={isLoading}
             to={isLoading ? "#" : `/api/v1/form/`}
           >
             Overall Breakdown

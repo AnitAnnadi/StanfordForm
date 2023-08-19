@@ -24,6 +24,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 const FormMetrics = () => {
   const {
     responseGroups,
+    handleChange,
     searchState,
     searchCounty,
     searchDistrict,
@@ -65,17 +66,18 @@ const FormMetrics = () => {
   let whenForName = null
 
   useEffect(() => {
-    if (exportClicked && exportData) {
+    if (exportClicked && exportData && exportData!=[]) {
       const worksheet = XLSXUtils.json_to_sheet(exportData);
       const workbook = XLSXUtils.book_new();
       XLSXUtils.book_append_sheet(workbook, worksheet, "Sheet1");
       writeXLSXFile(workbook, `data.xlsx`);
-
+      handleChange(exportData,[])
       setExportClicked(false);
     }
   }, [exportData, exportClicked]);
 
   const createExcelSheet = async () => {
+    
     setExportClicked(true)
     if (location.search) {
       const urlParams = new URLSearchParams(window.location.search);
@@ -113,7 +115,6 @@ const FormMetrics = () => {
 
 
   useEffect(()=>{
-    console.log('hi')
     if (isOverall){
       getResponseGroups(currentSchoolIndex,shouldReload, false, true);
     }

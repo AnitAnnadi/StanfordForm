@@ -91,7 +91,6 @@ const Form = () => {
     } else {
       let period = info["period"];
       let code = localStorage.getItem("code");
-      console.log(captcha)
       submitForm(formData, code, grade, when, type, school, null, null, null, null, null, captcha);
       
     }
