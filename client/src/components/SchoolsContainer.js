@@ -98,7 +98,7 @@ const SchoolsContainer = ({ shouldReload, stopReload }) => {
       </div>
       <div ref={endDivRef} className='end'>
       </div>
-      {isLoading ? <Loading center /> : null}
+      {isLoading ? <div><Loading center />  <p>Please wait, getting all your data</p></div>: null}
     </Wrapper>
   );
 };

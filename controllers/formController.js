@@ -8,7 +8,6 @@ import {StatusCodes} from "http-status-codes";
 
 const getFormMetrics = async(req,res) => {
   const user = await User.findOne({ _id: req.user.userId });
-
   const token = user.createJWT();
   attachCookie({ res, token });
 
@@ -24,6 +23,7 @@ const getFormMetrics = async(req,res) => {
 
   const school = await School.findOne({ _id: schoolId })
   const teacher = await User.findOne({ _id: teacherId })
+  console.log(school, teacher)
   let responseQueryObject={}
   
   responseQueryObject = {
@@ -35,10 +35,12 @@ const getFormMetrics = async(req,res) => {
       school: school.school,
   }
 
-
-  if (period && period !== 'undefined' ) {
+  console.log(period)
+  if (period && period !== 'null') {
     responseQueryObject.period = period;
   }
+  
+  console.log(responseQueryObject)
 
   const studentResponses = await StudentResponse.find(responseQueryObject);
 

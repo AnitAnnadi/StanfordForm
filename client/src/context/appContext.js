@@ -578,7 +578,7 @@ const AppProvider = ({ children }) => {
           });
         }
         schoolIndex++
-        if (!overallBreakdown && !all && newResponses.length>=4){
+        if (!overallBreakdown && !all && newResponses.length>=8){
           break
         }
         

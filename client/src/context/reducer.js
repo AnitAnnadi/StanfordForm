@@ -261,13 +261,15 @@ const reducer = (state, action) => {
   }
 
   if (action.type === PAGE_FULL) {
-    return { ...state,currentSchoolIndex: action.payload.schoolIndex};
+    console.log('payload'+action.payload.schoolIndex)
+   return { ...state,currentSchoolIndex: action.payload.schoolIndex};
   }
   if (action.type === GET_RESPONSE_GROUPS_SUCCESS) {
     // Filter out duplicate responses from action.payload.newResponses
     const uniqueNewResponses = action.payload.newResponses.filter((newResponse) => {
       return !state.responseGroups.some((existingResponse) => JSON.stringify(existingResponse) === JSON.stringify(newResponse));
     });
+    console.log(uniqueNewResponses)
 
     // console.log(action.payload.all)
     if (action.payload.all){

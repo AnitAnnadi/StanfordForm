@@ -113,6 +113,7 @@ const FormMetrics = () => {
 
 
   useEffect(()=>{
+    console.log('hi')
     if (isOverall){
       getResponseGroups(currentSchoolIndex,shouldReload, false, true);
     }
