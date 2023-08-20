@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Logo, FormRow, Alert } from "../components";
 import Wrapper from "../assets/wrappers/RegisterPage";
 import { useAppContext } from "../context/appContext";
-import { useNavigate } from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import Logo2 from "../assets/images/logo.png";
 import ReCAPTCHA from "react-google-recaptcha"
@@ -24,8 +24,11 @@ const Register = () => {
   let role = "";
   let adminroles = ["Site Admin", "District Admin", "County Admin", "State Admin", "Standford Staff"];
   const navigate = useNavigate();
-  const location = useLocation();
-  const { type } = location.state;
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const type = searchParams.get("type");
+
   let adminbool=false
   const [values, setValues] = useState(initialState);
   const [adminRole, setAdminRole] = useState("default");
@@ -116,6 +119,10 @@ const Register = () => {
   };
 
   useEffect(() => {
+    if (!type || (type !== "teacher" && type !== "admin")) {
+      navigate("/landing");
+    }
+
     if ((user && hasLocation) || (user?.role === 'Standford Staff')) {
       adminroles.map((role=>{
         if (role==user.role){
@@ -181,11 +188,12 @@ const Register = () => {
         )}
 
         {!values.isMember && <AdminRole />}
-        {!values.isMember?
-        <ReCAPTCHA 
-            ref={captchaRef}
-            sitekey={"6LerfqAnAAAAAB86YDhcCf0XanGHJXHQkvyxY6fJ"} />
-            :null}
+        {!values.isMember && (
+          <ReCAPTCHA
+              ref={captchaRef}
+              sitekey={"6LerfqAnAAAAAB86YDhcCf0XanGHJXHQkvyxY6fJ"}
+          />
+        )}
         <button type="submit" className="btn btn-block" disabled={isLoading}>
           submit
         </button>

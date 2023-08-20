@@ -21,17 +21,15 @@ function SelectRole() {
         <h2>I am a...</h2>
         <div className="landing-btns">
           <Link
-            to="/register"
+            to="/register?type=teacher"
             className="btn btn-hero"
-            state={{ type: "teacher" }}
             onClick={handleClick}
             value={"teacher"}
           >
             Teacher
           </Link>
           <Link
-            to="/register"
-            state={{ type: "admin" }}
+            to="/register?type=admin"
             className="btn btn-hero"
             onClick={handleClick}
             value={"admin"}
