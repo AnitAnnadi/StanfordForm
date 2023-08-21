@@ -516,7 +516,7 @@ const AppProvider = ({ children }) => {
       let newResponses = [];
       let teacherNames = [];
       let schoolIndex = currentSchoolIndex&&!all?currentSchoolIndex:0
-      
+            
       while ( schoolIndex<filteredSchools.length) {
 
         const { data: data2 } = await authFetch.get('/studentResponses', {
@@ -532,13 +532,13 @@ const AppProvider = ({ children }) => {
         });
         const { teacherName, studentResponses } = data2;
 
-        let teacherMatch = teacherNames.find(function(obj) {
-            return obj[1] === filteredSchools[schoolIndex].teacher;
-          });
+        // let teacherMatch = teacherNames.find(function(obj) {
+        //     return obj[1] === filteredSchools[schoolIndex].teacher;
+        //   });
 
-        if (!teacherMatch) {
-          teacherNames.push([teacherName, filteredSchools[schoolIndex].teacher]);
-        }
+        // if (!teacherMatch) {
+        //   teacherNames.push([teacherName, filteredSchools[schoolIndex].teacher]);
+        // }
 
 
         let uniqueResponseTypes = [];
@@ -574,6 +574,8 @@ const AppProvider = ({ children }) => {
               });
             }).length,
           });
+
+
         }
         schoolIndex++
         if (!overallBreakdown && !all && newResponses.length>=8){
