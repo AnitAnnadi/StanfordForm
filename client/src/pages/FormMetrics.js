@@ -15,7 +15,7 @@ import { AiOutlineForm, AiOutlineNumber } from "react-icons/ai";
 import { TbListNumbers, TbNumbers } from "react-icons/tb";
 import { useAppContext } from "../context/appContext";
 import { utils as XLSXUtils, writeFile as writeXLSXFile } from 'xlsx';
-import { tobacco, postTobacco, cannabis, postCannabis, safety
+import { tobacco, postTobacco, cannabis, postCannabis, safety, healthy
 } from "../utils/questions";
 
 
@@ -110,6 +110,9 @@ const FormMetrics = () => {
     }
     else if (formType === "Safety First"){
       return createQuestionsToAnswersMap(safety, data)
+    }
+    else if (formType === "Healthy Futures"){
+      return createQuestionsToAnswersMap(healthy, data)
     }
   };
 

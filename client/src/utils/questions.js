@@ -458,3 +458,88 @@ export const  tobacco = [
   
   
   ]
+
+  export const healthy = [
+    {
+      question: "I know the triggers of substance use.",
+      answers: [
+        "Strongly agree",
+        "Disagree",
+        "Neither disagree nor agree",
+        "Agree",
+        "Strongly agree",
+      ],
+    },
+    {
+      question: "I know strategies to address triggers of substance use.",
+      answers: [
+        "Strongly agree",
+        "Disagree",
+        "Neither disagree nor agree",
+        "Agree",
+        "Strongly agree",
+      ],
+    },
+    {
+      question: "I know of healthy alternatives to using substances.",
+      answers: [
+        "Strongly agree",
+        "Disagree",
+        "Neither disagree nor agree",
+        "Agree",
+        "Strongly agree",
+      ],
+    },
+    {
+      question: "I have at least two ways to reduce my stress.",
+      answers: [
+        "Strongly agree",
+        "Disagree",
+        "Neither disagree nor agree",
+        "Agree",
+        "Strongly agree",
+      ],
+    },
+    {
+      question: "I know how substance use impacts a person’s body.",
+      answers: [
+        "Strongly agree",
+        "Disagree",
+        "Neither disagree nor agree",
+        "Agree",
+        "Strongly agree",
+      ],
+    },
+    {
+      question:
+        "I can name at least 2 resources to help people who use substances.",
+      answers: [
+        "Strongly agree",
+        "Disagree",
+        "Neither disagree nor agree",
+        "Agree",
+        "Strongly agree",
+      ],
+    },
+    {
+      question: "I know the signs and symptoms of substance use withdrawal.",
+      answers: [
+        "Strongly agree",
+        "Disagree",
+        "Neither disagree nor agree",
+        "Agree",
+        "Strongly agree",
+      ],
+    },
+    {
+      question:
+        "I can identify at least two mental health symptoms associated with substance use.",
+      answers: [
+        "Strongly agree",
+        "Disagree",
+        "Neither disagree nor agree",
+        "Agree",
+        "Strongly agree",
+      ],
+    },
+  ];

@@ -10,7 +10,7 @@ import {
 } from "../utils/schoolDataFetch";
 import { Link } from "react-router-dom";
 import { utils as XLSXUtils, writeFile as writeXLSXFile } from 'xlsx';
-import { tobacco, postTobacco, cannabis, postCannabis, safety
+import { tobacco, postTobacco, cannabis, postCannabis, safety, healthy
 } from "../utils/questions";
 
 
@@ -86,6 +86,9 @@ const SearchContainer = ({ startReload }) => {
       return when === "before" ? createQuestionsToAnswersMap(tobacco, data) : createQuestionsToAnswersMap(tobacco.concat(postTobacco), data);
     } else if (formType === "Smart Talk: Cannabis Prevention & Education Awareness") {
       return when === "before" ? createQuestionsToAnswersMap(cannabis, data) : createQuestionsToAnswersMap(cannabis.concat(postCannabis),data);
+    }
+    else if (formType === "Healthy Futures" ){
+      return createQuestionsToAnswersMap(healthy, data)
     }
     else if (formType === "Safety First"){
       return createQuestionsToAnswersMap(safety, data)

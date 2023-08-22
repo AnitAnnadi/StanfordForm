@@ -12,6 +12,7 @@ import {
   cannabis,
   postCannabis,
   safety,
+  healthy,
 } from "../utils/questions";
 import ReCAPTCHA from "react-google-recaptcha"
 
@@ -111,6 +112,9 @@ const Form = () => {
         : cannabis.concat(postCannabis);
     } else if (info["form"] === "Safety First") {
       return safety;
+    }
+    else if (info["form"] === "Healthy Futures") {
+      return healthy;
     }
   });
 
