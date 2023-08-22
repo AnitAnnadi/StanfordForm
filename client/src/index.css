@@ -282,6 +282,16 @@ li {
   letter-spacing: var(--letterSpacing);
   text-transform: capitalize;
 }
+
+.location-icon {
+  color: var(--primary-500);
+  transition: var(--transition);
+}
+
+.location-icon:hover {
+  color: var(--primary-700);
+}
+
 /* alert */
 
 @keyframes spinner {
