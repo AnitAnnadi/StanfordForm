@@ -6,6 +6,7 @@ import Dropdown from "react-dropdown";
 import { useEffect } from "react";
 import Logo2 from "../assets/images/logo.png";
 import { useNavigate } from "react-router-dom";
+import { BsArrowRight } from "react-icons/bs";
 import {
   narrowDistricts,
   narrowCities,
@@ -15,7 +16,7 @@ import {
 } from "../utils/schoolDataFetch";
 import { Link } from "react-router-dom";
 
-const  SelectLoc = ({ noCode }) => {
+const SelectLoc = ({ noCode }) => {
   const {
     user,
     userLocations,
@@ -24,7 +25,7 @@ const  SelectLoc = ({ noCode }) => {
     addLocation,
     isLoading,
     successAlert,
-    exists
+    exists,
   } = useAppContext();
   const navigate = useNavigate();
 
@@ -168,7 +169,7 @@ const  SelectLoc = ({ noCode }) => {
     }
   };
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (noCode) {
       if (
@@ -406,17 +407,8 @@ const  SelectLoc = ({ noCode }) => {
             >
               {isLoading ? "Please Wait..." : "submit"}
             </button>
-            <br/>
-            {numOfLocations>1?
-            <Link
-              to="/"
-              className="btn btn-block"
-              disabled={isLoading}
-              style={{ marginTop: "1.38rem" }}
-            >
-              {isLoading ? "Please Wait..." : "Go to Dashboard"}
-            </Link>:null}
-            
+            <br />
+
             <p>
               Don't see your school?{" "}
               <a
@@ -427,6 +419,29 @@ const  SelectLoc = ({ noCode }) => {
                 Click here
               </a>
             </p>
+            {numOfLocations > 1 ? (
+              <div
+                className="dashboard-link"
+                style={{
+                  display: "flex",
+                  columnGap: "0.5rem",
+                  marginTop: "-1rem",
+                  alignContent: "center",
+                  minWidth: "100%",
+                  justifyContent: "flex-end",
+                }}
+              >
+                {isLoading ? "Please Wait..." : "Go to Dashboard"}
+                <Link
+                  to="/"
+                  disabled={isLoading}
+                  className="location-icon"
+                  style={{ fontSize: "1.5rem" }}
+                >
+                  <BsArrowRight />
+                </Link>
+              </div>
+            ) : null}
           </div>
         </form>
       </Wrapper>
