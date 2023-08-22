@@ -58,10 +58,12 @@ const stateList = ["all", "Alabama", "Alaska", "Arizona", "Arkansas", "Californi
 
 const initialState = {
   userLoading: false,
+  exportLoading:false,
   isLoading: false,
   showAlert: false,
   alertText: '',
   alertType: '',
+  exists:false,
   user: LSUser ? LSUser : null,
   userLocation: '',
   userLocations: LSUserLocations ? (LSUserLocations !== 'undefined' ? LSUserLocations : []) : [],
@@ -364,8 +366,9 @@ const AppProvider = ({ children }) => {
       const { data } = await authFetch.post('/schools/user', locationData);
       const { data: data2 } = await authFetch.get('/schools/user', locationData);
 
-      const { user } = data;
+      const { user, exists } = data;
       const { userLocations } = data2;
+      console.log(exists)
 
       localStorage.setItem('userLocations', JSON.stringify(userLocations))
 
@@ -396,7 +399,8 @@ const AppProvider = ({ children }) => {
         type: ADD_LOCATION_SUCCESS,
         payload: {
           userLocations,
-          newFormStates: newFormState
+          newFormStates: newFormState,
+          exists
         }
       });
     } catch (error) {
@@ -448,6 +452,7 @@ const AppProvider = ({ children }) => {
   };
 
   const handleChange = ({ name, value }) => {
+    console.log(name,value)
     dispatch({ type: HANDLE_CHANGE, payload: { name, value } });
   };
   const handleChanges = (newStates) => {
@@ -475,10 +480,14 @@ const AppProvider = ({ children }) => {
       searchTeacher,
       searchType,
       searchBeforeAfter,
-      responseGroups
+      responseGroups,
+      exportLoading
     } = state;
     dispatch({ type: GET_RESPONSE_GROUPS_BEGIN, payload:{shouldReload} });
     try {
+      if (all){
+        handleChange({ name: "exportLoading", value: true });
+      }
       const { data } = await authFetch.get('/schools', {
         params: {
           searchState,
@@ -620,8 +629,9 @@ const AppProvider = ({ children }) => {
         responseGroups,
         currentSchoolIndex,
         shouldReload,
+        exportLoading
     } = state;
-
+    handleChange({ name: "exportLoading", value: true });
     if (search) {
         try {
             dispatch({

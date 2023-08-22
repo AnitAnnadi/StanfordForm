@@ -119,7 +119,8 @@ const reducer = (state, action) => {
       alertType: 'success',
       alertText: action.payload.msg,
       exportData: action.payload.exportData,
-      isLoading: false
+      isLoading: false,
+      exportLoading:false
     };
   }
 
@@ -205,6 +206,7 @@ const reducer = (state, action) => {
     };
   }
   if (action.type === HANDLE_CHANGE) {
+    console.log(action.payload.name,action.payload.value )
     return {
       ...state,
       page: 1,
@@ -355,15 +357,32 @@ const reducer = (state, action) => {
     };
   }
   if (action.type === ADD_LOCATION_SUCCESS) {
-    return {
-      ...state,
-      userLocations: action.payload.userLocations,
-      ...action.payload.newFormStates,
-      hasLocation: true,
-      showAlert: true,
-      alertType: 'success',
-      alertText: 'Location added!',
-    };
+    if (action.payload.exists){
+      console.log('hi')
+      return {
+        ...state,
+        userLocations: action.payload.userLocations,
+        ...action.payload.newFormStates,
+        hasLocation: true,
+        showAlert: true,
+        alertType: 'danger',
+        alertText: 'Location already exists. Can’t add duplicate.',
+        exists:true
+      };
+    }
+    else{
+      return {
+        ...state,
+        userLocations: action.payload.userLocations,
+        ...action.payload.newFormStates,
+        hasLocation: true,
+        showAlert: true,
+        alertType: 'success',
+        alertText: 'Location added!',
+        exists:false
+      };
+    }
+    
   }
   throw new Error(`no such action : ${action.type}`);
 };

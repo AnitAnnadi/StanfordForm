@@ -39,7 +39,8 @@ const FormMetrics = () => {
     exportData,
     getResponseGroups,
     shouldReload,
-    currentSchoolIndex
+    currentSchoolIndex,
+    exportLoading
   } = useAppContext();
 
 
@@ -225,7 +226,7 @@ const FormMetrics = () => {
               <span className="icon-css">
                 <BiExport />
               </span>
-              Export to Excel
+              {exportLoading?"Exporting...":"Export To Excel"}
             </button>
             <div className="content-center">
               <ResponseGroupInfo
@@ -315,7 +316,7 @@ const FormMetrics = () => {
               <span className="icon-css">
                 <BiExport />
               </span>
-              Export to Excel
+              {exportLoading?"Exporting...":"Export To Excel"}
             </button>
               <ResponseGroupInfo
                 icon={<FaChalkboardTeacher />}
