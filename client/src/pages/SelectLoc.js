@@ -396,17 +396,7 @@ const  SelectLoc = ({ noCode }) => {
                 </label>
               </>
             )}
-            {numOfLocations>1?
-            <div>
-<Link
-  to="/"
-  className="btn btn-block"
-  disabled={isLoading}
-  style={{ marginTop: "1.38rem", width: "100%" }}
->
-  {isLoading ? "Please Wait..." : "Go to Dashboard"}
-</Link>
-</div>:null}
+
             <button
               className="btn btn-block"
               type="submit"
@@ -416,6 +406,16 @@ const  SelectLoc = ({ noCode }) => {
             >
               {isLoading ? "Please Wait..." : "submit"}
             </button>
+            <br/>
+            {numOfLocations>1?
+            <Link
+              to="/"
+              className="btn btn-block"
+              disabled={isLoading}
+              style={{ marginTop: "1.38rem" }}
+            >
+              {isLoading ? "Please Wait..." : "Go to Dashboard"}
+            </Link>:null}
             
             <p>
               Don't see your school?{" "}
