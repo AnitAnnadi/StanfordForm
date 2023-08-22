@@ -13,8 +13,9 @@ import {
   narrowSchools,
   getDistrictCounty,
 } from "../utils/schoolDataFetch";
+import { Link } from "react-router-dom";
 
-const SelectLoc = ({ noCode }) => {
+const  SelectLoc = ({ noCode }) => {
   const {
     user,
     userLocations,
@@ -23,6 +24,7 @@ const SelectLoc = ({ noCode }) => {
     addLocation,
     isLoading,
     successAlert,
+    exists
   } = useAppContext();
   const navigate = useNavigate();
 
@@ -166,7 +168,7 @@ const SelectLoc = ({ noCode }) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     if (noCode) {
       if (
@@ -214,7 +216,7 @@ const SelectLoc = ({ noCode }) => {
         return;
       }
 
-      addLocation({
+      await addLocation({
         multiplePeriods: multiplePeriods,
         state: state,
         county: county !== "default" ? county : null,
@@ -242,11 +244,11 @@ const SelectLoc = ({ noCode }) => {
         if (adminbool) {
           setTimeout(() => {
             navigate("/metrics");
-          }, 3000);
+          }, 2000);
         } else {
           setTimeout(() => {
             navigate("/");
-          }, 1000);
+          }, 2000);
         }
       }
     }
@@ -394,6 +396,17 @@ const SelectLoc = ({ noCode }) => {
                 </label>
               </>
             )}
+            {numOfLocations>1?
+            <div>
+<Link
+  to="/"
+  className="btn btn-block"
+  disabled={isLoading}
+  style={{ marginTop: "1.38rem", width: "100%" }}
+>
+  {isLoading ? "Please Wait..." : "Go to Dashboard"}
+</Link>
+</div>:null}
             <button
               className="btn btn-block"
               type="submit"
@@ -403,6 +416,7 @@ const SelectLoc = ({ noCode }) => {
             >
               {isLoading ? "Please Wait..." : "submit"}
             </button>
+            
             <p>
               Don't see your school?{" "}
               <a

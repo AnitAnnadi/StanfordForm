@@ -13,15 +13,19 @@ const createLocation = async(req,res) =>{
   const user = await User.findOne({ _id: req.user.userId });
   const userLocations = await School.find({ teacher: user._id, multiplePeriods, state, county, city, district, school});
   let location;
+  let exists = false;
   console.log(userLocations)
   if (userLocations.length===0){
-    console.log('hi')
   location = await School.create({ teacher: user._id, multiplePeriods, state, county, city, district, school })
-  }
   const token = user.createJWT();
   attachCookie({ res, token });
+  }
+  else{
+    exists = true
+  }
+  
 
-  res.status(StatusCodes.CREATED).json({ user, location });
+  res.status(StatusCodes.CREATED).json({ user, location, exists });
 }
 
 const getUserLocations = async(req, res) => {

@@ -46,7 +46,8 @@ const SearchContainer = ({ startReload }) => {
     shouldReload,
     allResponseGroups,
     getExport,
-    exportData
+    exportData,
+    exportLoading
   } = useAppContext();
   const [exportClicked, setExportClicked] = useState(false);
   const [questionsToAnswers, setQuestionsToAnswers] = useState({});
@@ -347,7 +348,7 @@ const SearchContainer = ({ startReload }) => {
             disabled={isLoading}
             onClick={createExcelSheet}
             >
-            export all data
+            {exportLoading?"Exporting...":"export all data"}
           </button>
           <Link
             className="btn btn-block btn-obreak"
