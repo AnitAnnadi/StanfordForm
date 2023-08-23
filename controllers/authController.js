@@ -130,37 +130,36 @@ const submitForm = async(req,res) =>{
   if (!response.data.success){
     throw new BadRequestError('Please complete the reCaptcha. ');
   }
-  if (code){
+  if (code) {
     console.log(code)
-  const teacher = await User.findOne({ code });
-  if (!teacher){
-    throw new BadRequestError('Invalid Code. Try Again or Ask Teacher for Code');
-  }
-
-  let StudentResponseData=''
-  if (period!=="default"){
-    StudentResponseData= await StudentResponse.create({formCode:code,teacher:teacher._id,grade:grade,when:when,formType:type,school:school,period:period})
-
-  }
-  if (period==="default"){
-    
-    StudentResponseData= await StudentResponse.create({formCode:code,teacher:teacher._id,grade:grade,when:when,formType:type,school:school})
-    
-  }
-  let _id=(StudentResponseData["_id"])
-  
-  formData.forEach(async (item) => {
-    const { question, answers } = item;
-  
-    for (const answer of answers) {
-      await Question.create({ StudentResponse: _id, Question: question, Answer: answer });
+    const teacher = await User.findOne({ code });
+    if (!teacher) {
+      throw new BadRequestError('Invalid Code. Try Again or Ask Teacher for Code');
     }
-  }
-  
-  );
-  res.status(StatusCodes.OK).json({ msg: 'Form Sucessfully Completed. Redirecting...' });
 
-}
+    let StudentResponseData=''
+    if (period!=="default"){
+      StudentResponseData= await StudentResponse.create({formCode:code,teacher:teacher._id,grade:grade,when:when,formType:type,school:school,period:period})
+
+    }
+    if (period==="default"){
+
+      StudentResponseData= await StudentResponse.create({formCode:code,teacher:teacher._id,grade:grade,when:when,formType:type,school:school})
+
+    }
+
+    let _id=(StudentResponseData["_id"])
+  
+    formData.forEach(async (item) => {
+      const { question, answers } = item;
+
+      for (const answer of answers) {
+        await Question.create({ StudentResponse: _id, Question: question, Answer: answer });
+      }
+    });
+
+    res.status(StatusCodes.OK).json({ msg: 'Form Sucessfully Completed. Redirecting...' });
+  }
 
   else{
     let NoCodeData=''

@@ -57,18 +57,23 @@ const getNoCodeStudentResponses = async(req, res) => {
 
   const {
     school,
+    state,
+    city,
+    county,
+    district,
     grade,
     period,
     formType,
     when,
     all,
   } = req.query;
-  let form = all=='true' ? 'all' : formType
+  let form = all == 'true' ? 'all' : formType
 
-  const queryObject = {
-    school,
-  };
+  const queryObject = {};
 
+  if (school && school !== 'all') {
+    queryObject.school = school;
+  }
   if (form && form !== 'all') {
     queryObject.formType = form;
   }
@@ -80,6 +85,18 @@ const getNoCodeStudentResponses = async(req, res) => {
   }
   if (when && when !== 'all') {
     queryObject.when = when;
+  }
+  if (state && state !== 'all') {
+    queryObject.state = state;
+  }
+  if (city && city !== 'all') {
+    queryObject.city = city;
+  }
+  if (county && county !== 'all') {
+    queryObject.county = county;
+  }
+  if (district && district !== 'all') {
+    queryObject.district = district;
   }
 
   const studentResponses = await NoCodeSchema.find(queryObject)

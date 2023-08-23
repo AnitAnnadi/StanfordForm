@@ -622,7 +622,7 @@ const AppProvider = ({ children }) => {
 
       let newResponses = [];
       let teacherNames = [];
-      let schoolIndex = currentSchoolIndex&&!all?currentSchoolIndex:0
+      let schoolIndex = (currentSchoolIndex && !all) ? currentSchoolIndex : 0;
       
       while ( schoolIndex < filteredSchools.length) {
 
@@ -687,6 +687,95 @@ const AppProvider = ({ children }) => {
           break
         }
       }
+
+      if (user.role === 'Standford Staff') {
+        console.log("Its a standfard staff!!")
+        if (schoolIndex >= filteredSchools.length && newResponses.length === 0) {
+          const offsetIndex = schoolIndex - filteredSchools.length;
+
+          const { data: data3 } = await authFetch.get('/studentResponses/noCode', {
+            params: {
+              school: searchSchool,
+              state: searchState,
+              city: searchCity,
+              county: searchCounty,
+              district: searchDistrict,
+              grade: searchGrade,
+              period: searchPeriod,
+              formType: searchType,
+              when: searchBeforeAfter,
+              all
+            }
+          });
+
+          const { studentResponses: noCodeStudentResponses } = data3;
+
+          let uniqueResponseTypes = [];
+
+          for (const responseIndex in noCodeStudentResponses) {
+            let newResponseType = {
+              formCode: "noCode",
+              custom: true,
+              teacher: "No Teacher",
+              grade: noCodeStudentResponses[responseIndex].grade,
+              when: noCodeStudentResponses[responseIndex].when,
+              formType: noCodeStudentResponses[responseIndex].formType,
+              school: {
+                school: noCodeStudentResponses[responseIndex].school,
+                state: noCodeStudentResponses[responseIndex].state,
+                teacher: "No Teacher",
+                multiplePeriods: false,
+                district: noCodeStudentResponses[responseIndex].district,
+                county: noCodeStudentResponses[responseIndex].county,
+                city: noCodeStudentResponses[responseIndex].city,
+              },
+              period: "No Period"
+            }
+
+            let match = uniqueResponseTypes.find(function(obj) {
+              return JSON.stringify(obj) === JSON.stringify(newResponseType);
+            });
+
+            if (!match) {
+              uniqueResponseTypes.push(newResponseType);
+            }
+          }
+
+          for (let i = (offsetIndex * 4); (i < uniqueResponseTypes.length && i < ((offsetIndex * 4) + 4)); i += 1) {
+            const currentResponse = uniqueResponseTypes[i]
+
+            // school: filteredSchools[schoolIndex],
+            // teacherName,
+            // uniqueResponseType: uniqueResponseTypes[responseTypeIndex],
+            // numberOfResponses: studentResponses.filter((response) => {
+            //   return Object.entries(uniqueResponseTypes[responseTypeIndex]).every(([key, value]) => {
+            //     return response[key] === value;
+            //   });
+            // }).length,
+
+            newResponses.push({
+              school: currentResponse.school,
+              teacherName: "No Teacher",
+              uniqueResponseType: currentResponse,
+              numberOfResponses: noCodeStudentResponses.filter((response) => {
+                return response.grade === currentResponse.grade &&
+                  response.when === currentResponse.when &&
+                  response.formType === currentResponse.formType &&
+                  response.school === currentResponse.school.school &&
+                  response.state === currentResponse.school.state &&
+                  response.district === currentResponse.school.district &&
+                  response.county === currentResponse.school.county &&
+                  response.city === currentResponse.school.city
+              }).length
+            });
+
+            console.log({currentResponse})
+            console.log({noCodeStudentResponses})
+          }
+        }
+      }
+
+      console.log({newResponses})
 
       if (all){
         getExport(false, null, newResponses);

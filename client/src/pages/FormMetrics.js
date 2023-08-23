@@ -126,12 +126,18 @@ const FormMetrics = () => {
         responseGroups.map((responseGroup) => {
           const { school, uniqueResponseType } = responseGroup;
           const queryParameters = new URLSearchParams({
+            custom: uniqueResponseType?.custom,
             teacherId: school.teacher,
-            schoolId: school._id,
+            schoolId: school?._id,
             period: uniqueResponseType.period,
             grade: uniqueResponseType.grade,
             formType: uniqueResponseType.formType,
             when: uniqueResponseType.when,
+            school: school.school,
+            state: school.state,
+            city: school.city,
+            county: school.county,
+            district: school.district,
             overallBreakdown:true
           });
   
