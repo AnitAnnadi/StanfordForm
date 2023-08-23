@@ -24,6 +24,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 const FormMetrics = () => {
   const {
     responseGroups,
+    overallLoading,
     handleChange,
     searchState,
     searchCounty,
@@ -199,7 +200,7 @@ const FormMetrics = () => {
     }
   }, [location.search, formCode, responseGroups]);
       
-  if (isLoading) return (
+  if (isLoading || overallLoading) return (
   <div>
     {isOverall?<p >This may take a while. We have to retrieve all your data</p>:null}
   <Loading center />

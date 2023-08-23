@@ -74,6 +74,7 @@ const initialState = {
   numOfPages: 1,
   page: 1,
   stats: {},
+  overallLoading:false,
   allResponseGroups:[],
   monthlyApplications: [],
   stateOptions: localStorage.getItem("stateOptions") ? (localStorage.getItem("stateOptions") !== "undefined" ? JSON.parse(localStorage.getItem("stateOptions")): stateList) : stateList,
@@ -486,6 +487,9 @@ const AppProvider = ({ children }) => {
       if (all){
         handleChange({ name: "exportLoading", value: true });
       }
+      if (overallBreakdown){
+        handleChange({ name: "overallLoading", value: true });
+      }
       const { data } = await authFetch.get('/schools', {
         params: {
           searchState,
@@ -602,7 +606,7 @@ const AppProvider = ({ children }) => {
         schoolIndex,
         },
       });
-
+      handleChange({ name: "overallLoading", value: false });
       dispatch({
         type: GET_RESPONSE_GROUPS_SUCCESS,
         payload: {

@@ -11,7 +11,7 @@ const createLocation = async(req,res) =>{
   }
 
   const user = await User.findOne({ _id: req.user.userId });
-  const userLocations = await School.find({ teacher: user._id, multiplePeriods, state, county, city, district, school});
+  const userLocations = await School.find({ teacher: user._id, state, county, city, district, school});
   let location;
   let exists = false;
   if (userLocations.length===0){
