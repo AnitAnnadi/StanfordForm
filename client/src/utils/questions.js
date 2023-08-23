@@ -29,7 +29,7 @@ export const  tobacco = [
         "Disagree",
         "Neither disagree nor agree",
         "Agree",
-        "Strongly agree"
+        "Strongly disagree"
       ],
     },
     {
@@ -84,7 +84,7 @@ export const  tobacco = [
           "Disagree",
           "Neither disagree nor agree",
           "Agree",
-          "Strongly agree"
+          "Strongly disagree"
         ],
     },
     {
@@ -95,7 +95,7 @@ export const  tobacco = [
           "Disagree",
           "Neither disagree nor agree",
           "Agree",
-          "Strongly agree"
+          "Strongly disagree"
         ],
     },
     {
@@ -106,7 +106,7 @@ export const  tobacco = [
           "Disagree",
           "Neither disagree nor agree",
           "Agree",
-          "Strongly agree"
+          "Strongly disagree"
         ],
     },
     {
@@ -117,7 +117,7 @@ export const  tobacco = [
           "Disagree",
           "Neither disagree nor agree",
           "Agree",
-          "Strongly agree"
+          "Strongly disagree"
         ],
     },
     {
