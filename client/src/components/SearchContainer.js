@@ -52,12 +52,36 @@ const SearchContainer = ({ startReload }) => {
   const [exportClicked, setExportClicked] = useState(false);
   const [questionsToAnswers, setQuestionsToAnswers] = useState({});
   let reorderedQuestionsToAnswers = {};
-
+  const vape = [];
+  const cannabis = [];
+  const safety = [];
+  const healthy = [];
+  
   useEffect(() => {
     if (exportClicked && exportData) {
-      const worksheet = XLSXUtils.json_to_sheet(exportData);
+      exportData.forEach(obj => {
+        const formtype = obj['form type'];
+        if (formtype === "You and Me, Together Vape-Free") {
+          vape.push(obj);
+        } else if (formtype === "Smart Talk: Cannabis Prevention & Education Awareness") {
+          cannabis.push(obj);
+        } else if (formtype === "Safety First") {
+          safety.push(obj);
+        }
+        else if (formtype === "Healthy Futures") {
+          healthy.push(obj);
+        }
+      });
+      
+      const vapeSheet = XLSXUtils.json_to_sheet(vape);
+      const cannabisSheet = XLSXUtils.json_to_sheet(cannabis);
+      const safetySheet = XLSXUtils.json_to_sheet(safety);
+      const healthySheet = XLSXUtils.json_to_sheet(healthy);
       const workbook = XLSXUtils.book_new();
-      XLSXUtils.book_append_sheet(workbook, worksheet, "Sheet1");
+      XLSXUtils.book_append_sheet(workbook, vapeSheet, "Vape-Free");
+      XLSXUtils.book_append_sheet(workbook, cannabisSheet, "Smart Talk");
+      XLSXUtils.book_append_sheet(workbook, safetySheet, "Safety First");
+      XLSXUtils.book_append_sheet(workbook, healthySheet, "Healthy Futures");
       writeXLSXFile(workbook, `data.xlsx`);
       handleChange(exportData,[])
       setExportClicked(false);

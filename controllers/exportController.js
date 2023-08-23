@@ -21,7 +21,7 @@ const findResponse = (list, questions, obj) => {
     if (foundQuestions.length > 0) {
       obj[block.question] = foundQuestions.map((q) => q.Answer).join(", "); // Combine answers if there are multiple matches
     } else {
-      obj[block.question] = "n/a";
+      obj[block.question] = "";
     }
   });
   exportData.push(obj);
@@ -43,7 +43,6 @@ const getExport = async (req, res) => {
       when: when,
       school: school.school,
     };
-    console.log(period)
 
     if (period && period !== "undefined" && period!='null') {
       responseQueryObject.period = period;
@@ -66,8 +65,9 @@ const getExport = async (req, res) => {
         obj.when = studentResponse.when;
         obj.grade = studentResponse.grade;
         obj.period =
-          studentResponse.period === undefined ? "n/a" : studentResponse.period;
-        obj["form type"] = studentResponse.formType;
+          studentResponse.period === undefined || studentResponse.period === null? "n/a" : studentResponse.period;
+        console.log(obj.period)
+          obj["form type"] = studentResponse.formType;
 
         let questions = await Question.find({
           StudentResponse: studentResponse._id,

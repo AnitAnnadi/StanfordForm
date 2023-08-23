@@ -14,7 +14,6 @@ const createLocation = async(req,res) =>{
   const userLocations = await School.find({ teacher: user._id, multiplePeriods, state, county, city, district, school});
   let location;
   let exists = false;
-  console.log(userLocations)
   if (userLocations.length===0){
   location = await School.create({ teacher: user._id, multiplePeriods, state, county, city, district, school })
   const token = user.createJWT();

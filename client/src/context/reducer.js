@@ -358,7 +358,6 @@ const reducer = (state, action) => {
   }
   if (action.type === ADD_LOCATION_SUCCESS) {
     if (action.payload.exists){
-      console.log('hi')
       return {
         ...state,
         userLocations: action.payload.userLocations,

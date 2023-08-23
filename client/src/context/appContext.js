@@ -368,7 +368,6 @@ const AppProvider = ({ children }) => {
 
       const { user, exists } = data;
       const { userLocations } = data2;
-      console.log(exists)
 
       localStorage.setItem('userLocations', JSON.stringify(userLocations))
 
@@ -452,7 +451,6 @@ const AppProvider = ({ children }) => {
   };
 
   const handleChange = ({ name, value }) => {
-    console.log(name,value)
     dispatch({ type: HANDLE_CHANGE, payload: { name, value } });
   };
   const handleChanges = (newStates) => {
