@@ -122,7 +122,20 @@ const SelectLoc = ({ noCode }) => {
     user?.role === "Site Admin" || user?.role === "Teacher" || noCode;
   const showMultiplePeriods = user?.role === "Teacher";
   const showAdditionalLoc = user?.role === "Teacher";
-
+  useEffect(() => {
+    console.log(exists)
+    if (!exists && !additionalLoc) {
+      if (adminbool) {
+        setTimeout(() => {
+          navigate("/metrics");
+        }, 2000);
+      } else {
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
+      }
+    }
+  }, [exists]);
   useEffect(() => {
     if (user?.role === "Site Admin" || user?.role === "Teacher" || noCode) {
       if (state !== "default" && city !== "default" && school !== "default") {
@@ -231,7 +244,7 @@ const SelectLoc = ({ noCode }) => {
           adminbool = true;
         }
       });
-
+      console.log(exists)
       if (additionalLoc) {
         setState("default");
         setCounty("default");
@@ -241,17 +254,7 @@ const SelectLoc = ({ noCode }) => {
         setMultiplePeriods(false);
         setAdditionalLoc(false);
         setNumOfLocations(numOfLocations + 1);
-      } else {
-        if (adminbool) {
-          setTimeout(() => {
-            navigate("/metrics");
-          }, 2000);
-        } else {
-          setTimeout(() => {
-            navigate("/");
-          }, 2000);
-        }
-      }
+      } 
     }
   };
 

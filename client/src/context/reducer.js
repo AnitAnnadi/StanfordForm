@@ -357,6 +357,7 @@ const reducer = (state, action) => {
     };
   }
   if (action.type === ADD_LOCATION_SUCCESS) {
+    console.log(action.payload.exists)
     if (action.payload.exists){
       return {
         ...state,

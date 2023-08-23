@@ -63,7 +63,7 @@ const initialState = {
   showAlert: false,
   alertText: '',
   alertType: '',
-  exists:false,
+  exists:true,
   user: LSUser ? LSUser : null,
   userLocation: '',
   userLocations: LSUserLocations ? (LSUserLocations !== 'undefined' ? LSUserLocations : []) : [],
