@@ -687,7 +687,7 @@ const AppProvider = ({ children }) => {
       }
 
       if (user.role === 'Standford Staff') {
-        if (schoolIndex >= filteredSchools.length && newResponses.length === 0) {
+        if (schoolIndex >= filteredSchools.length && (newResponses.length === 0 || all)) {
           const offsetIndex = schoolIndex - filteredSchools.length;
 
           const { data: data3 } = await authFetch.get('/studentResponses/noCode', {
@@ -738,7 +738,7 @@ const AppProvider = ({ children }) => {
             }
           }
 
-          for (let i = (offsetIndex * 4); (i < uniqueResponseTypes.length && i < ((offsetIndex * 4) + 4)); i += 1) {
+          for (let i = (offsetIndex * 4); (i < uniqueResponseTypes.length && ((i < ((offsetIndex * 4) + 4)) || all)); i += 1) {
             const currentResponse = uniqueResponseTypes[i]
 
             // school: filteredSchools[schoolIndex],
@@ -825,37 +825,43 @@ const AppProvider = ({ children }) => {
             dispatch({ type: GET_EXPORT_FAIL, payload: { msg: "Export Failed" } });
         }
     } else {
-
-        
         dispatch({ type: GET_EXPORT_BEGIN, payload: { exportData: null } });
 
         const allExportData = [];
+
         for (const responseGroup of (allResponseGroups ? allResponseGroups : responseGroups)) {
-        const { school, uniqueResponseType } = responseGroup;
-        const queryParameters = new URLSearchParams({
-          teacherId: school.teacher,
-          schoolId: school._id,
-          period: uniqueResponseType.period,
-          grade: uniqueResponseType.grade,
-          formType: uniqueResponseType.formType,
-          when: uniqueResponseType.when,
-        });
-  
-        try {
-          const data = await authFetch.get(
-            `/export/${uniqueResponseType.formCode}?${queryParameters}`
-          );
-          const exportDatas = data.data.exportData;
-          exportDatas.forEach((exportData) => {
-            allExportData.push(exportData);
+          const { school, uniqueResponseType } = responseGroup;
+
+          const queryParameters = new URLSearchParams({
+            noCode: uniqueResponseType?.noCode ? 'true' : 'false',
+            teacherId: school.teacher,
+            schoolId: school?._id,
+            period: uniqueResponseType.period,
+            grade: uniqueResponseType.grade,
+            formType: uniqueResponseType.formType,
+            when: uniqueResponseType.when,
+            school: school.school,
+            state: school.state,
+            city: school.city,
+            county: school.county,
+            district: school.district,
           });
-        } catch (error) {
-          console.error(`Error fetching data for responseGroup: ${responseGroup}`, error);
-          dispatch({ type: GET_EXPORT_FAIL, payload: { msg: "Export Failed" } });
-          return; // Exit the function early since there was an error
-        }
+
+          try {
+            const data = await authFetch.get(
+              `/export/${uniqueResponseType.formCode}?${queryParameters}`
+            );
+            const exportDatas = data.data.exportData;
+            exportDatas.forEach((exportData) => {
+              allExportData.push(exportData);
+            });
+          } catch (error) {
+            console.error(`Error fetching data for responseGroup: ${responseGroup}`, error);
+            dispatch({ type: GET_EXPORT_FAIL, payload: { msg: "Export Failed" } });
+            return; // Exit the function early since there was an error
+          }
         
-      }
+        }
 
         dispatch({
             type: GET_EXPORT_SUCCESS,

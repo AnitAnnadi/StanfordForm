@@ -126,7 +126,7 @@ const FormMetrics = () => {
         responseGroups.map((responseGroup) => {
           const { school, uniqueResponseType } = responseGroup;
           const queryParameters = new URLSearchParams({
-            custom: uniqueResponseType?.custom,
+            noCode: uniqueResponseType?.noCode,
             teacherId: school.teacher,
             schoolId: school?._id,
             period: uniqueResponseType.period,

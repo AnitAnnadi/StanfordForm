@@ -34,8 +34,6 @@ const createLocation = async(req, res) =>{
 const getLocations = async(req, res) => {
   const { state, county, city, district, school } = req.query;
 
-  console.log(req.query)
-
   const upperSchool = school ? school.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : undefined;
   const upperDistrict = district ? district.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : undefined;
   const upperCity = city ? city.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : undefined;

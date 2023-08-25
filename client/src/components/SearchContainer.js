@@ -54,7 +54,6 @@ const SearchContainer = ({ startReload }) => {
 
   useEffect(() => {
     if (exportClicked && exportData) {
-      console.log("exportData", exportData)
       const worksheet = XLSXUtils.json_to_sheet(exportData);
       const workbook = XLSXUtils.book_new();
       XLSXUtils.book_append_sheet(workbook, worksheet, "Sheet1");

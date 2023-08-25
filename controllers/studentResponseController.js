@@ -22,6 +22,8 @@ const getStudentResponses = async(req, res) => {
     all,
     overallBreakdown
   } = req.query;
+
+  // Is it the intent to show all form types when exporting?
   let form = all=='true' ? 'all' : formType
   const teacher = await User.findOne({ _id: teacherId })
 
@@ -67,6 +69,8 @@ const getNoCodeStudentResponses = async(req, res) => {
     when,
     all,
   } = req.query;
+
+  // Is it the intent to show all form types when exporting?
   let form = all == 'true' ? 'all' : formType
 
   const queryObject = {};
