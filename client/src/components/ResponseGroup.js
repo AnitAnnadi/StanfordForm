@@ -18,7 +18,7 @@ const ResponseGroup = ({
   const formCode = uniqueResponseType.formCode
 
   const queryParams = new URLSearchParams({
-    custom: uniqueResponseType?.custom,
+    noCode: uniqueResponseType?.noCode ? 'true' : 'false',
     teacherId: school.teacher,
     schoolId: school?._id,
     period: uniqueResponseType.period,

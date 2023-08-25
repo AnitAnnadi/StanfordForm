@@ -182,6 +182,7 @@ const FormMetrics = () => {
       setIsOverall(false);
       setIsLoading(true);
       const queryParameters = new URLSearchParams(location.search);
+
       const formType = queryParameters.get("formType");
       const when = queryParameters.get("when");
       fetch(`/api/v1/form/${formCode}?${queryParameters.toString()}`)

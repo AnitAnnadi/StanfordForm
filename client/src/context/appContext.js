@@ -510,8 +510,6 @@ const AppProvider = ({ children }) => {
     try {
       const schoolNames = await narrowAllSchools({state, county, city, district}, allowed);
 
-      console.log("changing:", reactState, schoolNames)
-
       dispatch({ type: HANDLE_CHANGE, payload: { name: reactState, value: schoolNames } });
     } catch (error) {
       console.log(error)
@@ -689,7 +687,6 @@ const AppProvider = ({ children }) => {
       }
 
       if (user.role === 'Standford Staff') {
-        console.log("Its a standfard staff!!")
         if (schoolIndex >= filteredSchools.length && newResponses.length === 0) {
           const offsetIndex = schoolIndex - filteredSchools.length;
 
@@ -715,7 +712,7 @@ const AppProvider = ({ children }) => {
           for (const responseIndex in noCodeStudentResponses) {
             let newResponseType = {
               formCode: "noCode",
-              custom: true,
+              noCode: true,
               teacher: "No Teacher",
               grade: noCodeStudentResponses[responseIndex].grade,
               when: noCodeStudentResponses[responseIndex].when,
@@ -768,14 +765,9 @@ const AppProvider = ({ children }) => {
                   response.city === currentResponse.school.city
               }).length
             });
-
-            console.log({currentResponse})
-            console.log({noCodeStudentResponses})
           }
         }
       }
-
-      console.log({newResponses})
 
       if (all){
         getExport(false, null, newResponses);

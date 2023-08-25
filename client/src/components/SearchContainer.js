@@ -122,7 +122,6 @@ const SearchContainer = ({ startReload }) => {
   };
 
   const handleChange = (e) => {
-    console.log("e", e)
     switch (e.target.name) {
       case "searchState":
         handleChanges({

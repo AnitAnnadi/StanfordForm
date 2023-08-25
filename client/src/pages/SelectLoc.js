@@ -311,6 +311,18 @@ const SelectLoc = ({ noCode }) => {
                 >
                   <option value={"default"}>Choose your County</option>
                   {counties.map((county, index) => {
+                    if (county === "custom") {
+                      if (counties.length === 1) {
+                        return (
+                          <option key={index} value={county}>
+                            Doesn't apply
+                          </option>
+                        );
+                      } else {
+                        return <></>
+                      }
+                    }
+
                     return (
                       <option key={index} value={county}>
                         {county}
@@ -351,6 +363,18 @@ const SelectLoc = ({ noCode }) => {
                 >
                   <option value={"default"}>Choose your District</option>
                   {districts.map((district, index) => {
+                    if (district === "custom") {
+                      if (districts.length === 1) {
+                        return (
+                          <option key={index} value={district}>
+                            Doesn't apply
+                          </option>
+                        );
+                      } else {
+                        return <></>
+                      }
+                    }
+
                     return (
                       <option key={index} value={district}>
                         {district}
