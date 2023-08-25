@@ -451,6 +451,46 @@ const AppProvider = ({ children }) => {
     // clearAlert();
   };
 
+  const forgotPassword = async({email})=>{
+    try{
+      console.log(email)
+      const { data } = await axios.post(`/api/v1/auth/forgotPassword`,{email})
+      console.log(data)
+    }
+    catch(error){
+
+    }
+  }
+
+  const verifyReset = async({token, email, password})=>{
+
+    try{
+      console.log(token)
+      const { data } = await axios.post(`/api/v1/auth/verifyToken`,{token,email})
+      console.log(data)
+      if (data.msg == "verified"){
+        console.log('verified')
+      }
+      const {reset} = await axios.post(`/api/v1/auth/resetpassword`,{email,password})
+      console.log(reset)
+      if (reset.msg == 'Password reset successful!' ){
+        dispatch({
+          type: FORM_SUCCESS,
+  
+        });
+      }
+    }
+    catch(error){
+      dispatch({
+        type: FORM_FAIL,
+        payload: { msg: "Your email and link dont match or your link might have expired" },
+      });
+      clearAlert();
+    }
+  }
+
+
+
   const handleChange = ({ name, value }) => {
     dispatch({ type: HANDLE_CHANGE, payload: { name, value } });
   };
@@ -733,7 +773,9 @@ const AppProvider = ({ children }) => {
         addLocation,
         enterCode,
         submitForm,
-        getTotal
+        getTotal,
+        forgotPassword,
+        verifyReset
       }}
     >
       {children}

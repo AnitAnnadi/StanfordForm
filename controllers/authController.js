@@ -8,6 +8,10 @@ import { v4 as uuid } from 'uuid';
 import Question from '../models/Question.js';
 import NoCode from '../models/NoCode.js';
 import axios from 'axios';
+import nodemailer from 'nodemailer';
+import crypto from 'crypto';
+import ResetPassword from '../models/ResetPassword.js';
+
 
 
 const enterCode=async(req,res)=>{
@@ -113,9 +117,49 @@ const updateUser = async (req, res) => {
   res.status(StatusCodes.OK).json({ user });
 };
 
-const getCurrentUser = async (req, res) => {
+const forgotPassword=async(req,res)=>{
+  const {email} = req.body
+  console.log(email)
   
-};
+
+  if (email==null){
+
+    throw new BadRequestError('Please Enter an email');
+  }
+  const user = await User.findOne({ email });
+  
+  if (user){
+    const token = crypto.randomBytes(20).toString('hex');
+    const reset = await ResetPassword.create({email,token})
+    console.log(reset)
+    const transporter = nodemailer.createTransport({
+      service: 'Gmail', // e.g., 'Gmail', 'SendGrid'
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to:email,
+      subject:'Reset Data Dashboard Password',
+      text:`To Reset your password access this link - http://localhost:3000/resetpassword/${token}`,
+    };
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error(error);
+        res.status(500).send('Error sending email');
+      } else {
+        console.log('Email sent: ' + info.response);
+        res.status(200).send('Email sent');
+      }
+    });
+
+  }
+  else{
+    throw new BadRequestError('Invalid Code. Try Again or Ask Teacher for Code');
+  }
+}
 
 const logout = async (req, res) => {
   res.cookie('token', 'logout', {
@@ -125,6 +169,37 @@ const logout = async (req, res) => {
   res.status(StatusCodes.OK).json({ msg: 'user logged out!' });
 };
 
+const resetPassword = async(req,res) =>{
+  const {email,password} = req.body
+  console.log(email,password)
+  const user = await User.findOne({email})
+  if (user){
+    user.password = password
+    await user.save();
+    console.log('hi')
+    res.status(StatusCodes.OK).json({ msg: 'Password reset successful!' });
+  }
+}
+
+const verifyToken = async (req, res) => {
+  const {token,email} = req.body
+  try {
+    const resets = await ResetPassword.find({ token });
+
+    const matchingReset = resets.find((reset) => reset.email === email);
+
+    if (matchingReset) {
+      console.log('Token verified');
+      return res.status(StatusCodes.OK).json({ msg: 'verified' });
+    } else {
+      throw new BadRequestError('The email and link dont match or your link has expired');
+    }
+  } catch (error) {
+    console.error('Error verifying token:', error);
+    return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Token verification failed' });
+  }
+
+};
 const submitForm = async(req,res) =>{
   const {formData,code,grade,when,type,school,period,state, city, county, district, captcha}=req.body;
   if (captcha!=undefined){
@@ -191,4 +266,4 @@ const submitForm = async(req,res) =>{
    
 }
 
-export { register, login, updateUser, getCurrentUser, logout , enterCode, submitForm };
+export { resetPassword,verifyToken, register, login, updateUser, forgotPassword, logout , enterCode, submitForm };

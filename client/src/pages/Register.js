@@ -72,6 +72,9 @@ const Register = () => {
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
+  const resetPassword= ()=>{
+    navigate('/forgotpassword')
+  }
   const onSubmit = (e) => {
     e.preventDefault();
     const { name, email, password, isMember, state, city, school,confirm } = values;
@@ -186,6 +189,11 @@ const Register = () => {
             handleChange={handleChange}
           />
         )}
+        {values.isMember?
+        <button type="button" onClick={resetPassword} className="member-btn">
+            Forgot Passsword?
+          </button>:
+        null}
 
         {!values.isMember && <AdminRole />}
         {!values.isMember && (
