@@ -461,7 +461,7 @@ const AppProvider = ({ children }) => {
       if (data=="Email sent"){
         dispatch({
           type: FORM_SUCCESS,
-          payload: {msg: "Email Sent"}
+          payload: {msg: `An email with the password reset has been sent to ${email}`}
   
         });
         clearAlert()
