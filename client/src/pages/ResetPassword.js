@@ -4,6 +4,7 @@ import { useState,useEffect } from 'react'
 import { Logo, FormRow, Alert } from "../components";
 import Wrapper from '../assets/wrappers/ErrorPage'
 import { useAppContext } from '../context/appContext';
+import { useNavigate } from 'react-router-dom';
 
 const ResetPassword = () => {
     const initialState = {
@@ -12,12 +13,20 @@ const ResetPassword = () => {
         confirm:""
       };
     const [values, setValues] = useState(initialState);
+    const navigate = useNavigate();
+
     const currentURL = new URL(window.location.href);
     console.log(currentURL.pathname)
     const [, , token] = currentURL.pathname.split('/');
-    const { forgotPassword, isLoading, showAlert, verifyReset, displayAlert } =
+    const { resetPassword, forgotPassword, isLoading, showAlert, verifyReset, displayAlert } =
     useAppContext();
-
+    useEffect(()=>{
+        if (resetPassword){
+          setTimeout(() => {
+            navigate("/", {});
+          }, 3000);
+        }
+      },[resetPassword])
     const onSubmit = (e)=>{
         e.preventDefault();
         const { email, password,confirm } = values;

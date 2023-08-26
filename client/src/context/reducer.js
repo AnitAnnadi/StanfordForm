@@ -201,7 +201,7 @@ const reducer = (state, action) => {
       isLoading: false,
       showAlert: true,
       alertType: 'success',
-      alertText: "Form Sucessfully Completed. Redirecting...",
+      alertText: action.payload.msg,
       nextPg:true
     };
   }

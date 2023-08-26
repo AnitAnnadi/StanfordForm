@@ -102,7 +102,8 @@ const initialState = {
   hasLocation:null,
   exportData:null,
   currentSchoolIndex:null,
-  nextPg:false
+  nextPg:false,
+  resetPassword:false
 };
 
 const configureFormStates = (userLocations, user, formStates) => {
@@ -436,6 +437,7 @@ const AppProvider = ({ children }) => {
       const { data } = await axios.post(`/api/v1/auth/submitForm/`, {formData,code,grade,when,type,school,period,state, city, county, district,captcha});
       dispatch({
         type: FORM_SUCCESS,
+        payload :{msg:"Form Sucessfully Completed. Redirecting..." }
 
       });
       
@@ -456,6 +458,14 @@ const AppProvider = ({ children }) => {
       console.log(email)
       const { data } = await axios.post(`/api/v1/auth/forgotPassword`,{email})
       console.log(data)
+      if (data=="Email sent"){
+        dispatch({
+          type: FORM_SUCCESS,
+          payload: {msg: "Email Sent"}
+  
+        });
+        clearAlert()
+      }
     }
     catch(error){
 
@@ -465,25 +475,40 @@ const AppProvider = ({ children }) => {
   const verifyReset = async({token, email, password})=>{
 
     try{
-      console.log(token)
+      handleChange({ name: "resetPassword", value: false });
       const { data } = await axios.post(`/api/v1/auth/verifyToken`,{token,email})
       console.log(data)
       if (data.msg == "verified"){
         console.log('verified')
-      }
-      const {reset} = await axios.post(`/api/v1/auth/resetpassword`,{email,password})
-      console.log(reset)
-      if (reset.msg == 'Password reset successful!' ){
+        const {reset} = await axios.post(`/api/v1/auth/resetpassword`,{email,password})
         dispatch({
           type: FORM_SUCCESS,
+          payload: {msg: "Password Changed"}
   
         });
+        handleChange({ name: "resetPassword", value: true });
+        clearAlert()
       }
+      else{
+        dispatch({
+          type: FORM_FAIL,
+          payload: { msg: "The email and link dont match or your link has expired" },
+        });
+        clearAlert();
+      }
+      // if (reset.msg == 'Password reset successful!' ){
+      //   dispatch({
+      //     type: FORM_SUCCESS,
+      //     payload :{msg:"Form Sucessfully Completed. Redirecting..." }
+  
+      //   });
+      // }
     }
     catch(error){
+      console.log(error)
       dispatch({
         type: FORM_FAIL,
-        payload: { msg: "Your email and link dont match or your link might have expired" },
+        payload: { msg: "The email and link dont match or your link has expired" },
       });
       clearAlert();
     }

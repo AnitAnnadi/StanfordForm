@@ -177,7 +177,7 @@ const resetPassword = async(req,res) =>{
     user.password = password
     await user.save();
     console.log('hi')
-    res.status(StatusCodes.OK).json({ msg: 'Password reset successful!' });
+    return res.status(StatusCodes.OK).json({ msg: 'verified' });
   }
 }
 
