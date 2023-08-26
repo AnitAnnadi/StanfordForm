@@ -42,7 +42,7 @@ const ResetPassword = () => {
     <div>
     <Wrapper className="full-page">
       <form className="form" onSubmit={onSubmit}>
-        <h3>Reset Passsword</h3>
+        <h3>Reset Password</h3>
         {showAlert && <Alert />}
 
  
@@ -61,7 +61,7 @@ const ResetPassword = () => {
             handleChange={handleChange}
           />   
         <button type="submit" className="btn btn-block" disabled={isLoading}>
-          Change Password
+          Reset Password
         </button>
       </form>
     </Wrapper>
