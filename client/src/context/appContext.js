@@ -498,7 +498,7 @@ const AppProvider = ({ children }) => {
       else{
         dispatch({
           type: FORM_FAIL,
-          payload: { msg: "The email and link dont match or your link has expired" },
+          payload: { msg: "Your reset password link has expired" },
         });
         clearAlert();
       }
