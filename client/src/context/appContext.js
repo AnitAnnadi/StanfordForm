@@ -93,7 +93,7 @@ const initialState = {
   searchPeriod: 'all',
   teacherOptions: [], // [[teacherName, teacherId], [teacherName, teacherId], ...]
   searchTeacher: 'all',
-  typeOptions: ['You and Me, Together Vape-Free', 'Smart Talk: Cannabis Prevention & Education Awareness', 'Safety First', 'Healthy Futures'],
+  typeOptions: ['You and Me, Together Vape-Free', 'Smart Talk: Cannabis Prevention & Education Awareness', 'Safety First', 'Healthy Futures: Tabacco/Nicotine/Vaping','Healthy Futures: Cannabis'],
   searchType: 'You and Me, Together Vape-Free',
   beforeAfterOptions: ['all', 'before', 'after'],
   searchBeforeAfter: 'all',
@@ -455,7 +455,6 @@ const AppProvider = ({ children }) => {
 
   const forgotPassword = async({email})=>{
     try{
-      console.log(email)
       const { data } = await axios.post(`/api/v1/auth/forgotPassword`,{email})
       console.log(data)
       if (data=="Email sent"){
@@ -466,21 +465,28 @@ const AppProvider = ({ children }) => {
         });
         clearAlert()
       }
+
     }
     catch(error){
+
+      dispatch({
+        type: FORM_FAIL,
+        payload: { msg: error.response.data.msg },
+      });
+      clearAlert()
 
     }
   }
 
-  const verifyReset = async({token, email, password})=>{
+  const verifyReset = async({token, password})=>{
 
     try{
       handleChange({ name: "resetPassword", value: false });
-      const { data } = await axios.post(`/api/v1/auth/verifyToken`,{token,email})
+      const { data } = await axios.post(`/api/v1/auth/verifyToken`,{token})
       console.log(data)
       if (data.msg == "verified"){
         console.log('verified')
-        const {reset} = await axios.post(`/api/v1/auth/resetpassword`,{email,password})
+        const {reset} = await axios.post(`/api/v1/auth/resetpassword`,{password,token})
         dispatch({
           type: FORM_SUCCESS,
           payload: {msg: "Password Changed"}
@@ -496,19 +502,13 @@ const AppProvider = ({ children }) => {
         });
         clearAlert();
       }
-      // if (reset.msg == 'Password reset successful!' ){
-      //   dispatch({
-      //     type: FORM_SUCCESS,
-      //     payload :{msg:"Form Sucessfully Completed. Redirecting..." }
-  
-      //   });
-      // }
+
     }
     catch(error){
-      console.log(error)
+      console.log(error.response.data.msg.message)
       dispatch({
         type: FORM_FAIL,
-        payload: { msg: "The email and link dont match or your link has expired" },
+        payload: { msg: error.response.data.msg.message},
       });
       clearAlert();
     }

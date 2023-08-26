@@ -90,7 +90,10 @@ const getExport = async (req, res) => {
         } else if (studentResponse.formType === "Safety First") {
           findResponse(safety, questions, obj);
         }
-        else if (studentResponse.formType === "Healthy Futures") {
+        else if (studentResponse.formType === "Healthy Futures: Tabacco/Nicotine/Vaping") {
+          findResponse(healthy, questions, obj);
+        }
+        else if (studentResponse.formType === "Healthy Futures: Cannabis") {
           findResponse(healthy, questions, obj);
         }
       })

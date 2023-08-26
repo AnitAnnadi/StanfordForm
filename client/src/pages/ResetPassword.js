@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 
 const ResetPassword = () => {
     const initialState = {
-        email: "",
         password: "",
         confirm:""
       };
@@ -29,15 +28,12 @@ const ResetPassword = () => {
       },[resetPassword])
     const onSubmit = (e)=>{
         e.preventDefault();
-        const { email, password,confirm } = values;
-        console.log(email)
+        const {  password,confirm } = values;
         if (password!==confirm ){
             displayAlert(true);
             return;
           }
-        if (email){
-            verifyReset({token,email, password});
-        }
+        verifyReset({token, password});
     }
     const handleChange = (e) => {
         setValues({ ...values, [e.target.name]: e.target.value });
@@ -49,13 +45,7 @@ const ResetPassword = () => {
         <h3>Reset Passsword</h3>
         {showAlert && <Alert />}
 
-        {/* email input */}
-        <FormRow
-          type="email"
-          name="email"
-          value={values.email}
-          handleChange={handleChange}
-        />
+ 
         <FormRow
           type="password"
           name="password"
@@ -71,7 +61,7 @@ const ResetPassword = () => {
             handleChange={handleChange}
           />   
         <button type="submit" className="btn btn-block" disabled={isLoading}>
-          Send Email
+          Change Password
         </button>
       </form>
     </Wrapper>

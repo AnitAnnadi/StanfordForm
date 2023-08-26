@@ -127,10 +127,11 @@ const forgotPassword=async(req,res)=>{
     throw new BadRequestError('Please Enter an email');
   }
   const user = await User.findOne({ email });
-  
+  console.log(user)
   if (user){
     const token = crypto.randomBytes(20).toString('hex');
-    const reset = await ResetPassword.create({email,token})
+    const userId = user._id
+    const reset = await ResetPassword.create({userId, email,token})
     console.log(reset)
     const transporter = nodemailer.createTransport({
       service: 'Gmail', // e.g., 'Gmail', 'SendGrid'
@@ -139,6 +140,7 @@ const forgotPassword=async(req,res)=>{
         pass: process.env.EMAIL_PASSWORD,
       },
     });
+    console.log(process.env.EMAIL,process.env.EMAIL_PASSWORD)
     const mailOptions = {
       from: process.env.EMAIL,
       to:email,
@@ -156,8 +158,9 @@ const forgotPassword=async(req,res)=>{
     });
 
   }
-  else{
-    throw new BadRequestError('Invalid Code. Try Again or Ask Teacher for Code');
+  if (!user){
+    console.log('hi')
+    throw new BadRequestError('Invalid email');
   }
 }
 
@@ -170,25 +173,31 @@ const logout = async (req, res) => {
 };
 
 const resetPassword = async(req,res) =>{
-  const {email,password} = req.body
-  console.log(email,password)
-  const user = await User.findOne({email})
+  try{
+  console.log('hi')
+  const {password,token} = req.body
+  const reset = await ResetPassword.find({token})
+  const userId = reset[0].userId
+  const user = await User.findOne(userId)
   if (user){
     user.password = password
     await user.save();
-    console.log('hi')
     return res.status(StatusCodes.OK).json({ msg: 'verified' });
+  }}
+  catch(error){
+    console.log(error)
+    return res.status(StatusCodes.BAD_REQUEST).json({ msg: error });
+
   }
 }
 
 const verifyToken = async (req, res) => {
-  const {token,email} = req.body
+  const {token} = req.body
   try {
-    const resets = await ResetPassword.find({ token });
+    const reset = await ResetPassword.findOne({ token });
 
-    const matchingReset = resets.find((reset) => reset.email === email);
 
-    if (matchingReset) {
+    if (reset) {
       console.log('Token verified');
       return res.status(StatusCodes.OK).json({ msg: 'verified' });
     } else {

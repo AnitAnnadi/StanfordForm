@@ -55,7 +55,8 @@ const SearchContainer = ({ startReload }) => {
   const vape = [];
   const cannabis = [];
   const safety = [];
-  const healthy = [];
+  const healthyTobacco = [];
+  const healthyCannabis = [];
   
   useEffect(() => {
     if (exportClicked && exportData) {
@@ -68,8 +69,11 @@ const SearchContainer = ({ startReload }) => {
         } else if (formtype === "Safety First") {
           safety.push(obj);
         }
-        else if (formtype === "Healthy Futures") {
-          healthy.push(obj);
+        else if (formtype === "Healthy Futures: Tabacco/Nicotine/Vaping") {
+          healthyTobacco.push(obj);
+        }
+        else if (formtype === "Healthy Futures: Cannabis") {
+          healthyCannabis.push(obj);
         }
       });
       
@@ -81,7 +85,8 @@ const SearchContainer = ({ startReload }) => {
       XLSXUtils.book_append_sheet(workbook, vapeSheet, "Vape-Free");
       XLSXUtils.book_append_sheet(workbook, cannabisSheet, "Smart Talk");
       XLSXUtils.book_append_sheet(workbook, safetySheet, "Safety First");
-      XLSXUtils.book_append_sheet(workbook, healthySheet, "Healthy Futures");
+      XLSXUtils.book_append_sheet(workbook, healthyTobacco, "Healthy Futures:Tobacco");
+      XLSXUtils.book_append_sheet(workbook, healthyCannabis, "Healthy Futures:Cannabis");
       writeXLSXFile(workbook, `data.xlsx`);
       handleChange(exportData,[])
       setExportClicked(false);

@@ -113,10 +113,14 @@ const Form = () => {
     } else if (info["form"] === "Safety First") {
       return safety;
     }
-    else if (info["form"] === "Healthy Futures") {
+    else if (info["form"] === "Healthy Futures: Tabacco/Nicotine/Vaping") {
+      return healthy;
+    }
+    else if (info["form"] === "Healthy Futures: Cannabis") {
       return healthy;
     }
   });
+
 
   return (
     <Wrapper

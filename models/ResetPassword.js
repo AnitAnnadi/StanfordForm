@@ -2,6 +2,11 @@ import mongoose from 'mongoose'
 
 const ResetPassword = new mongoose.Schema(
   {
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: [true, 'Please provide id'],
+      //   maxlength:10,
+      },
     email: {
       type: String,
       required: [true, 'Please provide email'],

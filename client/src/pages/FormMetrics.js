@@ -113,7 +113,10 @@ const FormMetrics = () => {
     else if (formType === "Safety First"){
       return createQuestionsToAnswersMap(safety, data)
     }
-    else if (formType === "Healthy Futures"){
+    else if (formType === "Healthy Futures: Tabacco/Nicotine/Vaping"){
+      return createQuestionsToAnswersMap(healthy, data)
+    }
+    else if (formType === "Healthy Futures: Cannabis"){
       return createQuestionsToAnswersMap(healthy, data)
     }
   };
