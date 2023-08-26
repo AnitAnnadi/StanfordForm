@@ -182,6 +182,7 @@ const resetPassword = async(req,res) =>{
   if (user){
     user.password = password
     await user.save();
+    await reset[0].remove()
     return res.status(StatusCodes.OK).json({ msg: 'verified' });
   }}
   catch(error){
@@ -201,7 +202,7 @@ const verifyToken = async (req, res) => {
       console.log('Token verified');
       return res.status(StatusCodes.OK).json({ msg: 'verified' });
     } else {
-      throw new BadRequestError('The email and link dont match or your link has expired');
+      return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Link expired.' });
     }
   } catch (error) {
     console.error('Error verifying token:', error);

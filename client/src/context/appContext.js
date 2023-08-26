@@ -468,7 +468,6 @@ const AppProvider = ({ children }) => {
 
     }
     catch(error){
-
       dispatch({
         type: FORM_FAIL,
         payload: { msg: error.response.data.msg },
@@ -498,17 +497,17 @@ const AppProvider = ({ children }) => {
       else{
         dispatch({
           type: FORM_FAIL,
-          payload: { msg: "The email and link dont match or your link has expired" },
+          payload: { msg: "Your link has expired" },
         });
         clearAlert();
       }
 
     }
     catch(error){
-      console.log(error.response.data.msg.message)
+      console.log(error.response.data.msg)
       dispatch({
         type: FORM_FAIL,
-        payload: { msg: error.response.data.msg.message},
+        payload: { msg: error.response.data.msg},
       });
       clearAlert();
     }
