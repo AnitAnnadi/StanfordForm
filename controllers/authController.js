@@ -202,7 +202,7 @@ const verifyToken = async (req, res) => {
       console.log('Token verified');
       return res.status(StatusCodes.OK).json({ msg: 'verified' });
     } else {
-      return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Link expired.' });
+      return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Your reset password link has expired.' });
     }
   } catch (error) {
     console.error('Error verifying token:', error);

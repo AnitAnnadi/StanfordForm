@@ -497,7 +497,7 @@ const AppProvider = ({ children }) => {
       else{
         dispatch({
           type: FORM_FAIL,
-          payload: { msg: "Your link has expired" },
+          payload: { msg: "Your reset password link has expired" },
         });
         clearAlert();
       }

@@ -36,7 +36,7 @@ const ForgotPassword = () => {
           handleChange={handleChange}
         />
         <button type="submit" className="btn btn-block" disabled={isLoading}>
-          Send Email
+          Request Reset Link
         </button>
       </form>
     </Wrapper>
