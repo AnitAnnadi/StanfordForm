@@ -145,7 +145,7 @@ const forgotPassword=async(req,res)=>{
       from: process.env.EMAIL,
       to:email,
       subject:'Reset Data Dashboard Password',
-      text:`To Reset your password access this link - http://localhost:3000/resetpassword/${token}`,
+      text:`To Reset your password access this link - https://datadashboard.stanfordreachlab.com//resetpassword/${token}`,
     };
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
