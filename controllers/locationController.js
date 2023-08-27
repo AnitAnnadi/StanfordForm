@@ -19,7 +19,8 @@ const createLocation = async(req, res) =>{
   const locationExists = await Location.findOne({ state: upperState, county: upperCounty, city: upperCity, district: upperDistrict, name: upperSchool });
 
   if (locationExists) {
-    throw new BadRequestError('Location already exists');
+    // return existing location
+    res.status(StatusCodes.OK).json({ location: locationExists });
   }
 
   const location = await Location.create({ state: upperState, county: upperCounty, city: upperCity, district: upperDistrict, name: upperSchool })
