@@ -119,11 +119,16 @@ const CreateLoc = () => {
       setDistrict("default");
 
       if (value !== "default") {
+        setCities(narrowCities({ state, county: value }));
         setDistricts(narrowDistricts({ state, county: value }));
       }
     } else if (field === "city") {
       setCity(value);
       setSchool("default");
+
+      if (value !== "default") {
+        setDistricts(narrowDistricts({ state, county, city: value }));
+      }
     } else if (field === "district") {
       setDistrict(value);
     } else if (field === "school") {

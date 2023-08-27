@@ -96,9 +96,9 @@ const SearchContainer = ({ startReload }) => {
 
     if (user.role === "Teacher") {
       const allowedValues = userLocations.map(
-        (location) => location[searchType]
+        (location) => location[searchType].toUpperCase()
       );
-      values = searchValues.filter((value) => allowedValues.includes(value));
+      values = searchValues.filter((value) => allowedValues.includes(value.toUpperCase()));
     } else if (user.role === "Standford Staff") {
       values = searchValues;
     } else {
@@ -106,7 +106,7 @@ const SearchContainer = ({ startReload }) => {
         values = searchValues;
       } else {
         values = searchValues.filter(
-          (value) => value === userLocations[0][searchType]
+          (value) => value.toUpperCase() === userLocations[0][searchType].toUpperCase()
         );
       }
     }
@@ -167,7 +167,7 @@ const SearchContainer = ({ startReload }) => {
           //   ),
           districtOptions: narrowAllowedOptions(
             "district",
-            narrowDistricts({ county: e.target.value })
+            narrowDistricts({ county: e.target.value, state: searchState })
           ),
         });
 
@@ -181,7 +181,11 @@ const SearchContainer = ({ startReload }) => {
           searchTeacher: 'all',
           districtOptions: narrowAllowedOptions(
               "district",
-              narrowDistricts({ city: e.target.value, county: searchCounty, state: searchState })
+              narrowDistricts({
+                city: e.target.value === 'all' ? undefined : e.target.value,
+                county: searchCounty === 'all' ? undefined : searchCounty,
+                state: searchState === 'all' ? undefined : searchState
+              })
             ),
           // schoolOptions: narrowAllowedOptions(
           //     "school",

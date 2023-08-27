@@ -128,7 +128,7 @@ const configureFormStates = (userLocations, user, formStates) => {
 
       newStateOptions = [userLocations[0].state];
       newCountyOptions = [userLocations[0].county];
-      newDistrictOptions = [userLocations[0].district];
+      newDistrictOptions = [userLocations[0].district === "district" ? "N/A" : userLocations[0].district];
       newCityOptions = [userLocations[0].city];
       newSchoolOptions = [userLocations[0].school];
 
@@ -142,7 +142,7 @@ const configureFormStates = (userLocations, user, formStates) => {
 
       newStateOptions = [userLocations[0].state];
       newCountyOptions = [userLocations[0].county];
-      newDistrictOptions = [userLocations[0].district];
+      newDistrictOptions = [userLocations[0].district === "district" ? "N/A" : userLocations[0].district];
       newCityOptions = ["all", ...narrowCities({state: userLocations[0].state, county: userLocations[0].county, district: userLocations[0].district})];
       newSchoolOptions = ["all", ...narrowAllSchools({state: userLocations[0].state, county: userLocations[0].county, district: userLocations[0].district})];
       break;
@@ -183,7 +183,7 @@ const configureFormStates = (userLocations, user, formStates) => {
 
         newStateOptions = [userLocations[0].state];
         newCountyOptions = [userLocations[0].county];
-        newDistrictOptions = [userLocations[0].district];
+        newDistrictOptions = [userLocations[0].district === "district" ? "N/A" : userLocations[0].district];
         newCityOptions = [userLocations[0].city];
         newSchoolOptions = [userLocations[0].school];
       } else {
@@ -242,23 +242,23 @@ const narrowAllSchools = async (getParams, allowed = false) => {
       let userLocationsFiltered = userLocations
 
       if (state && state !== "all") {
-        userLocationsFiltered = userLocationsFiltered.filter((location) => location.state === state);
+        userLocationsFiltered = userLocationsFiltered.filter((location) => location.state.toUpperCase() === state.toUpperCase());
       }
 
       if (county && county !== "all") {
-        userLocationsFiltered = userLocationsFiltered.filter((location) => location.county === county);
+        userLocationsFiltered = userLocationsFiltered.filter((location) => location.county.toUpperCase() === county.toUpperCase());
       }
 
       if (city && city !== "all") {
-        userLocationsFiltered = userLocationsFiltered.filter((location) => location.city === city);
+        userLocationsFiltered = userLocationsFiltered.filter((location) => location.city.toUpperCase() === city.toUpperCase());
       }
 
       if (district && district !== "all") {
-        userLocationsFiltered = userLocationsFiltered.filter((location) => location.district === district);
+        userLocationsFiltered = userLocationsFiltered.filter((location) => location.district.toUpperCase() === district.toUpperCase());
       }
 
       if (school && school !== "all") {
-        userLocationsFiltered = userLocationsFiltered.filter((location) => location.school === school);
+        userLocationsFiltered = userLocationsFiltered.filter((location) => location.school.toUpperCase() === school.toUpperCase());
       }
 
       return userLocationsFiltered.map((location) => location.school);
@@ -589,7 +589,7 @@ const AppProvider = ({ children }) => {
           searchState,
           searchCounty,
           searchCity,
-          searchDistrict,
+          searchDistrict : searchDistrict === 'N/A' ? undefined : searchDistrict,
           searchSchool,
           searchTeacher:
             user.role === 'Teacher' ? user._id :
