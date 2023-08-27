@@ -8,6 +8,10 @@ import { v4 as uuid } from 'uuid';
 import Question from '../models/Question.js';
 import NoCode from '../models/NoCode.js';
 import axios from 'axios';
+import nodemailer from 'nodemailer';
+import crypto from 'crypto';
+import ResetPassword from '../models/ResetPassword.js';
+
 
 
 const enterCode=async(req,res)=>{
@@ -113,9 +117,52 @@ const updateUser = async (req, res) => {
   res.status(StatusCodes.OK).json({ user });
 };
 
-const getCurrentUser = async (req, res) => {
+const forgotPassword=async(req,res)=>{
+  const {email} = req.body
+  console.log(email)
   
-};
+
+  if (email==null){
+
+    throw new BadRequestError('Please Enter an email');
+  }
+  const user = await User.findOne({ email });
+  console.log(user)
+  if (user){
+    const token = crypto.randomBytes(20).toString('hex');
+    const userId = user._id
+    const reset = await ResetPassword.create({userId, email,token})
+    console.log(reset)
+    const transporter = nodemailer.createTransport({
+      service: 'Gmail', // e.g., 'Gmail', 'SendGrid'
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+    console.log(process.env.EMAIL,process.env.EMAIL_PASSWORD)
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to:email,
+      subject:'Reset Data Dashboard Password',
+      text:`To Reset your password access this link - https://datadashboard.stanfordreachlab.com//resetpassword/${token}`,
+    };
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error(error);
+        res.status(500).send('Error sending email');
+      } else {
+        console.log('Email sent: ' + info.response);
+        res.status(200).send('Email sent');
+      }
+    });
+
+  }
+  if (!user){
+    console.log('hi')
+    throw new BadRequestError('Invalid email');
+  }
+}
 
 const logout = async (req, res) => {
   res.cookie('token', 'logout', {
@@ -125,6 +172,44 @@ const logout = async (req, res) => {
   res.status(StatusCodes.OK).json({ msg: 'user logged out!' });
 };
 
+const resetPassword = async(req,res) =>{
+  try{
+  console.log('hi')
+  const {password,token} = req.body
+  const reset = await ResetPassword.find({token})
+  const userId = reset[0].userId
+  const user = await User.findOne(userId)
+  if (user){
+    user.password = password
+    await user.save();
+    await reset[0].remove()
+    return res.status(StatusCodes.OK).json({ msg: 'verified' });
+  }}
+  catch(error){
+    console.log(error)
+    return res.status(StatusCodes.BAD_REQUEST).json({ msg: error });
+
+  }
+}
+
+const verifyToken = async (req, res) => {
+  const {token} = req.body
+  try {
+    const reset = await ResetPassword.findOne({ token });
+
+
+    if (reset) {
+      console.log('Token verified');
+      return res.status(StatusCodes.OK).json({ msg: 'verified' });
+    } else {
+      return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Your reset password link has expired.' });
+    }
+  } catch (error) {
+    console.error('Error verifying token:', error);
+    return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Token verification failed' });
+  }
+
+};
 const submitForm = async(req,res) =>{
   const {formData,code,grade,when,type,school,period,state, city, county, district, captcha}=req.body;
   if (captcha!=undefined){
@@ -191,4 +276,4 @@ const submitForm = async(req,res) =>{
    
 }
 
-export { register, login, updateUser, getCurrentUser, logout , enterCode, submitForm };
+export { resetPassword,verifyToken, register, login, updateUser, forgotPassword, logout , enterCode, submitForm };

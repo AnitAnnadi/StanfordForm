@@ -93,7 +93,7 @@ const initialState = {
   searchPeriod: 'all',
   teacherOptions: [], // [[teacherName, teacherId], [teacherName, teacherId], ...]
   searchTeacher: 'all',
-  typeOptions: ['You and Me, Together Vape-Free', 'Smart Talk: Cannabis Prevention & Education Awareness', 'Safety First', 'Healthy Futures'],
+  typeOptions: ['You and Me, Together Vape-Free', 'Smart Talk: Cannabis Prevention & Education Awareness', 'Safety First', 'Healthy Futures: Tabacco/Nicotine/Vaping','Healthy Futures: Cannabis'],
   searchType: 'You and Me, Together Vape-Free',
   beforeAfterOptions: ['all', 'before', 'after'],
   searchBeforeAfter: 'all',
@@ -102,7 +102,8 @@ const initialState = {
   hasLocation:null,
   exportData:null,
   currentSchoolIndex:null,
-  nextPg:false
+  nextPg:false,
+  resetPassword:false
 };
 
 const configureFormStates = (userLocations, user, formStates) => {
@@ -436,6 +437,7 @@ const AppProvider = ({ children }) => {
       const { data } = await axios.post(`/api/v1/auth/submitForm/`, {formData,code,grade,when,type,school,period,state, city, county, district,captcha});
       dispatch({
         type: FORM_SUCCESS,
+        payload :{msg:"Form Sucessfully Completed. Redirecting..." }
 
       });
       
@@ -450,6 +452,68 @@ const AppProvider = ({ children }) => {
     clearAlert();
     // clearAlert();
   };
+
+  const forgotPassword = async({email})=>{
+    try{
+      const { data } = await axios.post(`/api/v1/auth/forgotPassword`,{email})
+      console.log(data)
+      if (data=="Email sent"){
+        dispatch({
+          type: FORM_SUCCESS,
+          payload: {msg: `An email with the password reset has been sent to ${email}`}
+  
+        });
+        clearAlert()
+      }
+
+    }
+    catch(error){
+      dispatch({
+        type: FORM_FAIL,
+        payload: { msg: error.response.data.msg },
+      });
+      clearAlert()
+
+    }
+  }
+
+  const verifyReset = async({token, password})=>{
+
+    try{
+      handleChange({ name: "resetPassword", value: false });
+      const { data } = await axios.post(`/api/v1/auth/verifyToken`,{token})
+      console.log(data)
+      if (data.msg == "verified"){
+        console.log('verified')
+        const {reset} = await axios.post(`/api/v1/auth/resetpassword`,{password,token})
+        dispatch({
+          type: FORM_SUCCESS,
+          payload: {msg: "Password Changed"}
+  
+        });
+        handleChange({ name: "resetPassword", value: true });
+        clearAlert()
+      }
+      else{
+        dispatch({
+          type: FORM_FAIL,
+          payload: { msg: "Your reset password link has expired" },
+        });
+        clearAlert();
+      }
+
+    }
+    catch(error){
+      console.log(error.response.data.msg)
+      dispatch({
+        type: FORM_FAIL,
+        payload: { msg: error.response.data.msg},
+      });
+      clearAlert();
+    }
+  }
+
+
 
   const handleChange = ({ name, value }) => {
     dispatch({ type: HANDLE_CHANGE, payload: { name, value } });
@@ -733,7 +797,9 @@ const AppProvider = ({ children }) => {
         addLocation,
         enterCode,
         submitForm,
-        getTotal
+        getTotal,
+        forgotPassword,
+        verifyReset
       }}
     >
       {children}

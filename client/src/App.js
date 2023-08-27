@@ -13,6 +13,8 @@ import JoinForm from "./pages/JoinForm";
 import Form from "./pages/Form";
 import Success from "./components/Sucess";
 import FormMetrics from "./pages/FormMetrics";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 
 function App() {
@@ -44,6 +46,8 @@ function App() {
         } />
         <Route path="/joinedForm" element={<JoinForm />} />
         <Route path="/form" element={<Form />} />
+        <Route path="/forgotpassword" element={<ForgotPassword />} />
+        <Route path="/resetpassword/:token" element={<ResetPassword />} />
         <Route path="/register" element={<Register />} />
         {/* <Route path="/register/admin" element={<Register />} /> */}
         <Route path="/landing" element={<SelectRole />} />

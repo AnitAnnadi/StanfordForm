@@ -217,9 +217,14 @@ const JoinForm = () => {
                 Safety First
               </option>
               <option
-                value={"Healthy Futures"}
+                value={"Healthy Futures: Tabacco/Nicotine/Vaping"}
               >
-                Healthy Futures
+                Healthy Futures: Tabacco/Nicotine/Vaping
+              </option>
+              <option
+                value={"Healthy Futures: Cannabis"}
+              >
+                Healthy Futures: Cannabis
               </option>
 
             </select>
