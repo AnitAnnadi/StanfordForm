@@ -216,6 +216,8 @@ const JoinForm = () => {
               <option value={"Safety First"}>
                 Safety First
               </option>
+              {!info["noCode"]?null:
+              <div>
               <option
                 value={"Healthy Futures: Tabacco/Nicotine/Vaping"}
               >
@@ -226,6 +228,8 @@ const JoinForm = () => {
               >
                 Healthy Futures: Cannabis
               </option>
+              </div>
+}
 
             </select>
 
