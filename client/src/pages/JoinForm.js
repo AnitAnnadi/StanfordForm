@@ -216,20 +216,21 @@ const JoinForm = () => {
               <option value={"Safety First"}>
                 Safety First
               </option>
-              {!info["noCode"]?null:
-              <div>
+              {info["noCode"]?null:
               <option
                 value={"Healthy Futures: Tabacco/Nicotine/Vaping"}
               >
                 Healthy Futures: Tabacco/Nicotine/Vaping
               </option>
+              }
+              {info["noCode"]?null:
               <option
                 value={"Healthy Futures: Cannabis"}
               >
                 Healthy Futures: Cannabis
               </option>
-              </div>
-}
+              }
+{/* } */}
 
             </select>
 
