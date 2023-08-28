@@ -785,7 +785,10 @@ const AppProvider = ({ children }) => {
     const { data } = await axios.post(`/api/v1/auth/createCertificate`,{name,info})
     console.log(data.msg)
     if (data.msg == "Certificate Created"){
-      handleChange({ name: "certificate", value: true });    }
+      handleChange({ name: "certificate", value: true });
+      handleChange({ name: "certificate", value: true });
+      successAlert("Creating Certificate...")
+    }
   }
     catch(error){
       console.log(error)
