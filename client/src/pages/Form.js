@@ -38,24 +38,25 @@ const Form = () => {
   let names = [];
   const captchaRef = useRef(null)
 
-  useEffect(()=>{
-    if (nextPg){
-      if (info["form"] === "Healthy Futures: Tobacco/Nicotine/Vaping" || info["form"] === "Healthy Futures: Cannabis") {
+  useEffect(() => {
+    if (nextPg) {
+      if (
+        (info["form"] === "Healthy Futures: Tobacco/Nicotine/Vaping" || info["form"] === "Healthy Futures: Cannabis") &&
+        info["when"] === "after"
+      ) {
         setTimeout(() => {
-          navigate("/certificateinfo", {state:{info}});
+          navigate("/certificateinfo", { state: { info } });
         }, 3000);
-      }
-      else{
+      } else {
         setTimeout(() => {
           navigate("/success", {});
         }, 3000);
       }
-
-      
+  
       captchaRef.current.reset();
     }
-  },[nextPg])
-
+  }, [nextPg]);
+  
   const handleSubmit = (e) => {
     e.preventDefault();
     const captcha =  captchaRef.current.getValue();
