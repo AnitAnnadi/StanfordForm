@@ -69,7 +69,7 @@ const SearchContainer = ({ startReload }) => {
         } else if (formtype === "Safety First") {
           safety.push(obj);
         }
-        else if (formtype === "Healthy Futures: Tabacco/Nicotine/Vaping") {
+        else if (formtype === "Healthy Futures: Tobacco/Nicotine/Vaping") {
           healthyTobacco.push(obj);
         }
         else if (formtype === "Healthy Futures: Cannabis") {

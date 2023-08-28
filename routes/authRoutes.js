@@ -17,7 +17,8 @@ import {
   submitForm,
   forgotPassword,
   verifyToken,
-  resetPassword
+  resetPassword,
+  createCertificate
 } from '../controllers/authController.js';
 
 import authenticateUser from '../middleware/auth.js';
@@ -31,5 +32,6 @@ router.route('/forgotpassword').post(forgotPassword)
 router.route('/verifyToken').post(verifyToken)
 router.route('/resetpassword').post(resetPassword)
 router.route('/updateUser').patch(authenticateUser, testUser, updateUser);
+router.route('/createCertificate').post(createCertificate);
 // router.route('/createLocation').post(authenticateUser, createLocation)
 export default router;
