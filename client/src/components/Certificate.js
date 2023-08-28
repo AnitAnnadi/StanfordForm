@@ -24,7 +24,7 @@ const Certificate = () => {
         {info["name"]}
 
       </div>
-      <div style={{ position: 'absolute', top: '62%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '15px', color: 'black', textAlign: 'center' }}>
+      <div style={{ position: 'absolute', top: '67%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '15px', color: 'black', textAlign: 'center' }}>
           {formattedDate}
         </div>
       {/* <p>{formattedDate}</p> */}
