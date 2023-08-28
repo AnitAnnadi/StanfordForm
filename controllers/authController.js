@@ -11,6 +11,7 @@ import axios from 'axios';
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
 import ResetPassword from '../models/ResetPassword.js';
+import Certificates from '../models/Certificates.js';
 
 
 
@@ -191,6 +192,19 @@ const resetPassword = async(req,res) =>{
 
   }
 }
+const createCertificate =async(req,res)=>{
+  const {name,info} = req.body
+  console.log(req.body)
+  try{
+  await Certificates.create({name:name, formType:info["form"], teacherId:info["teacher_id"] })
+  return res.status(StatusCodes.OK).json({ msg: 'Certificate Created' });
+
+}
+  catch(error){
+    console.log(error)
+    return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Certificate creation failed.' });
+  }
+}
 
 const verifyToken = async (req, res) => {
   const {token} = req.body
@@ -270,10 +284,12 @@ const submitForm = async(req,res) =>{
       console.log(error)
     }
   }
+
+  
   
   
   
    
 }
 
-export { resetPassword,verifyToken, register, login, updateUser, forgotPassword, logout , enterCode, submitForm };
+export { createCertificate, resetPassword,verifyToken, register, login, updateUser, forgotPassword, logout , enterCode, submitForm };

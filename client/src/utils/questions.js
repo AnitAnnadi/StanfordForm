@@ -163,9 +163,9 @@ export const  tobacco = [
   export const postTobacco = [
     {
       question:
-        "Which best describes your plans regarding tobacco/nicotine/vaping:",
+        "Which best describes your plans regarding Tobacco/Nicotine/Vaping:",
       answers: [
-        "Stay tobacco/nicotine/vapingfree",
+        "Stay Tobacco/Nicotine/Vapingfree",
         "Reduce my use (cut-back)",
         "Quit",
   

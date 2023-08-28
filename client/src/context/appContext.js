@@ -59,10 +59,13 @@ const stateList = ["all", "Alabama", "Alaska", "Arizona", "Arkansas", "Californi
 const initialState = {
   userLoading: false,
   exportLoading:false,
+  certificate:false,
   isLoading: false,
   showAlert: false,
   alertText: '',
   alertType: '',
+  healthyFuturesListCannabis:[],
+  healthyFuturesListTobacco:[],
   exists:true,
   user: LSUser ? LSUser : null,
   userLocation: '',
@@ -93,7 +96,7 @@ const initialState = {
   searchPeriod: 'all',
   teacherOptions: [], // [[teacherName, teacherId], [teacherName, teacherId], ...]
   searchTeacher: 'all',
-  typeOptions: ['You and Me, Together Vape-Free', 'Smart Talk: Cannabis Prevention & Education Awareness', 'Safety First', 'Healthy Futures: Tabacco/Nicotine/Vaping','Healthy Futures: Cannabis'],
+  typeOptions: ['You and Me, Together Vape-Free', 'Smart Talk: Cannabis Prevention & Education Awareness', 'Safety First', 'Healthy Futures: Tobacco/Nicotine/Vaping','Healthy Futures: Cannabis'],
   searchType: 'You and Me, Together Vape-Free',
   beforeAfterOptions: ['all', 'before', 'after'],
   searchBeforeAfter: 'all',
@@ -776,6 +779,39 @@ const AppProvider = ({ children }) => {
     dispatch({ type: CHANGE_PAGE, payload: { page } });
   };
 
+  const createCertificate = async ({name,info}) => {
+    try{
+      console.log(name)
+    const { data } = await axios.post(`/api/v1/auth/createCertificate`,{name,info})
+    console.log(data.msg)
+    if (data.msg == "Certificate Created"){
+      handleChange({ name: "certificate", value: true });    }
+  }
+    catch(error){
+      console.log(error)
+    }
+    // dispatch({ type: CHANGE_PAGE, payload: { page } });
+  };
+
+  const getHealthyFutures = async(teacherId) =>{
+    console.log(teacherId)
+    try{
+      const { data } = await authFetch.get('/studentResponses/healthyFutures', {
+        params: {
+         teacherId
+        }
+      });
+      handleChange({ name: "healthyFuturesListCannabis", value: data.responsesByCannabis });
+      handleChange({ name: "healthyFuturesListTobacco", value: data.responsesByTobacco });
+
+      // const { data } = await authFetch.get('/studentResponse s/healthyFutures', {teacherId});
+    }
+    catch(error){
+      console.log(error)
+    }
+
+  }
+
 
 
   return (
@@ -783,6 +819,7 @@ const AppProvider = ({ children }) => {
       value={{
         ...state,
         displayAlert,
+        getHealthyFutures,
         setupUser,
         toggleSidebar,
         logoutUser,
@@ -799,7 +836,8 @@ const AppProvider = ({ children }) => {
         submitForm,
         getTotal,
         forgotPassword,
-        verifyReset
+        verifyReset,
+        createCertificate
       }}
     >
       {children}

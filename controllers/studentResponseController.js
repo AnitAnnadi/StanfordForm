@@ -4,7 +4,7 @@ import School from "../models/School.js";
 import attachCookie from "../utils/attachCookie.js";
 import {StatusCodes} from "http-status-codes";
 import StudentResponse from "../models/StudentResponse.js";
-
+import Certificates from "../models/Certificates.js";
 const getStudentResponses = async(req, res) => {
   const user = await User.findOne({ _id: req.user.userId });
   
@@ -48,4 +48,16 @@ const getStudentResponses = async(req, res) => {
   res.status(StatusCodes.OK).json({ teacherName: teacher.name, studentResponses });
 }
 
-export { getStudentResponses }
+const getHealthyFutures = async(req,res) =>{
+  const {teacherId} = req.query
+  console.log(teacherId)
+  const responses = await Certificates.find({teacherId:teacherId})
+  const responsesByCannabis = responses.filter(response => response.formType === 'Healthy Futures: Cannabis');
+  const responsesByTobacco = responses.filter(response => response.formType === 'Healthy Futures: Tobacco/Nicotine/Vaping');
+
+  res.status(StatusCodes.OK).json({ responsesByCannabis,responsesByTobacco });
+  
+
+}
+
+export { getStudentResponses, getHealthyFutures }

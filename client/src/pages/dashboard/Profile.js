@@ -5,6 +5,7 @@ import Wrapper from "../../assets/wrappers/DashboardFormPage";
 import { v4 as uuid } from "uuid";
 import { NavLink } from "react-router-dom";
 import { BiPlus } from "react-icons/bi";
+import HealthyFeatures from "../../components/HealthyFutures";
 
 const Profile = () => {
   const {
@@ -120,6 +121,7 @@ const Profile = () => {
               </p>
             );
           })}
+          <HealthyFeatures/>
           <button className="btn btn-block" type="submit" disabled={isLoading}>
             {isLoading ? "Please Wait..." : "save changes"}
           </button>
