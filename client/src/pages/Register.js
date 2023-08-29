@@ -112,13 +112,16 @@ const Register = () => {
       });
     } else {
       const captcha = captchaRef.current.getValue();
+      console.log(type)
       setupUser({
         currentUser,
         captcha,
         endPoint: "register",
-        alertText: "User Created! Redirecting...",
+        alertText: type === "admin" ? "Confirm Registration from link sent to Email":"User Created! Redirecting...",
       });
+      
     }
+    setValues(initialState);
   };
 
   useEffect(() => {

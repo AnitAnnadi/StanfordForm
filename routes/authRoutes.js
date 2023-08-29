@@ -18,13 +18,15 @@ import {
   forgotPassword,
   verifyToken,
   resetPassword,
-  createCertificate
+  createCertificate,
+  verify2fa
 } from '../controllers/authController.js';
 
 import authenticateUser from '../middleware/auth.js';
 import testUser from '../middleware/testUser.js';
 router.route('/register').post(apiLimiter, register);
 router.route('/login').post( login);
+router.route('/verify2fa').post( verify2fa);
 router.get('/logout', logout);
 router.route('/enterCode').post( enterCode);
 router.route('/submitForm').post(submitForm)

@@ -284,14 +284,26 @@ const AppProvider = ({ children }) => {
         {currentUser,
         captcha}
       );
-
+        
       const { user, hasLocation, userLocations } = data;
-
-      localStorage.setItem('user', JSON.stringify(user))
-
-      if (userLocations) {
-        localStorage.setItem('userLocations', JSON.stringify(userLocations))
+      
+     let role = currentUser.role
+      console.log(role, currentUser)
+      if (
+        role !== "Site Admin" &&
+        role !== "District Admin" &&
+        role !== "County Admin" &&
+        role !== "State Admin" &&
+        role !== "Standford Staff"
+      ) {
+        console.log('hi');
+        localStorage.setItem('user', JSON.stringify(user));
+        if (userLocations) {
+          localStorage.setItem('userLocations', JSON.stringify(userLocations));
+        }
       }
+      
+    
 
       let newFormState = {};
 
@@ -815,6 +827,33 @@ const AppProvider = ({ children }) => {
 
   }
 
+  const verify2fa = async(_id) => {
+    try{
+      console.log(_id)
+      const { data } = await axios.post(`/api/v1/auth/verify2fa`,{_id})
+      const { user, hasLocation, userLocations } = data;
+      console.log(data)
+      localStorage.setItem('user', JSON.stringify(user))
+
+      if (userLocations) {
+        localStorage.setItem('userLocations', JSON.stringify(userLocations))
+      }
+      let alertText = "User Successfully Created... "
+      dispatch({
+        type: SETUP_USER_SUCCESS,
+        payload: { user, alertText, hasLocation,
+          userLocations: userLocations ? userLocations : [],
+        },
+      });
+      clearAlert();
+
+      // const { data } = await authFetch.get('/studentResponse s/healthyFutures', {teacherId});
+    }
+    catch(error){
+      console.log(error)
+    }
+  };
+
 
 
   return (
@@ -822,6 +861,7 @@ const AppProvider = ({ children }) => {
       value={{
         ...state,
         displayAlert,
+        verify2fa,
         getHealthyFutures,
         setupUser,
         toggleSidebar,

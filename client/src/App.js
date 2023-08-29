@@ -17,6 +17,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import CertInfo from "./pages/CertInfo";
 import Certificate from "./components/Certificate";
+import VerifyTwoFactor from "./pages/VerifyTwoFactor";
 
 
 function App() {
@@ -51,6 +52,7 @@ function App() {
         <Route path="/certificateInfo" element={<CertInfo />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/resetpassword/:token" element={<ResetPassword />} />
+        <Route path="/2fa/:token" element={<VerifyTwoFactor />} />
         <Route path="/register" element={<Register />} />
         {/* <Route path="/register/admin" element={<Register />} /> */}
         <Route path="/landing" element={<SelectRole />} />
