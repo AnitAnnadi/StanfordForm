@@ -121,7 +121,9 @@ const Profile = () => {
               </p>
             );
           })}
-          <HealthyFeatures/>
+          {user.role=="Teacher"?
+          <HealthyFeatures/>:
+          null}
           <button className="btn btn-block" type="submit" disabled={isLoading}>
             {isLoading ? "Please Wait..." : "save changes"}
           </button>
