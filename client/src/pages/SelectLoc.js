@@ -121,6 +121,7 @@ const SelectLoc = ({ noCode }) => {
     user?.role === "Site Admin" || user?.role === "Teacher" || noCode;
   const showMultiplePeriods = user?.role === "Teacher";
   const showAdditionalLoc = user?.role === "Teacher";
+  const showCreateSchool = user?.role === "Site Admin" || user?.role === "Teacher" || user?.role === "Standford Staff" || noCode;
 
   useEffect(() => {
     if (user?.role === "Site Admin" || user?.role === "Teacher" || noCode) {
@@ -446,7 +447,7 @@ const SelectLoc = ({ noCode }) => {
             >
               {isLoading ? "Please Wait..." : "submit"}
             </button>
-            {!noCode && (
+            {showCreateSchool && (
               <p>
                 Don't see your school?{" "}
                 <Link to="/createLoc" className="link">

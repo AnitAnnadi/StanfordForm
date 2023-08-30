@@ -175,7 +175,7 @@ const CreateLoc = () => {
       } else {
         setTimeout(() => {
           navigate("/");
-        }, 1000);
+        }, 3000);
       }
     }
   };

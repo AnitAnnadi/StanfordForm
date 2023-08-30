@@ -1,6 +1,7 @@
 import React, { useReducer, useContext, useEffect } from 'react';
 import {
   getSchoolDataValue,
+  getSchoolObject,
   narrowCities,
   narrowCounties,
   narrowDistricts,
@@ -416,7 +417,7 @@ const AppProvider = ({ children }) => {
 
       let newLocationData = {state, county, district, city, school, multiplePeriods};
 
-      if (district === 'custom' && county === 'custom') {
+      if (district === 'custom' || county === 'custom') {
         const urlSearchParams = new URLSearchParams(
           state,
           city,
@@ -431,8 +432,8 @@ const AppProvider = ({ children }) => {
         }
       }
 
-      const { data } = await authFetch.post('/schools/user', locationData);
-      const { data: data2 } = await authFetch.get('/schools/user', locationData);
+      const { data } = await authFetch.post('/schools/user', newLocationData);
+      const { data: data2 } = await authFetch.get('/schools/user');
 
       const { user } = data;
       const { userLocations } = data2;
@@ -482,19 +483,30 @@ const AppProvider = ({ children }) => {
 
   const addNewLocation = async (locationData) => {
     try {
-      const {data} = await authFetch.post('/locations', locationData);
-      const {location} = data;
-
       const { multiplePeriods } = locationData;
 
-      await addLocation({
-        multiplePeriods,
-        state: location.state,
-        county: location.county,
-        district: location.district,
-        city: location.city,
-        school: location.name
-      });
+      if (!(getSchoolObject(locationData).length > 0)) {
+        const {data} = await authFetch.post('/locations', locationData);
+        const {location} = data;
+
+        await addLocation({
+          multiplePeriods,
+          state: location.state,
+          county: location.county,
+          district: location.district,
+          city: location.city,
+          school: location.name
+        });
+      } else {
+        await addLocation({
+          multiplePeriods,
+          state: locationData.state,
+          county: locationData.county,
+          district: locationData.district,
+          city: locationData.city,
+          school: locationData.school
+        });
+      }
 
     } catch (error) {
       if (error.response.status !== 401) {

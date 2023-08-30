@@ -10,6 +10,12 @@ const createLocation = async(req, res) =>{
     throw new BadRequestError('All fields but district are required');
   }
 
+  const user = await User.findOne({ _id: req.user.userId });
+
+  if (user.role !== 'Site Admin' || user.role !== 'Standford Staff' || user.role !== 'Teacher') {
+    throw new BadRequestError('You do not have permission to create a location');
+  }
+
   const upperSchool = school.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   const upperDistrict = district ? district.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : undefined;
   const upperCity = city.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
@@ -25,7 +31,6 @@ const createLocation = async(req, res) =>{
 
   const location = await Location.create({ state: upperState, county: upperCounty, city: upperCity, district: upperDistrict, name: upperSchool })
 
-  const user = await User.findOne({ _id: req.user.userId });
   const token = user.createJWT();
   attachCookie({ res, token });
 
