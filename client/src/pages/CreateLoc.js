@@ -12,6 +12,7 @@ import {
   narrowSchools,
   getDistrictCounty,
 } from "../utils/schoolDataFetch";
+import CreateLocPopup from "../components/CreateLocPopup";
 
 const CreateLoc = () => {
   const {
@@ -180,7 +181,8 @@ const CreateLoc = () => {
     }
   };
 
-  return (
+  return <>
+    <CreateLocPopup />
     <div
       className="full-page"
       style={{ display: "grid", alignItems: "center", padding: "0 1rem" }}
@@ -305,7 +307,7 @@ const CreateLoc = () => {
       </Wrapper>
       <img width="200" height="100" src={Logo2} className="corner-logo" />
     </div>
-  );
+  </>
 };
 
 export default CreateLoc;
