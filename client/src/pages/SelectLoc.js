@@ -14,6 +14,7 @@ import {
   narrowSchools,
   getDistrictCounty,
 } from "../utils/schoolDataFetch";
+import CreateLocPopup from "../components/CreateLocPopup";
 
 const SelectLoc = ({ noCode }) => {
   const {
@@ -291,7 +292,10 @@ const SelectLoc = ({ noCode }) => {
     handleChange({name: "selectLocSchools", value: []});
   };
 
-  return (
+  const [displayAddPopup, setDisplayAddPopup] = useState(false);
+
+  return <>
+    {displayAddPopup && <CreateLocPopup setDisplay={setDisplayAddPopup} />}
     <div
       className="full-page"
       style={{ display: "grid", alignItems: "center", padding: "0 1rem" }}
@@ -470,9 +474,19 @@ const SelectLoc = ({ noCode }) => {
             {showCreateSchool && (
               <p>
                 Don't see your school?{" "}
-                <Link to="/createLoc" className="link">
+                <button
+                  className="link"
+                  style={{
+                    background: "none",
+                    border: "none",
+                  }}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setDisplayAddPopup(true)
+                  }}
+                >
                   Click here
-                </Link>
+                </button>
               </p>
             )}
             {numOfLocations > 1 ? <>
@@ -504,7 +518,7 @@ const SelectLoc = ({ noCode }) => {
       </Wrapper>
       <img width="200" height="100" src={Logo2} className="corner-logo" />
     </div>
-  );
+  </>;
 };
 
 export default SelectLoc;

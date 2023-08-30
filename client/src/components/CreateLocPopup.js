@@ -2,14 +2,12 @@ import Popup from "reactjs-popup";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 
-const CreateLocPopup = () => {
+const CreateLocPopup = ({setDisplay}) => {
   const navigate = useNavigate();
-
-  const [openStatus, setOpenStatus] = useState(true);
 
   return (
     <div className="welcome">
-      <Popup className="welcome" disableBackdropClick={true} backdrop="static" open={openStatus} modal nested>
+      <Popup className="welcome" disableBackdropClick={true} backdrop="static" open={true} modal nested>
         <div
           className="modal"
           style={{
@@ -41,9 +39,7 @@ const CreateLocPopup = () => {
               <button
                 className="btn btn-block submit-btn"
                 onClick={() => {
-                  setTimeout(() => {
-                    navigate("/selectLoc");
-                  }, 500);
+                  setDisplay(false);
                 }}
                 style={{ margin: "0.5rem 0" }}
               >
@@ -52,7 +48,9 @@ const CreateLocPopup = () => {
               <button
                 className="btn btn-block modal-clear-btn"
                 onClick={() => {
-                  setOpenStatus(false);
+                  setTimeout(() => {
+                    navigate("/createLoc");
+                  }, 500);
                 }}
               >
                 Continue

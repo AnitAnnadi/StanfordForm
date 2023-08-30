@@ -182,7 +182,6 @@ const CreateLoc = () => {
   };
 
   return <>
-    <CreateLocPopup />
     <div
       className="full-page"
       style={{ display: "grid", alignItems: "center", padding: "0 1rem" }}
