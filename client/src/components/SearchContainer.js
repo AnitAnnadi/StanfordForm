@@ -133,7 +133,7 @@ const SearchContainer = ({ startReload }) => {
         (location) => location[searchType]
       );
       values = searchValues.filter((value) => allowedValues.includes(value));
-    } else if (user.role === "Standford Staff") {
+    } else if (user.role === "Stanford Staff") {
       values = searchValues;
     } else {
       if (userLocations[0][searchType] === null) {

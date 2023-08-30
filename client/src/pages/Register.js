@@ -22,7 +22,7 @@ const initialState = {
 
 const Register = () => {
   let role = "";
-  let adminroles = ["Site Admin", "District Admin", "County Admin", "State Admin", "Standford Staff"];
+  let adminroles = ["Site Admin", "District Admin", "County Admin", "State Admin", "Stanford Staff"];
   const navigate = useNavigate();
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -32,7 +32,7 @@ const Register = () => {
   let adminbool=false
   const [values, setValues] = useState(initialState);
   const [adminRole, setAdminRole] = useState("default");
-  const { user, isLoading, showAlert, displayAlert, setupUser, hasLocation } =
+  const { twofaSent,user, isLoading, showAlert, displayAlert, setupUser, hasLocation } =
     useAppContext();
   const captchaRef = useRef(null)
 
@@ -75,7 +75,7 @@ const Register = () => {
   const resetPassword= ()=>{
     navigate('/forgotpassword')
   }
-  const onSubmit = (e) => {
+  const onSubmit = async(e) => {
     e.preventDefault();
     const { name, email, password, isMember, state, city, school,confirm } = values;
     if (!email || !password || (!isMember && !name)) {
@@ -112,8 +112,7 @@ const Register = () => {
       });
     } else {
       const captcha = captchaRef.current.getValue();
-      console.log(type)
-      setupUser({
+      await setupUser({
         currentUser,
         captcha,
         endPoint: "register",
@@ -121,7 +120,6 @@ const Register = () => {
       });
       
     }
-    setValues(initialState);
   };
 
   useEffect(() => {
@@ -129,7 +127,7 @@ const Register = () => {
       navigate("/landing");
     }
 
-    if ((user && hasLocation) || (user?.role === 'Standford Staff')) {
+    if ((user && hasLocation) || (user?.role === 'Stanford Staff')) {
       adminroles.map((role=>{
         if (role==user.role){
           adminbool=true
@@ -152,6 +150,16 @@ const Register = () => {
       }, 3000);
     }
   }, [user, navigate]);
+
+  useEffect(() => {
+    const { name, email, password, isMember, state, city, school,confirm } = values;
+    const currentUser = { name, email, password, role, state, city, school };
+
+    if (twofaSent === true){
+    setTimeout(() => {
+      navigate("/two-factor-sent",{ state: { currentUser } });
+    }, 3000);}
+  }, [twofaSent]);
 
   return (
     <div>

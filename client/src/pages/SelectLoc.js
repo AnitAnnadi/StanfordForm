@@ -28,6 +28,7 @@ const SelectLoc = ({ noCode }) => {
     exists,
   } = useAppContext();
   const navigate = useNavigate();
+  console.log(user.role)
 
   const [state, setState] = useState("default");
   const [city, setCity] = useState("default");
@@ -103,7 +104,7 @@ const SelectLoc = ({ noCode }) => {
     "District Admin",
     "County Admin",
     "State Admin",
-    "Standford Staff",
+    "Stanford Staff",
   ];
   let grades = ["K", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   let adminbool = false;
@@ -211,7 +212,7 @@ const SelectLoc = ({ noCode }) => {
         displayAlert();
       }
     } else {
-      if (user.role === "Standford Staff") {
+      if (user.role === "Stanford Staff") {
         setTimeout(() => {
           navigate("/");
         }, 1000);

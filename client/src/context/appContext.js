@@ -106,7 +106,8 @@ const initialState = {
   exportData:null,
   currentSchoolIndex:null,
   nextPg:false,
-  resetPassword:false
+  resetPassword:false,
+  twofaSent:false
 };
 
 const configureFormStates = (userLocations, user, formStates) => {
@@ -205,7 +206,7 @@ const configureFormStates = (userLocations, user, formStates) => {
         newSchoolOptions = ["all"];
       }
       break;
-    case "Standford Staff":
+    case "Stanford Staff":
       newSearchState = "all";
       newSearchCounty = "all";
       newSearchDistrict = "all";
@@ -278,12 +279,15 @@ const AppProvider = ({ children }) => {
   const setupUser = async ({ currentUser, captcha, endPoint, alertText }) => {
     localStorage.clear()
     dispatch({ type: SETUP_USER_BEGIN });
+    handleChange({ name: "twofaSent", value: false });
     try {
       const { data } = await axios.post(
         `/api/v1/auth/${endPoint}`,
         {currentUser,
         captcha}
       );
+      console.log(data)
+
         
       const { user, hasLocation, userLocations } = data;
       
@@ -294,13 +298,17 @@ const AppProvider = ({ children }) => {
         role !== "District Admin" &&
         role !== "County Admin" &&
         role !== "State Admin" &&
-        role !== "Standford Staff"
+        role !== "Stanford Staff"
       ) {
-        console.log('hi');
+        
         localStorage.setItem('user', JSON.stringify(user));
         if (userLocations) {
           localStorage.setItem('userLocations', JSON.stringify(userLocations));
         }
+      }
+
+      else{
+        handleChange({ name: "twofaSent", value: true });
       }
       
     
@@ -342,7 +350,7 @@ const AppProvider = ({ children }) => {
     } catch (error) {
       dispatch({
         type: SETUP_USER_ERROR,
-        payload: { msg: error.response.data.msg },
+        payload: { msg: error.response.data },
       });
     }
     clearAlert();
@@ -593,7 +601,7 @@ const AppProvider = ({ children }) => {
             return obj.county === userLocations[0].county;
           case "State Admin":
             return obj.state === userLocations[0].state;
-          case "Standford Staff":
+          case "Stanford Staff":
             return true;
           case "Teacher":
             return obj.teacher === user._id;
@@ -827,6 +835,18 @@ const AppProvider = ({ children }) => {
 
   }
 
+  const resendEmail = async(email) =>{
+    try{
+    console.log(email)
+    const { data } = await axios.post(`/api/v1/auth/resend2fa`,{email })
+    console.log(data)
+    successAlert(data)
+    }
+    catch(error){
+
+    }
+  }
+
   const verify2fa = async(_id) => {
     try{
       console.log(_id)
@@ -880,7 +900,8 @@ const AppProvider = ({ children }) => {
         getTotal,
         forgotPassword,
         verifyReset,
-        createCertificate
+        createCertificate,
+        resendEmail
       }}
     >
       {children}

@@ -67,7 +67,7 @@ const Profile = () => {
               alignItems: "center",
             }}
           >
-            {user.role != "Standford Staff" ? (
+            {user.role != "Stanford Staff" ? (
               <label
                 className="form-label"
                 style={{ fontSize: "1rem", marginBottom: 0 }}
@@ -110,7 +110,7 @@ const Profile = () => {
                 );
               } else if (user.role === "State Admin") {
                 return <>{location.state}</>;
-              } else if (user.role === "Standford Staff") {
+              } else if (user.role === "Stanford Staff") {
                 return <></>;
               }
             };

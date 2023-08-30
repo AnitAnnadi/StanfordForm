@@ -38,14 +38,23 @@ const enterCode=async(req,res)=>{
   }
 }
 
-const sendTwoFA =async({req,res, name, email, password, role, code})=>{
-  const userAlreadyExists = await Pending.findOne({ email });
-  if (userAlreadyExists) {
-    throw new BadRequestError('A 2fa link has already been sent to this email.');
-  }
-  const createPending = await Pending.create({ name, email, password, role, code });
+const resendTwoFa = async(req,res)=>{
+  try{
+  const {email} = req.body
+  const createPending = await Pending.findOne({email})
   console.log(createPending)
+  await sendTwoFa({email,createPending})
+  res.status(200).send('Resent');
 
+  }
+  catch(error){
+    res.status(500).send('Resend Failed');
+
+  }
+}
+
+const sendTwoFa = async({email,createPending})=>{
+  console.log(createPending._id)
   const transporter = nodemailer.createTransport({
     service: 'Gmail', // e.g., 'Gmail', 'SendGrid'
     auth: {
@@ -68,6 +77,17 @@ const sendTwoFA =async({req,res, name, email, password, role, code})=>{
       resolve(true); // Resolve the promise if email is sent successfully
     }
   });
+
+}
+const createTwoFA =async({req,res, name, email, password, role, code})=>{
+  const userAlreadyExists = await Pending.findOne({ email });
+  if (userAlreadyExists) {
+    throw new BadRequestError('A 2fa link has already been sent to this email.');
+  }
+  const createPending = await Pending.create({ name, email, password, role, code });
+  console.log(createPending)
+
+  sendTwoFa({email,createPending})
 
 
 
@@ -99,13 +119,13 @@ const register = async (req, res) => {
 
   const unique_id = uuid();
   const code = unique_id.slice(0,8) 
-  if   (role ==="Site Admin" || role ==="District Admin" || role=== "County Admin" || role == "State Admin" ||role === "Standford Staff"){
+  if   (role ==="Site Admin" || role ==="District Admin" || role=== "County Admin" || role == "State Admin" ||role === "Stanford Staff"){
     try {
-      await sendTwoFA({ name, email, password, role, code });
+      await createTwoFA({ name, email, password, role, code });
       res.status(200).send('2fa sent');
     } catch (error) {
       console.error(error);
-      res.status(500).send('Error sending 2fa email');
+      res.status(500).send('A 2fa link has already been sent to this email. Wait ten minutes to redo this process.');
     }
   }
   else{
@@ -385,4 +405,4 @@ const submitForm = async(req,res) =>{
    
 }
 
-export { verify2fa,createCertificate, resetPassword,verifyToken, register, login, updateUser, forgotPassword, logout , enterCode, submitForm };
+export { resendTwoFa,verify2fa,createCertificate, resetPassword,verifyToken, register, login, updateUser, forgotPassword, logout , enterCode, submitForm };

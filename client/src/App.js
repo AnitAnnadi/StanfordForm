@@ -18,6 +18,7 @@ import ResetPassword from "./pages/ResetPassword";
 import CertInfo from "./pages/CertInfo";
 import Certificate from "./components/Certificate";
 import VerifyTwoFactor from "./pages/VerifyTwoFactor";
+import TwoFactorSent from "./pages/TwoFactorSent";
 
 
 function App() {
@@ -48,6 +49,7 @@ function App() {
             <SelectLoc noCode={true}/>
         } />
         <Route path="/joinedForm" element={<JoinForm />} />
+        <Route path="/two-factor-sent" element={<TwoFactorSent />} />
         <Route path="/form" element={<Form />} />
         <Route path="/certificateInfo" element={<CertInfo />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
