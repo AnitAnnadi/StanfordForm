@@ -9,7 +9,6 @@ import NoCode from "../models/NoCode.js";
 
 const getFormMetrics = async(req,res) => {
   const user = await User.findOne({ _id: req.user.userId });
-
   const token = user.createJWT();
   attachCookie({ res, token });
 

@@ -35,6 +35,7 @@ const EnterCode = () => {
           navigate("/joinedForm", {
             state: {
               schools,
+              noCode:false
             },
           });
         }, 2000);

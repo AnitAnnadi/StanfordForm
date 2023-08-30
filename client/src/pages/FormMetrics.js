@@ -15,7 +15,7 @@ import { AiOutlineForm, AiOutlineNumber } from "react-icons/ai";
 import { TbListNumbers, TbNumbers } from "react-icons/tb";
 import { useAppContext } from "../context/appContext";
 import { utils as XLSXUtils, writeFile as writeXLSXFile } from 'xlsx';
-import { tobacco, postTobacco, cannabis, postCannabis, safety
+import { tobacco, postTobacco, cannabis, postCannabis, safety, healthy
 } from "../utils/questions";
 
 
@@ -24,6 +24,8 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 const FormMetrics = () => {
   const {
     responseGroups,
+    overallLoading,
+    handleChange,
     searchState,
     searchCounty,
     searchDistrict,
@@ -38,7 +40,8 @@ const FormMetrics = () => {
     exportData,
     getResponseGroups,
     shouldReload,
-    currentSchoolIndex
+    currentSchoolIndex,
+    exportLoading
   } = useAppContext();
 
 
@@ -65,17 +68,18 @@ const FormMetrics = () => {
   let whenForName = null
 
   useEffect(() => {
-    if (exportClicked && exportData) {
+    if (exportClicked && exportData && exportData!=[]) {
       const worksheet = XLSXUtils.json_to_sheet(exportData);
       const workbook = XLSXUtils.book_new();
       XLSXUtils.book_append_sheet(workbook, worksheet, "Sheet1");
       writeXLSXFile(workbook, `data.xlsx`);
-
+      handleChange(exportData,[])
       setExportClicked(false);
     }
   }, [exportData, exportClicked]);
 
   const createExcelSheet = async () => {
+    
     setExportClicked(true)
     if (location.search) {
       const urlParams = new URLSearchParams(window.location.search);
@@ -107,6 +111,12 @@ const FormMetrics = () => {
     }
     else if (formType === "Safety First"){
       return createQuestionsToAnswersMap(safety, data)
+    }
+    else if (formType === "Healthy Futures: Tobacco/Nicotine/Vaping"){
+      return createQuestionsToAnswersMap(healthy, data)
+    }
+    else if (formType === "Healthy Futures: Cannabis"){
+      return createQuestionsToAnswersMap(healthy, data)
     }
   };
 
@@ -199,7 +209,7 @@ const FormMetrics = () => {
     }
   }, [location.search, formCode, responseGroups]);
       
-  if (isLoading) return (
+  if (isLoading || overallLoading) return (
   <div>
     {isOverall?<p >This may take a while. We have to retrieve all your data</p>:null}
   <Loading center />
@@ -226,7 +236,7 @@ const FormMetrics = () => {
               <span className="icon-css">
                 <BiExport />
               </span>
-              Export to Excel
+              {exportLoading?"Exporting...":"Export To Excel"}
             </button>
             <div className="content-center">
               <ResponseGroupInfo
@@ -316,7 +326,7 @@ const FormMetrics = () => {
               <span className="icon-css">
                 <BiExport />
               </span>
-              Export to Excel
+              {exportLoading?"Exporting...":"Export To Excel"}
             </button>
               <ResponseGroupInfo
                 icon={<FaChalkboardTeacher />}

@@ -21,7 +21,7 @@ const enterCode=async(req,res)=>{
 
   const user = await User.findOne({ code });
   // if (user)
-  
+
   if (user){
     let teacher=user["_id"]
     const schools=await School.find({teacher})
@@ -49,7 +49,7 @@ const register = async (req, res) => {
     throw new BadRequestError('Email already in use');
   }
   const unique_id = uuid();
-  const code = unique_id.slice(0,8) 
+  const code = unique_id.slice(0,8)
   const user = await User.create({ name, email, password, role, code });
 
   const token = user.createJWT();
@@ -111,7 +111,7 @@ const updateUser = async (req, res) => {
 };
 
 const getCurrentUser = async (req, res) => {
-  
+
 };
 
 const logout = async (req, res) => {
@@ -149,7 +149,7 @@ const submitForm = async(req,res) =>{
     }
 
     let _id=(StudentResponseData["_id"])
-  
+
     formData.forEach(async (item) => {
       const { question, answers } = item;
 
@@ -168,11 +168,11 @@ const submitForm = async(req,res) =>{
     let _id=(NoCodeData["_id"])
     formData.forEach(async (item) => {
       const { question, answers } = item;
-    
+
       for (const answer of answers) {
         await Question.create({ StudentResponse: _id, Question: question, Answer: answer });
       }
-      
+
     })
     res.status(StatusCodes.OK).json({ msg: 'Form Sucessfully Completed. Redirecting...' })
   }
@@ -180,10 +180,106 @@ const submitForm = async(req,res) =>{
       console.log(error)
     }
   }
-  
-  
-  
-   
 }
 
-export { register, login, updateUser, getCurrentUser, logout , enterCode, submitForm };
+const createCertificate =async(req,res)=>{
+  const {name,info} = req.body
+  console.log(req.body)
+  try{
+  await Certificates.create({name:name, formType:info["form"], teacherId:info["teacher_id"] })
+  return res.status(StatusCodes.OK).json({ msg: 'Certificate Created' });
+
+}
+  catch(error){
+    console.log(error)
+    return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Certificate creation failed.' });
+  }
+}
+
+const verifyToken = async (req, res) => {
+  const {token} = req.body
+  try {
+    const reset = await ResetPassword.findOne({ token });
+
+
+    if (reset) {
+      console.log('Token verified');
+      return res.status(StatusCodes.OK).json({ msg: 'verified' });
+    } else {
+      return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Your reset password link has expired.' });
+    }
+  } catch (error) {
+    console.error('Error verifying token:', error);
+    return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Token verification failed' });
+  }
+
+};
+
+const resetPassword = async(req,res) =>{
+  try{
+  console.log('hi')
+  const {password,token} = req.body
+  const reset = await ResetPassword.find({token})
+  const userId = reset[0].userId
+  const user = await User.findOne(userId)
+  if (user){
+    user.password = password
+    await user.save();
+    await reset[0].remove()
+    return res.status(StatusCodes.OK).json({ msg: 'verified' });
+  }}
+  catch(error){
+    console.log(error)
+    return res.status(StatusCodes.BAD_REQUEST).json({ msg: error });
+
+  }
+}
+
+const forgotPassword=async(req,res)=>{
+  const {email} = req.body
+  console.log(email)
+
+
+  if (email==null){
+
+    throw new BadRequestError('Please Enter an email');
+  }
+  const user = await User.findOne({ email });
+  console.log(user)
+  if (user){
+    const token = crypto.randomBytes(20).toString('hex');
+    const userId = user._id
+    const reset = await ResetPassword.create({userId, email,token})
+    console.log(reset)
+    const transporter = nodemailer.createTransport({
+      service: 'Gmail', // e.g., 'Gmail', 'SendGrid'
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+    console.log(process.env.EMAIL,process.env.EMAIL_PASSWORD)
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to:email,
+      subject:'Reset Data Dashboard Password',
+      text:`To Reset your password access this link - https://datadashboard.stanfordreachlab.com/resetpassword/${token}`,
+    };
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error(error);
+        res.status(500).send('Error sending email');
+      } else {
+        console.log('Email sent: ' + info.response);
+        res.status(200).send('Email sent');
+      }
+    });
+
+  }
+  if (!user){
+    console.log('hi')
+    throw new BadRequestError('Invalid email');
+  }
+}
+
+export { createCertificate, resetPassword, verifyToken, register, login, updateUser, forgotPassword, logout , enterCode, submitForm, getCurrentUser };

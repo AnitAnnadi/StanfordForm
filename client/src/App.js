@@ -13,6 +13,11 @@ import JoinForm from "./pages/JoinForm";
 import Form from "./pages/Form";
 import Success from "./components/Sucess";
 import FormMetrics from "./pages/FormMetrics";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import CertInfo from "./pages/CertInfo";
+import Certificate from "./components/Certificate";
+
 import CreateLoc from "./pages/CreateLoc";
 
 function App() {
@@ -49,11 +54,15 @@ function App() {
         } />
         <Route path="/joinedForm" element={<JoinForm />} />
         <Route path="/form" element={<Form />} />
+        <Route path="/certificateInfo" element={<CertInfo />} />
+        <Route path="/forgotpassword" element={<ForgotPassword />} />
+        <Route path="/resetpassword/:token" element={<ResetPassword />} />
         <Route path="/register" element={<Register />} />
         {/* <Route path="/register/admin" element={<Register />} /> */}
         <Route path="/landing" element={<SelectRole />} />
         <Route path="/enterCode" element={<EnterCode />} />
         <Route path="/success" element={<Success />} />
+        <Route path="/certificate" element={<Certificate />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </BrowserRouter>

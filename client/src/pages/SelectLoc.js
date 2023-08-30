@@ -6,6 +6,7 @@ import Dropdown from "react-dropdown";
 import { useEffect } from "react";
 import Logo2 from "../assets/images/logo.png";
 import {Link, useNavigate} from "react-router-dom";
+import { BsArrowRight } from "react-icons/bs";
 import {
   narrowDistricts,
   narrowCities,
@@ -23,6 +24,7 @@ const SelectLoc = ({ noCode }) => {
     addLocation,
     isLoading,
     successAlert,
+    exists,
     selectLocSchools,
     setToNarrowSchools,
   } = useAppContext();
@@ -123,6 +125,23 @@ const SelectLoc = ({ noCode }) => {
   const showAdditionalLoc = user?.role === "Teacher";
   const showCreateSchool = user?.role === "Site Admin" || user?.role === "Teacher" || user?.role === "Standford Staff" || noCode;
 
+  // Note: I dont understand what this is for but its causing unintended behavior
+  // I restored the navigate in the submission handler
+  // useEffect(() => {
+  //   console.log(exists)
+  //   if (!exists && !additionalLoc) {
+  //     if (adminbool) {
+  //       setTimeout(() => {
+  //         navigate("/metrics");
+  //       }, 2000);
+  //     } else {
+  //       setTimeout(() => {
+  //         navigate("/");
+  //       }, 2000);
+  //     }
+  //   }
+  // }, [exists]);
+
   useEffect(() => {
     if (user?.role === "Site Admin" || user?.role === "Teacher" || noCode) {
       if (state !== "default" && city !== "default" && school !== "default") {
@@ -184,7 +203,7 @@ const SelectLoc = ({ noCode }) => {
   }, [selectLocSchools]);
 
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (noCode) {
       if (
@@ -232,7 +251,7 @@ const SelectLoc = ({ noCode }) => {
         return;
       }
 
-      addLocation({
+      await addLocation({
         multiplePeriods: multiplePeriods,
         state: state,
         county: county !== "default" ? county : null,
@@ -438,6 +457,7 @@ const SelectLoc = ({ noCode }) => {
                 </label>
               </>
             )}
+
             <button
               className="btn btn-block"
               type="submit"
@@ -455,6 +475,30 @@ const SelectLoc = ({ noCode }) => {
                 </Link>
               </p>
             )}
+            {numOfLocations > 1 ? <>
+              <br />
+              <div
+                className="dashboard-link"
+                style={{
+                  display: "flex",
+                  columnGap: "0.5rem",
+                  marginTop: "-1rem",
+                  alignContent: "center",
+                  minWidth: "100%",
+                  justifyContent: "flex-end",
+                }}
+              >
+                {isLoading ? "Please Wait..." : "Go to Dashboard"}
+                <Link
+                  to="/"
+                  disabled={isLoading}
+                  className="location-icon"
+                  style={{ fontSize: "1.5rem" }}
+                >
+                  <BsArrowRight />
+                </Link>
+              </div>
+            </> : null}
           </div>
         </form>
       </Wrapper>

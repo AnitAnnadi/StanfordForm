@@ -6,6 +6,7 @@ import {StatusCodes} from "http-status-codes";
 import StudentResponse from "../models/StudentResponse.js";
 import NoCodeSchema from "../models/NoCode.js";
 
+import Certificates from "../models/Certificates.js";
 const getStudentResponses = async(req, res) => {
   const user = await User.findOne({ _id: req.user.userId });
   
@@ -23,7 +24,6 @@ const getStudentResponses = async(req, res) => {
     overallBreakdown
   } = req.query;
 
-  // Is it the intent to show all form types when exporting?
   let form = all=='true' ? 'all' : formType
   const teacher = await User.findOne({ _id: teacherId })
 
@@ -107,4 +107,16 @@ const getNoCodeStudentResponses = async(req, res) => {
   res.status(StatusCodes.OK).json({ studentResponses });
 }
 
-export { getStudentResponses, getNoCodeStudentResponses };
+const getHealthyFutures = async(req,res) =>{
+  const {teacherId} = req.query
+  console.log(teacherId)
+  const responses = await Certificates.find({teacherId:teacherId})
+  const responsesByCannabis = responses.filter(response => response.formType === 'Healthy Futures: Cannabis');
+  const responsesByTobacco = responses.filter(response => response.formType === 'Healthy Futures: Tobacco/Nicotine/Vaping');
+
+  res.status(StatusCodes.OK).json({ responsesByCannabis,responsesByTobacco });
+
+
+}
+
+export { getStudentResponses, getHealthyFutures, getNoCodeStudentResponses };

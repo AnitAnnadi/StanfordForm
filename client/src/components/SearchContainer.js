@@ -10,13 +10,14 @@ import {
 } from "../utils/schoolDataFetch";
 import { Link } from "react-router-dom";
 import { utils as XLSXUtils, writeFile as writeXLSXFile } from 'xlsx';
-import { tobacco, postTobacco, cannabis, postCannabis, safety
+import { tobacco, postTobacco, cannabis, postCannabis, safety, healthy
 } from "../utils/questions";
 
 
 const SearchContainer = ({ startReload }) => {
   const {
     user,
+    handleChange,
     isLoading,
     searchState,
     searchCounty,
@@ -45,28 +46,59 @@ const SearchContainer = ({ startReload }) => {
     shouldReload,
     allResponseGroups,
     getExport,
-    exportData,
     setToNarrowSchools,
+    exportData,
+    exportLoading
   } = useAppContext();
   const [exportClicked, setExportClicked] = useState(false);
   const [questionsToAnswers, setQuestionsToAnswers] = useState({});
   let reorderedQuestionsToAnswers = {};
+  const vape = [];
+  const cannabis = [];
+  const safety = [];
+  const healthyTobacco = [];
+  const healthyCannabis = [];
 
   useEffect(() => {
     if (exportClicked && exportData) {
-      const worksheet = XLSXUtils.json_to_sheet(exportData);
-      const workbook = XLSXUtils.book_new();
-      XLSXUtils.book_append_sheet(workbook, worksheet, "Sheet1");
-      writeXLSXFile(workbook, `data.xlsx`);
+      exportData.forEach(obj => {
+        const formtype = obj['form type'];
+        if (formtype === "You and Me, Together Vape-Free") {
+          vape.push(obj);
+        } else if (formtype === "Smart Talk: Cannabis Prevention & Education Awareness") {
+          cannabis.push(obj);
+        } else if (formtype === "Safety First") {
+          safety.push(obj);
+        }
+        else if (formtype === "Healthy Futures: Tobacco/Nicotine/Vaping") {
+          healthyTobacco.push(obj);
+        }
+        else if (formtype === "Healthy Futures: Cannabis") {
+          healthyCannabis.push(obj);
+        }
+      });
 
+      const vapeSheet = XLSXUtils.json_to_sheet(vape);
+      const cannabisSheet = XLSXUtils.json_to_sheet(cannabis);
+      const safetySheet = XLSXUtils.json_to_sheet(safety);
+      const healthySheet = XLSXUtils.json_to_sheet(healthy);
+      const workbook = XLSXUtils.book_new();
+      XLSXUtils.book_append_sheet(workbook, vapeSheet, "Vape-Free");
+      XLSXUtils.book_append_sheet(workbook, cannabisSheet, "Smart Talk");
+      XLSXUtils.book_append_sheet(workbook, safetySheet, "Safety First");
+      XLSXUtils.book_append_sheet(workbook, healthyTobacco, "Healthy Futures:Tobacco");
+      XLSXUtils.book_append_sheet(workbook, healthyCannabis, "Healthy Futures:Cannabis");
+      writeXLSXFile(workbook, `data.xlsx`);
+      handleChange(exportData,[])
       setExportClicked(false);
     }
   }, [exportData, exportClicked]);
 
   const createExcelSheet = async () => {
-    setExportClicked(true);
-    
     await getResponseGroups(currentSchoolIndex, shouldReload, true)
+    setExportClicked(true);
+
+
   };
   
   
@@ -85,6 +117,9 @@ const SearchContainer = ({ startReload }) => {
       return when === "before" ? createQuestionsToAnswersMap(tobacco, data) : createQuestionsToAnswersMap(tobacco.concat(postTobacco), data);
     } else if (formType === "Smart Talk: Cannabis Prevention & Education Awareness") {
       return when === "before" ? createQuestionsToAnswersMap(cannabis, data) : createQuestionsToAnswersMap(cannabis.concat(postCannabis),data);
+    }
+    else if (formType === "Healthy Futures" ){
+      return createQuestionsToAnswersMap(healthy, data)
     }
     else if (formType === "Safety First"){
       return createQuestionsToAnswersMap(safety, data)
@@ -120,7 +155,7 @@ const SearchContainer = ({ startReload }) => {
     return values;
   };
 
-  const handleChange = (e) => {
+  const handleLocalChange = (e) => {
     switch (e.target.name) {
       case "searchState":
         handleChanges({
@@ -256,7 +291,7 @@ const SearchContainer = ({ startReload }) => {
             labelText="state"
             name="searchState"
             value={searchState}
-            handleChange={handleChange}
+            handleChange={handleLocalChange}
             list={stateOptions}
           />
           {/* search by county */}
@@ -264,7 +299,7 @@ const SearchContainer = ({ startReload }) => {
             labelText="county"
             name="searchCounty"
             value={searchCounty}
-            handleChange={handleChange}
+            handleChange={handleLocalChange}
             list={countyOptions}
           />
           {/* search by city */}
@@ -273,7 +308,7 @@ const SearchContainer = ({ startReload }) => {
             labelText="city"
             name="searchCity"
             value={searchCity}
-            handleChange={handleChange}
+            handleChange={handleLocalChange}
             list={cityOptions}
           />
           )}
@@ -282,7 +317,7 @@ const SearchContainer = ({ startReload }) => {
             labelText="district"
             name="searchDistrict"
             value={searchDistrict}
-            handleChange={handleChange}
+            handleChange={handleLocalChange}
             list={districtOptions}
           />
           {/* search by school */}
@@ -290,7 +325,7 @@ const SearchContainer = ({ startReload }) => {
             labelText="school"
             name="searchSchool"
             value={searchSchool}
-            handleChange={handleChange}
+            handleChange={handleLocalChange}
             list={["all", ...schoolOptions]}
           />
           {/* search by teacher */}
@@ -304,7 +339,7 @@ const SearchContainer = ({ startReload }) => {
                 ? "all"
                 : searchTeacher[0]
             }
-            handleChange={handleChange}
+            handleChange={handleLocalChange}
             list={
               user.role === "Teacher"
                 ? [user.name]
@@ -316,7 +351,7 @@ const SearchContainer = ({ startReload }) => {
             labelText="grade"
             name="searchGrade"
             value={searchGrade}
-            handleChange={handleChange}
+            handleChange={handleLocalChange}
             list={gradeOptions}
           />
           {/* search by period */}
@@ -324,7 +359,7 @@ const SearchContainer = ({ startReload }) => {
             labelText="period"
             name="searchPeriod"
             value={searchPeriod}
-            handleChange={handleChange}
+            handleChange={handleLocalChange}
             list={periodOptions}
           />
           {/* search by type */}
@@ -332,7 +367,7 @@ const SearchContainer = ({ startReload }) => {
             labelText="form type"
             name="searchType"
             value={searchType}
-            handleChange={handleChange}
+            handleChange={handleLocalChange}
             list={typeOptions}
           />
           {/* search by before/after */}
@@ -340,7 +375,7 @@ const SearchContainer = ({ startReload }) => {
             labelText="beforeAfter"
             name="searchBeforeAfter"
             value={searchBeforeAfter}
-            handleChange={handleChange}
+            handleChange={handleLocalChange}
             list={beforeAfterOptions}
           />
           <button
@@ -355,10 +390,11 @@ const SearchContainer = ({ startReload }) => {
             disabled={isLoading}
             onClick={createExcelSheet}
             >
-            export all data
+            {exportLoading?"Exporting...":"export all data"}
           </button>
           <Link
             className="btn btn-block btn-obreak"
+            disabled={isLoading}
             to={isLoading ? "#" : `/api/v1/form/`}
           >
             Overall Breakdown

@@ -142,6 +142,7 @@ const JoinForm = () => {
       when !== "default" &&
       school !== "default"
     ) {
+      let teacher_id = localStorage.getItem("teacher_id")
       successAlert("Redirecting...");
       setTimeout(() => {
         navigate("/form", {
@@ -151,6 +152,7 @@ const JoinForm = () => {
             when,
             school,
             period,
+            teacher_id
           },
         });
       }, 3000);
@@ -216,6 +218,22 @@ const JoinForm = () => {
               <option value={"Safety First"}>
                 Safety First
               </option>
+              {info["noCode"]?null:
+              <option
+                value={"Healthy Futures: Tobacco/Nicotine/Vaping"}
+              >
+                Healthy Futures: Tobacco/Nicotine/Vaping
+              </option>
+              }
+              {info["noCode"]?null:
+              <option
+                value={"Healthy Futures: Cannabis"}
+              >
+                Healthy Futures: Cannabis
+              </option>
+              }
+{/* } */}
+
             </select>
 
             <h4 className="form-title">When are you taking this form</h4>

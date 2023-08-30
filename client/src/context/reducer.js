@@ -118,14 +118,17 @@ const reducer = (state, action) => {
       showAlert: true,
       alertType: 'success',
       alertText: action.payload.msg,
-      exportData: action.payload.exportData
+      exportData: action.payload.exportData,
+      isLoading: false,
+      exportLoading:false
     };
   }
 
   if (action.type === GET_EXPORT_BEGIN) {
     return {
       ...state,
-      exportData: null
+      exportData: null,
+      isLoading: true
     };
   }
 
@@ -198,11 +201,12 @@ const reducer = (state, action) => {
       isLoading: false,
       showAlert: true,
       alertType: 'success',
-      alertText: "Form Sucessfully Completed. Redirecting...",
+      alertText: action.payload.msg,
       nextPg:true
     };
   }
   if (action.type === HANDLE_CHANGE) {
+    console.log(action.payload.name,action.payload.value )
     return {
       ...state,
       page: 1,
@@ -261,7 +265,7 @@ const reducer = (state, action) => {
   }
 
   if (action.type === PAGE_FULL) {
-    return { ...state,currentSchoolIndex: action.payload.schoolIndex};
+   return { ...state,currentSchoolIndex: action.payload.schoolIndex};
   }
   if (action.type === GET_RESPONSE_GROUPS_SUCCESS) {
     // Filter out duplicate responses from action.payload.newResponses
@@ -353,15 +357,32 @@ const reducer = (state, action) => {
     };
   }
   if (action.type === ADD_LOCATION_SUCCESS) {
-    return {
-      ...state,
-      userLocations: action.payload.userLocations,
-      ...action.payload.newFormStates,
-      hasLocation: true,
-      showAlert: true,
-      alertType: 'success',
-      alertText: 'Location added!',
-    };
+    console.log(action.payload.exists)
+    if (action.payload.exists){
+      return {
+        ...state,
+        userLocations: action.payload.userLocations,
+        ...action.payload.newFormStates,
+        hasLocation: true,
+        showAlert: true,
+        alertType: 'danger',
+        alertText: 'Location already exists. Can’t add duplicate.',
+        exists:true
+      };
+    }
+    else{
+      return {
+        ...state,
+        userLocations: action.payload.userLocations,
+        ...action.payload.newFormStates,
+        hasLocation: true,
+        showAlert: true,
+        alertType: 'success',
+        alertText: 'Location added!',
+        exists:false
+      };
+    }
+    
   }
   throw new Error(`no such action : ${action.type}`);
 };

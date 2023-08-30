@@ -76,9 +76,13 @@ const narrowSchools = ({state, county, city, district}) => {
     return [...new Set(schools)]
 }
 
-const getSchoolObject = ({state, county, city, district, school}) => {
+const getSchoolObject = ({state, county, city, school: schoolName}) => {
     return schoolData
-        .find((school) => school.state.toUpperCase() === state.toUpperCase() && school.county.toUpperCase() === county.toUpperCase() && school.city.toUpperCase() === city.toUpperCase() && school.district.toUpperCase() === district.toUpperCase() && school.name.toUpperCase() === school.toUpperCase())
+        .find((school) =>
+          school.state.toUpperCase() === state.toUpperCase()
+          && school.county.toUpperCase() === county.toUpperCase()
+          && school.city.toUpperCase() === city.toUpperCase()
+          && school.name.toUpperCase() === schoolName.toUpperCase())
 }
 
 const getDistrictCounty = (state, city, schoolName) => {

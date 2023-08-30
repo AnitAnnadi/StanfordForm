@@ -12,7 +12,7 @@ const createLocation = async(req, res) =>{
 
   const user = await User.findOne({ _id: req.user.userId });
 
-  if (user.role !== 'Site Admin' || user.role !== 'Standford Staff' || user.role !== 'Teacher') {
+  if (user.role !== 'Site Admin' && user.role !== 'Standford Staff' && user.role !== 'Teacher') {
     throw new BadRequestError('You do not have permission to create a location');
   }
 

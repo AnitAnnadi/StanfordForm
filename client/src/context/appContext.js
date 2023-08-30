@@ -59,10 +59,15 @@ const stateList = ["all", "Alabama", "Alaska", "Arizona", "Arkansas", "Californi
 
 const initialState = {
   userLoading: false,
+  exportLoading:false,
+  certificate:false,
   isLoading: false,
   showAlert: false,
   alertText: '',
   alertType: '',
+  healthyFuturesListCannabis:[],
+  healthyFuturesListTobacco:[],
+  exists:true,
   user: LSUser ? LSUser : null,
   userLocation: '',
   userLocations: LSUserLocations ? (LSUserLocations !== 'undefined' ? LSUserLocations : []) : [],
@@ -73,6 +78,7 @@ const initialState = {
   numOfPages: 1,
   page: 1,
   stats: {},
+  overallLoading:false,
   allResponseGroups:[],
   monthlyApplications: [],
   stateOptions: localStorage.getItem("stateOptions") ? (localStorage.getItem("stateOptions") !== "undefined" ? JSON.parse(localStorage.getItem("stateOptions")): stateList) : stateList,
@@ -91,7 +97,7 @@ const initialState = {
   searchPeriod: 'all',
   teacherOptions: [], // [[teacherName, teacherId], [teacherName, teacherId], ...]
   searchTeacher: 'all',
-  typeOptions: ['You and Me, Together Vape-Free', 'Smart Talk: Cannabis Prevention & Education Awareness', 'Safety First'],
+  typeOptions: ['You and Me, Together Vape-Free', 'Smart Talk: Cannabis Prevention & Education Awareness', 'Safety First', 'Healthy Futures: Tobacco/Nicotine/Vaping','Healthy Futures: Cannabis'],
   searchType: 'You and Me, Together Vape-Free',
   beforeAfterOptions: ['all', 'before', 'after'],
   searchBeforeAfter: 'all',
@@ -103,6 +109,7 @@ const initialState = {
   nextPg:false,
   selectLocSchools:[],
   searchContainerSchools:[],
+  resetPassword:false
 };
 
 const configureFormStates = (userLocations, user, formStates) => {
@@ -435,7 +442,7 @@ const AppProvider = ({ children }) => {
       const { data } = await authFetch.post('/schools/user', newLocationData);
       const { data: data2 } = await authFetch.get('/schools/user');
 
-      const { user } = data;
+      const { user, exists } = data;
       const { userLocations } = data2;
 
       localStorage.setItem('userLocations', JSON.stringify(userLocations))
@@ -467,7 +474,8 @@ const AppProvider = ({ children }) => {
         type: ADD_LOCATION_SUCCESS,
         payload: {
           userLocations,
-          newFormStates: newFormState
+          newFormStates: newFormState,
+          exists
         }
       });
     } catch (error) {
@@ -485,18 +493,29 @@ const AppProvider = ({ children }) => {
     try {
       const { multiplePeriods } = locationData;
 
-      if (!(getSchoolObject(locationData).length > 0)) {
+      if (!getSchoolObject(locationData)) {
         const {data} = await authFetch.post('/locations', locationData);
         const {location} = data;
 
-        await addLocation({
-          multiplePeriods,
-          state: location.state,
-          county: location.county,
-          district: location.district,
-          city: location.city,
-          school: location.name
-        });
+        if (location) {
+          await addLocation({
+            multiplePeriods,
+            state: location.state,
+            county: location.county,
+            district: location.district,
+            city: location.city,
+            school: location.name
+          });
+        } else {
+          addLocation({
+            multiplePeriods,
+            state: locationData.state,
+            county: locationData.county,
+            district: locationData.district,
+            city: locationData.city,
+            school: locationData.school
+          })
+        }
       } else {
         await addLocation({
           multiplePeriods,
@@ -509,6 +528,7 @@ const AppProvider = ({ children }) => {
       }
 
     } catch (error) {
+      console.log(error)
       if (error.response.status !== 401) {
         dispatch({
           type: UPDATE_USER_ERROR,
@@ -548,6 +568,7 @@ const AppProvider = ({ children }) => {
       const { data } = await axios.post(`/api/v1/auth/submitForm/`, {formData,code,grade,when,type,school,period,state, city, county, district,captcha});
       dispatch({
         type: FORM_SUCCESS,
+        payload :{msg:"Form Sucessfully Completed. Redirecting..." }
 
       });
       
@@ -562,6 +583,68 @@ const AppProvider = ({ children }) => {
     clearAlert();
     // clearAlert();
   };
+
+  const forgotPassword = async({email})=>{
+    try{
+      const { data } = await axios.post(`/api/v1/auth/forgotPassword`,{email})
+      console.log(data)
+      if (data=="Email sent"){
+        dispatch({
+          type: FORM_SUCCESS,
+          payload: {msg: `An email with the password reset has been sent to ${email}`}
+
+        });
+        clearAlert()
+      }
+
+    }
+    catch(error){
+      dispatch({
+        type: FORM_FAIL,
+        payload: { msg: error.response.data.msg },
+      });
+      clearAlert()
+
+    }
+  }
+
+  const verifyReset = async({token, password})=>{
+
+    try{
+      handleChange({ name: "resetPassword", value: false });
+      const { data } = await axios.post(`/api/v1/auth/verifyToken`,{token})
+      console.log(data)
+      if (data.msg == "verified"){
+        console.log('verified')
+        const {reset} = await axios.post(`/api/v1/auth/resetpassword`,{password,token})
+        dispatch({
+          type: FORM_SUCCESS,
+          payload: {msg: "Password Changed"}
+
+        });
+        handleChange({ name: "resetPassword", value: true });
+        clearAlert()
+      }
+      else{
+        dispatch({
+          type: FORM_FAIL,
+          payload: { msg: "Your reset password link has expired" },
+        });
+        clearAlert();
+      }
+
+    }
+    catch(error){
+      console.log(error.response.data.msg)
+      dispatch({
+        type: FORM_FAIL,
+        payload: { msg: error.response.data.msg},
+      });
+      clearAlert();
+    }
+  }
+
+
 
   const handleChange = ({ name, value }) => {
     dispatch({ type: HANDLE_CHANGE, payload: { name, value } });
@@ -591,11 +674,17 @@ const AppProvider = ({ children }) => {
       searchTeacher,
       searchType,
       searchBeforeAfter,
-      responseGroups
+      responseGroups,
+      exportLoading
     } = state;
     dispatch({ type: GET_RESPONSE_GROUPS_BEGIN, payload:{shouldReload} });
-
     try {
+      if (all){
+        handleChange({ name: "exportLoading", value: true });
+      }
+      if (overallBreakdown){
+        handleChange({ name: "overallLoading", value: true });
+      }
       const { data } = await authFetch.get('/schools', {
         params: {
           searchState,
@@ -633,7 +722,7 @@ const AppProvider = ({ children }) => {
       let newResponses = [];
       let teacherNames = [];
       let schoolIndex = (currentSchoolIndex && !all) ? currentSchoolIndex : 0;
-      
+
       while ( schoolIndex < filteredSchools.length) {
 
         const { data: data2 } = await authFetch.get('/studentResponses', {
@@ -649,13 +738,13 @@ const AppProvider = ({ children }) => {
         });
         const { teacherName, studentResponses } = data2;
 
-        let teacherMatch = teacherNames.find(function(obj) {
-            return obj[1] === filteredSchools[schoolIndex].teacher;
-          });
+        // let teacherMatch = teacherNames.find(function(obj) {
+        //     return obj[1] === filteredSchools[schoolIndex].teacher;
+        //   });
 
-        if (!teacherMatch) {
-          teacherNames.push([teacherName, filteredSchools[schoolIndex].teacher]);
-        }
+        // if (!teacherMatch) {
+        //   teacherNames.push([teacherName, filteredSchools[schoolIndex].teacher]);
+        // }
 
 
         let uniqueResponseTypes = [];
@@ -691,9 +780,11 @@ const AppProvider = ({ children }) => {
               });
             }).length,
           });
+
+
         }
         schoolIndex++
-        if (!overallBreakdown && !all && newResponses.length>=4){
+        if (!overallBreakdown && !all && newResponses.length>=8){
           break
         }
       }
@@ -750,7 +841,7 @@ const AppProvider = ({ children }) => {
             }
           }
 
-          for (let i = (offsetIndex * 4); (i < uniqueResponseTypes.length && ((i < ((offsetIndex * 4) + 4)) || all)); i += 1) {
+          for (let i = (offsetIndex * 8); (i < uniqueResponseTypes.length && ((i < ((offsetIndex * 8) + 8)) || all)); i += 1) {
             const currentResponse = uniqueResponseTypes[i]
 
             // school: filteredSchools[schoolIndex],
@@ -791,7 +882,7 @@ const AppProvider = ({ children }) => {
         schoolIndex,
         },
       });
-
+      handleChange({ name: "overallLoading", value: false });
       dispatch({
         type: GET_RESPONSE_GROUPS_SUCCESS,
         payload: {
@@ -816,8 +907,9 @@ const AppProvider = ({ children }) => {
         responseGroups,
         currentSchoolIndex,
         shouldReload,
+        exportLoading
     } = state;
-
+    handleChange({ name: "exportLoading", value: true });
     if (search) {
         try {
             dispatch({
@@ -902,6 +994,42 @@ const AppProvider = ({ children }) => {
     dispatch({ type: CHANGE_PAGE, payload: { page } });
   };
 
+  const createCertificate = async ({name,info}) => {
+    try{
+      console.log(name)
+    const { data } = await axios.post(`/api/v1/auth/createCertificate`,{name,info})
+    console.log(data.msg)
+    if (data.msg == "Certificate Created"){
+      handleChange({ name: "certificate", value: true });
+      handleChange({ name: "certificate", value: true });
+      successAlert("Creating Certificate...")
+    }
+  }
+    catch(error){
+      console.log(error)
+    }
+    // dispatch({ type: CHANGE_PAGE, payload: { page } });
+  };
+
+  const getHealthyFutures = async(teacherId) =>{
+    console.log(teacherId)
+    try{
+      const { data } = await authFetch.get('/studentResponses/healthyFutures', {
+        params: {
+         teacherId
+        }
+      });
+      handleChange({ name: "healthyFuturesListCannabis", value: data.responsesByCannabis });
+      handleChange({ name: "healthyFuturesListTobacco", value: data.responsesByTobacco });
+
+      // const { data } = await authFetch.get('/studentResponse s/healthyFutures', {teacherId});
+    }
+    catch(error){
+      console.log(error)
+    }
+
+  }
+
 
 
   return (
@@ -909,6 +1037,7 @@ const AppProvider = ({ children }) => {
       value={{
         ...state,
         displayAlert,
+        getHealthyFutures,
         setupUser,
         toggleSidebar,
         logoutUser,
@@ -925,7 +1054,10 @@ const AppProvider = ({ children }) => {
         addNewLocation,
         enterCode,
         submitForm,
-        getTotal
+        getTotal,
+        forgotPassword,
+        verifyReset,
+        createCertificate
       }}
     >
       {children}

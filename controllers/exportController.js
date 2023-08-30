@@ -11,6 +11,7 @@ import {
   cannabis,
   postCannabis,
   safety,
+  healthy,
 } from "../questions.js";
 import NoCode from "../models/NoCode.js";
 let exportData = [];
@@ -21,7 +22,7 @@ const findResponse = (list, questions, obj) => {
     if (foundQuestions.length > 0) {
       obj[block.question] = foundQuestions.map((q) => q.Answer).join(", "); // Combine answers if there are multiple matches
     } else {
-      obj[block.question] = "n/a";
+      obj[block.question] = "";
     }
   });
   exportData.push(obj);
@@ -100,8 +101,9 @@ const getExport = async (req, res) => {
         obj.when = studentResponse.when;
         obj.grade = studentResponse.grade;
         obj.period =
-          studentResponse.period === undefined ? "n/a" : studentResponse.period;
-        obj["form type"] = studentResponse.formType;
+          studentResponse.period === undefined || studentResponse.period === null? "n/a" : studentResponse.period;
+        console.log(obj.period)
+          obj["form type"] = studentResponse.formType;
 
         let questions = await Question.find({
           StudentResponse: studentResponse._id,
@@ -123,6 +125,12 @@ const getExport = async (req, res) => {
           }
         } else if (studentResponse.formType === "Safety First") {
           findResponse(safety, questions, obj);
+        }
+        else if (studentResponse.formType === "Healthy Futures: Tobacco/Nicotine/Vaping") {
+          findResponse(healthy, questions, obj);
+        }
+        else if (studentResponse.formType === "Healthy Futures: Cannabis") {
+          findResponse(healthy, questions, obj);
         }
       })
     );
