@@ -116,7 +116,7 @@ const Register = () => {
         currentUser,
         captcha,
         endPoint: "register",
-        alertText: type === "admin" ? "Confirm Registration from link sent to Email":"User Created! Redirecting...",
+        alertText: type === "admin" ? "Redirecting...":"User Created! Redirecting...",
       });
       
     }

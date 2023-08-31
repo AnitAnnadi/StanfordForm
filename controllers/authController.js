@@ -66,7 +66,7 @@ const sendTwoFa = async({email,createPending})=>{
     from: process.env.EMAIL,
     to:email,
     subject:'Confirm Admin Registration - Stanford Reach Labs Data Dashboard',
-    text:`To complte your Stanford Reach Labs Data Dashboard account creation click this link  - https://datadashboard.stanfordreachlab.com/2fa/${createPending._id}`,
+    text:`To complte your Stanford Reach Labs Data Dashboard account creation click this link  -  https://datadashboard.stanfordreachlab.com/2fa/${createPending._id}`,
   };
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
@@ -156,12 +156,12 @@ const login = async (req, res) => {
   }
   const user = await User.findOne({ email }).select('+password');
   if (!user) {
-    throw new UnAuthenticatedError('Invalid Credentials');
+    res.status(401).send('Invalid Credentials');
   }
 
   const isPasswordCorrect = await user.comparePassword(password);
   if (!isPasswordCorrect) {
-    throw new UnAuthenticatedError('Invalid Credentials');
+    res.status(410).send('Invalid Credentials');
   }
   const token = user.createJWT();
   attachCookie({ res, token });
@@ -193,11 +193,11 @@ const updateUser = async (req, res) => {
 };
 
 const verify2fa = async (req, res) => {
+  console.log('hhi')
   try{
   const {_id} = req.body;
   console.log(_id)
   const pending = await Pending.findOne({ _id });
-  console.log(pending)
   if (pending) {
     await pending.remove();
     const user = await User.create({
@@ -222,7 +222,7 @@ const verify2fa = async (req, res) => {
       }
     });
   } else {
-    res.status(404).send('Pending record not found');
+    res.status(404).send('The link has expired or already been used ');
   }}
   catch(error){
     console.log(error)

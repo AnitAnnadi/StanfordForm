@@ -37,7 +37,15 @@ const PendingSchema = new mongoose.Schema({
     maxlength: 20,
     default: null,
   },
+  createdAt: { type: Date, expires: '1m', default: Date.now },   
+
 })
+
+PendingSchema.pre('save', async function () {
+    if (!this.isModified('password')) return
+    const salt = await bcrypt.genSalt(10)
+    this.password = await bcrypt.hash(this.password, salt)
+  })
 
 
 

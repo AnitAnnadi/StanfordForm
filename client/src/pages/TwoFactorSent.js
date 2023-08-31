@@ -15,7 +15,6 @@ const TwoFactorSent = () => {
 
     try {
       setIsResending(true);
-      console.log(location.state);
       await resendEmail(currentUser.email);
       setIsResending(false);
     } catch (error) {

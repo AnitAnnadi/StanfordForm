@@ -28,7 +28,6 @@ const SelectLoc = ({ noCode }) => {
     exists,
   } = useAppContext();
   const navigate = useNavigate();
-  console.log(user.role)
 
   const [state, setState] = useState("default");
   const [city, setCity] = useState("default");
@@ -124,7 +123,6 @@ const SelectLoc = ({ noCode }) => {
   const showMultiplePeriods = user?.role === "Teacher";
   const showAdditionalLoc = user?.role === "Teacher";
   useEffect(() => {
-    console.log(exists)
     if (!exists && !additionalLoc) {
       if (adminbool) {
         setTimeout(() => {
@@ -245,7 +243,6 @@ const SelectLoc = ({ noCode }) => {
           adminbool = true;
         }
       });
-      console.log(exists)
       if (additionalLoc) {
         setState("default");
         setCounty("default");

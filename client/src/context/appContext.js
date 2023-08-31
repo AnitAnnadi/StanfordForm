@@ -286,13 +286,11 @@ const AppProvider = ({ children }) => {
         {currentUser,
         captcha}
       );
-      console.log(data)
 
         
       const { user, hasLocation, userLocations } = data;
       
      let role = currentUser.role
-      console.log(role, currentUser)
       if (
         role !== "Site Admin" &&
         role !== "District Admin" &&
@@ -348,7 +346,6 @@ const AppProvider = ({ children }) => {
         },
       });
     } catch (error) {
-      console.log(error.response.data.msg)
       dispatch({
         type: SETUP_USER_ERROR,
         payload: { msg: error.response.data },
@@ -480,7 +477,6 @@ const AppProvider = ({ children }) => {
   const forgotPassword = async({email})=>{
     try{
       const { data } = await axios.post(`/api/v1/auth/forgotPassword`,{email})
-      console.log(data)
       if (data=="Email sent"){
         dispatch({
           type: FORM_SUCCESS,
@@ -506,9 +502,7 @@ const AppProvider = ({ children }) => {
     try{
       handleChange({ name: "resetPassword", value: false });
       const { data } = await axios.post(`/api/v1/auth/verifyToken`,{token})
-      console.log(data)
       if (data.msg == "verified"){
-        console.log('verified')
         const {reset} = await axios.post(`/api/v1/auth/resetpassword`,{password,token})
         dispatch({
           type: FORM_SUCCESS,
@@ -528,7 +522,6 @@ const AppProvider = ({ children }) => {
 
     }
     catch(error){
-      console.log(error.response.data.msg)
       dispatch({
         type: FORM_FAIL,
         payload: { msg: error.response.data.msg},
@@ -802,9 +795,7 @@ const AppProvider = ({ children }) => {
 
   const createCertificate = async ({name,info}) => {
     try{
-      console.log(name)
     const { data } = await axios.post(`/api/v1/auth/createCertificate`,{name,info})
-    console.log(data.msg)
     if (data.msg == "Certificate Created"){
       handleChange({ name: "certificate", value: true });
       handleChange({ name: "certificate", value: true });
@@ -812,13 +803,11 @@ const AppProvider = ({ children }) => {
     }
   }
     catch(error){
-      console.log(error)
     }
     // dispatch({ type: CHANGE_PAGE, payload: { page } });
   };
 
   const getHealthyFutures = async(teacherId) =>{
-    console.log(teacherId)
     try{
       const { data } = await authFetch.get('/studentResponses/healthyFutures', {
         params: {
@@ -831,16 +820,13 @@ const AppProvider = ({ children }) => {
       // const { data } = await authFetch.get('/studentResponse s/healthyFutures', {teacherId});
     }
     catch(error){
-      console.log(error)
     }
 
   }
 
   const resendEmail = async(email) =>{
     try{
-    console.log(email)
     const { data } = await axios.post(`/api/v1/auth/resend2fa`,{email })
-    console.log(data)
     successAlert(data)
     }
     catch(error){
@@ -850,16 +836,14 @@ const AppProvider = ({ children }) => {
 
   const verify2fa = async(_id) => {
     try{
-      console.log(_id)
       const { data } = await axios.post(`/api/v1/auth/verify2fa`,{_id})
       const { user, hasLocation, userLocations } = data;
-      console.log(data)
       localStorage.setItem('user', JSON.stringify(user))
 
       if (userLocations) {
         localStorage.setItem('userLocations', JSON.stringify(userLocations))
       }
-      let alertText = "User Successfully Created... "
+      let alertText = "User Successfully Created..."
       dispatch({
         type: SETUP_USER_SUCCESS,
         payload: { user, alertText, hasLocation,
@@ -871,7 +855,11 @@ const AppProvider = ({ children }) => {
       // const { data } = await authFetch.get('/studentResponse s/healthyFutures', {teacherId});
     }
     catch(error){
-      console.log(error)
+      dispatch({
+        type: SETUP_USER_ERROR,
+        payload: { msg: error.response.data },
+      });
+      clearValues();
     }
   };
 

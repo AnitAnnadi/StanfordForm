@@ -19,7 +19,6 @@ const CertInfo = () => {
     useEffect(()=>{
       const {name} = values;
         if (certificate){
-        console.log('hi')
           setTimeout(() => {
             navigate("/certificate", {state:{name}});
           }, 1000);
@@ -32,7 +31,6 @@ const CertInfo = () => {
             displayAlert(true);
             return;
           }
-        console.log(name,info)
         createCertificate({name, info});
     }
     const handleChange = (e) => {
