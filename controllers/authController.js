@@ -108,11 +108,11 @@ const register = async (req, res) => {
 
   
   if (!name || !email || !password  ) {
-    throw new BadRequestError('please provide all values');
+    res.status(500).send('please provide all values');
   }
   const userAlreadyExists = await User.findOne({ email });
   if (userAlreadyExists) {
-    throw new BadRequestError('Email already in use');
+    res.status(500).send('Email already in use');
   }
 
   

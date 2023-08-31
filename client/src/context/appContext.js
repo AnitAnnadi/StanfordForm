@@ -348,6 +348,7 @@ const AppProvider = ({ children }) => {
         },
       });
     } catch (error) {
+      console.log(error.response.data.msg)
       dispatch({
         type: SETUP_USER_ERROR,
         payload: { msg: error.response.data },
