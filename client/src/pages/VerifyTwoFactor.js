@@ -26,7 +26,7 @@ const VerifyTwoFactor = () => {
         else{
             setTimeout(() => {
                 navigate("/selectLoc");
-                }, 1000)
+                }, 2000)
             }
     }
     if (alertText==="The link has expired or already been used "){
