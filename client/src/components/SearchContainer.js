@@ -12,6 +12,8 @@ import { Link } from "react-router-dom";
 import { utils as XLSXUtils, writeFile as writeXLSXFile } from 'xlsx';
 import { tobacco, postTobacco, cannabis, postCannabis, safety, healthy
 } from "../utils/questions";
+import { ThreeDots } from 'react-loader-spinner';
+
 
 
 const SearchContainer = ({ startReload }) => {
@@ -373,12 +375,23 @@ const SearchContainer = ({ startReload }) => {
             search forms
           </button>
           <button
-            className="btn btn-block btn-apply"
-            disabled={isLoading}
-            onClick={createExcelSheet}
-            >
-            {exportLoading?"Exporting...":"export all data"}
-          </button>
+          className="btn btn-block btn-apply"
+          disabled={isLoading}
+          onClick={createExcelSheet}
+          style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+        >
+          {exportLoading ? (
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <p style={{ margin: 0 }}>Exporting Data</p>
+              <div style={{ marginLeft: '10px' }}>
+                <ThreeDots color="green" height={20} width={20} style={{ verticalAlign: 'middle' }} />
+              </div>
+            </div>
+          ) : (
+            "Export all data"
+          )}
+        </button>
+
           <Link
             className="btn btn-block btn-obreak"
             disabled={isLoading}

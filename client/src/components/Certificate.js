@@ -20,11 +20,11 @@ const Certificate = () => {
         alt="Stanford ReachLab Healthy Futures Certificate"
         style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto' }}
       />
-      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '25px', color: 'black', textAlign: 'center' }}>
+      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '20px', color: 'black', textAlign: 'center' }}>
         {info["name"]}
 
       </div>
-      <div style={{ position: 'absolute', top: '67%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '15px', color: 'black', textAlign: 'center' }}>
+      <div style={{ position: 'absolute', top: '68%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '15px', color: 'black', textAlign: 'center' }}>
           {formattedDate}
         </div>
       {/* <p>{formattedDate}</p> */}

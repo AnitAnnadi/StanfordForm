@@ -3,6 +3,8 @@ import { useLocation } from "react-router-dom";
 import { useAppContext } from "../context/appContext";
 import { Alert, Loading } from "../components";
 import Wrapper from "../assets/wrappers/DashboardFormPage";
+import { ThreeDots } from 'react-loader-spinner';
+
 
 const TwoFactorSent = () => {
   const location = useLocation();
@@ -35,11 +37,19 @@ const TwoFactorSent = () => {
           <form onSubmit={onSubmit}>
             {showAlert && <Alert />}
             <button
-              type="submit"
-              className="btn btn-block"
-              disabled={isLoading || isResending}
+            type="submit"
+            className="btn btn-block"
+            disabled={isLoading || isResending}
+            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
             >
-              {isResending ? "Resending..." : "Resend Email"}
+            {isResending ? (
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                <p style={{ margin: 0 }}>Resending Email</p>
+                <ThreeDots color="black" height={20} width={20} style={{ marginLeft: '10px' }} />
+                </div>
+            ) : (
+                "Resend Email"
+            )}
             </button>
           </form>
         </div>
