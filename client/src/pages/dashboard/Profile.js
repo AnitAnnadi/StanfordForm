@@ -15,6 +15,7 @@ const Profile = () => {
     displayAlert,
     updateUser,
     isLoading,
+    handleChange
   } = useAppContext();
 
   const [name, setName] = useState(user?.name);
@@ -30,6 +31,10 @@ const Profile = () => {
     }
     updateUser({ name, email });
   };
+  // const handleSelectLoc =(e)=>{
+  //   e.preventDefault();
+  //   handleChange({ name: "addit", value: true });
+  // }
 
   return (
     <Wrapper>
@@ -82,7 +87,7 @@ const Profile = () => {
                 <NavLink
                   to={`/selectLoc`}
                   className="location-link btn btn-block"
-                >
+                  >
                   <BiPlus />
                 </NavLink>
               </>

@@ -3,7 +3,7 @@ import { FormRow, Alert } from "../components";
 import { useAppContext } from "../context/appContext";
 import Wrapper from "../assets/wrappers/DashboardFormPage";
 import Dropdown from "react-dropdown";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Logo2 from "../assets/images/logo.png";
 import { useNavigate } from "react-router-dom";
 import { BsArrowRight } from "react-icons/bs";
@@ -28,7 +28,7 @@ const SelectLoc = ({ noCode }) => {
     exists,
   } = useAppContext();
   const navigate = useNavigate();
-
+  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [state, setState] = useState("default");
   const [city, setCity] = useState("default");
   const [school, setSchool] = useState("default");
@@ -122,8 +122,10 @@ const SelectLoc = ({ noCode }) => {
     user?.role === "Site Admin" || user?.role === "Teacher" || noCode;
   const showMultiplePeriods = user?.role === "Teacher";
   const showAdditionalLoc = user?.role === "Teacher";
+
   useEffect(() => {
-    if (!exists && !additionalLoc) {
+    console.log(isFormSubmitted,exists,additionalLoc)
+  if (isFormSubmitted && !exists && !additionalLoc) {
       if (adminbool) {
         setTimeout(() => {
           navigate("/metrics");
@@ -209,15 +211,8 @@ const SelectLoc = ({ noCode }) => {
       } else {
         displayAlert();
       }
-    } else {
-      if (user.role === "Stanford Staff") {
-        setTimeout(() => {
-          navigate("/");
-        }, 1000);
-
-        return;
-      }
-
+    } 
+    else {
       if (
         state === "default" ||
         (showCounty && county === "default") ||
@@ -229,6 +224,15 @@ const SelectLoc = ({ noCode }) => {
         return;
       }
 
+      if (user.role === "Stanford Staff") {
+        setTimeout(() => {
+          navigate("/");
+        }, 1000);
+        return;
+      }
+
+      console.log('hi')
+      setIsFormSubmitted(true)
       await addLocation({
         multiplePeriods: multiplePeriods,
         state: state,
@@ -237,12 +241,7 @@ const SelectLoc = ({ noCode }) => {
         district: district !== "default" ? district : null,
         school: school !== "default" ? school : null,
       });
-
-      adminroles.map((role) => {
-        if (role === user.role) {
-          adminbool = true;
-        }
-      });
+      
       if (additionalLoc) {
         setState("default");
         setCounty("default");
@@ -251,8 +250,20 @@ const SelectLoc = ({ noCode }) => {
         setSchool("default");
         setMultiplePeriods(false);
         setAdditionalLoc(false);
+        
         setNumOfLocations(numOfLocations + 1);
       } 
+      
+
+
+      adminroles.map((role) => {
+        if (role === user.role) {
+          adminbool = true;
+        }
+      });
+      
+      
+      
     }
   };
 

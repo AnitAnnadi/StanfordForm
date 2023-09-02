@@ -37,7 +37,7 @@ const PendingSchema = new mongoose.Schema({
     maxlength: 20,
     default: null,
   },
-  createdAt: { type: Date, expires: '1m', default: Date.now },   
+  createdAt: { type: Date, expires: '10m', default: Date.now },   
 
 })
 

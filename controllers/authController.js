@@ -160,6 +160,7 @@ const login = async (req, res) => {
   }
 
   const isPasswordCorrect = await user.comparePassword(password);
+  console.log(password)
   if (!isPasswordCorrect) {
     res.status(410).send('Invalid Credentials');
   }
@@ -199,6 +200,7 @@ const verify2fa = async (req, res) => {
   console.log(_id)
   const pending = await Pending.findOne({ _id });
   if (pending) {
+    console.log(pending.password)
     await pending.remove();
     const user = await User.create({
       name: pending.name,
