@@ -28,7 +28,8 @@ const Form = () => {
     submitForm,
     successAlert,
     altertText,
-    nextPg
+    nextPg,
+    handleChange
   } = useAppContext();
 
   const navigate = useNavigate();
@@ -46,10 +47,13 @@ const Form = () => {
       ) {
         setTimeout(() => {
           navigate("/certificateinfo", { state: { info } });
+          handleChange({name:"isLoading",value:false})
         }, 3000);
       } else {
         setTimeout(() => {
           navigate("/success", {});
+          handleChange({name:"isLoading",value:false})
+
         }, 3000);
       }
   
