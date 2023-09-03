@@ -378,19 +378,21 @@ const SearchContainer = ({ startReload }) => {
           className="btn btn-block btn-apply"
           disabled={isLoading}
           onClick={createExcelSheet}
-          style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
         >
           {exportLoading ? (
-            <div style={{ display: 'flex', alignItems: 'center' }}>
+            <>
               <p style={{ margin: 0 }}>Exporting Data</p>
-              <div style={{ marginLeft: '10px' }}>
+              <div style={{ marginTop: '10px' }}>
                 <ThreeDots color="green" height={20} width={20} style={{ verticalAlign: 'middle' }} />
               </div>
-            </div>
+            </>
           ) : (
             "Export all data"
           )}
         </button>
+
+
 
           <Link
             className="btn btn-block btn-obreak"

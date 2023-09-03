@@ -323,20 +323,22 @@ const FormMetrics = () => {
           <div className="content">
             <div className="content-center">
             <button
-              className="btn"
-              style={{ display: "flex" }}
-              onClick={() => createExcelSheet()}
-            >
-              <span className="icon-css">
-                <BiExport />
-              </span>
-              {exportLoading?(
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                <p>Exporting</p>
-                <ThreeDots color="black" height={20} width={20} style={{ marginLeft: '10px' }} />
+            className="btn"
+            style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+            onClick={() => createExcelSheet()}
+          >
+            <span className="icon-css">
+              <BiExport />
+            </span>
+            {exportLoading ? (
+              <div style={{ display: 'flex', alignItems: 'center', marginLeft: '10px' }}>
+                <p style={{ margin: 0 }}>Exporting</p>
+                <ThreeDots color="white" height={20} width={20} style={{ marginLeft: '10px' }} />
               </div>
-              ):"Export To Excel"}
-            </button>
+            ) : (
+              "Export To Excel"
+            )}
+          </button>
               <ResponseGroupInfo
                 icon={<FaChalkboardTeacher />}
                 text={teacher.name}

@@ -103,10 +103,7 @@ const Register = () => {
     }
     if (role==="Stanford Staff"){
       const lowercaseEmail = email.toLowerCase();
-      if (lowercaseEmail.endsWith('@stanford.edu')){
-        return
-      }
-      else{
+      if (!lowercaseEmail.endsWith('@stanford.edu')){
         errorAlert("The email does not match with the role.");
         return
       }
