@@ -124,7 +124,6 @@ const SelectLoc = ({ noCode }) => {
   const showAdditionalLoc = user?.role === "Teacher";
 
   useEffect(() => {
-    console.log(isFormSubmitted,exists,additionalLoc)
   if (isFormSubmitted && !exists && !additionalLoc) {
       if (adminbool) {
         setTimeout(() => {
@@ -136,7 +135,9 @@ const SelectLoc = ({ noCode }) => {
         }, 2000);
       }
     }
-  }, [exists]);
+    setIsFormSubmitted(false)
+    setAdditionalLoc(false);
+  }, [isFormSubmitted]);
   useEffect(() => {
     if (user?.role === "Site Admin" || user?.role === "Teacher" || noCode) {
       if (state !== "default" && city !== "default" && school !== "default") {
@@ -231,8 +232,8 @@ const SelectLoc = ({ noCode }) => {
         return;
       }
 
-      console.log('hi')
-      setIsFormSubmitted(true)
+      
+      
       await addLocation({
         multiplePeriods: multiplePeriods,
         state: state,
@@ -241,7 +242,7 @@ const SelectLoc = ({ noCode }) => {
         district: district !== "default" ? district : null,
         school: school !== "default" ? school : null,
       });
-      
+      setIsFormSubmitted(true)
       if (additionalLoc) {
         setState("default");
         setCounty("default");
@@ -249,10 +250,11 @@ const SelectLoc = ({ noCode }) => {
         setDistrict("default");
         setSchool("default");
         setMultiplePeriods(false);
-        setAdditionalLoc(false);
+        // setAdditionalLoc(false);
         
         setNumOfLocations(numOfLocations + 1);
       } 
+      
       
 
 
@@ -403,7 +405,9 @@ const SelectLoc = ({ noCode }) => {
                     className="checkbox"
                     name="aliasChoice"
                     checked={additionalLoc}
-                    onChange={(e) => setAdditionalLoc(e.target.checked)}
+                    onChange={(e) => {
+                      setAdditionalLoc(e.target.checked)
+                    }}
                   />
                   <span className="checkbox-checkmark"></span>
                 </label>
