@@ -339,7 +339,7 @@ const FormMetrics = () => {
               <ResponseGroupInfo
                 icon={<TbListNumbers />}
                 text={
-                  responseType?.period
+                  (responseType?.period) && (responseType?.period !== "No Period")
                     ? "Period " + responseType.period
                     : "No specified period"
                 }

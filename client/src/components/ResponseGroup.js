@@ -46,7 +46,7 @@ const ResponseGroup = ({
           <ResponseGroupInfo icon={<FaChalkboardTeacher />} text={teacherName} />
           <ResponseGroupInfo icon={<AiOutlineNumber />} text={`${numberOfResponses} response(s)`} />
           <ResponseGroupInfo icon={<TbListNumbers />} text=
-          {uniqueResponseType?.period ? 'Period ' + uniqueResponseType.period:
+          {(uniqueResponseType?.period) && (uniqueResponseType?.period !== "No Period") ? 'Period ' + uniqueResponseType.period:
             'No specified period'}
           />
           <ResponseGroupInfo icon={<TbNumbers />} text={'Grade ' + uniqueResponseType.grade} />
