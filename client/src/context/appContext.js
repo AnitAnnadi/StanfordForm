@@ -847,7 +847,7 @@ const AppProvider = ({ children }) => {
       if (userLocations) {
         localStorage.setItem('userLocations', JSON.stringify(userLocations))
       }
-      let alertText = "User Successfully Created..."
+      let alertText = "User Successfully Created"
       dispatch({
         type: SETUP_USER_SUCCESS,
         payload: { user, alertText, hasLocation,
