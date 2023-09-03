@@ -13,6 +13,10 @@ const narrowCounties = ({state}) => {
 const narrowDistricts = ({state, county, city}) => {
     const districts = schoolData
         .filter((school) => {
+            if (!school?.district) {
+              return false
+            }
+
             if (state && county && city) {
                 return (school.state.toUpperCase() === state.toUpperCase() && school.county.toUpperCase() === county.toUpperCase() && school.city.toUpperCase() === city.toUpperCase())
             } else if (state && county) {
@@ -55,7 +59,7 @@ const narrowSchools = ({state, county, city, district}) => {
         .filter((school) => {
           // Seems like there should be a better way to do this but I can't think of it right now
           if (state && county && district) {
-              return (school.state.toUpperCase() === state.toUpperCase() && school.county.toUpperCase() === county.toUpperCase() && school.district.toUpperCase() === district.toUpperCase())
+              return (school.state.toUpperCase() === state.toUpperCase() && school.county.toUpperCase() === county.toUpperCase() && school.district?.toUpperCase() === district.toUpperCase())
           } else if (state && city) {
               return (school.state.toUpperCase() === state.toUpperCase() && school.city.toUpperCase() === city.toUpperCase())
           } else if (state) {
@@ -65,7 +69,7 @@ const narrowSchools = ({state, county, city, district}) => {
           } else if (city) {
               return (school.city.toUpperCase() === city.toUpperCase())
           } else if (district) {
-              return (school.district.toUpperCase() === district.toUpperCase())
+              return (school.district?.toUpperCase() === district.toUpperCase())
           } else {
               return school
           }
@@ -87,7 +91,7 @@ const getSchoolObject = ({state, county, city, school: schoolName}) => {
 
 const getDistrictCounty = (state, city, schoolName) => {
     const {district, county} = schoolData
-        .find((school) => school.state.toUpperCase() === state.toUpperCase() && school.city.toUpperCase() === city.toUpperCase() && school.name.toUpperCase() === schoolName.toUpperCase())
+        .find((school) => school.state.toUpperCase() === state.toUpperCase() && school.city.toUpperCase() === city.toUpperCase() && school.name.toUpperCase() === schoolName.toUpperCase() && school.district)
 
     return { foundDistrict: district, foundCounty: county}
 }
