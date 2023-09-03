@@ -125,6 +125,14 @@ const SelectLoc = ({ noCode }) => {
 
   useEffect(() => {
   if (isFormSubmitted && !exists && !additionalLoc) {
+    adminroles.map((role) => {
+      console.log(role)
+      if (role === user.role) {
+        console.log('hi')
+        adminbool = true;
+      }
+    });
+    console.log(adminbool)
       if (adminbool) {
         setTimeout(() => {
           navigate("/metrics");
@@ -227,7 +235,7 @@ const SelectLoc = ({ noCode }) => {
 
       if (user.role === "Stanford Staff") {
         setTimeout(() => {
-          navigate("/");
+          navigate("/metrics");
         }, 1000);
         return;
       }
@@ -242,7 +250,6 @@ const SelectLoc = ({ noCode }) => {
         district: district !== "default" ? district : null,
         school: school !== "default" ? school : null,
       });
-      setIsFormSubmitted(true)
       if (additionalLoc) {
         setState("default");
         setCounty("default");
@@ -256,13 +263,8 @@ const SelectLoc = ({ noCode }) => {
       } 
       
       
-
-
-      adminroles.map((role) => {
-        if (role === user.role) {
-          adminbool = true;
-        }
-      });
+      
+      setIsFormSubmitted(true)
       
       
       
