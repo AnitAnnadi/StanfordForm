@@ -178,6 +178,7 @@ const Form = () => {
           type="submit"
           onSubmit={(e) => handleSubmit(e.target.value)}
           style={{ marginTop: "1.38rem" }}
+          disabled={isLoading}
         >
           submit
         </button>

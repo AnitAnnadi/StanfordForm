@@ -19,6 +19,7 @@ const JoinForm = () => {
     isLoading,
     enterCode,
     successAlert,
+    handleChange
   } = useAppContext();
 
   const navigate = useNavigate();
@@ -103,6 +104,7 @@ const JoinForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    handleChange({name:"isLoading",value:false})
     if (info["noCode"]){
       if (
         form !== "default" &&
