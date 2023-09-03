@@ -270,6 +270,11 @@ const AppProvider = ({ children }) => {
     clearAlert();
   };
 
+  const errorAlert = (text) => {
+    dispatch({ type: SETUP_USER_ERROR,payload:{msg:text} });
+    clearAlert();
+  };
+
   const clearAlert = () => {
     setTimeout(() => {
       dispatch({ type: CLEAR_ALERT });
@@ -439,9 +444,7 @@ const AppProvider = ({ children }) => {
   const enterCode = async (code) => {
     try {
       const { data } = await axios.post(`/api/v1/auth/enterCode/`, {code});
-      
-      // console.log(response)
-      const {id, name, email, state, city, school} = data;
+            const {id, name, email, state, city, school} = data;
       dispatch({ type: ENTER_CODE , payload:{teacher:data["user"],schools:data["schools"]}});
     } catch (error) {
       if (error.response.status !== 401) {
@@ -891,7 +894,8 @@ const AppProvider = ({ children }) => {
         forgotPassword,
         verifyReset,
         createCertificate,
-        resendEmail
+        resendEmail,
+        errorAlert
       }}
     >
       {children}

@@ -32,7 +32,7 @@ const Register = () => {
   let adminbool=false
   const [values, setValues] = useState(initialState);
   const [adminRole, setAdminRole] = useState("default");
-  const { twofaSent,user, isLoading, showAlert, displayAlert, setupUser, hasLocation } =
+  const { twofaSent,user, isLoading, showAlert, displayAlert, setupUser, hasLocation,errorAlert } =
     useAppContext();
   const captchaRef = useRef(null)
 
@@ -100,6 +100,17 @@ const Register = () => {
         role = adminRole;
       }
       
+    }
+    if (role==="Stanford Staff"){
+      const lowercaseEmail = email.toLowerCase();
+      if (lowercaseEmail.endsWith('@stanford.edu')){
+        return
+      }
+      else{
+        errorAlert("The email does not match with the role.");
+        return
+      }
+  
     }
     const currentUser = { name, email, password, role, state, city, school };
 

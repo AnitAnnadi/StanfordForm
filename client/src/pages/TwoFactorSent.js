@@ -32,7 +32,7 @@ const TwoFactorSent = () => {
       <Wrapper>
         <div className="form">
           <h3>
-            Complete Two Factor Authentication from the link sent to your email.
+            Complete Two Factor Authentication from the link sent to {currentUser?.email}.
           </h3>
           <form onSubmit={onSubmit}>
             {showAlert && <Alert />}
