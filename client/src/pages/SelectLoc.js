@@ -124,7 +124,7 @@ const SelectLoc = ({ noCode }) => {
     user?.role === "Site Admin" || user?.role === "Teacher" || noCode;
   const showMultiplePeriods = user?.role === "Teacher";
   const showAdditionalLoc = user?.role === "Teacher";
-  const showCreateSchool = user?.role === "Site Admin" || user?.role === "Teacher" || user?.role === "Standford Staff" || noCode;
+  const showCreateSchool = user?.role === "Site Admin" || user?.role === "Teacher" || user?.role === "Standford Staff";
 
   // Note: I dont understand what this is for but its causing unintended behavior
   // I restored the navigate in the submission handler
