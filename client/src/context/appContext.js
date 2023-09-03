@@ -493,7 +493,9 @@ const AppProvider = ({ children }) => {
     try {
       const { multiplePeriods } = locationData;
 
-      if (!getSchoolObject(locationData)) {
+      const existingLocation = await getSchoolObject(locationData);
+
+      if (!existingLocation) {
         const {data} = await authFetch.post('/locations', locationData);
         const {location} = data;
 

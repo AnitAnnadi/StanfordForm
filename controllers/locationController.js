@@ -26,7 +26,7 @@ const createLocation = async(req, res) =>{
 
   if (locationExists) {
     // return existing location
-    res.status(StatusCodes.OK).json({ location: locationExists });
+    return res.status(StatusCodes.OK).json({ location: locationExists });
   }
 
   const location = await Location.create({ state: upperState, county: upperCounty, city: upperCity, district: upperDistrict, name: upperSchool })
@@ -34,7 +34,7 @@ const createLocation = async(req, res) =>{
   const token = user.createJWT();
   attachCookie({ res, token });
 
-  res.status(StatusCodes.CREATED).json({ location });
+  return res.status(StatusCodes.CREATED).json({ location });
 }
 
 const getLocations = async(req, res) => {
