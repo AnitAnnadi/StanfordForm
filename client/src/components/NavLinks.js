@@ -7,7 +7,7 @@ import { MdDashboard } from "react-icons/md";
 
 const NavLinks = ({ toggleSidebar }) => {
   const user=JSON.parse((localStorage.getItem("user")))
-  let adminroles = ["Site Admin", "District Admin", "County Admin", "State Admin", "Standford Staff"];
+  let adminroles = ["Site Admin", "District Admin", "County Admin", "State Admin", "Stanford Staff"];
   let adminbool=false
   let links=[]
   adminroles.map((role=>{

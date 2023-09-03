@@ -15,6 +15,7 @@ const Profile = () => {
     displayAlert,
     updateUser,
     isLoading,
+    handleChange
   } = useAppContext();
 
   const [name, setName] = useState(user?.name);
@@ -30,6 +31,10 @@ const Profile = () => {
     }
     updateUser({ name, email });
   };
+  // const handleSelectLoc =(e)=>{
+  //   e.preventDefault();
+  //   handleChange({ name: "addit", value: true });
+  // }
 
   return (
     <Wrapper>
@@ -67,7 +72,7 @@ const Profile = () => {
               alignItems: "center",
             }}
           >
-            {user.role != "Standford Staff" ? (
+            {user.role != "Stanford Staff" ? (
               <label
                 className="form-label"
                 style={{ fontSize: "1rem", marginBottom: 0 }}
@@ -82,7 +87,7 @@ const Profile = () => {
                 <NavLink
                   to={`/selectLoc`}
                   className="location-link btn btn-block"
-                >
+                  >
                   <BiPlus />
                 </NavLink>
               </>
@@ -110,7 +115,7 @@ const Profile = () => {
                 );
               } else if (user.role === "State Admin") {
                 return <>{location.state}</>;
-              } else if (user.role === "Standford Staff") {
+              } else if (user.role === "Stanford Staff") {
                 return <></>;
               }
             };

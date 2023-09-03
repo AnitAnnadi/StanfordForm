@@ -106,7 +106,8 @@ const initialState = {
   exportData:null,
   currentSchoolIndex:null,
   nextPg:false,
-  resetPassword:false
+  resetPassword:false,
+  twofaSent:false
 };
 
 const configureFormStates = (userLocations, user, formStates) => {
@@ -205,7 +206,7 @@ const configureFormStates = (userLocations, user, formStates) => {
         newSchoolOptions = ["all"];
       }
       break;
-    case "Standford Staff":
+    case "Stanford Staff":
       newSearchState = "all";
       newSearchCounty = "all";
       newSearchDistrict = "all";
@@ -269,6 +270,11 @@ const AppProvider = ({ children }) => {
     clearAlert();
   };
 
+  const errorAlert = (text) => {
+    dispatch({ type: SETUP_USER_ERROR,payload:{msg:text} });
+    clearAlert();
+  };
+
   const clearAlert = () => {
     setTimeout(() => {
       dispatch({ type: CLEAR_ALERT });
@@ -278,6 +284,7 @@ const AppProvider = ({ children }) => {
   const setupUser = async ({ currentUser, captcha, endPoint, alertText }) => {
     localStorage.clear()
     dispatch({ type: SETUP_USER_BEGIN });
+    handleChange({ name: "twofaSent", value: false });
     try {
       const { data } = await axios.post(
         `/api/v1/auth/${endPoint}`,
@@ -285,13 +292,29 @@ const AppProvider = ({ children }) => {
         captcha}
       );
 
+        
       const { user, hasLocation, userLocations } = data;
-
-      localStorage.setItem('user', JSON.stringify(user))
-
-      if (userLocations) {
-        localStorage.setItem('userLocations', JSON.stringify(userLocations))
+      
+     let role = currentUser.role
+      if (
+        role !== "Site Admin" &&
+        role !== "District Admin" &&
+        role !== "County Admin" &&
+        role !== "State Admin" &&
+        role !== "Stanford Staff"
+      ) {
+        
+        localStorage.setItem('user', JSON.stringify(user));
+        if (userLocations) {
+          localStorage.setItem('userLocations', JSON.stringify(userLocations));
+        }
       }
+
+      else{
+        handleChange({ name: "twofaSent", value: true });
+      }
+      
+    
 
       let newFormState = {};
 
@@ -330,7 +353,7 @@ const AppProvider = ({ children }) => {
     } catch (error) {
       dispatch({
         type: SETUP_USER_ERROR,
-        payload: { msg: error.response.data.msg },
+        payload: { msg: error.response.data },
       });
     }
     clearAlert();
@@ -421,9 +444,7 @@ const AppProvider = ({ children }) => {
   const enterCode = async (code) => {
     try {
       const { data } = await axios.post(`/api/v1/auth/enterCode/`, {code});
-      
-      // console.log(response)
-      const {id, name, email, state, city, school} = data;
+            const {id, name, email, state, city, school} = data;
       dispatch({ type: ENTER_CODE , payload:{teacher:data["user"],schools:data["schools"]}});
     } catch (error) {
       if (error.response.status !== 401) {
@@ -437,6 +458,7 @@ const AppProvider = ({ children }) => {
   };
  const submitForm = async (formData,code,grade,when,type,school,period,state, city, county, district, captcha) => {
     try {
+      handleChange({name:"isLoading",value:true})
       const { data } = await axios.post(`/api/v1/auth/submitForm/`, {formData,code,grade,when,type,school,period,state, city, county, district,captcha});
       dispatch({
         type: FORM_SUCCESS,
@@ -459,7 +481,6 @@ const AppProvider = ({ children }) => {
   const forgotPassword = async({email})=>{
     try{
       const { data } = await axios.post(`/api/v1/auth/forgotPassword`,{email})
-      console.log(data)
       if (data=="Email sent"){
         dispatch({
           type: FORM_SUCCESS,
@@ -485,9 +506,7 @@ const AppProvider = ({ children }) => {
     try{
       handleChange({ name: "resetPassword", value: false });
       const { data } = await axios.post(`/api/v1/auth/verifyToken`,{token})
-      console.log(data)
       if (data.msg == "verified"){
-        console.log('verified')
         const {reset} = await axios.post(`/api/v1/auth/resetpassword`,{password,token})
         dispatch({
           type: FORM_SUCCESS,
@@ -507,7 +526,6 @@ const AppProvider = ({ children }) => {
 
     }
     catch(error){
-      console.log(error.response.data.msg)
       dispatch({
         type: FORM_FAIL,
         payload: { msg: error.response.data.msg},
@@ -581,7 +599,7 @@ const AppProvider = ({ children }) => {
             return obj.county === userLocations[0].county;
           case "State Admin":
             return obj.state === userLocations[0].state;
-          case "Standford Staff":
+          case "Stanford Staff":
             return true;
           case "Teacher":
             return obj.teacher === user._id;
@@ -781,9 +799,7 @@ const AppProvider = ({ children }) => {
 
   const createCertificate = async ({name,info}) => {
     try{
-      console.log(name)
     const { data } = await axios.post(`/api/v1/auth/createCertificate`,{name,info})
-    console.log(data.msg)
     if (data.msg == "Certificate Created"){
       handleChange({ name: "certificate", value: true });
       handleChange({ name: "certificate", value: true });
@@ -791,13 +807,11 @@ const AppProvider = ({ children }) => {
     }
   }
     catch(error){
-      console.log(error)
     }
     // dispatch({ type: CHANGE_PAGE, payload: { page } });
   };
 
   const getHealthyFutures = async(teacherId) =>{
-    console.log(teacherId)
     try{
       const { data } = await authFetch.get('/studentResponses/healthyFutures', {
         params: {
@@ -810,10 +824,48 @@ const AppProvider = ({ children }) => {
       // const { data } = await authFetch.get('/studentResponse s/healthyFutures', {teacherId});
     }
     catch(error){
-      console.log(error)
     }
 
   }
+
+  const resendEmail = async(email) =>{
+    try{
+    const { data } = await axios.post(`/api/v1/auth/resend2fa`,{email })
+    successAlert(data)
+    }
+    catch(error){
+
+    }
+  }
+
+  const verify2fa = async(_id) => {
+    try{
+      const { data } = await axios.post(`/api/v1/auth/verify2fa`,{_id})
+      const { user, hasLocation, userLocations } = data;
+      localStorage.setItem('user', JSON.stringify(user))
+
+      if (userLocations) {
+        localStorage.setItem('userLocations', JSON.stringify(userLocations))
+      }
+      let alertText = "User Successfully Created..."
+      dispatch({
+        type: SETUP_USER_SUCCESS,
+        payload: { user, alertText, hasLocation,
+          userLocations: userLocations ? userLocations : [],
+        },
+      });
+      clearAlert();
+
+      // const { data } = await authFetch.get('/studentResponse s/healthyFutures', {teacherId});
+    }
+    catch(error){
+      dispatch({
+        type: SETUP_USER_ERROR,
+        payload: { msg: error.response.data },
+      });
+      clearValues();
+    }
+  };
 
 
 
@@ -822,6 +874,7 @@ const AppProvider = ({ children }) => {
       value={{
         ...state,
         displayAlert,
+        verify2fa,
         getHealthyFutures,
         setupUser,
         toggleSidebar,
@@ -840,7 +893,9 @@ const AppProvider = ({ children }) => {
         getTotal,
         forgotPassword,
         verifyReset,
-        createCertificate
+        createCertificate,
+        resendEmail,
+        errorAlert
       }}
     >
       {children}

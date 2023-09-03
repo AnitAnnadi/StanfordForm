@@ -198,7 +198,7 @@ const reducer = (state, action) => {
   if (action.type === FORM_SUCCESS) {
     return {
       ...state,
-      isLoading: false,
+      isLoading: true,
       showAlert: true,
       alertType: 'success',
       alertText: action.payload.msg,

@@ -12,6 +12,7 @@ import nodemailer from 'nodemailer';
 import crypto from 'crypto';
 import ResetPassword from '../models/ResetPassword.js';
 import Certificates from '../models/Certificates.js';
+import Pending from '../models/Pending.js';
 
 
 
@@ -37,6 +38,61 @@ const enterCode=async(req,res)=>{
   }
 }
 
+const resendTwoFa = async(req,res)=>{
+  try{
+  const {email} = req.body
+  const createPending = await Pending.findOne({email})
+  console.log(createPending)
+  await sendTwoFa({email,createPending})
+  res.status(200).send('Resent');
+
+  }
+  catch(error){
+    res.status(500).send('Resend Failed');
+
+  }
+}
+
+const sendTwoFa = async({email,createPending})=>{
+  console.log(createPending._id)
+  const transporter = nodemailer.createTransport({
+    service: 'Gmail', // e.g., 'Gmail', 'SendGrid'
+    auth: {
+      user: process.env.EMAIL,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
+  const mailOptions = {
+    from: process.env.EMAIL,
+    to:email,
+    subject:'Confirm Admin Registration - Stanford Reach Labs Data Dashboard',
+    text:`To complte your Stanford Reach Labs Data Dashboard account creation click this link  -  https://datadashboard.stanfordreachlab.com/2fa/${createPending._id}`,
+  };
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error(error);
+      reject(error); // Reject the promise if there's an error
+    } else {
+      console.log('Email sent: ' + info.response);
+      resolve(true); // Resolve the promise if email is sent successfully
+    }
+  });
+
+}
+const createTwoFA =async({req,res, name, email, password, role, code})=>{
+  const userAlreadyExists = await Pending.findOne({ email });
+  if (userAlreadyExists) {
+    throw new BadRequestError('A 2fa link has already been sent to this email.');
+  }
+  const createPending = await Pending.create({ name, email, password, role, code });
+  console.log(createPending)
+
+  sendTwoFa({email,createPending})
+
+
+
+}
+
 const register = async (req, res) => {
   const { currentUser,captcha} = req.body;
   const {name, email, password, role} = currentUser
@@ -44,24 +100,40 @@ const register = async (req, res) => {
     const response = await axios.post(
       `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.REACT_APP_SECRET_KEY}&response=${captcha}`
     );
-    if (!response.data.success){
-      throw new BadRequestError('Please complete the reCaptcha. ');
-    }
+    // if (!response.data.success){
+    //   throw new BadRequestError('Please complete the reCaptcha. ');
+    // }
   }
+
+
   
   if (!name || !email || !password  ) {
-    throw new BadRequestError('please provide all values');
+    res.status(500).send('please provide all values');
   }
   const userAlreadyExists = await User.findOne({ email });
   if (userAlreadyExists) {
-    throw new BadRequestError('Email already in use');
+    res.status(500).send('Email already in use');
   }
+
+  
+
   const unique_id = uuid();
   const code = unique_id.slice(0,8) 
+  if   (role ==="Site Admin" || role ==="District Admin" || role=== "County Admin" || role == "State Admin" ||role === "Stanford Staff"){
+    try {
+      await createTwoFA({ name, email, password, role, code });
+      res.status(200).send('2fa sent');
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('A 2fa link has already been sent to this email. Wait ten minutes to redo this process.');
+    }
+  }
+  else{
   const user = await User.create({ name, email, password, role, code });
-
+    console.log(user)
   const token = user.createJWT();
   attachCookie({ res, token });
+  
 
   res.status(StatusCodes.CREATED).json({
     user: {
@@ -73,6 +145,8 @@ const register = async (req, res) => {
       _id: user._id
     }
   });
+}
+
 };
 const login = async (req, res) => {
   const { currentUser,captcha} = req.body;
@@ -82,12 +156,13 @@ const login = async (req, res) => {
   }
   const user = await User.findOne({ email }).select('+password');
   if (!user) {
-    throw new UnAuthenticatedError('Invalid Credentials');
+    res.status(401).send('Invalid Credentials');
   }
 
   const isPasswordCorrect = await user.comparePassword(password);
+  console.log(password)
   if (!isPasswordCorrect) {
-    throw new UnAuthenticatedError('Invalid Credentials');
+    res.status(410).send('Invalid Credentials');
   }
   const token = user.createJWT();
   attachCookie({ res, token });
@@ -118,6 +193,44 @@ const updateUser = async (req, res) => {
   res.status(StatusCodes.OK).json({ user });
 };
 
+const verify2fa = async (req, res) => {
+  console.log('hhi')
+  try{
+  const {_id} = req.body;
+  console.log(_id)
+  const pending = await Pending.findOne({ _id });
+  if (pending) {
+    console.log(pending.password)
+    await pending.remove();
+    const user = await User.create({
+      name: pending.name,
+      email: pending.email,
+      password: pending.password,
+      role: pending.role,
+      code: pending.code
+    });
+
+    const token = user.createJWT();
+    attachCookie({ res, token });
+    
+    res.status(StatusCodes.CREATED).json({
+      user: {
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        password: user.password,
+        code: user.code,
+        _id: user._id
+      }
+    });
+  } else {
+    res.status(404).send('The link has expired or already been used ');
+  }}
+  catch(error){
+    console.log(error)
+  }
+};
+
 const forgotPassword=async(req,res)=>{
   const {email} = req.body
   console.log(email)
@@ -134,14 +247,16 @@ const forgotPassword=async(req,res)=>{
     const userId = user._id
     const reset = await ResetPassword.create({userId, email,token})
     console.log(reset)
-    const transporter = nodemailer.createTransport({
-      service: 'Gmail', // e.g., 'Gmail', 'SendGrid'
-      auth: {
-        user: process.env.EMAIL,
-        pass: process.env.EMAIL_PASSWORD,
-      },
-    });
+
     console.log(process.env.EMAIL,process.env.EMAIL_PASSWORD)
+
+  const transporter = nodemailer.createTransport({
+    service: 'Gmail', // e.g., 'Gmail', 'SendGrid'
+    auth: {
+      user: process.env.EMAIL,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
     const mailOptions = {
       from: process.env.EMAIL,
       to:email,
@@ -292,4 +407,4 @@ const submitForm = async(req,res) =>{
    
 }
 
-export { createCertificate, resetPassword,verifyToken, register, login, updateUser, forgotPassword, logout , enterCode, submitForm };
+export { resendTwoFa,verify2fa,createCertificate, resetPassword,verifyToken, register, login, updateUser, forgotPassword, logout , enterCode, submitForm };

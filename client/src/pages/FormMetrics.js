@@ -17,6 +17,8 @@ import { useAppContext } from "../context/appContext";
 import { utils as XLSXUtils, writeFile as writeXLSXFile } from 'xlsx';
 import { tobacco, postTobacco, cannabis, postCannabis, safety, healthy
 } from "../utils/questions";
+import { ThreeDots } from 'react-loader-spinner';
+
 
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -223,15 +225,23 @@ const FormMetrics = () => {
           
           <div className="content">
           <button
-              className="btn"
-              style={{ display: "flex" }}
-              onClick={() => createExcelSheet()}
-            >
-              <span className="icon-css">
-                <BiExport />
-              </span>
-              {exportLoading?"Exporting...":"Export To Excel"}
-            </button>
+            className="btn"
+            style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+            onClick={() => createExcelSheet()}
+          >
+            <span className="icon-css">
+              <BiExport />
+            </span>
+            {exportLoading ? (
+              <div style={{ display: 'flex', alignItems: 'center', marginLeft: '10px' }}>
+                <p style={{ margin: 0 }}>Exporting</p>
+                <ThreeDots color="white" height={20} width={20} style={{ marginLeft: '10px' }} />
+              </div>
+            ) : (
+              "Export To Excel"
+            )}
+          </button>
+
             <div className="content-center">
               <ResponseGroupInfo
                 icon={<AiOutlineNumber />}
@@ -313,15 +323,22 @@ const FormMetrics = () => {
           <div className="content">
             <div className="content-center">
             <button
-              className="btn"
-              style={{ display: "flex" }}
-              onClick={() => createExcelSheet()}
-            >
-              <span className="icon-css">
-                <BiExport />
-              </span>
-              {exportLoading?"Exporting...":"Export To Excel"}
-            </button>
+            className="btn"
+            style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+            onClick={() => createExcelSheet()}
+          >
+            <span className="icon-css">
+              <BiExport />
+            </span>
+            {exportLoading ? (
+              <div style={{ display: 'flex', alignItems: 'center', marginLeft: '10px' }}>
+                <p style={{ margin: 0 }}>Exporting</p>
+                <ThreeDots color="white" height={20} width={20} style={{ marginLeft: '10px' }} />
+              </div>
+            ) : (
+              "Export To Excel"
+            )}
+          </button>
               <ResponseGroupInfo
                 icon={<FaChalkboardTeacher />}
                 text={teacher.name}

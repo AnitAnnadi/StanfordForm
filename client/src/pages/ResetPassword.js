@@ -15,7 +15,6 @@ const ResetPassword = () => {
     const navigate = useNavigate();
 
     const currentURL = new URL(window.location.href);
-    console.log(currentURL.pathname)
     const [, , token] = currentURL.pathname.split('/');
     const { resetPassword, forgotPassword, isLoading, showAlert, verifyReset, displayAlert } =
     useAppContext();
