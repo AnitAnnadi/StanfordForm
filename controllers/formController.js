@@ -39,7 +39,7 @@ const getFormMetrics = async(req,res) => {
 
   let school = undefined;
 
-  if (noCode === "false") {
+  if (noCode === "false" || noCode === undefined || noCode === "undefined") {
     responseQueryObject = {
       formCode: formCode,
       teacher: teacherId,

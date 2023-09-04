@@ -93,6 +93,8 @@ const FormMetrics = () => {
   };
 
 
+  // NOTE: old responses with older versions of the form will not have the same questions as the current form leading
+  // to the results not rendering due to this funciton.
   const createQuestionsToAnswersMap = (array, questionsToAnswers) => {
     reorderedQuestionsToAnswers = {};
     array.forEach((question) => {
@@ -148,7 +150,6 @@ const FormMetrics = () => {
             city: school.city,
             county: school.county,
             district: school.district,
-            overallBreakdown:true
           });
   
           return fetch(`/api/v1/form/${uniqueResponseType.formCode}?${queryParameters.toString()}`)
