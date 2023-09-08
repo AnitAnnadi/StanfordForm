@@ -112,7 +112,7 @@ const initialState = {
   resetPassword:false
 };
 
-const configureFormStates = (userLocations, user, formStates) => {
+const configureFormStates = async (userLocations, user, formStates) => {
   let {
     newSearchState,
     newSearchCounty,
@@ -152,7 +152,8 @@ const configureFormStates = (userLocations, user, formStates) => {
       newCountyOptions = [userLocations[0].county];
       newDistrictOptions = [userLocations[0].district === "district" ? "N/A" : userLocations[0].district];
       newCityOptions = ["all", ...narrowCities({state: userLocations[0].state, county: userLocations[0].county, district: userLocations[0].district})];
-      newSchoolOptions = ["all", ...narrowAllSchools({state: userLocations[0].state, county: userLocations[0].county, district: userLocations[0].district})];
+      console.log(narrowAllSchools({state: userLocations[0].state, county: userLocations[0].county, district: userLocations[0].district}))
+      newSchoolOptions = ["all", ...(await narrowAllSchools({state: userLocations[0].state, county: userLocations[0].county, district: userLocations[0].district}))];
       break;
     case "County Admin":
       newSearchState = userLocations[0].state;
@@ -360,7 +361,7 @@ const AppProvider = ({ children }) => {
           'schoolOptions'
         ];
 
-        const newFormState = configureFormStates(userLocations, user,
+        const newFormState = await configureFormStates(userLocations, user,
           Object.fromEntries(stateKeys.map(key => {
               return ['new' + key[0].toUpperCase() + key.slice(1), state[key]]
           }))
@@ -460,7 +461,7 @@ const AppProvider = ({ children }) => {
         'schoolOptions'
       ];
 
-      const newFormState = configureFormStates(userLocations, user,
+      const newFormState = await configureFormStates(userLocations, user,
           Object.fromEntries(stateKeys.map(key => {
               return ['new' + key[0].toUpperCase() + key.slice(1), state[key]]
           }))
@@ -479,7 +480,8 @@ const AppProvider = ({ children }) => {
         }
       });
     } catch (error) {
-      if (error.response.status !== 401) {
+      console.log(error)
+      if (error.response?.status !== 401) {
         dispatch({
           type: UPDATE_USER_ERROR,
           payload: { msg: error.response.data.msg },
