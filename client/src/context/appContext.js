@@ -145,13 +145,14 @@ const configureFormStates = async (userLocations, user, formStates) => {
       newSearchState = userLocations[0].state;
       newSearchCounty = userLocations[0].county;
       newSearchDistrict = userLocations[0].district;
+      newSearchCity = userLocations[0].city;
       newSearchCity = "all";
       newSearchSchool = "all";
 
       newStateOptions = [userLocations[0].state];
       newCountyOptions = [userLocations[0].county];
       newDistrictOptions = [userLocations[0].district === "district" ? "N/A" : userLocations[0].district];
-      newCityOptions = ["all", ...narrowCities({state: userLocations[0].state, county: userLocations[0].county, district: userLocations[0].district})];
+      newCityOptions = [userLocations[0].city];
       console.log(narrowAllSchools({state: userLocations[0].state, county: userLocations[0].county, district: userLocations[0].district}))
       newSchoolOptions = ["all", ...(await narrowAllSchools({state: userLocations[0].state, county: userLocations[0].county, district: userLocations[0].district}))];
       break;
@@ -255,15 +256,15 @@ const narrowAllSchools = async (getParams, allowed = false) => {
       }
 
       if (county && county !== "all") {
-        userLocationsFiltered = userLocationsFiltered.filter((location) => location.county.toUpperCase() === county.toUpperCase());
+        userLocationsFiltered = userLocationsFiltered.filter((location) => location.county?.toUpperCase() === county.toUpperCase());
       }
 
       if (city && city !== "all") {
-        userLocationsFiltered = userLocationsFiltered.filter((location) => location.city.toUpperCase() === city.toUpperCase());
+        userLocationsFiltered = userLocationsFiltered.filter((location) => location.city?.toUpperCase() === city.toUpperCase());
       }
 
       if (district && district !== "all") {
-        userLocationsFiltered = userLocationsFiltered.filter((location) => location.district.toUpperCase() === district.toUpperCase());
+        userLocationsFiltered = userLocationsFiltered.filter((location) => location.district?.toUpperCase() === district.toUpperCase());
       }
 
       if (school && school !== "all") {
@@ -283,6 +284,7 @@ const narrowAllSchools = async (getParams, allowed = false) => {
     }
   } catch (error) {
     console.log(error);
+    return [];
   }
 }
 

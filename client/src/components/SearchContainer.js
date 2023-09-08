@@ -59,6 +59,8 @@ const SearchContainer = ({ startReload }) => {
   const healthyTobacco = [];
   const healthyCannabis = [];
 
+  console.log({schoolOptions})
+
   useEffect(() => {
     if (exportClicked && exportData) {
       exportData.forEach(obj => {
@@ -303,7 +305,6 @@ const SearchContainer = ({ startReload }) => {
             list={countyOptions}
           />
           {/* search by city */}
-          {user.role !== "District Admin" && (
           <FormRowSelect
             labelText="city"
             name="searchCity"
@@ -311,7 +312,6 @@ const SearchContainer = ({ startReload }) => {
             handleChange={handleLocalChange}
             list={cityOptions}
           />
-          )}
           {/* search by district */}
           <FormRowSelect
             labelText="district"

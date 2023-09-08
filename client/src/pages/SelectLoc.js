@@ -118,7 +118,7 @@ const SelectLoc = ({ noCode }) => {
   const showCounty =
     user?.role === "District Admin" || user?.role === "County Admin";
   const showCity =
-    user?.role === "Site Admin" || user?.role === "Teacher" || noCode;
+    user?.role === "Site Admin" || user?.role === "Teacher" || noCode || user?.role === "District Admin";
   const showDistrict = user?.role === "District Admin";
   const showSchool =
     user?.role === "Site Admin" || user?.role === "Teacher" || noCode;
@@ -188,6 +188,7 @@ const SelectLoc = ({ noCode }) => {
       setSchool("default");
 
       if (value !== "default") {
+        setDistricts(narrowDistricts({ state, city: value }));
         setToNarrowSchools({reactState: "selectLocSchools", state, city: value});
       }
     } else if (field === "district") {
