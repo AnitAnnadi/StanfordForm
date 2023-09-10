@@ -5,7 +5,7 @@ import Wrapper from "../assets/wrappers/DashboardFormPage";
 import Dropdown from "react-dropdown";
 import { useEffect, useRef } from "react";
 import Logo2 from "../assets/images/logo.png";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { BsArrowRight } from "react-icons/bs";
 import {
   narrowDistricts,
@@ -96,7 +96,12 @@ const SelectLoc = ({ noCode }) => {
   const [counties, setCounties] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [grade, setGrade] = useState("default");
-
+  const location = useLocation();
+  console.log(location.state)
+  const locationState = location?.state || {}; // Default to an empty object if location.state is null or undefined
+  const { adminTeacher } = locationState;
+  const { selectSchool } = locationState;
+  const { fromProfile } = locationState;
   const [multiplePeriods, setMultiplePeriods] = useState(false);
   let adminroles = [
     "Site Admin",
@@ -114,14 +119,25 @@ const SelectLoc = ({ noCode }) => {
   );
 
   const showCounty =
-    user?.role === "District Admin" || user?.role === "County Admin";
+    !fromProfile && !selectSchool && (user?.role === "District Admin" || user?.role === "County Admin");
   const showCity =
-    user?.role === "Site Admin" || user?.role === "Teacher" || noCode;
-  const showDistrict = user?.role === "District Admin";
+    user?.role === "Site Admin" || user?.role === "Teacher" || noCode || selectSchool || fromProfile;
+  const showDistrict = !fromProfile && !selectSchool && user?.role === "District Admin";
   const showSchool =
-    user?.role === "Site Admin" || user?.role === "Teacher" || noCode;
-  const showMultiplePeriods = user?.role === "Teacher";
-  const showAdditionalLoc = user?.role === "Teacher";
+    user?.role === "Site Admin" || user?.role === "Teacher" || noCode || selectSchool || fromProfile;
+  const showMultiplePeriods = user?.role === "Teacher" ||selectSchool;
+  const showAdditionalLoc = user?.role === "Teacher" || selectSchool;
+  useEffect(() => {
+    setState("default");
+    setCity("default");
+    setSchool("default");
+    setDistrict("default");
+    setCounty("default");
+    setForm("default");
+    setWhen("default");
+    // setMultiplePeriods(false);
+    // setAdditionalLoc(false);
+  }, []);
 
   useEffect(() => {
   if (isFormSubmitted && !exists && !additionalLoc) {
@@ -132,9 +148,24 @@ const SelectLoc = ({ noCode }) => {
         adminbool = true;
       }
     });
-    console.log(adminbool)
+    setIsFormSubmitted(false)
+    setAdditionalLoc(false);
       if (adminbool) {
+        console.log(adminTeacher)
+        if (adminTeacher){
+          console.log('hi')
+          setTimeout(() => {
+            navigate("/selectLoc", {
+              state: { adminTeacher: false, selectSchool:true, fromProfile:false }
+            });
+            }, 2000)
+            return
+        }
+        
+          
         setTimeout(() => {
+          console.log(isFormSubmitted)
+          console.log('to metric')
           navigate("/metrics");
         }, 2000);
       } else {

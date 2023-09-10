@@ -37,6 +37,10 @@ const UserSchema = new mongoose.Schema({
     maxlength: 20,
     default: null,
   },
+  adminTeacher:{
+    type:Boolean,
+    default:false
+  }
 })
 
 UserSchema.pre('save', async function () {

@@ -55,13 +55,13 @@ const JoinForm = () => {
             <option value={"default"} disabled>
               Choose your School
             </option>
-            {schools.map((school, index) => {
-              return (
-                <option key={index} value={school["school"]}>
-                  {school["school"]}
-                </option>
-              );
-            })}
+            {schools.map((school, index) => (
+            school["school"] ? (
+              <option key={index} value={school["school"]}>
+                {school["school"]}
+              </option>
+            ) : null
+          ))}
           </select>
         </div>
       );

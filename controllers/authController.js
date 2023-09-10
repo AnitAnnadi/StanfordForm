@@ -79,12 +79,12 @@ const sendTwoFa = async({email,createPending})=>{
   });
 
 }
-const createTwoFA =async({req,res, name, email, password, role, code})=>{
+const createTwoFA =async({req,res, name, email, password, role, code, adminTeacher})=>{
   const userAlreadyExists = await Pending.findOne({ email });
   if (userAlreadyExists) {
     throw new BadRequestError('A 2fa link has already been sent to this email.');
   }
-  const createPending = await Pending.create({ name, email, password, role, code });
+  const createPending = await Pending.create({ name, email, password, role, code, adminTeacher });
   console.log(createPending)
 
   sendTwoFa({email,createPending})
@@ -94,7 +94,8 @@ const createTwoFA =async({req,res, name, email, password, role, code})=>{
 }
 
 const register = async (req, res) => {
-  const { currentUser,captcha} = req.body;
+  const { currentUser,captcha, adminTeacher} = req.body;
+  console.log(adminTeacher)
   const {name, email, password, role} = currentUser
   if (captcha!=undefined){
     const response = await axios.post(
@@ -109,10 +110,12 @@ const register = async (req, res) => {
   
   if (!name || !email || !password  ) {
     res.status(500).send('please provide all values');
+    return
   }
   const userAlreadyExists = await User.findOne({ email });
   if (userAlreadyExists) {
     res.status(500).send('Email already in use');
+    return
   }
 
   
@@ -121,11 +124,13 @@ const register = async (req, res) => {
   const code = unique_id.slice(0,8) 
   if   (role ==="Site Admin" || role ==="District Admin" || role=== "County Admin" || role == "State Admin" ||role === "Stanford Staff"){
     try {
-      await createTwoFA({ name, email, password, role, code });
+      await createTwoFA({ name, email, password, role, code, adminTeacher });
       res.status(200).send('2fa sent');
+      return
     } catch (error) {
       console.error(error);
       res.status(500).send('A 2fa link has already been sent to this email. Wait ten minutes to redo this process.');
+      return
     }
   }
   else{
@@ -194,7 +199,6 @@ const updateUser = async (req, res) => {
 };
 
 const verify2fa = async (req, res) => {
-  console.log('hhi')
   try{
   const {_id} = req.body;
   console.log(_id)
@@ -207,7 +211,8 @@ const verify2fa = async (req, res) => {
       email: pending.email,
       password: pending.password,
       role: pending.role,
-      code: pending.code
+      code: pending.code,
+      adminTeacher: pending.adminTeacher
     });
 
     const token = user.createJWT();
@@ -220,7 +225,8 @@ const verify2fa = async (req, res) => {
         role: user.role,
         password: user.password,
         code: user.code,
-        _id: user._id
+        _id: user._id,
+        adminTeacher:user.adminTeacher
       }
     });
   } else {

@@ -281,7 +281,7 @@ const AppProvider = ({ children }) => {
     }, 3000);
   };
 
-  const setupUser = async ({ currentUser, captcha, endPoint, alertText }) => {
+  const setupUser = async ({ currentUser, captcha, adminTeacher, endPoint, alertText }) => {
     localStorage.clear()
     dispatch({ type: SETUP_USER_BEGIN });
     handleChange({ name: "twofaSent", value: false });
@@ -289,7 +289,8 @@ const AppProvider = ({ children }) => {
       const { data } = await axios.post(
         `/api/v1/auth/${endPoint}`,
         {currentUser,
-        captcha}
+        captcha,
+        adminTeacher}
       );
 
         

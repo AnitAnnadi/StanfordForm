@@ -37,6 +37,10 @@ const PendingSchema = new mongoose.Schema({
     maxlength: 20,
     default: null,
   },
+  adminTeacher:{
+    type:Boolean,
+    default:false
+  },
   createdAt: { type: Date, expires: '10m', default: Date.now },   
 
 })

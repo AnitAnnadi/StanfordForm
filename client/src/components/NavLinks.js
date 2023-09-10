@@ -16,7 +16,7 @@ const NavLinks = ({ toggleSidebar }) => {
     }
   }))
 
-  if (adminbool===true){
+  if (adminbool===true && !user?.adminTeacher){
     links = [
       // { id: 1, text: "home", path: "/", icon: <MdDashboard /> },
       { id: 2, text: "metrics", path: "metrics", icon: <ImStatsBars /> },

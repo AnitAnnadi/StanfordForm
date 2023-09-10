@@ -17,7 +17,8 @@ const initialState = {
   city: "",
   school: "",
   isMember: false,
-  confirm:""
+  confirm:"",
+  adminTeacher:false
 };
 
 const Register = () => {
@@ -72,12 +73,17 @@ const Register = () => {
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
+  const handleCheckChange = (e) => {
+    console.log(values)
+    setValues({ ...values, adminTeacher: !values.adminTeacher });
+  };
+  
   const resetPassword= ()=>{
     navigate('/forgotpassword')
   }
   const onSubmit = async(e) => {
     e.preventDefault();
-    const { name, email, password, isMember, state, city, school,confirm } = values;
+    const { name, email, password, isMember, state, city, school,confirm, adminTeacher } = values;
     if (!email || !password || (!isMember && !name)) {
       displayAlert();
       return;
@@ -125,6 +131,7 @@ const Register = () => {
       await setupUser({
         currentUser,
         captcha,
+        adminTeacher,
         endPoint: "register",
         alertText: type === "admin" ? "Redirecting...":"User Created! Redirecting...",
       });
@@ -209,6 +216,8 @@ const Register = () => {
             value={values.confirm}
             handleChange={handleChange}
           />
+
+
         )}
         {values.isMember?
         <button type="button" onClick={resetPassword} className="member-btn">
@@ -217,6 +226,14 @@ const Register = () => {
         null}
 
         {!values.isMember && <AdminRole />}
+        {!values.isMember && type=='admin' &&  <FormRow
+          type="checkbox"
+          labelText="I am also a teacher"
+          name="adminTeacher"
+          value = {values.adminTeacher}
+          checked={values.adminTeacher}
+          handleChange={handleCheckChange}
+          />}
         {!values.isMember && (
           <ReCAPTCHA
               ref={captchaRef}

@@ -17,17 +17,21 @@ const VerifyTwoFactor = () => {
       }, []); // Empty dependency array
       
     useEffect(() => {
+      console.log(user)
     if (alertText==="User Successfully Created"){
         if (user.role==="Stanford Staff"){
         setTimeout(() => {
             navigate("/metrics");
             }, 2000)
         }
-        else{
-            setTimeout(() => {
-                navigate("/selectLoc");
-                }, 2000)
-            }
+        else {
+          setTimeout(() => {
+            navigate("/selectLoc", {
+              state: { adminTeacher: user.adminTeacher, selectSchool:false, fromProfile:false }
+            });
+          }, 2000);
+        }
+        
     }
     if (alertText==="The link has expired or already been used "){
         setTimeout(() => {
