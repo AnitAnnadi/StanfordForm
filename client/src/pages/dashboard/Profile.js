@@ -147,7 +147,8 @@ let schoolLocations=[]
               School locations
             </label>
           )}
-         {showAddLocation && !user.role=='Teacher' && (
+          
+         {showAddLocation && user.role!='Teacher' && (
           <button
             onClick={handleAddLocationClick}
             className="location-link btn btn-block"
