@@ -115,8 +115,9 @@ const SelectLoc = ({ noCode }) => {
   const [additionalLoc, setAdditionalLoc] = useState(false);
 
   const [numOfLocations, setNumOfLocations] = useState(
-    userLocations ? userLocations.length + 1 : 1
+    user.adminTeacher ? (userLocations ? userLocations.length : 1) : (userLocations ? userLocations.length + 1 : 1)
   );
+  
 
   const showCounty =
     !fromProfile && !selectSchool && (user?.role === "District Admin" || user?.role === "County Admin");
