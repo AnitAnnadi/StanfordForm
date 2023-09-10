@@ -155,6 +155,7 @@ const SearchContainer = ({ startReload }) => {
       if (userLocations[0][searchType] === null) {
         values = searchValues;
       } else {
+        console.log('hi')
         values = searchValues.filter(
           (value) => value === userLocations[0][searchType]
         );
