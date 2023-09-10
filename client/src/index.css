@@ -450,7 +450,7 @@ li {
   max-width: 1.25rem;
   justify-content: center;
   align-content: center;
-  height: 1.25rem;
+  max-height: 1.35rem;
   font-size: 1.1rem;
 }
 
