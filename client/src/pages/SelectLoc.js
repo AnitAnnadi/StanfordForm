@@ -125,8 +125,8 @@ const SelectLoc = ({ noCode }) => {
   const showDistrict = !fromProfile && !selectSchool && user?.role === "District Admin";
   const showSchool =
     user?.role === "Site Admin" || user?.role === "Teacher" || noCode || selectSchool || fromProfile;
-  const showMultiplePeriods = user?.role === "Teacher" ||selectSchool;
-  const showAdditionalLoc = user?.role === "Teacher" || selectSchool;
+  const showMultiplePeriods = user?.role === "Teacher" ||selectSchool || fromProfile;
+  const showAdditionalLoc = user?.role === "Teacher" || selectSchool || fromProfile;
   useEffect(() => {
     setState("default");
     setCity("default");
@@ -152,7 +152,7 @@ const SelectLoc = ({ noCode }) => {
     setAdditionalLoc(false);
       if (adminbool) {
         console.log(adminTeacher)
-        if (adminTeacher){
+        if (adminTeacher && user.role!=='Site Admin'){
           console.log('hi')
           setTimeout(() => {
             navigate("/selectLoc", {
@@ -311,10 +311,13 @@ const SelectLoc = ({ noCode }) => {
         <form className="form" onSubmit={handleSubmit}>
           {showAlert && <Alert />}
           <div className="form">
-            <h3 className="form-title">
-              Select Location{" "}
-              {numOfLocations > 1 && !noCode ? numOfLocations : ""}
-            </h3>
+          <h3 className="form-title">
+          {user.role === "Teacher" || selectSchool || fromProfile
+            ? "Select School"
+            : "Select Admin Location"}
+          {numOfLocations > 1 && !noCode ? ` ${numOfLocations}` : ""}
+        </h3>
+
             <h4 className="form-title">State</h4>
             <select
               name="aliasChoice"

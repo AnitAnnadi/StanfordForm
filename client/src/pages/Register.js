@@ -226,14 +226,19 @@ const Register = () => {
         null}
 
         {!values.isMember && <AdminRole />}
-        {!values.isMember && type=='admin' &&  <FormRow
-          type="checkbox"
-          labelText="I am also a teacher"
-          name="adminTeacher"
-          value = {values.adminTeacher}
-          checked={values.adminTeacher}
-          handleChange={handleCheckChange}
-          />}
+        {!values.isMember && type=='admin' && 
+        <label className="checkbox-container">
+              I am also a teacher
+              <input
+                type="checkbox"
+                className="checkbox"
+                name="adminTeacher"
+                value={values.adminTeacher}
+                checked={values.adminTeacher}
+                onChange={handleCheckChange}
+              />
+              <span className="checkbox-checkmark"></span>
+            </label>}
         {!values.isMember && (
           <ReCAPTCHA
               ref={captchaRef}

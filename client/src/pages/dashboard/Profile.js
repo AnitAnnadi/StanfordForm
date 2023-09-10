@@ -23,12 +23,12 @@ const Profile = () => {
     isLoading,
     handleChange
   } = useAppContext();
-  const navigate = useNavigate();
+const navigate = useNavigate();
 
   const [name, setName] = useState(user?.name);
   const [email, setEmail] = useState(user?.email);
 
-  const showAddLocation = user.role === "Teacher" || user.adminTeacher;
+  const showAddLocation = user.role === "Teacher" || user.adminTeacher && user.role!=='Site Admin';
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -86,7 +86,7 @@ let schoolLocations=[]
                 className="form-label"
                 style={{ fontSize: "1rem", marginBottom: 0 }}
               >
-                {user.adminTeacher?"admin locations":"locations"}
+                {(user.adminTeacher && user.role!='Site Admin')?"admin locations":"locations"}
               </label>
             ) : (
               <></>
@@ -142,12 +142,12 @@ let schoolLocations=[]
             );
           })}
           <div style={{ display: 'flex', alignItems: 'center' }}>
-          {user.adminTeacher && (
+          {(user.adminTeacher && user.role !== 'Site Admin') && (
             <label className="form-label" style={{ fontSize: '1rem', marginBottom: 0 }}>
               School locations
             </label>
           )}
-         {showAddLocation && (
+         {showAddLocation && !user.role=='Teacher' && (
           <button
             onClick={handleAddLocationClick}
             className="location-link btn btn-block"
@@ -166,7 +166,7 @@ let schoolLocations=[]
             </p>
           ))}
 
-          {user.role=="Teacher"?
+          {user.role=="Teacher" || user.adminTeacher?
           <HealthyFeatures/>:
           null}
           <button className="btn btn-block" type="submit" disabled={isLoading}>
