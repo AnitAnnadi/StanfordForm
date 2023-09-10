@@ -10,9 +10,6 @@ import { useNavigate } from "react-router-dom";
 
 // Inside your component...
 
-
-
-
 const Profile = () => {
   const {
     user,
@@ -21,14 +18,16 @@ const Profile = () => {
     displayAlert,
     updateUser,
     isLoading,
-    handleChange
+    handleChange,
   } = useAppContext();
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [name, setName] = useState(user?.name);
   const [email, setEmail] = useState(user?.email);
 
-  const showAddLocation = user.role === "Teacher" || user.adminTeacher && user.role!=='Site Admin';
+  const showAddLocation =
+    user.role === "Teacher" ||
+    (user.adminTeacher && user.role !== "Site Admin");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -44,7 +43,7 @@ const navigate = useNavigate();
       state: { adminTeacher: false, selectSchool: false, fromProfile: true },
     });
   };
-let schoolLocations=[]
+  let schoolLocations = [];
   return (
     <Wrapper>
       <form className="form" onSubmit={handleSubmit}>
@@ -86,14 +85,19 @@ let schoolLocations=[]
                 className="form-label"
                 style={{ fontSize: "1rem", marginBottom: 0 }}
               >
-                {(user.adminTeacher && user.role!='Site Admin')?"admin locations":"locations"}
+                {user.adminTeacher && user.role != "Site Admin"
+                  ? "admin location"
+                  : "locations"}
               </label>
             ) : (
               <></>
             )}
             {showAddLocation && !user.adminTeacher && (
               <>
-                <NavLink to={`/selectLoc`} className="location-link btn btn-block">
+                <NavLink
+                  to={`/selectLoc`}
+                  className="location-link btn btn-block"
+                >
                   <BiPlus />
                 </NavLink>
               </>
@@ -107,13 +111,17 @@ let schoolLocations=[]
                     {location.school} - {location.city}, {location.state}
                   </>
                 );
-              } 
-              else{
-                if (location.city===null || location.state ===null || location.school===null){
+              } else {
+                if (
+                  location.city === null ||
+                  location.state === null ||
+                  location.school === null
+                ) {
                   if (user.role === "District Admin") {
                     return (
                       <>
-                        {location.district} - {location.county}, {location.state}
+                        {location.district} - {location.county},{" "}
+                        {location.state}
                       </>
                     );
                   } else if (user.role === "County Admin") {
@@ -127,9 +135,10 @@ let schoolLocations=[]
                   } else if (user.role === "Stanford Staff") {
                     return <></>;
                   }
-                }
-                else{
-                  schoolLocations.push(`${location.school} - ${location.city}, ${location.state}`);
+                } else {
+                  schoolLocations.push(
+                    `${location.school} - ${location.city}, ${location.state}`
+                  );
                 }
               }
             };
@@ -138,38 +147,46 @@ let schoolLocations=[]
               <p key={index} className="location">
                 {renderLocationInfo()}
               </p>
-
             );
           })}
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-          {(user.adminTeacher && user.role !== 'Site Admin') && (
-            <label className="form-label" style={{ fontSize: '1rem', marginBottom: 0 }}>
-              School locations
-            </label>
-          )}
-          
-         {showAddLocation && user.role!='Teacher' && (
-          <button
-            onClick={handleAddLocationClick}
-            className="location-link btn btn-block"
+          <div
+            style={{
+              display: "flex",
+              columnGap: "0.35rem",
+              alignItems: "center",
+            }}
           >
-            <BiPlus />
-          </button>
-        )}
+            {user.adminTeacher && user.role !== "Site Admin" && (
+              <label
+                className="form-label"
+                style={{ fontSize: "1rem", marginBottom: 0 }}
+              >
+                School locations
+              </label>
+            )}
 
-        </div>
+            {showAddLocation && user.role != "Teacher" && (
+              <button
+                onClick={handleAddLocationClick}
+                className="location-link btn btn-block"
+                style={{ margin: 0 }}
+              >
+                <BiPlus />
+              </button>
+            )}
+          </div>
           {schoolLocations.map((location, index) => (
             <p
               key={index}
-              style={{ margin: '0', padding: '0', textIndent: '2rem' }}
+              style={{ margin: "0", padding: "0", textIndent: "2rem" }}
             >
               {location}
             </p>
           ))}
 
-          {user.role=="Teacher" || user.adminTeacher?
-          <HealthyFeatures/>:
-          null}
+          {user.role == "Teacher" || user.adminTeacher ? (
+            <HealthyFeatures />
+          ) : null}
           <button className="btn btn-block" type="submit" disabled={isLoading}>
             {isLoading ? "Please Wait..." : "save changes"}
           </button>
