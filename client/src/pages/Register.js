@@ -143,14 +143,13 @@ const Register = () => {
     if (!type || (type !== "teacher" && type !== "admin")) {
       navigate("/landing");
     }
-    console.log(user)
     if ((user && hasLocation) || (user?.role === 'Stanford Staff')) {
       adminroles.map((role=>{
         if (role==user.role){
           adminbool=true
         }
       }))
-      if (adminbool){
+      if (adminbool & !user.adminTeacher){
         setTimeout(() => {
           navigate("/metrics");
         }, 3000);

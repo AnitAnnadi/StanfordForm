@@ -37,12 +37,15 @@ const JoinForm = () => {
   let periods = [0, 1, 2, 3, 4, 5, 6, 7, 8];
   let schools = null;
 
+
   if (!info["noCode"]){
     schools = info["schools"];
   }
 
   const MultipleSchools = () => {
-    if (schools.length > 1) {
+    const actualSchools = schools.filter((school) => school["school"]);
+
+    if (actualSchools.length > 1) {
       return (
         <div>
           <h4 className="form-title">School Name</h4>
@@ -52,24 +55,26 @@ const JoinForm = () => {
             onChange={(e) => setSchool(e.target.value)}
             className="form-select"
           >
-            <option value={"default"} disabled>
+            <option value="default" disabled>
               Choose your School
             </option>
-            {schools.map((school, index) => (
-            school["school"] ? (
+            
+            {actualSchools.map((school, index) => (
               <option key={index} value={school["school"]}>
                 {school["school"]}
               </option>
-            ) : null
-          ))}
+            ))}
           </select>
         </div>
       );
-    } else {
-      setSchool(schools[0]["school"]);
+    } else if (actualSchools.length === 1) {
+      console.log(actualSchools);
+      setSchool(actualSchools[0]["school"]); // Set the selected school name
     }
+  
+    return null; // Handle the case when there are no valid schools
   };
-  let current = "";
+    let current = "";
   const MultiplePeriods = () => {
     schools.map((each) => {
       if (each["school"] === school) {

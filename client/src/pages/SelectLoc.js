@@ -152,7 +152,6 @@ const SelectLoc = ({ noCode }) => {
     setIsFormSubmitted(false)
     setAdditionalLoc(false);
       if (adminbool) {
-        console.log(adminTeacher)
         if (adminTeacher && user.role!=='Site Admin'){
           console.log('hi')
           setTimeout(() => {
@@ -162,13 +161,16 @@ const SelectLoc = ({ noCode }) => {
             }, 2000)
             return
         }
-        
-          
+        if (user.adminTeacher){
+          setTimeout(() => {
+            navigate("/");
+          }, 2000);
+        }
+        else{
         setTimeout(() => {
-          console.log(isFormSubmitted)
-          console.log('to metric')
           navigate("/metrics");
         }, 2000);
+      }
       } else {
         setTimeout(() => {
           navigate("/");
