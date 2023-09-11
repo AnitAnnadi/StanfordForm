@@ -70,7 +70,7 @@ const Profile = () => {
           >
             role -{" "}
             <span style={{ letterSpacing: "0", color: "#102a43" }}>
-              {user.role}
+              {user.adminTeacher?user.role + " and teacher": user.role}
             </span>
           </label>
           <div
