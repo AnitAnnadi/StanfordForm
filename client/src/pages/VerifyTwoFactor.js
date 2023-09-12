@@ -18,16 +18,26 @@ const VerifyTwoFactor = () => {
       
     useEffect(() => {
     if (alertText==="User Successfully Created"){
-        if (user.role==="Stanford Staff"){
+        if (user.role==="Stanford Staff" && !user.adminTeacher){
         setTimeout(() => {
             navigate("/metrics");
             }, 2000)
         }
+        else if(user.role==="Stanford Staff" && user.adminTeacher) {
+          setTimeout(() => {
+            navigate("/selectLoc", {
+              state: { adminTeacher: false, selectSchool:true, fromProfile:false }
+            });
+          }, 2000);
+        }
         else{
-            setTimeout(() => {
-                navigate("/selectLoc");
-                }, 2000)
-            }
+          setTimeout(() => {
+            navigate("/selectLoc", {
+              state: { adminTeacher: user.adminTeacher, selectSchool:false, fromProfile:false }
+            });
+          }, 2000);
+        }
+        
     }
     if (alertText==="The link has expired or already been used "){
         setTimeout(() => {

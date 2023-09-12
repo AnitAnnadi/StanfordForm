@@ -5,7 +5,7 @@ import Wrapper from "../assets/wrappers/DashboardFormPage";
 import Dropdown from "react-dropdown";
 import { useEffect, useRef } from "react";
 import Logo2 from "../assets/images/logo.png";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { BsArrowRight } from "react-icons/bs";
 import {
   narrowDistricts,
@@ -96,7 +96,11 @@ const SelectLoc = ({ noCode }) => {
   const [counties, setCounties] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [grade, setGrade] = useState("default");
-
+  const location = useLocation();
+  const locationState = location?.state || {}; // Default to an empty object if location.state is null or undefined
+  const { adminTeacher } = locationState;
+  const { selectSchool } = locationState;
+  const { fromProfile } = locationState;
   const [multiplePeriods, setMultiplePeriods] = useState(false);
   let adminroles = [
     "Site Admin",
@@ -110,33 +114,59 @@ const SelectLoc = ({ noCode }) => {
   const [additionalLoc, setAdditionalLoc] = useState(false);
 
   const [numOfLocations, setNumOfLocations] = useState(
-    userLocations ? userLocations.length + 1 : 1
+    (user.adminTeacher && user.role!="Stanford Staff") ? (userLocations ? userLocations.length : 1) : (userLocations ? userLocations.length + 1 : 1)
   );
+  
 
   const showCounty =
-    user?.role === "District Admin" || user?.role === "County Admin";
+    !fromProfile && !selectSchool && (user?.role === "District Admin" || user?.role === "County Admin");
   const showCity =
-    user?.role === "Site Admin" || user?.role === "Teacher" || noCode;
-  const showDistrict = user?.role === "District Admin";
+    user?.role === "Site Admin" || user?.role === "Teacher" || noCode || selectSchool || fromProfile;
+  const showDistrict = !fromProfile && !selectSchool && user?.role === "District Admin";
   const showSchool =
-    user?.role === "Site Admin" || user?.role === "Teacher" || noCode;
-  const showMultiplePeriods = user?.role === "Teacher";
-  const showAdditionalLoc = user?.role === "Teacher";
+    user?.role === "Site Admin" || user?.role === "Teacher" || noCode || selectSchool || fromProfile;
+  const showMultiplePeriods = user?.role === "Teacher" ||selectSchool || fromProfile;
+  const showAdditionalLoc = user?.role === "Teacher" || selectSchool || fromProfile;
+  useEffect(() => {
+    setState("default");
+    setCity("default");
+    setSchool("default");
+    setDistrict("default");
+    setCounty("default");
+    setForm("default");
+    setWhen("default");
+    // setMultiplePeriods(false);
+    // setAdditionalLoc(false);
+  }, []);
 
   useEffect(() => {
   if (isFormSubmitted && !exists && !additionalLoc) {
     adminroles.map((role) => {
-      console.log(role)
       if (role === user.role) {
-        console.log('hi')
         adminbool = true;
       }
     });
-    console.log(adminbool)
+    setIsFormSubmitted(false)
+    setAdditionalLoc(false);
       if (adminbool) {
+        if (adminTeacher && user.role!=='Site Admin'){
+          setTimeout(() => {
+            navigate("/selectLoc", {
+              state: { adminTeacher: false, selectSchool:true, fromProfile:false }
+            });
+            }, 2000)
+            return
+        }
+        if (user.adminTeacher){
+          setTimeout(() => {
+            navigate("/");
+          }, 2000);
+        }
+        else{
         setTimeout(() => {
           navigate("/metrics");
         }, 2000);
+      }
       } else {
         setTimeout(() => {
           navigate("/");
@@ -233,12 +263,7 @@ const SelectLoc = ({ noCode }) => {
         return;
       }
 
-      if (user.role === "Stanford Staff") {
-        setTimeout(() => {
-          navigate("/metrics");
-        }, 1000);
-        return;
-      }
+      
 
       
       
@@ -280,10 +305,13 @@ const SelectLoc = ({ noCode }) => {
         <form className="form" onSubmit={handleSubmit}>
           {showAlert && <Alert />}
           <div className="form">
-            <h3 className="form-title">
-              Select Location{" "}
-              {numOfLocations > 1 && !noCode ? numOfLocations : ""}
-            </h3>
+          <h3 className="form-title">
+          {user.role === "Teacher" || selectSchool || fromProfile
+            ? "Select School"
+            : user.role=="Site Admin"?"Select School Location": "Select Admin Location"}
+          {numOfLocations > 1 && !noCode ? ` ${numOfLocations}` : ""}
+        </h3>
+
             <h4 className="form-title">State</h4>
             <select
               name="aliasChoice"
@@ -397,7 +425,7 @@ const SelectLoc = ({ noCode }) => {
                 </label>
               </>
             )}
-            {!noCode && showAdditionalLoc && (
+            {!noCode && showAdditionalLoc && user.role!=="Site Admin" && (
               <>
                 <hr />
                 <label className="checkbox-container">

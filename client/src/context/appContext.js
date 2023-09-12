@@ -81,7 +81,7 @@ const initialState = {
   allResponseGroups:[],
   monthlyApplications: [],
   stateOptions: localStorage.getItem("stateOptions") ? (localStorage.getItem("stateOptions") !== "undefined" ? JSON.parse(localStorage.getItem("stateOptions")): stateList) : stateList,
-  searchState: localStorage.getItem("searchState") ? (localStorage.getItem("searchState") !== "undefined" ? JSON.parse(localStorage.getItem("searchState")): 'al'): 'all',
+  searchState: localStorage.getItem("searchState") ? (localStorage.getItem("searchState") !== "undefined" ? JSON.parse(localStorage.getItem("searchState")): 'all'): 'all',
   countyOptions: localStorage.getItem("countyOptions") ? (localStorage.getItem("countyOptions") !== "undefined" ? JSON.parse(localStorage.getItem("countyOptions")): ['all']): ['all'],
   searchCounty: localStorage.getItem("searchCounty") ? (localStorage.getItem("searchCounty") !== "undefined" ? JSON.parse(localStorage.getItem("searchCounty")): 'all'): 'all',
   districtOptions: localStorage.getItem("districtOptions") ? (localStorage.getItem("districtOptions") !== "undefined" ? JSON.parse(localStorage.getItem("districtOptions")): ['all']): ['all'],
@@ -281,7 +281,7 @@ const AppProvider = ({ children }) => {
     }, 3000);
   };
 
-  const setupUser = async ({ currentUser, captcha, endPoint, alertText }) => {
+  const setupUser = async ({ currentUser, captcha, adminTeacher, endPoint, alertText }) => {
     localStorage.clear()
     dispatch({ type: SETUP_USER_BEGIN });
     handleChange({ name: "twofaSent", value: false });
@@ -289,7 +289,8 @@ const AppProvider = ({ children }) => {
       const { data } = await axios.post(
         `/api/v1/auth/${endPoint}`,
         {currentUser,
-        captcha}
+        captcha,
+        adminTeacher}
       );
 
         

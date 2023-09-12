@@ -19,7 +19,9 @@ const HealthyFeatures = () => {
   return (
     <div>
       <div>
-        <p>Students Who Completed Healthy Futures: Tobacco/Nicotine/Vaping</p>
+        <p style={{ marginBottom: "0.25rem", marginTop: 0 }}>
+          Students Who Completed Healthy Futures: Tobacco/Nicotine/Vaping
+        </p>
         {healthyFuturesListTobacco.length > 0 ? (
           healthyFuturesListTobacco.map((response) => (
             <p className="location" key={response._id}>
@@ -33,7 +35,9 @@ const HealthyFeatures = () => {
         )}
       </div>
       <div>
-        <p>Students Who Completed Healthy Futures: Cannabis</p>
+        <p style={{ marginBottom: "0.25rem" }}>
+          Students Who Completed Healthy Futures: Cannabis
+        </p>
         {healthyFuturesListCannabis.length > 0 ? (
           healthyFuturesListCannabis.map((response) => (
             <div className="location" key={response._id}>

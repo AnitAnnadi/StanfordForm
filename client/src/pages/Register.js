@@ -17,7 +17,8 @@ const initialState = {
   city: "",
   school: "",
   isMember: false,
-  confirm:""
+  confirm:"",
+  adminTeacher:false
 };
 
 const Register = () => {
@@ -32,7 +33,7 @@ const Register = () => {
   let adminbool=false
   const [values, setValues] = useState(initialState);
   const [adminRole, setAdminRole] = useState("default");
-  const { twofaSent,user, isLoading, showAlert, displayAlert, setupUser, hasLocation,errorAlert } =
+  const { twofaSent,user, isLoading, showAlert, displayAlert, setupUser, hasLocation,errorAlert,userLocations } =
     useAppContext();
   const captchaRef = useRef(null)
 
@@ -72,12 +73,16 @@ const Register = () => {
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
+  const handleCheckChange = (e) => {
+    setValues({ ...values, adminTeacher: !values.adminTeacher });
+  };
+  
   const resetPassword= ()=>{
     navigate('/forgotpassword')
   }
   const onSubmit = async(e) => {
     e.preventDefault();
-    const { name, email, password, isMember, state, city, school,confirm } = values;
+    const { name, email, password, isMember, state, city, school,confirm, adminTeacher } = values;
     if (!email || !password || (!isMember && !name)) {
       displayAlert();
       return;
@@ -89,8 +94,7 @@ const Register = () => {
     if (type == "teacher") {
       role = "Teacher";
     }
-    console.log(type)
-    console.log(adminRole)
+
     if (!isMember && type == "admin") {
       if (adminRole=="default"){
         
@@ -105,14 +109,13 @@ const Register = () => {
     }
     if (role==="Stanford Staff"){
       const lowercaseEmail = email.toLowerCase();
-      // if (!lowercaseEmail.endsWith('@stanford.edu')){
-      //   errorAlert("The email does not match with the role.");
-      //   return
-      // }
+      if (!lowercaseEmail.endsWith('@stanford.edu')){
+        errorAlert("The email does not match with the role.");
+        return
+      }
   
     }
     const currentUser = { name, email, password, role, state, city, school };
-    console.log(currentUser)
     if (isMember) {
       setupUser({
         currentUser,
@@ -125,6 +128,7 @@ const Register = () => {
       await setupUser({
         currentUser,
         captcha,
+        adminTeacher,
         endPoint: "register",
         alertText: type === "admin" ? "Redirecting...":"User Created! Redirecting...",
       });
@@ -136,14 +140,13 @@ const Register = () => {
     if (!type || (type !== "teacher" && type !== "admin")) {
       navigate("/landing");
     }
-    console.log(user)
-    if ((user && hasLocation) || (user?.role === 'Stanford Staff')) {
+    if ((user && hasLocation) || (user?.role === 'Stanford Staff' && !user.adminTeacher)) {
       adminroles.map((role=>{
         if (role==user.role){
           adminbool=true
         }
       }))
-      if (adminbool){
+      if (adminbool & !user.adminTeacher){
         setTimeout(() => {
           navigate("/metrics");
         }, 3000);
@@ -155,9 +158,29 @@ const Register = () => {
       }
     
     } else if (user && !hasLocation) {
-      setTimeout(() => {
-        navigate("/selectLoc");
-      }, 3000);
+      if (user.adminTeacher){
+        if (userLocations.length>=1 || user.role=="Stanford Staff"){
+          setTimeout(() => {
+            navigate("/selectLoc", {
+              state: { adminTeacher: false, selectSchool:true, fromProfile:false }
+            });
+          }, 2000);
+        }
+        else{
+          setTimeout(() => {
+            navigate("/selectLoc", {
+              state: { adminTeacher: true, selectSchool:false, fromProfile:false }
+            });
+          }, 2000);
+        }
+      }
+      else{
+        setTimeout(() => {
+          navigate("/selectLoc");
+        }, 2000);
+      }
+      
+      
     }
   }, [user, navigate]);
 
@@ -209,6 +232,8 @@ const Register = () => {
             value={values.confirm}
             handleChange={handleChange}
           />
+
+
         )}
         {values.isMember?
         <button type="button" onClick={resetPassword} className="member-btn">
@@ -217,6 +242,19 @@ const Register = () => {
         null}
 
         {!values.isMember && <AdminRole />}
+        {!values.isMember && type=='admin' && 
+        <label className="checkbox-container">
+              I am also a teacher
+              <input
+                type="checkbox"
+                className="checkbox"
+                name="adminTeacher"
+                value={values.adminTeacher}
+                checked={values.adminTeacher}
+                onChange={handleCheckChange}
+              />
+              <span className="checkbox-checkmark"></span>
+            </label>}
         {!values.isMember && (
           <ReCAPTCHA
               ref={captchaRef}
