@@ -17,7 +17,6 @@ const VerifyTwoFactor = () => {
       }, []); // Empty dependency array
       
     useEffect(() => {
-      console.log(user)
     if (alertText==="User Successfully Created"){
         if (user.role==="Stanford Staff" && !user.adminTeacher){
         setTimeout(() => {

@@ -74,7 +74,6 @@ const Register = () => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
   const handleCheckChange = (e) => {
-    console.log(values)
     setValues({ ...values, adminTeacher: !values.adminTeacher });
   };
   
@@ -95,8 +94,7 @@ const Register = () => {
     if (type == "teacher") {
       role = "Teacher";
     }
-    console.log(type)
-    console.log(adminRole)
+
     if (!isMember && type == "admin") {
       if (adminRole=="default"){
         
@@ -118,7 +116,6 @@ const Register = () => {
   
     }
     const currentUser = { name, email, password, role, state, city, school };
-    console.log(currentUser)
     if (isMember) {
       setupUser({
         currentUser,
@@ -162,7 +159,6 @@ const Register = () => {
     
     } else if (user && !hasLocation) {
       if (user.adminTeacher){
-        console.log(userLocations)
         if (userLocations.length>=1 || user.role=="Stanford Staff"){
           setTimeout(() => {
             navigate("/selectLoc", {

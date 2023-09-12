@@ -66,7 +66,7 @@ const sendTwoFa = async({email,createPending})=>{
     from: process.env.EMAIL,
     to:email,
     subject:'Confirm Admin Registration - Stanford Reach Labs Data Dashboard',
-    text:`To complte your Stanford Reach Labs Data Dashboard account creation click this link  -  https://datadashboard.stanfordreachlab.com/2fa/${createPending._id}`,
+    text:`To complete your Stanford Reach Labs Data Dashboard account creation click this link  -  https://datadashboard.stanfordreachlab.com/2fa/${createPending._id}`,
   };
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {

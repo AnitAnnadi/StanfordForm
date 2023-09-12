@@ -97,7 +97,6 @@ const SelectLoc = ({ noCode }) => {
   const [districts, setDistricts] = useState([]);
   const [grade, setGrade] = useState("default");
   const location = useLocation();
-  console.log(location.state)
   const locationState = location?.state || {}; // Default to an empty object if location.state is null or undefined
   const { adminTeacher } = locationState;
   const { selectSchool } = locationState;
@@ -143,9 +142,7 @@ const SelectLoc = ({ noCode }) => {
   useEffect(() => {
   if (isFormSubmitted && !exists && !additionalLoc) {
     adminroles.map((role) => {
-      console.log(role)
       if (role === user.role) {
-        console.log('hi')
         adminbool = true;
       }
     });
@@ -309,7 +306,6 @@ const SelectLoc = ({ noCode }) => {
           {showAlert && <Alert />}
           <div className="form">
           <h3 className="form-title">
-            {console.log(user.role)}
           {user.role === "Teacher" || selectSchool || fromProfile
             ? "Select School"
             : user.role=="Site Admin"?"Select School Location": "Select Admin Location"}

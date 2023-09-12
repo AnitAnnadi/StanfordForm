@@ -68,7 +68,6 @@ const JoinForm = () => {
         </div>
       );
     } else if (actualSchools.length === 1) {
-      console.log(actualSchools);
       setSchool(actualSchools[0]["school"]); // Set the selected school name
     }
   

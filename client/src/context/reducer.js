@@ -79,7 +79,6 @@ const reducer = (state, action) => {
   }
 
   if (action.type === SETUP_USER_SUCCESS) {
-    console.log(action.payload.userLocations)
     return {
       ...state,
       isLoading: false,
@@ -207,7 +206,6 @@ const reducer = (state, action) => {
     };
   }
   if (action.type === HANDLE_CHANGE) {
-    console.log(action.payload.name,action.payload.value )
     return {
       ...state,
       page: 1,
@@ -358,7 +356,6 @@ const reducer = (state, action) => {
     };
   }
   if (action.type === ADD_LOCATION_SUCCESS) {
-    console.log(action.payload.exists)
     if (action.payload.exists){
       return {
         ...state,
