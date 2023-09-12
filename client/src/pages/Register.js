@@ -111,10 +111,10 @@ const Register = () => {
     }
     if (role==="Stanford Staff"){
       const lowercaseEmail = email.toLowerCase();
-      if (!lowercaseEmail.endsWith('@stanford.edu')){
-        errorAlert("The email does not match with the role.");
-        return
-      }
+      // if (!lowercaseEmail.endsWith('@stanford.edu')){
+      //   errorAlert("The email does not match with the role.");
+      //   return
+      // }
   
     }
     const currentUser = { name, email, password, role, state, city, school };
@@ -143,7 +143,7 @@ const Register = () => {
     if (!type || (type !== "teacher" && type !== "admin")) {
       navigate("/landing");
     }
-    if ((user && hasLocation) || (user?.role === 'Stanford Staff')) {
+    if ((user && hasLocation) || (user?.role === 'Stanford Staff' && !user.adminTeacher)) {
       adminroles.map((role=>{
         if (role==user.role){
           adminbool=true

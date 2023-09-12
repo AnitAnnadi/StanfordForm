@@ -19,7 +19,7 @@ const VerifyTwoFactor = () => {
     useEffect(() => {
       console.log(user)
     if (alertText==="User Successfully Created"){
-        if (user.role==="Stanford Staff"){
+        if (user.role==="Stanford Staff" && !user.adminTeacher){
         setTimeout(() => {
             navigate("/metrics");
             }, 2000)
@@ -27,7 +27,7 @@ const VerifyTwoFactor = () => {
         else {
           setTimeout(() => {
             navigate("/selectLoc", {
-              state: { adminTeacher: user.adminTeacher, selectSchool:false, fromProfile:false }
+              state: { adminTeacher: false, selectSchool:true, fromProfile:false }
             });
           }, 2000);
         }

@@ -115,7 +115,7 @@ const SelectLoc = ({ noCode }) => {
   const [additionalLoc, setAdditionalLoc] = useState(false);
 
   const [numOfLocations, setNumOfLocations] = useState(
-    user.adminTeacher ? (userLocations ? userLocations.length : 1) : (userLocations ? userLocations.length + 1 : 1)
+    (user.adminTeacher && user.role!="Stanford Staff") ? (userLocations ? userLocations.length : 1) : (userLocations ? userLocations.length + 1 : 1)
   );
   
 
@@ -153,7 +153,6 @@ const SelectLoc = ({ noCode }) => {
     setAdditionalLoc(false);
       if (adminbool) {
         if (adminTeacher && user.role!=='Site Admin'){
-          console.log('hi')
           setTimeout(() => {
             navigate("/selectLoc", {
               state: { adminTeacher: false, selectSchool:true, fromProfile:false }
@@ -267,12 +266,7 @@ const SelectLoc = ({ noCode }) => {
         return;
       }
 
-      if (user.role === "Stanford Staff") {
-        setTimeout(() => {
-          navigate("/metrics");
-        }, 1000);
-        return;
-      }
+      
 
       
       
@@ -317,7 +311,7 @@ const SelectLoc = ({ noCode }) => {
           <h3 className="form-title">
           {user.role === "Teacher" || selectSchool || fromProfile
             ? "Select School"
-            : "Select Admin Location"}
+            : user.role=="Site Admin"?"Select School Location": "Select Admin Location"}
           {numOfLocations > 1 && !noCode ? ` ${numOfLocations}` : ""}
         </h3>
 
@@ -434,7 +428,7 @@ const SelectLoc = ({ noCode }) => {
                 </label>
               </>
             )}
-            {!noCode && showAdditionalLoc && (
+            {!noCode && showAdditionalLoc && user.role!=="Site Admin" && (
               <>
                 <hr />
                 <label className="checkbox-container">

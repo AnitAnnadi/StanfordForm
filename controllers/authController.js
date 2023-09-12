@@ -175,7 +175,15 @@ const login = async (req, res) => {
 
   const userLocations = await School.find({ teacher: user._id });
 
-  let hasLocation = userLocations.length > 0;
+  let hasLocation;
+  if (user.adminTeacher && user.role!="Stanford Staff"){
+    hasLocation = userLocations.length > 1;
+  }
+  else{
+    hasLocation = userLocations.length > 0;
+  }
+  
+  
 
 
   res.status(StatusCodes.OK).json({ user,hasLocation, userLocations });
