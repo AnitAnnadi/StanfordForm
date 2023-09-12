@@ -79,6 +79,7 @@ const reducer = (state, action) => {
   }
 
   if (action.type === SETUP_USER_SUCCESS) {
+    console.log(action.payload.userLocations)
     return {
       ...state,
       isLoading: false,

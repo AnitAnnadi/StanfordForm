@@ -309,6 +309,7 @@ const SelectLoc = ({ noCode }) => {
           {showAlert && <Alert />}
           <div className="form">
           <h3 className="form-title">
+            {console.log(user.role)}
           {user.role === "Teacher" || selectSchool || fromProfile
             ? "Select School"
             : user.role=="Site Admin"?"Select School Location": "Select Admin Location"}

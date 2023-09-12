@@ -24,10 +24,17 @@ const VerifyTwoFactor = () => {
             navigate("/metrics");
             }, 2000)
         }
-        else {
+        else if(user.role==="Stanford Staff" && user.adminTeacher) {
           setTimeout(() => {
             navigate("/selectLoc", {
               state: { adminTeacher: false, selectSchool:true, fromProfile:false }
+            });
+          }, 2000);
+        }
+        else{
+          setTimeout(() => {
+            navigate("/selectLoc", {
+              state: { adminTeacher: user.adminTeacher, selectSchool:false, fromProfile:false }
             });
           }, 2000);
         }

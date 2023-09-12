@@ -33,7 +33,7 @@ const Register = () => {
   let adminbool=false
   const [values, setValues] = useState(initialState);
   const [adminRole, setAdminRole] = useState("default");
-  const { twofaSent,user, isLoading, showAlert, displayAlert, setupUser, hasLocation,errorAlert } =
+  const { twofaSent,user, isLoading, showAlert, displayAlert, setupUser, hasLocation,errorAlert,userLocations } =
     useAppContext();
   const captchaRef = useRef(null)
 
@@ -111,10 +111,10 @@ const Register = () => {
     }
     if (role==="Stanford Staff"){
       const lowercaseEmail = email.toLowerCase();
-      // if (!lowercaseEmail.endsWith('@stanford.edu')){
-      //   errorAlert("The email does not match with the role.");
-      //   return
-      // }
+      if (!lowercaseEmail.endsWith('@stanford.edu')){
+        errorAlert("The email does not match with the role.");
+        return
+      }
   
     }
     const currentUser = { name, email, password, role, state, city, school };
@@ -161,9 +161,30 @@ const Register = () => {
       }
     
     } else if (user && !hasLocation) {
-      setTimeout(() => {
-        navigate("/selectLoc");
-      }, 3000);
+      if (user.adminTeacher){
+        console.log(userLocations)
+        if (userLocations.length>=1 || user.role=="Stanford Staff"){
+          setTimeout(() => {
+            navigate("/selectLoc", {
+              state: { adminTeacher: false, selectSchool:true, fromProfile:false }
+            });
+          }, 2000);
+        }
+        else{
+          setTimeout(() => {
+            navigate("/selectLoc", {
+              state: { adminTeacher: true, selectSchool:false, fromProfile:false }
+            });
+          }, 2000);
+        }
+      }
+      else{
+        setTimeout(() => {
+          navigate("/selectLoc");
+        }, 2000);
+      }
+      
+      
     }
   }, [user, navigate]);
 
