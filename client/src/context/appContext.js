@@ -7,7 +7,7 @@ import {
   narrowDistricts,
   narrowSchools
 } from "../utils/schoolDataFetch";
-
+import { distance } from "fastest-levenshtein";
 import { tobacco,postTobacco, cannabis, postCannabis, safety  } from "../utils/questions";
 
 
@@ -43,7 +43,7 @@ import {
 
   ENTER_CODE,
   GET_TOTAL,
-  ADD_LOCATION_SUCCESS, HANDLE_MULTIPLE_CHANGES, SUCCESS_ALERT
+  ADD_LOCATION_SUCCESS, HANDLE_MULTIPLE_CHANGES, SUCCESS_ALERT, SIMILAR_LOCATIONS_FOUND
 } from './actions';
 const LSUser = JSON.parse(localStorage.getItem("user"));
 const LSUserLocations = JSON.parse(localStorage.getItem("userLocations"));
@@ -109,8 +109,18 @@ const initialState = {
   nextPg:false,
   selectLocSchools:[],
   searchContainerSchools:[],
-  resetPassword:false
+  resetPassword:false,
+  similarLocationNames:[],
+  similarLocationData:{},
+  similaritiesChecked:false,
 };
+
+const stringDifScore = (str1, str2) => {
+  const str1Arr = str1.toUpperCase().split(" ").sort().join("");
+  const str2Arr = str2.toUpperCase().split(" ").sort().join("");
+
+  return distance(str1Arr, str2Arr);
+}
 
 const configureFormStates = async (userLocations, user, formStates) => {
   let {
@@ -493,13 +503,53 @@ const AppProvider = ({ children }) => {
     clearAlert();
   };
 
-  const addNewLocation = async (locationData) => {
+  const addNewLocation = async (locationData, bypassSimilar=false) => {
     try {
       const { multiplePeriods } = locationData;
 
       const existingLocation = await getSchoolObject(locationData);
 
       if (!existingLocation) {
+        if (!bypassSimilar) {
+          const {data: adjacentData} = await authFetch.get('/locations', {
+            params: {
+              state: locationData.state,
+              county: locationData.county,
+              city: locationData.city,
+              district: locationData.district,
+            }
+          });
+
+          const localAdjacentSchoolNames = await narrowSchools(locationData);
+          const customAdjacentSchoolNames = adjacentData.locations.map((location) => location.name);
+
+          const adjacentSchoolNames = [...new Set([...localAdjacentSchoolNames, ...customAdjacentSchoolNames])];
+
+          const similarSchoolNames = adjacentSchoolNames.filter((schoolName) => {
+            const scoreBoundary = schoolName.length * 0.8; // 80% of the length of the school name
+            console.log(schoolName, locationData.school, stringDifScore(schoolName, locationData.school))
+            return stringDifScore(schoolName, locationData.school) < scoreBoundary; // 8 is the threshold for similarity, change if needed
+          });
+
+          if (similarSchoolNames.length > 0) {
+            dispatch({
+              type: SIMILAR_LOCATIONS_FOUND,
+              payload: {
+                similarLocationNames: similarSchoolNames,
+                similarLocationData: {
+                  multiplePeriods,
+                  state: locationData.state,
+                  county: locationData.county,
+                  city: locationData.city,
+                  district: locationData.district,
+                  school: locationData.school,
+                }
+              }
+            });
+            return;
+          }
+        }
+
         const {data} = await authFetch.post('/locations', locationData);
         const {location} = data;
 
@@ -532,6 +582,8 @@ const AppProvider = ({ children }) => {
           school: locationData.school
         });
       }
+
+
 
     } catch (error) {
       console.log(error)

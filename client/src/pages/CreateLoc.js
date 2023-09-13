@@ -10,9 +10,10 @@ import {
   narrowCities,
   narrowCounties,
   narrowSchools,
-  getDistrictCounty,
+  getDistrictCounty, getSchoolObject,
 } from "../utils/schoolDataFetch";
 import CreateLocPopup from "../components/CreateLocPopup";
+import SimilarLocPopup from "../components/SimilarLocPopup";
 
 const CreateLoc = () => {
   const {
@@ -22,6 +23,9 @@ const CreateLoc = () => {
     displayAlert,
     addNewLocation,
     isLoading,
+    similaritiesChecked,
+    similarLocationData,
+    similarLocationNames,
   } = useAppContext();
   const navigate = useNavigate();
 
@@ -84,6 +88,43 @@ const CreateLoc = () => {
     "Wisconsin",
     "Wyoming",
   ];
+
+  const [displaySimilarPopup, setDisplaySimilarPopup] = useState(false);
+
+  useEffect(() => {
+    if (similaritiesChecked) {
+      if (similarLocationNames.length > 0) {
+        setDisplaySimilarPopup(true);
+      } else {
+        adminroles.map((role) => {
+          if (role === user.role) {
+            adminbool = true;
+          }
+        });
+
+        if (additionalLoc) {
+          setTimeout(() => {
+              navigate("/selectLoc");
+            }, 3000);
+        } else {
+          if (adminbool) {
+            setTimeout(() => {
+              navigate("/metrics");
+            }, 3000);
+          } else {
+            setTimeout(() => {
+              navigate("/");
+            }, 3000);
+          }
+        }
+      }
+    }
+
+    return () => {
+      setDisplaySimilarPopup(false);
+    }
+
+  } , [similaritiesChecked]);
 
   const [cities, setCities] = useState([]);
   const [counties, setCounties] = useState([]);
@@ -156,7 +197,22 @@ const CreateLoc = () => {
       city: city !== "default" ? city : null,
       district: district !== "default" ? district : null,
       school: school !== "default" ? school : null,
-    });
+    }, false);
+  };
+
+  const submitSimilarLocation = (schoolName=null) => {
+    if (!schoolName) {
+      addNewLocation(similarLocationData, true);
+    } else {
+      addNewLocation({
+        multiplePeriods: similarLocationData.multiplePeriods,
+        state: similarLocationData.state,
+        county: similarLocationData.county,
+        city: similarLocationData.city,
+        district: similarLocationData.district,
+        school: schoolName,
+      }, true);
+    }
 
     adminroles.map((role) => {
       if (role === user.role) {
@@ -179,9 +235,32 @@ const CreateLoc = () => {
         }, 3000);
       }
     }
-  };
+  }
+
+  const changeSimilarPopup = (status) => {
+    setDisplaySimilarPopup(status);
+
+    if (status === false) {
+      if (additionalLoc) {
+        setTimeout(() => {
+            navigate("/selectLoc");
+          }, 3000);
+      } else {
+        if (adminbool) {
+          setTimeout(() => {
+            navigate("/metrics");
+          }, 3000);
+        } else {
+          setTimeout(() => {
+            navigate("/");
+          }, 3000);
+        }
+      }
+    }
+  }
 
   return <>
+    {displaySimilarPopup && <SimilarLocPopup setDisplay={changeSimilarPopup} submitSimilar={submitSimilarLocation} />}
     <div
       className="full-page"
       style={{ display: "grid", alignItems: "center", padding: "0 1rem" }}

@@ -31,7 +31,9 @@ import {
   SUCCESS_ALERT,
   FORM_SUCCESS,
   FORM_FAIL,
-  FORM_BEGIN
+  FORM_BEGIN,
+  SIMILAR_LOCATIONS_FOUND,
+  NEW_LOCATION_ADDED
 } from './actions';
 
 import { initialState } from './appContext';
@@ -383,6 +385,22 @@ const reducer = (state, action) => {
       };
     }
     
+  }
+  if (action.type === SIMILAR_LOCATIONS_FOUND) {
+    return {
+      ...state,
+      similarLocationNames: action.payload.similarLocationNames,
+      similarLocationData: action.payload.similarLocationData,
+      similaritiesChecked: true,
+    };
+  }
+  if (action.type === NEW_LOCATION_ADDED) {
+    return {
+      ...state,
+      similarLocationNames: [],
+      similarLocationData: {},
+      similaritiesChecked: true,
+    };
   }
   throw new Error(`no such action : ${action.type}`);
 };
