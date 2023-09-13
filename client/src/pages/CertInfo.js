@@ -44,6 +44,7 @@ const CertInfo = () => {
       <form className="form" onSubmit={onSubmit}>
         <h3>Enter Certificate Information</h3>
         {showAlert && <Alert />}
+        <p>Thank you for completing Stanford REACH Lab’s course. In order to receive credit for completing the course AND to receive a certificate of completion, please enter your full first and last name.</p>
 
  
         <FormRow
