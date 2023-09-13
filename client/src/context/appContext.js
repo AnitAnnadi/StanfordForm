@@ -153,8 +153,8 @@ const configureFormStates = (userLocations, user, formStates) => {
       newSchoolOptions = ["all", ...narrowSchools({state: userLocations[0].state, county: userLocations[0].county, district: userLocations[0].district})];
       break;
     case "County Admin":
-      newSearchState = userLocations[0].state;
-      newSearchCounty = userLocations[0].county;
+      newSearchState = userLocations[0]?.state;
+      newSearchCounty = userLocations[0]?.county;
       newSearchDistrict = "all";
       newSearchCity = "all";
       newSearchSchool = "all";
@@ -352,9 +352,10 @@ const AppProvider = ({ children }) => {
         },
       });
     } catch (error) {
+      console.log(error)
       dispatch({
         type: SETUP_USER_ERROR,
-        payload: { msg: error.response.data },
+        payload: { msg: error?.response?.data },
       });
     }
     clearAlert();
