@@ -26,6 +26,7 @@ const Home = () => {
   useEffect(() => {
     if (user && user.adminTeacher && userLocations.length<2){
         if (userLocations.length==1 && (user.role=='Stanford Staff' || user.role=="Site Admin")){
+          console.log('hi')
           return
         }
         else if (userLocations.length>=1){

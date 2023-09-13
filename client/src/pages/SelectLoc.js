@@ -425,7 +425,7 @@ const SelectLoc = ({ noCode }) => {
                 </label>
               </>
             )}
-            {!noCode && showAdditionalLoc && user.role!=="Site Admin" && (
+            {!noCode && showAdditionalLoc && user.role!=="Site Admin" && user.role!="Stanford Staff" && (
               <>
                 <hr />
                 <label className="checkbox-container">

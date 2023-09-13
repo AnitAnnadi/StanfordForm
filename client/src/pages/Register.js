@@ -159,12 +159,19 @@ const Register = () => {
     
     } else if (user && !hasLocation) {
       if (user.adminTeacher){
-        if (userLocations.length>=1 || user.role=="Stanford Staff"){
+        if ((userLocations.length>=1 && user.role!=="Stanford Staff" && user.role !== "Site Admin" )|| (user.role=="Stanford Staff" && userLocations.length<1) || (user.role == "Site Admin" && userLocations.length<1)){
+          console.log(userLocations.length)
           setTimeout(() => {
             navigate("/selectLoc", {
               state: { adminTeacher: false, selectSchool:true, fromProfile:false }
             });
           }, 2000);
+        }
+        else if( (user.role=="Stanford Staff" && userLocations.length>=1) || (user.role == "Site Admin" && userLocations.length>=1)){
+          setTimeout(() => {
+            navigate("/");
+          }, 2000);
+          return
         }
         else{
           setTimeout(() => {
