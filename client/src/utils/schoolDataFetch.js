@@ -4,7 +4,7 @@ import {common} from "@mui/material/colors";
 const narrowCounties = ({state}) => {
     const counties = schoolData
         .filter((school) => school.state.toUpperCase() === state.toUpperCase())
-        .map((school) => school.county)
+        .map((school) => school.county.toUpperCase())
         .sort();
 
     return [...new Set(counties)]
@@ -28,10 +28,10 @@ const narrowDistricts = ({state, county, city}) => {
             } else if (state) {
                 return (school.state.toUpperCase() === state.toUpperCase())
             } else {
-                return school
+                return false
             }
         })
-        .map((school) => school.district)
+        .map((school) => school.district.toUpperCase())
         .sort();
 
     return [...new Set(districts)]
@@ -48,7 +48,7 @@ const narrowCities = ({state, county}) => {
                 return school.state.toUpperCase() === state.toUpperCase() && school.county.toUpperCase() === county.toUpperCase()
             }
         })
-        .map((school) => school.city)
+        .map((school) => school.city.toUpperCase())
         .sort();
 
     return [...new Set(cities)]
@@ -71,10 +71,10 @@ const narrowSchools = ({state, county, city, district}) => {
           } else if (district) {
               return (school.district?.toUpperCase() === district.toUpperCase())
           } else {
-              return school
+              return false
           }
         })
-        .map((school) => school.name)
+        .map((school) => school.name.toUpperCase())
         .sort();
 
     return [...new Set(schools)]
@@ -93,11 +93,11 @@ const getDistrictCounty = (state, city, schoolName) => {
     const {district, county} = schoolData
         .find((school) => school.state.toUpperCase() === state.toUpperCase() && school.city.toUpperCase() === city.toUpperCase() && school.name.toUpperCase() === schoolName.toUpperCase() && school.district)
 
-    return { foundDistrict: district, foundCounty: county}
+    return { foundDistrict: district.toUpperCase(), foundCounty: county.toUpperCase()}
 }
 
 const getSchoolDataValue = (value) => {
-    return [...new Set(schoolData.map((school) => school[value]).sort())]
+    return [...new Set(schoolData.map((school) => school[value].toUpperCase()).sort())]
 }
 
 

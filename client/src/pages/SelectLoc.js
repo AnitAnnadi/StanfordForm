@@ -115,6 +115,13 @@ const SelectLoc = ({ noCode }) => {
     userLocations ? userLocations.length + 1 : 1
   );
 
+  useEffect(() => {
+    if (userLocations) {
+      setNumOfLocations(userLocations.length + 1);
+    }
+  }, [userLocations]);
+
+
   const showCounty =
     user?.role === "District Admin" || user?.role === "County Admin";
   const showCity =
@@ -150,11 +157,14 @@ const SelectLoc = ({ noCode }) => {
         // just do this whole thing in app context later
 
         try {
+          console.log("getting district and county")
+          console.log(state, city, school)
           const {foundDistrict, foundCounty} = getDistrictCounty(
             state,
             city,
             school
           );
+          console.log(foundDistrict, foundCounty)
 
           setDistrict(foundDistrict);
           setCounty(foundCounty);
@@ -276,7 +286,6 @@ const SelectLoc = ({ noCode }) => {
         setSchool("default");
         setMultiplePeriods(false);
         setAdditionalLoc(false);
-        setNumOfLocations(numOfLocations + 1);
       } else {
         if (adminbool) {
           setTimeout(() => {
