@@ -125,7 +125,7 @@ const SelectLoc = ({ noCode }) => {
   const showDistrict = !fromProfile && !selectSchool && user?.role === "District Admin";
   const showSchool =
     user?.role === "Site Admin" || user?.role === "Teacher" || noCode || selectSchool || fromProfile;
-  const showMultiplePeriods = user?.role === "Teacher" ||selectSchool || fromProfile;
+  const showMultiplePeriods = user?.role === "Teacher" ||selectSchool || fromProfile || user?.role =="Site Admin";
   const showAdditionalLoc = user?.role === "Teacher" || selectSchool || fromProfile;
   useEffect(() => {
     setState("default");
