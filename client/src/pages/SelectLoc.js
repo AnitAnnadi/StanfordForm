@@ -125,7 +125,7 @@ const SelectLoc = ({ noCode }) => {
   const showDistrict = !fromProfile && !selectSchool && user?.role === "District Admin";
   const showSchool =
     user?.role === "Site Admin" || user?.role === "Teacher" || noCode || selectSchool || fromProfile;
-  const showMultiplePeriods = user?.role === "Teacher" ||selectSchool || fromProfile || user.role =="Site Admin";
+  const showMultiplePeriods = user?.role === "Teacher" ||selectSchool || fromProfile || user?.role =="Site Admin";
   const showAdditionalLoc = user?.role === "Teacher" || selectSchool || fromProfile;
   useEffect(() => {
     setState("default");
@@ -425,7 +425,7 @@ const SelectLoc = ({ noCode }) => {
                 </label>
               </>
             )}
-            {!noCode && showAdditionalLoc && user.role!=="Site Admin" && user.role!="Stanford Staff" && (
+            {!noCode && showAdditionalLoc && user.role!=="Site Admin" && (
               <>
                 <hr />
                 <label className="checkbox-container">
