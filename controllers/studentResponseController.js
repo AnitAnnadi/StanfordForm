@@ -8,6 +8,7 @@ import NoCodeSchema from "../models/NoCode.js";
 
 import Certificates from "../models/Certificates.js";
 const getStudentResponses = async(req, res) => {
+  try{
   const user = await User.findOne({ _id: req.user.userId });
   
   const token = user.createJWT();
@@ -48,7 +49,11 @@ const getStudentResponses = async(req, res) => {
   }
 
   const studentResponses = await StudentResponse.find(queryObject)
-  res.status(StatusCodes.OK).json({ teacherName: teacher.name, studentResponses });
+  res.status(StatusCodes.OK).json({ teacherName: teacher?.name, studentResponses });
+}
+catch(error){
+  console.log(error)
+}
 }
 
 const getNoCodeStudentResponses = async(req, res) => {

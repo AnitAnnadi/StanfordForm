@@ -200,7 +200,7 @@ const reducer = (state, action) => {
   if (action.type === FORM_SUCCESS) {
     return {
       ...state,
-      isLoading: false,
+      isLoading: true,
       showAlert: true,
       alertType: 'success',
       alertText: action.payload.msg,
@@ -208,7 +208,6 @@ const reducer = (state, action) => {
     };
   }
   if (action.type === HANDLE_CHANGE) {
-    console.log(action.payload.name,action.payload.value )
     return {
       ...state,
       page: 1,
@@ -359,7 +358,6 @@ const reducer = (state, action) => {
     };
   }
   if (action.type === ADD_LOCATION_SUCCESS) {
-    console.log(action.payload.exists)
     if (action.payload.exists){
       return {
         ...state,

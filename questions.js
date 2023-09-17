@@ -46,6 +46,7 @@ export const  tobacco = [
     {
       question:
         "Imagine you vape nicotine daily:  How likely are you to become addicted?",
+        
       answers: [
         "Not at all likely to become addicted",
         "Slightly likely to become addicted",
@@ -312,13 +313,7 @@ export const  tobacco = [
   
     {
       question:"How hard would it be for you to refuse, or say “no” to, a friend who offered you drugs?",
-      answers:[
-        "very easy",
-        "easy",
-        "neither hard or easy",
-        "Hard",
-        "very hard"
-      ]
+      answers: ["Very easy", "Easy", "Neither hard or easy", "Hard", "Very hard"],
     },
   
     {

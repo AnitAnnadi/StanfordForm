@@ -3,9 +3,9 @@ import { FormRow, Alert } from "../components";
 import { useAppContext } from "../context/appContext";
 import Wrapper from "../assets/wrappers/DashboardFormPage";
 import Dropdown from "react-dropdown";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Logo2 from "../assets/images/logo.png";
-import {Link, useNavigate} from "react-router-dom";
+import {Link, useNavigate,useLocation} from "react-router-dom";
 import { BsArrowRight } from "react-icons/bs";
 import {
   narrowDistricts,
@@ -30,7 +30,7 @@ const SelectLoc = ({ noCode }) => {
     setToNarrowSchools,
   } = useAppContext();
   const navigate = useNavigate();
-
+  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [state, setState] = useState("default");
   const [city, setCity] = useState("default");
   const [school, setSchool] = useState("default");
@@ -98,22 +98,27 @@ const SelectLoc = ({ noCode }) => {
   const [counties, setCounties] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [grade, setGrade] = useState("default");
-
+  const location = useLocation();
+  const locationState = location?.state || {}; // Default to an empty object if location.state is null or undefined
+  const { adminTeacher } = locationState;
+  const { selectSchool } = locationState;
+  const { fromProfile } = locationState;
   const [multiplePeriods, setMultiplePeriods] = useState(false);
   let adminroles = [
     "Site Admin",
     "District Admin",
     "County Admin",
     "State Admin",
-    "Standford Staff",
+    "Stanford Staff",
   ];
   let grades = ["K", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   let adminbool = false;
   const [additionalLoc, setAdditionalLoc] = useState(false);
 
   const [numOfLocations, setNumOfLocations] = useState(
-    userLocations ? userLocations.length + 1 : 1
+    (user.adminTeacher && user.role!="Stanford Staff") ? (userLocations ? userLocations.length : 1) : (userLocations ? userLocations.length + 1 : 1)
   );
+  
 
   useEffect(() => {
     if (userLocations) {
@@ -123,33 +128,63 @@ const SelectLoc = ({ noCode }) => {
 
 
   const showCounty =
-    user?.role === "District Admin" || user?.role === "County Admin";
+    !fromProfile && !selectSchool && (user?.role === "District Admin" || user?.role === "County Admin");
   const showCity =
-    user?.role === "Site Admin" || user?.role === "Teacher" || noCode || user?.role === "District Admin";
-  const showDistrict = user?.role === "District Admin";
+    user?.role === "Site Admin" || user?.role === "Teacher" || noCode || selectSchool || fromProfile;
+  const showDistrict = !fromProfile && !selectSchool && user?.role === "District Admin";
   const showSchool =
-    user?.role === "Site Admin" || user?.role === "Teacher" || noCode;
-  const showMultiplePeriods = user?.role === "Teacher";
-  const showAdditionalLoc = user?.role === "Teacher";
-  const showCreateSchool = user?.role === "Site Admin" || user?.role === "Teacher" || user?.role === "Standford Staff";
+    user?.role === "Site Admin" || user?.role === "Teacher" || noCode || selectSchool || fromProfile;
+  const showMultiplePeriods = user?.role === "Teacher" ||selectSchool || fromProfile || user?.role =="Site Admin";
+  const showAdditionalLoc = user?.role === "Teacher" || selectSchool || fromProfile;
+  useEffect(() => {
+    setState("default");
+    setCity("default");
+    setSchool("default");
+    setDistrict("default");
+    setCounty("default");
+    setForm("default");
+    setWhen("default");
+    // setMultiplePeriods(false);
+    // setAdditionalLoc(false);
+  }, []);
 
-  // Note: I dont understand what this is for but its causing unintended behavior
-  // I restored the navigate in the submission handler
-  // useEffect(() => {
-  //   console.log(exists)
-  //   if (!exists && !additionalLoc) {
-  //     if (adminbool) {
-  //       setTimeout(() => {
-  //         navigate("/metrics");
-  //       }, 2000);
-  //     } else {
-  //       setTimeout(() => {
-  //         navigate("/");
-  //       }, 2000);
-  //     }
-  //   }
-  // }, [exists]);
-
+  useEffect(() => {
+  if (isFormSubmitted && !exists && !additionalLoc) {
+    adminroles.map((role) => {
+      if (role === user.role) {
+        adminbool = true;
+      }
+    });
+    setIsFormSubmitted(false)
+    setAdditionalLoc(false);
+      if (adminbool) {
+        if (adminTeacher && user.role!=='Site Admin'){
+          setTimeout(() => {
+            navigate("/selectLoc", {
+              state: { adminTeacher: false, selectSchool:true, fromProfile:false }
+            });
+            }, 2000)
+            return
+        }
+        if (user.adminTeacher){
+          setTimeout(() => {
+            navigate("/");
+          }, 2000);
+        }
+        else{
+        setTimeout(() => {
+          navigate("/metrics");
+        }, 2000);
+      }
+      } else {
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
+      }
+    }
+    setIsFormSubmitted(false)
+    setAdditionalLoc(false);
+  }, [isFormSubmitted]);
   useEffect(() => {
     if (user?.role === "Site Admin" || user?.role === "Teacher" || noCode) {
       if (state !== "default" && city !== "default" && school !== "default") {
@@ -243,15 +278,8 @@ const SelectLoc = ({ noCode }) => {
       } else {
         displayAlert();
       }
-    } else {
-      if (user.role === "Standford Staff") {
-        setTimeout(() => {
-          navigate("/");
-        }, 1000);
-
-        return;
-      }
-
+    } 
+    else {
       if (
         state === "default" ||
         (showCounty && county === "default") ||
@@ -263,6 +291,10 @@ const SelectLoc = ({ noCode }) => {
         return;
       }
 
+      
+
+      
+      
       await addLocation({
         multiplePeriods: multiplePeriods,
         state: state,
@@ -272,12 +304,6 @@ const SelectLoc = ({ noCode }) => {
         school: school !== "default" ? school : null,
       });
 
-      adminroles.map((role) => {
-        if (role === user.role) {
-          adminbool = true;
-        }
-      });
-
       if (additionalLoc) {
         setState("default");
         setCounty("default");
@@ -285,19 +311,15 @@ const SelectLoc = ({ noCode }) => {
         setDistrict("default");
         setSchool("default");
         setMultiplePeriods(false);
-        setAdditionalLoc(false);
-      } else {
-        if (adminbool) {
-          setTimeout(() => {
-            navigate("/metrics");
-          }, 3000);
-        } else {
-          setTimeout(() => {
-            navigate("/");
-          }, 1000);
-        }
-      }
-    }
+        setNumOfLocations(numOfLocations + 1);
+      } 
+      
+      
+      
+      setIsFormSubmitted(true)
+      
+      
+     }
 
     handleChange({name: "selectLocSchools", value: []});
   };
@@ -314,10 +336,13 @@ const SelectLoc = ({ noCode }) => {
         <form className="form" onSubmit={handleSubmit}>
           {showAlert && <Alert />}
           <div className="form">
-            <h3 className="form-title">
-              Select Location{" "}
-              {numOfLocations > 1 && !noCode ? numOfLocations : ""}
-            </h3>
+          <h3 className="form-title">
+          {user.role === "Teacher" || selectSchool || fromProfile
+            ? "Select School"
+            : user.role=="Site Admin"?"Select School Location": "Select Admin Location"}
+          {numOfLocations > 1 && !noCode ? ` ${numOfLocations}` : ""}
+        </h3>
+
             <h4 className="form-title">State</h4>
             <select
               name="aliasChoice"
@@ -455,7 +480,7 @@ const SelectLoc = ({ noCode }) => {
                 </label>
               </>
             )}
-            {!noCode && showAdditionalLoc && (
+            {!noCode && showAdditionalLoc && user.role!=="Site Admin" && (
               <>
                 <hr />
                 <label className="checkbox-container">
@@ -465,7 +490,9 @@ const SelectLoc = ({ noCode }) => {
                     className="checkbox"
                     name="aliasChoice"
                     checked={additionalLoc}
-                    onChange={(e) => setAdditionalLoc(e.target.checked)}
+                    onChange={(e) => {
+                      setAdditionalLoc(e.target.checked)
+                    }}
                   />
                   <span className="checkbox-checkmark"></span>
                 </label>

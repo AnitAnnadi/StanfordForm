@@ -1,7 +1,7 @@
 import { FormRow, FormRowSelect } from ".";
 import { useAppContext } from "../context/appContext";
 import Wrapper from "../assets/wrappers/SearchContainer";
-import {useState, useMemo, useEffect} from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   narrowCities,
   narrowCounties,
@@ -9,10 +9,16 @@ import {
   narrowSchools,
 } from "../utils/schoolDataFetch";
 import { Link } from "react-router-dom";
-import { utils as XLSXUtils, writeFile as writeXLSXFile } from 'xlsx';
-import { tobacco, postTobacco, cannabis, postCannabis, safety, healthy
+import { utils as XLSXUtils, writeFile as writeXLSXFile } from "xlsx";
+import {
+  tobacco,
+  postTobacco,
+  cannabis,
+  postCannabis,
+  safety,
+  healthy,
 } from "../utils/questions";
-
+import { ThreeDots } from "react-loader-spinner";
 
 const SearchContainer = ({ startReload }) => {
   const {
@@ -48,7 +54,7 @@ const SearchContainer = ({ startReload }) => {
     getExport,
     setToNarrowSchools,
     exportData,
-    exportLoading
+    exportLoading,
   } = useAppContext();
   const [exportClicked, setExportClicked] = useState(false);
   const [questionsToAnswers, setQuestionsToAnswers] = useState({});
@@ -59,23 +65,22 @@ const SearchContainer = ({ startReload }) => {
   const healthyTobacco = [];
   const healthyCannabis = [];
 
-  console.log({schoolOptions})
 
   useEffect(() => {
     if (exportClicked && exportData) {
-      exportData.forEach(obj => {
-        const formtype = obj['form type'];
+      exportData.forEach((obj) => {
+        const formtype = obj["form type"];
         if (formtype === "You and Me, Together Vape-Free") {
           vape.push(obj);
-        } else if (formtype === "Smart Talk: Cannabis Prevention & Education Awareness") {
+        } else if (
+          formtype === "Smart Talk: Cannabis Prevention & Education Awareness"
+        ) {
           cannabis.push(obj);
         } else if (formtype === "Safety First") {
           safety.push(obj);
-        }
-        else if (formtype === "Healthy Futures: Tobacco/Nicotine/Vaping") {
+        } else if (formtype === "Healthy Futures: Tobacco/Nicotine/Vaping") {
           healthyTobacco.push(obj);
-        }
-        else if (formtype === "Healthy Futures: Cannabis") {
+        } else if (formtype === "Healthy Futures: Cannabis") {
           healthyCannabis.push(obj);
         }
       });
@@ -88,27 +93,33 @@ const SearchContainer = ({ startReload }) => {
       XLSXUtils.book_append_sheet(workbook, vapeSheet, "Vape-Free");
       XLSXUtils.book_append_sheet(workbook, cannabisSheet, "Smart Talk");
       XLSXUtils.book_append_sheet(workbook, safetySheet, "Safety First");
-      XLSXUtils.book_append_sheet(workbook, healthyTobacco, "Healthy Futures:Tobacco");
-      XLSXUtils.book_append_sheet(workbook, healthyCannabis, "Healthy Futures:Cannabis");
+      XLSXUtils.book_append_sheet(
+        workbook,
+        healthyTobacco,
+        "Healthy Futures:Tobacco"
+      );
+      XLSXUtils.book_append_sheet(
+        workbook,
+        healthyCannabis,
+        "Healthy Futures:Cannabis"
+      );
       writeXLSXFile(workbook, `data.xlsx`);
-      handleChange(exportData,[])
+      handleChange(exportData, []);
       setExportClicked(false);
     }
   }, [exportData, exportClicked]);
 
   const createExcelSheet = async () => {
-    await getResponseGroups(currentSchoolIndex, shouldReload, true)
+    await getResponseGroups(currentSchoolIndex, shouldReload, true);
     setExportClicked(true);
-
-
   };
-  
-  
+
   const createQuestionsToAnswersMap = (array, questionsToAnswers) => {
     reorderedQuestionsToAnswers = {};
     array.forEach((question) => {
-      if ((questionsToAnswers).hasOwnProperty(question.question)) {
-        reorderedQuestionsToAnswers[question.question] = questionsToAnswers[question.question];
+      if (questionsToAnswers.hasOwnProperty(question.question)) {
+        reorderedQuestionsToAnswers[question.question] =
+          questionsToAnswers[question.question];
       }
     });
     setQuestionsToAnswers(reorderedQuestionsToAnswers);
@@ -116,15 +127,19 @@ const SearchContainer = ({ startReload }) => {
 
   const formTimeType = (formType, when, data) => {
     if (formType === "You and Me, Together Vape-Free") {
-      return when === "before" ? createQuestionsToAnswersMap(tobacco, data) : createQuestionsToAnswersMap(tobacco.concat(postTobacco), data);
-    } else if (formType === "Smart Talk: Cannabis Prevention & Education Awareness") {
-      return when === "before" ? createQuestionsToAnswersMap(cannabis, data) : createQuestionsToAnswersMap(cannabis.concat(postCannabis),data);
-    }
-    else if (formType === "Healthy Futures" ){
-      return createQuestionsToAnswersMap(healthy, data)
-    }
-    else if (formType === "Safety First"){
-      return createQuestionsToAnswersMap(safety, data)
+      return when === "before"
+        ? createQuestionsToAnswersMap(tobacco, data)
+        : createQuestionsToAnswersMap(tobacco.concat(postTobacco), data);
+    } else if (
+      formType === "Smart Talk: Cannabis Prevention & Education Awareness"
+    ) {
+      return when === "before"
+        ? createQuestionsToAnswersMap(cannabis, data)
+        : createQuestionsToAnswersMap(cannabis.concat(postCannabis), data);
+    } else if (formType === "Healthy Futures") {
+      return createQuestionsToAnswersMap(healthy, data);
+    } else if (formType === "Safety First") {
+      return createQuestionsToAnswersMap(safety, data);
     }
   };
 
@@ -136,7 +151,7 @@ const SearchContainer = ({ startReload }) => {
         (location) => location[searchType].toUpperCase()
       );
       values = searchValues.filter((value) => allowedValues.includes(value.toUpperCase()));
-    } else if (user.role === "Standford Staff") {
+    }  else if (user.role === "Stanford Staff") {
       values = searchValues;
     } else {
       if (userLocations[0][searchType] === null) {
@@ -162,27 +177,23 @@ const SearchContainer = ({ startReload }) => {
       case "searchState":
         handleChanges({
           [e.target.name]: e.target.value,
-          searchCounty: 'all',
-          searchCity: 'all',
-          searchDistrict: 'all',
-          searchSchool: 'all',
-          searchTeacher: 'all',
+          searchCounty: "all",
+          searchCity: "all",
+          searchDistrict: "all",
+          searchSchool: "all",
+          searchTeacher: "all",
           countyOptions: narrowAllowedOptions(
-              "county",
-              narrowCounties({ state: e.target.value })
-            ),
+            "county",
+            narrowCounties({ state: e.target.value })
+          ),
           cityOptions: narrowAllowedOptions(
               "city",
               narrowCities({ state: e.target.value })
             ),
-          // schoolOptions: narrowAllowedOptions(
-          //     "school",
-          //     narrowSchools({ state: e.target.value })
-          //   ),
           districtOptions: narrowAllowedOptions(
-              "district",
-              narrowDistricts({ state: e.target.value })
-            ),
+            "district",
+            narrowDistricts({ state: e.target.value })
+          ),
         });
 
         setToNarrowSchools({reactState: "schoolOptions", allowed: true, state: e.target.value})
@@ -190,18 +201,14 @@ const SearchContainer = ({ startReload }) => {
       case "searchCounty":
         handleChanges({
           [e.target.name]: e.target.value,
-          searchCity: 'all',
-          searchDistrict: 'all',
-          searchSchool: 'all',
-          searchTeacher: 'all',
+          searchCity: "all",
+          searchDistrict: "all",
+          searchSchool: "all",
+          searchTeacher: "all",
           cityOptions: narrowAllowedOptions(
             "city",
             narrowCities({ county: e.target.value })
           ),
-          // schoolOptions: narrowAllowedOptions(
-          //     "school",
-          //     narrowSchools({ county: e.target.value })
-          //   ),
           districtOptions: narrowAllowedOptions(
             "district",
             narrowDistricts({ county: e.target.value, state: searchState })
@@ -213,9 +220,9 @@ const SearchContainer = ({ startReload }) => {
       case "searchCity":
         handleChanges({
           [e.target.name]: e.target.value,
-          searchDistrict: 'all',
-          searchSchool: 'all',
-          searchTeacher: 'all',
+          searchDistrict: "all",
+          searchSchool: "all",
+          searchTeacher: "all",
           districtOptions: narrowAllowedOptions(
               "district",
               narrowDistricts({
@@ -224,10 +231,6 @@ const SearchContainer = ({ startReload }) => {
                 state: searchState === 'all' ? undefined : searchState
               })
             ),
-          // schoolOptions: narrowAllowedOptions(
-          //     "school",
-          //     narrowSchools({ city: e.target.value, county: searchCounty, state: searchState })
-          //   ),
         });
 
         setToNarrowSchools({reactState: "schoolOptions", allowed: true, city: e.target.value, county: searchCounty, state: searchState})
@@ -237,17 +240,13 @@ const SearchContainer = ({ startReload }) => {
           [e.target.name]: e.target.value,
           searchSchool: 'all',
           searchTeacher: 'all',
-          // schoolOptions: narrowAllowedOptions(
-          //     "school",
-          //     narrowSchools({ district: e.target.value, county: searchCounty, state: searchState, city: searchCity })
-          //   ),
         });
 
         setToNarrowSchools({reactState: "schoolOptions", allowed: true, district: e.target.value, county: searchCounty, state: searchState, city: searchCity});
         break;
       case "searchSchool":
         handleChanges({
-          searchTeacher: 'all',
+          searchTeacher: "all",
           [e.target.name]: e.target.value,
         });
         break;
@@ -305,13 +304,15 @@ const SearchContainer = ({ startReload }) => {
             list={countyOptions}
           />
           {/* search by city */}
-          <FormRowSelect
-            labelText="city"
-            name="searchCity"
-            value={searchCity}
-            handleChange={handleLocalChange}
-            list={cityOptions}
-          />
+          {user.role !== "District Admin" && (
+            <FormRowSelect
+              labelText="city"
+              name="searchCity"
+              value={searchCity}
+              handleChange={handleLocalChange}
+              list={cityOptions}
+            />
+          )}
           {/* search by district */}
           <FormRowSelect
             labelText="district"
@@ -389,9 +390,22 @@ const SearchContainer = ({ startReload }) => {
             className="btn btn-block btn-apply"
             disabled={isLoading}
             onClick={createExcelSheet}
-            >
-            {exportLoading?"Exporting...":"export all data"}
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              placeItems: "center",
+            }}
+          >
+            {exportLoading ? (
+              <>
+                Exporting Data
+                <ThreeDots color="green" height={20} width={20} />
+              </>
+            ) : (
+              "Export all data"
+            )}
           </button>
+
           <Link
             className="btn btn-block btn-obreak"
             disabled={isLoading}

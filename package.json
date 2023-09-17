@@ -45,6 +45,7 @@
     "nodemailer": "^6.9.4",
     "pdf-lib": "^1.17.1",
     "react-google-recaptcha": "^3.1.0",
+    "react-loader-spinner": "^5.4.5",
     "react-multi-select-component": "^4.3.4",
     "react-scripts": "^5.0.1",
     "reactjs-popup": "^2.0.5",
