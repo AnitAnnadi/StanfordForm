@@ -12,7 +12,6 @@ import {
   register,
   login,
   updateUser,
-  getCurrentUser,
   logout,
   enterCode,
   submitForm,

@@ -31,7 +31,8 @@ import {
   FORM_FAIL,
   HANDLE_CHANGE,
   CLEAR_VALUES,
-
+  NEW_LOCATION_APPROVE,
+  NEW_LOCATION_DECLINE,
   GET_RESPONSE_GROUPS_BEGIN,
   GET_RESPONSE_GROUPS_SUCCESS,
   PAGE_FULL,
@@ -40,7 +41,7 @@ import {
   SHOW_STATS_SUCCESS,
   CLEAR_FILTERS,
   CHANGE_PAGE,
-
+  NEW_LOCATION_ADDED,
   ENTER_CODE,
   GET_TOTAL,
   ADD_LOCATION_SUCCESS, HANDLE_MULTIPLE_CHANGES, SUCCESS_ALERT, SIMILAR_LOCATIONS_FOUND
@@ -110,11 +111,12 @@ const initialState = {
   selectLocSchools:[],
   searchContainerSchools:[],
   resetPassword:false,
-  similarLocationNames:[],
-  similarLocationData:{},
-  similaritiesChecked:false,
   resetPassword:false,
-  twofaSent:false
+  twofaSent:false,
+  pendingApproval:false,
+  pendingSchool:'',
+  approved:false,
+  declined:false
 };
 
 const stringDifScore = (str1, str2) => {
@@ -531,95 +533,24 @@ const AppProvider = ({ children }) => {
 
   const addNewLocation = async (locationData, bypassSimilar=false) => {
     try {
-      const { multiplePeriods } = locationData;
-
-      const existingLocation = await getSchoolObject(locationData);
-
-      if (!existingLocation) {
-        if (!bypassSimilar) {
-          const {data: adjacentData} = await authFetch.get('/locations', {
-            params: {
-              state: locationData.state,
-              county: locationData.county,
-              city: locationData.city,
-              district: locationData.district,
-            }
-          });
-
-          const localAdjacentSchoolNames = await narrowSchools(locationData);
-          const customAdjacentSchoolNames = adjacentData.locations.map((location) => location.name);
-
-          const adjacentSchoolNames = [...new Set([...localAdjacentSchoolNames, ...customAdjacentSchoolNames])];
-
-          const similarSchoolNames = adjacentSchoolNames.filter((schoolName) => {
-            const scoreBoundary = schoolName.length * 0.8; // 80% of the length of the school name
-            console.log(schoolName, locationData.school, stringDifScore(schoolName, locationData.school))
-            return stringDifScore(schoolName, locationData.school) < scoreBoundary; // 8 is the threshold for similarity, change if needed
-          });
-
-          if (similarSchoolNames.length > 0) {
-            dispatch({
-              type: SIMILAR_LOCATIONS_FOUND,
-              payload: {
-                similarLocationNames: similarSchoolNames,
-                similarLocationData: {
-                  multiplePeriods,
-                  state: locationData.state,
-                  county: locationData.county,
-                  city: locationData.city,
-                  district: locationData.district,
-                  school: locationData.school,
-                }
-              }
-            });
-            return;
-          }
-        }
-
-        const {data} = await authFetch.post('/locations', locationData);
-        const {location} = data;
-
-        if (location) {
-          await addLocation({
-            multiplePeriods,
-            state: location.state,
-            county: location.county,
-            district: location.district,
-            city: location.city,
-            school: location.name
-          });
-        } else {
-          addLocation({
-            multiplePeriods,
-            state: locationData.state,
-            county: locationData.county,
-            district: locationData.district,
-            city: locationData.city,
-            school: locationData.school
-          })
-        }
-      } else {
-        await addLocation({
-          multiplePeriods,
-          state: locationData.state,
-          county: locationData.county,
-          district: locationData.district,
-          city: locationData.city,
-          school: locationData.school
-        });
-      }
-
-
-
-    } catch (error) {
-      console.log(error)
-      if (error.response.status !== 401) {
+      const {multiplePeriods, state, county, city, district, school} = locationData
+      console.log(school)
+      const {data} = await authFetch.post('/locations', locationData); 
+      if (data.location){
         dispatch({
-          type: UPDATE_USER_ERROR,
-          payload: { msg: error.response.data.msg },
-        });
+          type:NEW_LOCATION_ADDED,
+          payload:{pendingSchool: school}
+        })
+      } 
+      else{
+        errorAlert("There was an error submitting your location.")
       }
     }
+
+    catch(error){
+
+    }
+
   };
 
   const setToNarrowSchools = async ({reactState, allowed, state, county, city, district}) => {
@@ -870,8 +801,8 @@ const AppProvider = ({ children }) => {
           break
         }
       }
-
-      if (user.role === 'Standford Staff') {
+      if (user.role === 'Stanford Staff') {
+        console.log('hi')
         if (schoolIndex >= filteredSchools.length && (newResponses.length === 0 || all)) {
           const offsetIndex = schoolIndex - filteredSchools.length;
 
@@ -1076,6 +1007,23 @@ const AppProvider = ({ children }) => {
     dispatch({ type: CHANGE_PAGE, payload: { page } });
   };
 
+  const approveLocationRequest = async(_id) => {
+    console.log(_id)
+    const {data} = await authFetch.post('/locations/approve', {_id}); 
+    if (data){
+      dispatch({ type: NEW_LOCATION_APPROVE });
+      clearAlert();
+    }
+  };
+  const declineLocationRequest = async(_id) => {
+    console.log(_id)
+    const {data} = await authFetch.post('/locations/decline', {_id}); 
+    if (data){
+      dispatch({ type: NEW_LOCATION_DECLINE });
+      clearAlert();
+    }
+  };
+
   const createCertificate = async ({name,info}) => {
     try{
     const { data } = await axios.post(`/api/v1/auth/createCertificate`,{name,info})
@@ -1176,7 +1124,9 @@ const AppProvider = ({ children }) => {
         verifyReset,
         createCertificate,
         resendEmail,
-        errorAlert
+        errorAlert,
+        approveLocationRequest,
+        declineLocationRequest
       }}
     >
       {children}

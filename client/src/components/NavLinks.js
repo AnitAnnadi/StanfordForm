@@ -20,15 +20,19 @@ const NavLinks = ({ toggleSidebar }) => {
     links = [
       // { id: 1, text: "home", path: "/", icon: <MdDashboard /> },
       { id: 2, text: "metrics", path: "metrics", icon: <ImStatsBars /> },
-      { id: 3, text: "profile", path: "profile", icon: <FaUser /> },
+      { id: 4, text: "profile", path: "profile", icon: <FaUser /> },
     ];
   }
   else{
     links = [
       { id: 1, text: "home", path: "/", icon: <MdDashboard /> },
       { id: 2, text: "metrics", path: "metrics", icon: <ImStatsBars /> },
-      { id: 3, text: "profile", path: "profile", icon: <FaUser /> },
+      { id: 4, text: "profile", path: "profile", icon: <FaUser /> },
     ];
+
+  if (user.role=="Stanford Staff"){
+    links.push({ id: 3, text: "Location Requests", path: "/locationRequests", icon: <MdDashboard /> },)
+  }
   }
 
   return (

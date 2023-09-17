@@ -1,9 +1,11 @@
 import Popup from "reactjs-popup";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
+import { useAppContext } from "../context/appContext";
 
 const CreateLocPopup = ({setDisplay}) => {
   const navigate = useNavigate();
+  const { handleChange } = useAppContext();
 
   return (
     <div className="welcome">
@@ -48,6 +50,7 @@ const CreateLocPopup = ({setDisplay}) => {
               <button
                 className="btn btn-block modal-clear-btn"
                 onClick={() => {
+                  handleChange({ name: "pendingApproval", value: false });
                   setTimeout(() => {
                     navigate("/createLoc");
                   }, 500);

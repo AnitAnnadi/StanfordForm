@@ -91,8 +91,8 @@ const getExport = async (req, res) => {
     const map = await Promise.all(
       studentResponses.map(async (studentResponse) => {
         let obj = {
-          teacher: teacher.name,
-          school: school.school,
+          teacher: teacher?.name,
+          school: school?.school,
           county: school.county === "custom" ? "n/a" : school.county,
           district: school.district === "custom" ? "n/a" : school.district,
           state:school.state,

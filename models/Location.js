@@ -6,6 +6,10 @@ const LocationSchema = new mongoose.Schema({
     trim: true,
     default: 'name',
   },
+  multiplePeriods:{
+    type:Boolean,
+    default:false
+  },
   state: {
     type: String,
     trim: true,
@@ -25,6 +29,15 @@ const LocationSchema = new mongoose.Schema({
     type: String,
     trim: true,
     default: 'district',
+  },
+  approved: {
+    type: Boolean,
+    default: false,
+  },
+  requestedUser:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
   },
   custom: {
     type: Boolean,

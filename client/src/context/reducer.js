@@ -16,6 +16,8 @@ import {
   HANDLE_MULTIPLE_CHANGES,
   CLEAR_VALUES,
   GET_RESPONSE_GROUPS_BEGIN,
+  NEW_LOCATION_DECLINE,
+  NEW_LOCATION_APPROVE,
   GET_RESPONSE_GROUPS_SUCCESS,
   PAGE_FULL,
   GET_RESPONSE_GROUPS_ERROR,
@@ -357,6 +359,28 @@ const reducer = (state, action) => {
       hasLocation: action.payload.hasLocation
     };
   }
+
+  if (action.type === NEW_LOCATION_APPROVE) {
+    console.log('hi')
+    return {
+      ...state,
+      approved: true,
+      alertText: "You have approved the new location" ,
+      alertType:"success",
+      showAlert:true
+    };
+  }
+
+  if (action.type === NEW_LOCATION_DECLINE) {
+    return {
+      ...state,
+      declined: true,
+      alertText: "You have declined the  location" ,
+      alertType:"danger",
+      showAlert:true
+    };
+  }
+
   if (action.type === ADD_LOCATION_SUCCESS) {
     if (action.payload.exists){
       return {
@@ -384,21 +408,15 @@ const reducer = (state, action) => {
     }
     
   }
-  if (action.type === SIMILAR_LOCATIONS_FOUND) {
-    return {
-      ...state,
-      similarLocationNames: action.payload.similarLocationNames,
-      similarLocationData: action.payload.similarLocationData,
-      similaritiesChecked: true,
-    };
-  }
+
   if (action.type === NEW_LOCATION_ADDED) {
     return {
       ...state,
-      similarLocationNames: [],
-      similarLocationData: {},
-      similaritiesChecked: true,
+      pendingApproval:true,
+      pendingSchool:action.payload.pendingSchool
+
     };
+  
   }
   throw new Error(`no such action : ${action.type}`);
 };

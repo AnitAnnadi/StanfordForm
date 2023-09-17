@@ -116,7 +116,7 @@ const SelectLoc = ({ noCode }) => {
   const [additionalLoc, setAdditionalLoc] = useState(false);
 
   const [numOfLocations, setNumOfLocations] = useState(
-    (user.adminTeacher && user.role!="Stanford Staff") ? (userLocations ? userLocations.length : 1) : (userLocations ? userLocations.length + 1 : 1)
+    (user?.adminTeacher && user?.role!="Stanford Staff") ? (userLocations ? userLocations.length : 1) : (userLocations ? userLocations.length + 1 : 1)
   );
   
 
@@ -337,7 +337,8 @@ const SelectLoc = ({ noCode }) => {
           {showAlert && <Alert />}
           <div className="form">
           <h3 className="form-title">
-          {user.role === "Teacher" || selectSchool || fromProfile
+          
+          {noCode || user?.role === "Teacher" || selectSchool || fromProfile
             ? "Select School"
             : user.role=="Site Admin"?"Select School Location": "Select Admin Location"}
           {numOfLocations > 1 && !noCode ? ` ${numOfLocations}` : ""}
@@ -508,7 +509,7 @@ const SelectLoc = ({ noCode }) => {
             >
               {isLoading ? "Please Wait..." : "submit"}
             </button>
-            {showCreateSchool && (
+            { (
               <p>
                 Don't see your school?{" "}
                 <button
@@ -533,7 +534,7 @@ const SelectLoc = ({ noCode }) => {
                 style={{
                   display: "flex",
                   columnGap: "0.5rem",
-                  marginTop: "-1rem",
+                  marginTop: "1rem",
                   alignContent: "center",
                   minWidth: "100%",
                   justifyContent: "flex-end",

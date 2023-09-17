@@ -19,9 +19,9 @@ import CertInfo from "./pages/CertInfo";
 import Certificate from "./components/Certificate";
 import VerifyTwoFactor from "./pages/VerifyTwoFactor";
 import TwoFactorSent from "./pages/TwoFactorSent";
-
+import PendingLocation from "./pages/PendingLocation";
 import CreateLoc from "./pages/CreateLoc";
-
+import LocationRequests from "./pages/LocationRequests";
 function App() {
   return (
     <BrowserRouter>
@@ -36,6 +36,9 @@ function App() {
         >
           <Route index element={<Home />} />
           <Route path="metrics" element={<Metrics />} />
+          <Route path="/locationRequests" element={
+            <LocationRequests />
+        } />
           <Route path="profile" element={<Profile />} />
           <Route path="/api/v1/form/:formCode" element={<FormMetrics />}/>
           <Route path="/api/v1/form/" element={<FormMetrics />}/>
@@ -46,6 +49,12 @@ function App() {
             <SelectLoc />
           </ProtectedRoute>
         } />
+         <Route path="/pendingLocation" element={
+          <ProtectedRoute>
+            <PendingLocation />
+          </ProtectedRoute>
+        } />
+
         <Route path="/createLoc" element={
           <ProtectedRoute>
             <CreateLoc />
