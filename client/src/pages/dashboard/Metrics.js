@@ -53,17 +53,24 @@ const Metrics = () => {
         }
     }
     else if (user && !user.adminTeacher && userLocations.length<1){
+      console.log('hi')
+      console.log(user.role)
+      if (user.role =="Stanford Staff"){
+
+        return
+      }
+      else{
       successAlert("Redirecting to select location")
       setTimeout(() => {
         navigate("/selectLoc");
       }, 2000);
       return
     }
+    }
     else{
       return
     }
   }, []);
-
   const [reloadSchools, setReloadSchools] = useState(false);
 
   const startReloadSchools = () => {

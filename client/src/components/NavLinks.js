@@ -7,6 +7,7 @@ import { MdDashboard } from "react-icons/md";
 
 const NavLinks = ({ toggleSidebar }) => {
   const user=JSON.parse((localStorage.getItem("user")))
+  console.log(user.role+' nav')
   let adminroles = ["Site Admin", "District Admin", "County Admin", "State Admin", "Stanford Staff"];
   let adminbool=false
   let links=[]
@@ -16,12 +17,12 @@ const NavLinks = ({ toggleSidebar }) => {
     }
   }))
 
+
+
   if (adminbool===true && !user?.adminTeacher){
-    links = [
-      // { id: 1, text: "home", path: "/", icon: <MdDashboard /> },
-      { id: 2, text: "metrics", path: "metrics", icon: <ImStatsBars /> },
-      { id: 4, text: "profile", path: "profile", icon: <FaUser /> },
-    ];
+    links.push({ id: 2, text: "metrics", path: "metrics", icon: <ImStatsBars /> })
+    links.push ({ id: 4, text: "profile", path: "profile", icon: <FaUser /> })
+    
   }
   else{
     links = [
@@ -29,10 +30,11 @@ const NavLinks = ({ toggleSidebar }) => {
       { id: 2, text: "metrics", path: "metrics", icon: <ImStatsBars /> },
       { id: 4, text: "profile", path: "profile", icon: <FaUser /> },
     ];
+  
+  }
 
   if (user.role=="Stanford Staff"){
     links.push({ id: 3, text: "Location Requests", path: "/locationRequests", icon: <MdDashboard /> },)
-  }
   }
 
   return (
