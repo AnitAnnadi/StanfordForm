@@ -86,19 +86,21 @@ const SearchContainer = ({ startReload }) => {
       const vapeSheet = XLSXUtils.json_to_sheet(vape);
       const cannabisSheet = XLSXUtils.json_to_sheet(cannabis);
       const safetySheet = XLSXUtils.json_to_sheet(safety);
-      const healthySheet = XLSXUtils.json_to_sheet(healthy);
+      const healthyTobaccoSheet = XLSXUtils.json_to_sheet(healthyTobacco);
+      const healthyCannabisSheet = XLSXUtils.json_to_sheet(healthyCannabis);
+
       const workbook = XLSXUtils.book_new();
       XLSXUtils.book_append_sheet(workbook, vapeSheet, "Vape-Free");
       XLSXUtils.book_append_sheet(workbook, cannabisSheet, "Smart Talk");
       XLSXUtils.book_append_sheet(workbook, safetySheet, "Safety First");
       XLSXUtils.book_append_sheet(
         workbook,
-        healthyTobacco,
+        healthyTobaccoSheet,
         "Healthy Futures:Tobacco"
       );
       XLSXUtils.book_append_sheet(
         workbook,
-        healthyCannabis,
+        healthyCannabisSheet,
         "Healthy Futures:Cannabis"
       );
       writeXLSXFile(workbook, `data.xlsx`);

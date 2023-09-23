@@ -66,7 +66,6 @@ const getExport = async (req, res) => {
         obj.grade = studentResponse.grade;
         obj.period =
           studentResponse.period === undefined || studentResponse.period === null? "n/a" : studentResponse.period;
-        console.log(obj.period)
           obj["form type"] = studentResponse.formType;
 
         let questions = await Question.find({
@@ -98,7 +97,6 @@ const getExport = async (req, res) => {
         }
       })
     );
-
     res.status(StatusCodes.OK).json({ exportData });
   } catch (error) {
     console.error("Error exporting exportData:", error);
