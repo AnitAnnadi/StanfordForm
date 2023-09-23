@@ -52,7 +52,7 @@ const getExport = async (req, res) => {
     const map = await Promise.all(
       studentResponses.map(async (studentResponse) => {
         let obj = {
-          teacher: teacher.name,
+          teacher: teacher?.name,
           school: school.school,
           county: school.county,
           district: school.district,
