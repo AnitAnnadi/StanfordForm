@@ -91,6 +91,7 @@ const reducer = (state, action) => {
       userLocation: action.payload.location,
       userLocations: action.payload.userLocations,
       jobLocation: action.payload.location,
+      pendingLocations:action.payload.pendingLocations,
       ...action.payload.newFormStates,
       showAlert: true,
       alertType: 'success',

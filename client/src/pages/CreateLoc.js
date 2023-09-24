@@ -22,7 +22,8 @@ const CreateLoc = () => {
     displayAlert,
     addNewLocation,
     isLoading,
-    pendingApproval
+    pendingApproval,
+    successAlert
   } = useAppContext();
   const navigate = useNavigate();
 
@@ -89,13 +90,13 @@ const CreateLoc = () => {
     if (pendingApproval){
       setTimeout(() => {
         navigate("/pendingLocation");
+        // successAlert("Redirecting...");
       }, 1000);
     }
 
   } , [pendingApproval]);
 
 
-  const [displaySimilarPopup, setDisplaySimilarPopup] = useState(false);
 
   const [cities, setCities] = useState([]);
   const [counties, setCounties] = useState([]);
@@ -270,17 +271,6 @@ const CreateLoc = () => {
               <span className="checkbox-checkmark"></span>
             </label>
             <hr />
-            <label className="checkbox-container">
-              I would like to submit an additional location
-              <input
-                type="checkbox"
-                className="checkbox"
-                name="aliasChoice"
-                checked={additionalLoc}
-                onChange={(e) => setAdditionalLoc(e.target.checked)}
-              />
-              <span className="checkbox-checkmark"></span>
-            </label>
             <button
               className="btn btn-block"
               type="submit"

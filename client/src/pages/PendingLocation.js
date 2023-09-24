@@ -11,10 +11,13 @@ import { ThreeDots } from 'react-loader-spinner';
 const PendingLocation = () => {
 
 
-    const {pendingSchool,handleChange, showAlert, displayAlert,alertText,user} = useAppContext();
+    const {getLocations,pendingLocations,handleChange, userLocations,showAlert, displayAlert,alertText,user, su} = useAppContext();
     // useEffect(() => {
     //     verify2fa(_id);
     //   }, []); // Empty dependency arra
+    useEffect(()=>{
+        getLocations({user})
+        },[])
       
     const navigate = useNavigate();
     const anotherLocation=()=>{
@@ -25,15 +28,39 @@ const PendingLocation = () => {
             });
             }, 2000)
     }
+    const home=()=>{
+        handleChange({ name: "pendingApproval", value: false });
+        setTimeout(() => {
+            navigate("/", {
+            });
+            }, 2000)
+    }
+    console.log(pendingLocations)
     return (
         <div>
-        <p>Your custom location request for {pendingSchool} is currently under review. Please check back in 24 hours and contact sgerbert@stanford.edu if you have any questions</p>
+        {showAlert && <Alert/>}
+        <p>
+            Your custom location request for (
+            {pendingLocations.map((location) => (
+                location.name
+            ))}
+            ) is currently under review. Please check back in 24 hours and contact
+            sgerbert@stanford.edu if you have any questions
+        </p>
+
         <button
                   onClick={anotherLocation}
                   className="btn btn-hero"
         >
             Select Another Location
         </button>
+        {userLocations.length>0 && user.role!=="Site Admin"?
+        <button
+        onClick={home}
+        className="btn btn-hero"
+        >Go to Dashboard</button>:
+        null
+        }
         </div>
       );
           

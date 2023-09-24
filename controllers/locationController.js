@@ -13,7 +13,6 @@ const createLocation = async(req, res) =>{
   }
 
   const user = await User.findOne({ _id: req.user.userId });
-
   // if (user.role !== 'Site Admin' && user.role !== 'Standford Staff' && user.role !== 'Teacher') {
   //   throw new BadRequestError('You do not have permission to create a location');
   // }
@@ -23,6 +22,7 @@ const createLocation = async(req, res) =>{
   const upperCity = city.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   const upperCounty = county.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   const upperState = state.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+ 
   const userId= (req.user.userId)
   console.log(userId)
   const locationExists = await Location.findOne({ state: upperState, county: upperCounty, city: upperCity, district: upperDistrict, name: upperSchool });
@@ -85,7 +85,7 @@ const getLocations = async(req, res) => {
     city: upperCity,
     district: upperDistrict,
     name: upperSchool,
-    approved
+    approved:false
   }
 
   Object.keys(queryObject).forEach(key => queryObject[key] === undefined && delete queryObject[key])
@@ -93,11 +93,11 @@ const getLocations = async(req, res) => {
   const locations = await Location.find(queryObject);
   let users=[]
   for (const location of locations) {
-    const foundUser = await User.findOne({ requestedUser: location.requestedUser });
+    console.log(location.requestedUser)
+    const foundUser = await User.findOne({ _id: location.requestedUser });
     users.push(foundUser);
   }
   console.log(users)
-  console.log(locations)
   res.status(StatusCodes.OK).json({ locations, users });
 }
 

@@ -82,6 +82,7 @@ const initialState = {
   overallLoading:false,
   allResponseGroups:[],
   monthlyApplications: [],
+  pendingLocations:[],
   stateOptions: localStorage.getItem("stateOptions") ? (localStorage.getItem("stateOptions") !== "undefined" ? JSON.parse(localStorage.getItem("stateOptions")): stateList) : stateList,
   searchState: localStorage.getItem("searchState") ? (localStorage.getItem("searchState") !== "undefined" ? JSON.parse(localStorage.getItem("searchState")): 'all'): 'all',
   countyOptions: localStorage.getItem("countyOptions") ? (localStorage.getItem("countyOptions") !== "undefined" ? JSON.parse(localStorage.getItem("countyOptions")): ['all']): ['all'],
@@ -114,7 +115,7 @@ const initialState = {
   resetPassword:false,
   twofaSent:false,
   pendingApproval:false,
-  pendingSchool:'',
+  pendingSchool:[],
   approved:false,
   declined:false
 };
@@ -347,7 +348,15 @@ const AppProvider = ({ children }) => {
       dispatch({ type: CLEAR_ALERT });
     }, 3000);
   };
-
+  const getLocations = async({user})=>{
+    const { data } = await axios.post(
+      `/api/v1/auth/getLocations`,
+      {user}
+    );
+    const { userLocations,pendingLocations } = data;
+    handleChange({ name: "userLocations", value: userLocations });
+    handleChange({ name: "pendingLocations", value: pendingLocations });
+  }
   const setupUser = async ({ currentUser, captcha, adminTeacher, endPoint, alertText }) => {
     localStorage.clear()
     dispatch({ type: SETUP_USER_BEGIN });
@@ -361,7 +370,7 @@ const AppProvider = ({ children }) => {
       );
 
         
-      const { user, hasLocation, userLocations } = data;
+      const { user, hasLocation, userLocations, pendingLocations } = data;
       
      let role = currentUser.role
       if (
@@ -415,7 +424,8 @@ const AppProvider = ({ children }) => {
         type: SETUP_USER_SUCCESS,
         payload: { user, alertText, hasLocation,
           userLocations: userLocations ? userLocations : [],
-          newFormStates: endPoint === 'login' ? newFormState : null
+          newFormStates: endPoint === 'login' ? newFormState : null,
+          pendingLocations: pendingLocations ? pendingLocations : [],
         },
       });
     } catch (error) {
@@ -532,6 +542,9 @@ const AppProvider = ({ children }) => {
   };
 
   const addNewLocation = async (locationData, bypassSimilar=false) => {
+    const {
+      pendingSchool
+  } = state;
     try {
       const {multiplePeriods, state, county, city, district, school} = locationData
       console.log(school)
@@ -539,7 +552,7 @@ const AppProvider = ({ children }) => {
       if (data.location){
         dispatch({
           type:NEW_LOCATION_ADDED,
-          payload:{pendingSchool: school}
+          payload:{pendingSchool: pendingSchool.push(school)}
         })
       } 
       else{
@@ -660,6 +673,7 @@ const AppProvider = ({ children }) => {
 
 
   const handleChange = ({ name, value }) => {
+    console.log(name,value)
     dispatch({ type: HANDLE_CHANGE, payload: { name, value } });
   };
   const handleChanges = (newStates) => {
@@ -1126,7 +1140,8 @@ const AppProvider = ({ children }) => {
         resendEmail,
         errorAlert,
         approveLocationRequest,
-        declineLocationRequest
+        declineLocationRequest,
+        getLocations
       }}
     >
       {children}

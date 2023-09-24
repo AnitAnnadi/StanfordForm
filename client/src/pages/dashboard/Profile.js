@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FormRow, Alert } from "../../components";
 import { useAppContext } from "../../context/appContext";
 import Wrapper from "../../assets/wrappers/DashboardFormPage";
@@ -19,11 +19,16 @@ const Profile = () => {
     updateUser,
     isLoading,
     handleChange,
+    getLocations
   } = useAppContext();
   const navigate = useNavigate();
 
   const [name, setName] = useState(user?.name);
   const [email, setEmail] = useState(user?.email);
+
+  useEffect(()=>{
+    getLocations({user})
+    },[])
 
   const showAddLocation =
     user.role === "Teacher" ||

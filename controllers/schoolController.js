@@ -6,13 +6,14 @@ import {StatusCodes} from "http-status-codes";
 
 const createSchool = async(req, res) =>{
   const { multiplePeriods, state, county, city, district, school } = req.body;
+  try{
   if (!state) {
     throw new BadRequestError('State is required');
   }
 
   const user = await User.findOne({ _id: req.user.userId });
   // ignore case
-  const userLocations = await School.find({ teacher: user._id, state, county, city, district, school}).collation({ locale: 'en', strength: 1 })
+  const userLocations = await School.find({ teacher: user._id, state, county, city, district, school})
   let location;
   let exists = false;
   if (userLocations.length===0){
@@ -23,9 +24,14 @@ const createSchool = async(req, res) =>{
   else{
     exists = true
   }
+  res.status(StatusCodes.CREATED).json({ user, location, exists });
+}
+catch(error){
+  console.log(error)
+}
   
 
-  res.status(StatusCodes.CREATED).json({ user, location, exists });
+  
 }
 
 const getUserSchools = async(req, res) => {
