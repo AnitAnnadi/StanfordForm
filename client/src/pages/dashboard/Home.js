@@ -29,8 +29,8 @@ const Home = () => {
       }, []);
 
   useEffect(() => {
-      
-      if (pendingLocations.length >= 1 && userLocations.length === 0) {
+      if (pendingLocations){
+      if (pendingLocations?.length >= 1 && userLocations.length === 0) {
         successAlert("Redirecting to pending location");
         setTimeout(() => {
           navigate("/pendingLocation");
@@ -55,7 +55,7 @@ const Home = () => {
           }, 2000);
           return;
         }
-        else if (userLocations.length === 0) {
+        else if (userLocations.length === 0 && pendingLocations.length==9) {
           if (user.adminTeacher && (user.role === 'Stanford Staff' || user.role === "Site Admin")) {
             successAlert("Redirecting to select school location");
             setTimeout(() => {
@@ -94,6 +94,7 @@ const Home = () => {
           return;
         }
       }
+    }
     }, [pendingLocations]);
   
   

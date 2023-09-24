@@ -509,7 +509,7 @@ const SelectLoc = ({ noCode }) => {
             >
               {isLoading ? "Please Wait..." : "submit"}
             </button>
-            { (
+            {(user.adminTeacher && numOfLocations>1) || user.role=="Site Admin" || user.role==="Teacher" ? (
               <p>
                 Don't see your school?{" "}
                 <button
@@ -526,7 +526,7 @@ const SelectLoc = ({ noCode }) => {
                   Click here
                 </button>
               </p>
-            )}
+            ):null}
             {numOfLocations > 1 ? <>
               <br />
               <div

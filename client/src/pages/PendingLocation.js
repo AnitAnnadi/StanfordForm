@@ -35,13 +35,12 @@ const PendingLocation = () => {
             });
             }, 2000)
     }
-    console.log(pendingLocations)
     return (
         <div>
         {showAlert && <Alert/>}
         <p>
             Your custom location request for (
-            {pendingLocations.map((location) => (
+            {pendingLocations?.map((location) => (
                 location.name
             ))}
             ) is currently under review. Please check back in 24 hours and contact
@@ -54,7 +53,8 @@ const PendingLocation = () => {
         >
             Select Another Location
         </button>
-        {userLocations.length>0 && user.role!=="Site Admin"?
+        {console.log(user.adminTeacher, userLocations)}
+        {(user.adminTeacher && userLocations.length>=2)|| (userLocations.length>0 && (user.role=="Site Admin" || user.role==="Teacher"))?
         <button
         onClick={home}
         className="btn btn-hero"

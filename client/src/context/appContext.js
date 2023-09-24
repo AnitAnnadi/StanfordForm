@@ -143,17 +143,17 @@ const configureFormStates = async (userLocations, user, formStates) => {
 
   switch (user.role) {
     case "Site Admin":
-      newSearchState = userLocations[0].state;
-      newSearchCounty = userLocations[0].county;
-      newSearchDistrict = userLocations[0].district;
-      newSearchCity = userLocations[0].city;
-      newSearchSchool = userLocations[0].school;
+      newSearchState = userLocations[0]?.state;
+      newSearchCounty = userLocations[0]?.county;
+      newSearchDistrict = userLocations[0]?.district;
+      newSearchCity = userLocations[0]?.city;
+      newSearchSchool = userLocations[0]?.school;
 
-      newStateOptions = [userLocations[0].state];
-      newCountyOptions = [userLocations[0].county];
-      newDistrictOptions = [userLocations[0].district === "district" ? "N/A" : userLocations[0].district];
-      newCityOptions = [userLocations[0].city];
-      newSchoolOptions = [userLocations[0].school];
+      newStateOptions = [userLocations[0]?.state];
+      newCountyOptions = [userLocations[0]?.county];
+      newDistrictOptions = [userLocations[0]?.district === "district" ? "N/A" : userLocations[0]?.district];
+      newCityOptions = [userLocations[0]?.city];
+      newSchoolOptions = [userLocations[0]?.school];
 
       break;
     case "District Admin":

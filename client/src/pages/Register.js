@@ -33,7 +33,7 @@ const Register = () => {
   let adminbool=false
   const [values, setValues] = useState(initialState);
   const [adminRole, setAdminRole] = useState("default");
-  const { twofaSent,user, isLoading, showAlert, displayAlert, setupUser, hasLocation,errorAlert,userLocations } =
+  const { twofaSent,user, pendingLocations,isLoading, showAlert, displayAlert, setupUser, hasLocation,errorAlert,userLocations } =
     useAppContext();
   const captchaRef = useRef(null)
 
@@ -117,6 +117,7 @@ const Register = () => {
     }
     const currentUser = { name, email, password, role, state, city, school };
     if (isMember) {
+      
       setupUser({
         currentUser,
         // null,
@@ -138,7 +139,25 @@ const Register = () => {
 
   useEffect(() => {
     if (!type || (type !== "teacher" && type !== "admin")) {
-      navigate("/landing");
+      return navigate("/landing");
+    }
+    if (user?.role == "Site Admin" && pendingLocations.length>=1){
+      setTimeout(() => {
+        navigate("/pendingLocation");
+      }, 3000);
+      return
+    }
+    else if (user?.role =="Teacher" && !hasLocation && pendingLocations.length>=1){
+      setTimeout(() => {
+        navigate("/pendingLocation");
+      }, 3000);
+      return
+    }
+    else if (user?.adminTeacher && userLocations.length==1 && pendingLocations.length>=1){
+      setTimeout(() => {
+        navigate("/pendingLocation");
+      }, 3000);
+      return
     }
     if ((user && hasLocation) || (user?.role === 'Stanford Staff' && !user.adminTeacher)) {
       adminroles.map((role=>{
