@@ -471,10 +471,10 @@ const AppProvider = ({ children }) => {
 
   const addLocation = async (locationData) => {
     try {
-      const { state, county, district, city, school, multiplePeriods } = locationData;
+      const { state, county, district, city, school, multiplePeriods, requesterId } = locationData;
 
-      let newLocationData = {state, county, district, city, school, multiplePeriods};
-
+      let newLocationData = {state, county, district, city, school, multiplePeriods, requesterId};
+      console.log(requesterId)
       if (district === 'custom' || county === 'custom') {
         const urlSearchParams = new URLSearchParams(
           state,
@@ -1037,6 +1037,15 @@ const AppProvider = ({ children }) => {
       clearAlert();
     }
   };
+
+  // const declineAndSelectLocationRequest = async(_id) => {
+  //   console.log(_id)
+  //   const {data} = await authFetch.post('/locations/decline', {_id}); 
+  //   if (data){
+  //     dispatch({ type: NEW_LOCATION_DECLINE });
+  //     clearAlert();
+  //   }
+  // };
 
   const createCertificate = async ({name,info}) => {
     try{

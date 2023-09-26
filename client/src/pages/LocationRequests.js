@@ -30,6 +30,13 @@ const LocationRequests = () => {
 
     fetchData(); 
   }, [approved, declined]); 
+  
+  const declineAndSelectLocationRequest = async(_id, name)=>{
+    console.log(name)
+    navigate(`/selectLoc`, {
+      state: { adminTeacher: false, selectSchool: false, fromProfile: false, forOther: _id, requestedName:name},
+    });
+  }
 
   // Return JSX or UI elements here
   return (
@@ -44,12 +51,12 @@ const LocationRequests = () => {
       <button onClick={() => declineLocationRequest(location._id)}>
         Decline Request
       </button>
-      <button>
+      <button onClick={() => declineAndSelectLocationRequest(location._id, users[index]?.name)}>
         Decline Request and Add Location
       </button>
-
-      <p>Teacher Name: {users[index].name} </p>
-      <p>Teacher Email: {users[index].email} </p>
+    {console.log(users)}
+      <p>Teacher Name: {users[index]?.name} </p>
+      <p>Teacher Email: {users[index]?.email} </p>
       <p>Location: {location.name}</p>
       <p>District: {location.district}</p>
       <p>Count: {location.county}</p>

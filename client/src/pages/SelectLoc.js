@@ -103,7 +103,10 @@ const SelectLoc = ({ noCode }) => {
   const { adminTeacher } = locationState;
   const { selectSchool } = locationState;
   const { fromProfile } = locationState;
-  const [multiplePeriods, setMultiplePeriods] = useState(false);
+  let { forOther } = locationState;
+  forOther = forOther !== undefined ? forOther : null;
+  let {requestedName} = locationState
+    const [multiplePeriods, setMultiplePeriods] = useState(false);
   let adminroles = [
     "Site Admin",
     "District Admin",
@@ -130,10 +133,10 @@ const SelectLoc = ({ noCode }) => {
   const showCounty =
     !fromProfile && !selectSchool && (user?.role === "District Admin" || user?.role === "County Admin");
   const showCity =
-    user?.role === "Site Admin" || user?.role === "Teacher" || noCode || selectSchool || fromProfile;
+    user?.role === "Site Admin" || user?.role === "Teacher" || noCode || selectSchool || fromProfile || forOther;
   const showDistrict = !fromProfile && !selectSchool && user?.role === "District Admin";
   const showSchool =
-    user?.role === "Site Admin" || user?.role === "Teacher" || noCode || selectSchool || fromProfile;
+    user?.role === "Site Admin" || user?.role === "Teacher" || noCode || selectSchool || fromProfile|| forOther;
   const showMultiplePeriods = user?.role === "Teacher" ||selectSchool || fromProfile || user?.role =="Site Admin";
   const showAdditionalLoc = user?.role === "Teacher" || selectSchool || fromProfile;
   useEffect(() => {
@@ -252,6 +255,29 @@ const SelectLoc = ({ noCode }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (forOther){
+      console.log('hi')
+      if (
+        state === "default" ||
+        (showCounty && county === "default") ||
+        (showCity && city === "default") ||
+        (showDistrict && district === "default") ||
+        (showSchool && school === "default")
+      ) {
+        displayAlert();
+        return;
+      }
+      await addLocation({
+        state: state,
+        county: county !== "default" ? county : null,
+        city: city !== "default" ? city : null,
+        district: district !== "default" ? district : null,
+        school: school !== "default" ? school : null,
+        requesterId:forOther,
+      })
+      setIsFormSubmitted(true)
+      return;
+    }
     if (noCode) {
       if (
         state != "default" ||
@@ -338,10 +364,19 @@ const SelectLoc = ({ noCode }) => {
           <div className="form">
           <h3 className="form-title">
           
-          {noCode || user?.role === "Teacher" || selectSchool || fromProfile
-            ? "Select School"
-            : user.role=="Site Admin"?"Select School Location": "Select Admin Location"}
-          {numOfLocations > 1 && !noCode ? ` ${numOfLocations}` : ""}
+          {
+            forOther
+              ? "Select Location for "
+              : noCode || user?.role === "Teacher" || selectSchool || fromProfile
+              ? "Select School"
+              : user.role === "Site Admin"
+              ? "Select School Location"
+              : "Select Admin Location"
+          }
+          {
+            forOther ? requestedName : (numOfLocations > 1 && !noCode ? ` ${numOfLocations}` : "")
+          }
+
         </h3>
 
             <h4 className="form-title">State</h4>

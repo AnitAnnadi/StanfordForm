@@ -3,21 +3,34 @@ import User from "../models/User.js";
 import School from "../models/School.js";
 import attachCookie from "../utils/attachCookie.js";
 import {StatusCodes} from "http-status-codes";
+import Location from "../models/Location.js";
 
 const createSchool = async(req, res) =>{
-  const { multiplePeriods, state, county, city, district, school } = req.body;
+  let { multiplePeriods, state, county, city, district, school, requesterId } = req.body;
   try{
   if (!state) {
     throw new BadRequestError('State is required');
   }
+  let user;
+  if (requesterId){
+    const loc = await Location.findOne({_id:requesterId})
+    user = await User.findOne({ _id: loc.requestedUser });
+    multiplePeriods = loc.multiplePeriods
 
-  const user = await User.findOne({ _id: req.user.userId });
+  }
+  else{
+    user = await User.findOne({ _id: req.user.userId });
+  }
   // ignore case
   const userLocations = await School.find({ teacher: user._id, state, county, city, district, school})
   let location;
   let exists = false;
   if (userLocations.length===0){
   location = await School.create({ teacher: user._id, multiplePeriods, state, county, city, district, school })
+  if (requesterId){
+    const location = await Location.findOne({_id:requesterId });
+    await location.remove();
+  }
   const token = user.createJWT();
   attachCookie({ res, token });
   }
