@@ -4,7 +4,7 @@ import {common} from "@mui/material/colors";
 const narrowCounties = ({state}) => {
     const counties = schoolData
         .filter((school) => school.state.toUpperCase() === state.toUpperCase())
-        .map((school) => school.county.toUpperCase())
+        .map((school) => school.county)
         .sort();
 
     return [...new Set(counties)]

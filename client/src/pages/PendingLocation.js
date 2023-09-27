@@ -19,24 +19,24 @@ const PendingLocation = () => {
     displayAlert,
     alertText,
     user,
-    su,
+    successAlert,
   } = useAppContext();
-  // useEffect(() => {
-  //     verify2fa(_id);
-  //   }, []); // Empty dependency arra
   useEffect(() => {
     getLocations({ user });
   }, []);
 
   const navigate = useNavigate();
-  const anotherLocation = () => {
+  const anotherLocation = (event) => {
+    event.preventDefault(); 
     handleChange({ name: "pendingApproval", value: false });
+    successAlert("Redirecting...");
     setTimeout(() => {
       navigate("/selectLoc", {
         state: { adminTeacher: false, selectSchool: false, fromProfile: true },
       });
     }, 2000);
   };
+  
   const home = () => {
     handleChange({ name: "pendingApproval", value: false });
     setTimeout(() => {

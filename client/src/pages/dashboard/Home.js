@@ -25,6 +25,7 @@ const Home = () => {
   } = useAppContext();
   const navigate = useNavigate();
   useEffect(() => {
+    console.log('effect')
   getLocations({ user })
       }, []);
 
@@ -95,7 +96,7 @@ const Home = () => {
         }
       }
     }
-    }, [pendingLocations]);
+    }, [pendingLocations,userLocations]);
   
   
 
