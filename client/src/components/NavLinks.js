@@ -38,13 +38,23 @@ const NavLinks = ({ toggleSidebar }) => {
     ];
   }
 
-  if (user.role == "Stanford Staff") {
+  if (user?.role == "Stanford Staff" && !user?.adminTeacher) {
     links.unshift({
       id: 3,
       text: "Location Requests",
       path: "/locationRequests",
       icon: <FaSchool />,
     });
+  }
+  if (user?.role == "Stanford Staff" && user?.adminTeacher) {
+    const newLink = {
+      id: 3,
+      text: "Location Requests",
+      path: "/locationRequests",
+      icon: <FaSchool />,
+    };
+  
+    links.splice(1, 0, newLink);
   }
   
 
