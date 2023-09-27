@@ -5,7 +5,7 @@ import Wrapper from "../assets/wrappers/DashboardFormPage";
 import Dropdown from "react-dropdown";
 import { useEffect, useRef } from "react";
 import Logo2 from "../assets/images/logo.png";
-import {Link, useNavigate,useLocation} from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { BsArrowRight } from "react-icons/bs";
 import {
   narrowDistricts,
@@ -105,8 +105,8 @@ const SelectLoc = ({ noCode }) => {
   const { fromProfile } = locationState;
   let { forOther } = locationState;
   forOther = forOther !== undefined ? forOther : null;
-  let {requestedName} = locationState
-    const [multiplePeriods, setMultiplePeriods] = useState(false);
+  let { requestedName } = locationState;
+  const [multiplePeriods, setMultiplePeriods] = useState(false);
   let adminroles = [
     "Site Admin",
     "District Admin",
@@ -119,9 +119,14 @@ const SelectLoc = ({ noCode }) => {
   const [additionalLoc, setAdditionalLoc] = useState(false);
 
   const [numOfLocations, setNumOfLocations] = useState(
-    (user?.adminTeacher && user?.role!="Stanford Staff") ? (userLocations ? userLocations.length : 1) : (userLocations ? userLocations.length + 1 : 1)
+    user?.adminTeacher && user?.role != "Stanford Staff"
+      ? userLocations
+        ? userLocations.length
+        : 1
+      : userLocations
+      ? userLocations.length + 1
+      : 1
   );
-  
 
   useEffect(() => {
     if (userLocations) {
@@ -129,16 +134,33 @@ const SelectLoc = ({ noCode }) => {
     }
   }, [userLocations]);
 
-
   const showCounty =
-    !fromProfile && !selectSchool && (user?.role === "District Admin" || user?.role === "County Admin");
+    !fromProfile &&
+    !selectSchool &&
+    (user?.role === "District Admin" || user?.role === "County Admin");
   const showCity =
-    user?.role === "Site Admin" || user?.role === "Teacher" || noCode || selectSchool || fromProfile || forOther;
-  const showDistrict = !fromProfile && !selectSchool && user?.role === "District Admin";
+    user?.role === "Site Admin" ||
+    user?.role === "Teacher" ||
+    noCode ||
+    selectSchool ||
+    fromProfile ||
+    forOther;
+  const showDistrict =
+    !fromProfile && !selectSchool && user?.role === "District Admin";
   const showSchool =
-    user?.role === "Site Admin" || user?.role === "Teacher" || noCode || selectSchool || fromProfile|| forOther;
-  const showMultiplePeriods = user?.role === "Teacher" ||selectSchool || fromProfile || user?.role =="Site Admin";
-  const showAdditionalLoc = user?.role === "Teacher" || selectSchool || fromProfile;
+    user?.role === "Site Admin" ||
+    user?.role === "Teacher" ||
+    noCode ||
+    selectSchool ||
+    fromProfile ||
+    forOther;
+  const showMultiplePeriods =
+    user?.role === "Teacher" ||
+    selectSchool ||
+    fromProfile ||
+    user?.role == "Site Admin";
+  const showAdditionalLoc =
+    user?.role === "Teacher" || selectSchool || fromProfile;
   useEffect(() => {
     setState("default");
     setCity("default");
@@ -152,57 +174,59 @@ const SelectLoc = ({ noCode }) => {
   }, []);
 
   useEffect(() => {
-  if (isFormSubmitted && !exists && !additionalLoc) {
-    adminroles.map((role) => {
-      if (role === user.role) {
-        adminbool = true;
-      }
-    });
-    setIsFormSubmitted(false)
-    setAdditionalLoc(false);
+    if (isFormSubmitted && !exists && !additionalLoc) {
+      adminroles.map((role) => {
+        if (role === user.role) {
+          adminbool = true;
+        }
+      });
+      setIsFormSubmitted(false);
+      setAdditionalLoc(false);
       if (adminbool) {
-        if (adminTeacher && user.role!=='Site Admin'){
+        if (adminTeacher && user.role !== "Site Admin") {
           setTimeout(() => {
             navigate("/selectLoc", {
-              state: { adminTeacher: false, selectSchool:true, fromProfile:false }
+              state: {
+                adminTeacher: false,
+                selectSchool: true,
+                fromProfile: false,
+              },
             });
-            }, 2000)
-            return
+          }, 2000);
+          return;
         }
-        if (user.adminTeacher){
+        if (user.adminTeacher) {
           setTimeout(() => {
             navigate("/");
           }, 2000);
+        } else {
+          setTimeout(() => {
+            navigate("/metrics");
+          }, 2000);
         }
-        else{
-        setTimeout(() => {
-          navigate("/metrics");
-        }, 2000);
-      }
       } else {
         setTimeout(() => {
           navigate("/");
         }, 2000);
       }
     }
-    setIsFormSubmitted(false)
+    setIsFormSubmitted(false);
     setAdditionalLoc(false);
   }, [isFormSubmitted]);
   useEffect(() => {
     if (user?.role === "Site Admin" || user?.role === "Teacher" || noCode) {
       if (state !== "default" && city !== "default" && school !== "default") {
-
         // just do this whole thing in app context later
 
         try {
-          console.log("getting district and county")
-          console.log(state, city, school)
-          const {foundDistrict, foundCounty} = getDistrictCounty(
+          console.log("getting district and county");
+          console.log(state, city, school);
+          const { foundDistrict, foundCounty } = getDistrictCounty(
             state,
             city,
             school
           );
-          console.log(foundDistrict, foundCounty)
+          console.log(foundDistrict, foundCounty);
 
           setDistrict(foundDistrict);
           setCounty(foundCounty);
@@ -237,7 +261,11 @@ const SelectLoc = ({ noCode }) => {
 
       if (value !== "default") {
         setDistricts(narrowDistricts({ state, city: value }));
-        setToNarrowSchools({reactState: "selectLocSchools", state, city: value});
+        setToNarrowSchools({
+          reactState: "selectLocSchools",
+          state,
+          city: value,
+        });
       }
     } else if (field === "district") {
       setDistrict(value);
@@ -252,11 +280,10 @@ const SelectLoc = ({ noCode }) => {
     }
   }, [selectLocSchools]);
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (forOther){
-      console.log('hi')
+    if (forOther) {
+      console.log("hi");
       if (
         state === "default" ||
         (showCounty && county === "default") ||
@@ -273,9 +300,9 @@ const SelectLoc = ({ noCode }) => {
         city: city !== "default" ? city : null,
         district: district !== "default" ? district : null,
         school: school !== "default" ? school : null,
-        requesterId:forOther,
-      })
-      setIsFormSubmitted(true)
+        requesterId: forOther,
+      });
+      setIsFormSubmitted(true);
       return;
     }
     if (noCode) {
@@ -304,8 +331,7 @@ const SelectLoc = ({ noCode }) => {
       } else {
         displayAlert();
       }
-    } 
-    else {
+    } else {
       if (
         state === "default" ||
         (showCounty && county === "default") ||
@@ -317,10 +343,6 @@ const SelectLoc = ({ noCode }) => {
         return;
       }
 
-      
-
-      
-      
       await addLocation({
         multiplePeriods: multiplePeriods,
         state: state,
@@ -338,260 +360,264 @@ const SelectLoc = ({ noCode }) => {
         setSchool("default");
         setMultiplePeriods(false);
         setNumOfLocations(numOfLocations + 1);
-      } 
-      
-      
-      
-      setIsFormSubmitted(true)
-      
-      
-     }
+      }
 
-    handleChange({name: "selectLocSchools", value: []});
+      setIsFormSubmitted(true);
+    }
+
+    handleChange({ name: "selectLocSchools", value: [] });
   };
 
   const [displayAddPopup, setDisplayAddPopup] = useState(false);
 
-  return <>
-    {displayAddPopup && <CreateLocPopup setDisplay={setDisplayAddPopup} />}
-    <div
-      className="full-page"
-      style={{ display: "grid", alignItems: "center", padding: "0 1rem" }}
-    >
-      <Wrapper style={{ paddingBottom: "1.5rem" }}>
-        <form className="form" onSubmit={handleSubmit}>
-          {showAlert && <Alert />}
-          <div className="form">
-          <h3 className="form-title">
-          
-          {
-            forOther
-              ? "Select Location for "
-              : noCode || user?.role === "Teacher" || selectSchool || fromProfile
-              ? "Select School"
-              : user.role === "Site Admin"
-              ? "Select School Location"
-              : "Select Admin Location"
-          }
-          {
-            forOther ? requestedName : (numOfLocations > 1 && !noCode ? ` ${numOfLocations}` : "")
-          }
+  return (
+    <>
+      {displayAddPopup && <CreateLocPopup setDisplay={setDisplayAddPopup} />}
+      <div
+        className="full-page"
+        style={{ display: "grid", alignItems: "center", padding: "0 1rem" }}
+      >
+        <Wrapper style={{ paddingBottom: "1.5rem" }}>
+          <form className="form" onSubmit={handleSubmit}>
+            {showAlert && <Alert />}
+            <div className="form">
+              <h3 className="form-title">
+                {forOther
+                  ? "Select Location for "
+                  : noCode ||
+                    user?.role === "Teacher" ||
+                    selectSchool ||
+                    fromProfile
+                  ? "Select School"
+                  : user.role === "Site Admin"
+                  ? "Select School Location"
+                  : "Select Admin Location"}
+                {forOther
+                  ? requestedName
+                  : numOfLocations > 1 && !noCode
+                  ? ` ${numOfLocations}`
+                  : ""}
+              </h3>
 
-        </h3>
-
-            <h4 className="form-title">State</h4>
-            <select
-              name="aliasChoice"
-              value={state}
-              onChange={(e) => handleChange("state", e.target.value)}
-              className="form-select"
-            >
-              <option value={"default"}>Choose your State</option>
-              {states.map((state, index) => {
-                return (
-                  <option key={index} value={state}>
-                    {state}
-                  </option>
-                );
-              })}
-            </select>
-            {showCounty && (
-              <>
-                <h4 className="form-title">County</h4>
-                <select
-                  name="aliasChoice"
-                  value={county}
-                  onChange={(e) => handleChange("county", e.target.value)}
-                  className="form-select"
-                >
-                  <option value={"default"}>Choose your County</option>
-                  {counties.map((county, index) => {
-                    if (county === "custom") {
-                      if (counties.length === 1) {
-                        return (
-                          <option key={index} value={county}>
-                            Doesn't apply
-                          </option>
-                        );
-                      } else {
-                        return <></>
-                      }
-                    }
-
-                    return (
-                      <option key={index} value={county}>
-                        {county}
-                      </option>
-                    );
-                  })}
-                </select>
-              </>
-            )}
-            {showCity && (
-              <>
-                <h4 className="form-title">City</h4>
-                <select
-                  name="aliasChoice"
-                  value={city}
-                  onChange={(e) => handleChange("city", e.target.value)}
-                  className="form-select"
-                >
-                  <option value={"default"}>Choose your City</option>
-                  {cities.map((city, index) => {
-                    return (
-                      <option key={index} value={city}>
-                        {city}
-                      </option>
-                    );
-                  })}
-                </select>
-              </>
-            )}
-            {showDistrict && (
-              <>
-                <h4 className="form-title">District</h4>
-                <select
-                  name="aliasChoice"
-                  value={district}
-                  onChange={(e) => handleChange("district", e.target.value)}
-                  className="form-select"
-                >
-                  <option value={"default"}>Choose your District</option>
-                  {districts.map((district, index) => {
-                    if (district === "custom") {
-                      if (districts.length === 1) {
-                        return (
-                          <option key={index} value={district}>
-                            Doesn't apply
-                          </option>
-                        );
-                      } else {
-                        return <></>
-                      }
-                    }
-
-                    return (
-                      <option key={index} value={district}>
-                        {district}
-                      </option>
-                    );
-                  })}
-                </select>
-              </>
-            )}
-            {showSchool && (
-              <>
-                <h4 className="form-title">School</h4>
-                <select
-                  name="aliasChoice"
-                  value={school}
-                  onChange={(e) => handleChange("school", e.target.value)}
-                  className="form-select"
-                >
-                  <option value={"default"}>Choose your School</option>
-                  {schools.map((school, index) => {
-                    return (
-                      <option key={index} value={school}>
-                        {school}
-                      </option>
-                    );
-                  })}
-                </select>
-              </>
-            )}
-
-            {!noCode && showMultiplePeriods && (
-              <>
-                <hr />
-                <label className="checkbox-container">
-                  I teach multiple classes/periods at this location
-                  <input
-                    type="checkbox"
-                    className="checkbox"
-                    name="aliasChoice"
-                    checked={multiplePeriods}
-                    onChange={(e) => setMultiplePeriods(e.target.checked)}
-                  />
-                  <span className="checkbox-checkmark"></span>
-                </label>
-              </>
-            )}
-            {!noCode && showAdditionalLoc && user.role!=="Site Admin" && (
-              <>
-                <hr />
-                <label className="checkbox-container">
-                  I would like to submit an additional location
-                  <input
-                    type="checkbox"
-                    className="checkbox"
-                    name="aliasChoice"
-                    checked={additionalLoc}
-                    onChange={(e) => {
-                      setAdditionalLoc(e.target.checked)
-                    }}
-                  />
-                  <span className="checkbox-checkmark"></span>
-                </label>
-              </>
-            )}
-
-            <button
-              className="btn btn-block"
-              type="submit"
-              disabled={isLoading}
-              onSubmit={(e) => handleSubmit(e.target.value)}
-              style={{ marginTop: "1.38rem" }}
-            >
-              {isLoading ? "Please Wait..." : "submit"}
-            </button>
-            {(user.adminTeacher && numOfLocations>1) || user.role=="Site Admin" || user.role==="Teacher" ? (
-              <p>
-                Don't see your school?{" "}
-                <button
-                  className="link"
-                  style={{
-                    background: "none",
-                    border: "none",
-                  }}
-                  onClick={(e) => {
-                    e.preventDefault()
-                    setDisplayAddPopup(true)
-                  }}
-                >
-                  Click here
-                </button>
-              </p>
-            ):null}
-            {numOfLocations > 1 ? <>
-              <br />
-              <div
-                className="dashboard-link"
-                style={{
-                  display: "flex",
-                  columnGap: "0.5rem",
-                  marginTop: "1rem",
-                  alignContent: "center",
-                  minWidth: "100%",
-                  justifyContent: "flex-end",
-                }}
+              <h4 className="form-title">State</h4>
+              <select
+                name="aliasChoice"
+                value={state}
+                onChange={(e) => handleChange("state", e.target.value)}
+                className="form-select"
               >
-                {isLoading ? "Please Wait..." : "Go to Dashboard"}
-                <Link
-                  to="/"
-                  disabled={isLoading}
-                  className="location-icon"
-                  style={{ fontSize: "1.5rem" }}
-                >
-                  <BsArrowRight />
-                </Link>
-              </div>
-            </> : null}
-          </div>
-        </form>
-      </Wrapper>
-      <img width="200" height="100" src={Logo2} className="corner-logo" />
-    </div>
-  </>;
+                <option value={"default"}>Choose your State</option>
+                {states.map((state, index) => {
+                  return (
+                    <option key={index} value={state}>
+                      {state}
+                    </option>
+                  );
+                })}
+              </select>
+              {showCounty && (
+                <>
+                  <h4 className="form-title">County</h4>
+                  <select
+                    name="aliasChoice"
+                    value={county}
+                    onChange={(e) => handleChange("county", e.target.value)}
+                    className="form-select"
+                  >
+                    <option value={"default"}>Choose your County</option>
+                    {counties.map((county, index) => {
+                      if (county === "custom") {
+                        if (counties.length === 1) {
+                          return (
+                            <option key={index} value={county}>
+                              Doesn't apply
+                            </option>
+                          );
+                        } else {
+                          return <></>;
+                        }
+                      }
+
+                      return (
+                        <option key={index} value={county}>
+                          {county}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </>
+              )}
+              {showCity && (
+                <>
+                  <h4 className="form-title">City</h4>
+                  <select
+                    name="aliasChoice"
+                    value={city}
+                    onChange={(e) => handleChange("city", e.target.value)}
+                    className="form-select"
+                  >
+                    <option value={"default"}>Choose your City</option>
+                    {cities.map((city, index) => {
+                      return (
+                        <option key={index} value={city}>
+                          {city}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </>
+              )}
+              {showDistrict && (
+                <>
+                  <h4 className="form-title">District</h4>
+                  <select
+                    name="aliasChoice"
+                    value={district}
+                    onChange={(e) => handleChange("district", e.target.value)}
+                    className="form-select"
+                  >
+                    <option value={"default"}>Choose your District</option>
+                    {districts.map((district, index) => {
+                      if (district === "custom") {
+                        if (districts.length === 1) {
+                          return (
+                            <option key={index} value={district}>
+                              Doesn't apply
+                            </option>
+                          );
+                        } else {
+                          return <></>;
+                        }
+                      }
+
+                      return (
+                        <option key={index} value={district}>
+                          {district}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </>
+              )}
+              {showSchool && (
+                <>
+                  <h4 className="form-title">School</h4>
+                  <select
+                    name="aliasChoice"
+                    value={school}
+                    onChange={(e) => handleChange("school", e.target.value)}
+                    className="form-select"
+                  >
+                    <option value={"default"}>Choose your School</option>
+                    {schools.map((school, index) => {
+                      return (
+                        <option key={index} value={school}>
+                          {school}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </>
+              )}
+
+              {!noCode && showMultiplePeriods && (
+                <>
+                  <hr />
+                  <label className="checkbox-container">
+                    I teach multiple classes/periods at this location
+                    <input
+                      type="checkbox"
+                      className="checkbox"
+                      name="aliasChoice"
+                      checked={multiplePeriods}
+                      onChange={(e) => setMultiplePeriods(e.target.checked)}
+                    />
+                    <span className="checkbox-checkmark"></span>
+                  </label>
+                </>
+              )}
+              {!noCode && showAdditionalLoc && user.role !== "Site Admin" && (
+                <>
+                  <hr />
+                  <label className="checkbox-container">
+                    I would like to submit an additional location
+                    <input
+                      type="checkbox"
+                      className="checkbox"
+                      name="aliasChoice"
+                      checked={additionalLoc}
+                      onChange={(e) => {
+                        setAdditionalLoc(e.target.checked);
+                      }}
+                    />
+                    <span className="checkbox-checkmark"></span>
+                  </label>
+                </>
+              )}
+
+              <button
+                className="btn btn-block"
+                type="submit"
+                disabled={isLoading}
+                onSubmit={(e) => handleSubmit(e.target.value)}
+                style={{ marginTop: "1.38rem" }}
+              >
+                {isLoading ? "Please Wait..." : "submit"}
+              </button>
+              {(user.adminTeacher && numOfLocations > 1) ||
+              user.role == "Site Admin" ||
+              user.role === "Teacher" ? (
+                <p>
+                  Don't see your school?{" "}
+                  <button
+                    className="link"
+                    style={{
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                    }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setDisplayAddPopup(true);
+                    }}
+                  >
+                    Click here
+                  </button>
+                </p>
+              ) : null}
+              {numOfLocations > 1 ? (
+                <>
+                  <br />
+                  <div
+                    className="dashboard-link"
+                    style={{
+                      display: "flex",
+                      columnGap: "0.5rem",
+                      marginTop: "1rem",
+                      alignContent: "center",
+                      minWidth: "100%",
+                      justifyContent: "flex-end",
+                    }}
+                  >
+                    {isLoading ? "Please Wait..." : "Go to Dashboard"}
+                    <Link
+                      to="/"
+                      disabled={isLoading}
+                      className="location-icon"
+                      style={{ fontSize: "1.5rem" }}
+                    >
+                      <BsArrowRight />
+                    </Link>
+                  </div>
+                </>
+              ) : null}
+            </div>
+          </form>
+        </Wrapper>
+        <img width="200" height="100" src={Logo2} className="corner-logo" />
+      </div>
+    </>
+  );
 };
 
 export default SelectLoc;
