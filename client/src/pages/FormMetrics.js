@@ -161,11 +161,13 @@ const FormMetrics = () => {
     };
   
     if (!location.search) {
+      console.log('hi')
       setIsOverall(true);
       setIsLoading(true);
       
       fetchDataForResponseGroups()
         .then((responses) => {
+          // console.log(responses)
           responses.forEach((data) => {
             const currentQuestionsToAnswers = data.questionsToAnswers;
             Object.keys(currentQuestionsToAnswers).forEach((question) => {
@@ -354,6 +356,7 @@ const FormMetrics = () => {
                 icon={<AiOutlineNumber />}
                 text={`${numberOfResponses} response(s)`}
               />
+              {console.log(responseType)}
               <ResponseGroupInfo
                 icon={<TbListNumbers />}
                 text={

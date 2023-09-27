@@ -381,6 +381,7 @@ const submitForm = async(req,res) =>{
   }
 
   let StudentResponseData=''
+  console.log(period)
   if (period!=="default"){
     StudentResponseData= await StudentResponse.create({formCode:code,teacher:teacher._id,grade:grade,when:when,formType:type,school:school,period:period})
 

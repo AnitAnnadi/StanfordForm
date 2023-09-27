@@ -106,7 +106,7 @@ const Form = () => {
     } else {
       let period = info["period"];
       let code = localStorage.getItem("code");
-      submitForm(formData, code, grade, when, type, school, null, null, null, null, null, captcha);
+      submitForm(formData, code, grade, when, type, school, period, null, null, null, null, captcha);
       
     }
     

@@ -594,6 +594,7 @@ const AppProvider = ({ children }) => {
   };
  const submitForm = async (formData,code,grade,when,type,school,period,state, city, county, district, captcha) => {
     try {
+      console.log(period)
       handleChange({name:"isLoading",value:true})
       const { data } = await axios.post(`/api/v1/auth/submitForm/`, {formData,code,grade,when,type,school,period,state, city, county, district,captcha});
       dispatch({

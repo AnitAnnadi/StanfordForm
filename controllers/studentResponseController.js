@@ -41,6 +41,7 @@ const getStudentResponses = async(req, res) => {
   if (grade && grade !== 'all') {
     queryObject.grade = grade;
   }
+  console.log(period)
   if (period && period !== 'all') {
     queryObject.period = period;
   }
