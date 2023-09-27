@@ -62,7 +62,7 @@ const LocationRequests = () => {
       {showAlert && <Alert />}
       {locations.length > 0 ? (
         locations.map((location, index) => (
-          <Wrapper>
+          <Wrapper style={{ marginBottom: "1.2rem" }}>
             <header>
               {/* <div className="main-icon">{school.school.charAt(0)}</div> */}
               <div className="info">
