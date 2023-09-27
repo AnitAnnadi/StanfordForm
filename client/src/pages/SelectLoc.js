@@ -169,8 +169,6 @@ const SelectLoc = ({ noCode }) => {
     setCounty("default");
     setForm("default");
     setWhen("default");
-    // setMultiplePeriods(false);
-    // setAdditionalLoc(false);
   }, []);
 
   useEffect(() => {
@@ -564,9 +562,9 @@ const SelectLoc = ({ noCode }) => {
               >
                 {isLoading ? "Please Wait..." : "submit"}
               </button>
-              {(user.adminTeacher && numOfLocations > 1) ||
-              user.role == "Site Admin" ||
-              user.role === "Teacher" ? (
+              {!noCode && (user?.adminTeacher && numOfLocations > 1) ||
+              user?.role == "Site Admin" ||
+              user?.role === "Teacher" ? (
                 <p>
                   Don't see your school?{" "}
                   <button
@@ -585,7 +583,7 @@ const SelectLoc = ({ noCode }) => {
                   </button>
                 </p>
               ) : null}
-              {numOfLocations > 1 ? (
+              {numOfLocations > 1 && !noCode ? (
                 <>
                   <br />
                   <div
