@@ -39,13 +39,14 @@ const NavLinks = ({ toggleSidebar }) => {
   }
 
   if (user.role == "Stanford Staff") {
-    links.push({
+    links.unshift({
       id: 3,
       text: "Location Requests",
       path: "/locationRequests",
       icon: <FaSchool />,
     });
   }
+  
 
   return (
     <div className="nav-links">

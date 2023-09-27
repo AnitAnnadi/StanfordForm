@@ -166,9 +166,16 @@ const Register = () => {
         }
       }))
       if (adminbool & !user.adminTeacher){
+        if (user.role == "Stanford Staff"){
+          setTimeout(() => {
+            navigate("/locationRequests");
+          }, 3000);
+        }
+        else{
         setTimeout(() => {
           navigate("/metrics");
         }, 3000);
+      }
       }
       else{
         setTimeout(() => {
