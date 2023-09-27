@@ -24,7 +24,6 @@ const createLocation = async(req, res) =>{
   const upperState = state.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
  
   const userId= (req.user.userId)
-  console.log(userId)
   const locationExists = await Location.findOne({ state: upperState, county: upperCounty, city: upperCity, district: upperDistrict, name: upperSchool });
 
   if (locationExists) {

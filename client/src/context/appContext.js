@@ -157,19 +157,19 @@ const configureFormStates = async (userLocations, user, formStates) => {
 
       break;
     case "District Admin":
-      newSearchState = userLocations[0].state;
-      newSearchCounty = userLocations[0].county;
-      newSearchDistrict = userLocations[0].district;
-      newSearchCity = userLocations[0].city;
+      newSearchState = userLocations[0]?.state;
+      newSearchCounty = userLocations[0]?.county;
+      newSearchDistrict = userLocations[0]?.district;
+      newSearchCity = userLocations[0]?.city;
       newSearchCity = "all";
       newSearchSchool = "all";
 
-      newStateOptions = [userLocations[0].state];
-      newCountyOptions = [userLocations[0].county];
-      newDistrictOptions = [userLocations[0].district === "district" ? "N/A" : userLocations[0].district];
-      newCityOptions = [userLocations[0].city];
-      console.log(narrowAllSchools({state: userLocations[0].state, county: userLocations[0].county, district: userLocations[0].district}))
-      newSchoolOptions = ["all", ...(await narrowAllSchools({state: userLocations[0].state, county: userLocations[0].county, district: userLocations[0].district}))];
+      newStateOptions = [userLocations[0]?.state];
+      newCountyOptions = [userLocations[0]?.county];
+      newDistrictOptions = [userLocations[0]?.district === "district" ? "N/A" : userLocations[0]?.district];
+      newCityOptions = [userLocations[0]?.city];
+      console.log(narrowAllSchools({state: userLocations[0]?.state, county: userLocations[0]?.county, district: userLocations[0]?.district}))
+      newSchoolOptions = ["all", ...(await narrowAllSchools({state: userLocations[0]?.state, county: userLocations[0]?.county, district: userLocations[0]?.district}))];
       break;
     case "County Admin":
       newSearchState = userLocations[0]?.state;
@@ -178,21 +178,21 @@ const configureFormStates = async (userLocations, user, formStates) => {
       newSearchCity = "all";
       newSearchSchool = "all";
 
-      newStateOptions = [userLocations[0].state];
-      newCountyOptions = [userLocations[0].county];
+      newStateOptions = [userLocations[0]?.state];
+      newCountyOptions = [userLocations[0]?.county];
 
-      newCityOptions = ["all", ...narrowCities({state: userLocations[0].state, county: userLocations[0].county})];
-      newDistrictOptions = ["all", ...narrowDistricts({state: userLocations[0].state, county: userLocations[0].county})];
+      newCityOptions = ["all", ...narrowCities({state: userLocations[0]?.state, county: userLocations[0]?.county})];
+      newDistrictOptions = ["all", ...narrowDistricts({state: userLocations[0]?.state, county: userLocations[0]?.county})];
       newSchoolOptions = ["all"];
       break;
     case "State Admin":
-      newSearchState = userLocations[0].state;
+      newSearchState = userLocations[0]?.state;
       newSearchCounty = "all";
       newSearchDistrict = "all";
       newSearchCity = "all";
       newSearchSchool = "all";
 
-      newStateOptions = [userLocations[0].state];
+      newStateOptions = [userLocations[0]?.state];
       newCountyOptions = ["all", ...narrowCounties({state: newSearchState})];
       newDistrictOptions = ["all"];
       newCityOptions = ["all"];
@@ -200,17 +200,17 @@ const configureFormStates = async (userLocations, user, formStates) => {
       break;
     case "Teacher":
       if (userLocations.length === 1) {
-        newSearchState = userLocations[0].state;
-        newSearchCounty = userLocations[0].county;
-        newSearchDistrict = userLocations[0].district;
-        newSearchCity = userLocations[0].city;
-        newSearchSchool = userLocations[0].school;
+        newSearchState = userLocations[0]?.state;
+        newSearchCounty = userLocations[0]?.county;
+        newSearchDistrict = userLocations[0]?.district;
+        newSearchCity = userLocations[0]?.city;
+        newSearchSchool = userLocations[0]?.school;
 
-        newStateOptions = [userLocations[0].state];
-        newCountyOptions = [userLocations[0].county];
-        newDistrictOptions = [userLocations[0].district === "district" ? "N/A" : userLocations[0].district];
-        newCityOptions = [userLocations[0].city];
-        newSchoolOptions = [userLocations[0].school];
+        newStateOptions = [userLocations[0]?.state];
+        newCountyOptions = [userLocations[0]?.county];
+        newDistrictOptions = [userLocations[0]?.district === "district" ? "N/A" : userLocations[0]?.district];
+        newCityOptions = [userLocations[0]?.city];
+        newSchoolOptions = [userLocations[0]?.school];
       } else {
         newSearchState = "all";
         newSearchCounty = "all";
@@ -729,13 +729,13 @@ const AppProvider = ({ children }) => {
       const filteredSchools = schools.filter((obj) => {
         switch (user.role) {
           case "Site Admin":
-            return obj.school === userLocations[0].school;
+            return obj.school === userLocations[0]?.school;
           case "District Admin":
-            return obj.district === userLocations[0].district;
+            return obj.district === userLocations[0]?.district;
           case "County Admin":
-            return obj.county === userLocations[0].county;
+            return obj.county === userLocations[0]?.county;
           case "State Admin":
-            return obj.state === userLocations[0].state;
+            return obj.state === userLocations[0]?.state;
           case "Stanford Staff":
             return true;
           case "Teacher":
