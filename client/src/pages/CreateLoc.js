@@ -87,6 +87,8 @@ const CreateLoc = () => {
     "Wyoming",
   ];
   useEffect(() => {
+    console.log('effect')
+    console.log(pendingApproval)
     if (pendingApproval){
       setTimeout(() => {
         navigate("/pendingLocation");
@@ -152,7 +154,6 @@ const CreateLoc = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(multiplePeriods,state,county, city, district, school)
     if (
       state === "default" ||
       (county === "default") ||
@@ -162,7 +163,7 @@ const CreateLoc = () => {
       displayAlert();
       return;
     }
-
+    successAlert("Redirecting...")
     addNewLocation({
       multiplePeriods: multiplePeriods,
       state: state,

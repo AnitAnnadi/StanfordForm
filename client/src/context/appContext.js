@@ -550,6 +550,7 @@ const AppProvider = ({ children }) => {
       console.log(school)
       const {data} = await authFetch.post('/locations', locationData); 
       if (data.location){
+        handleChange({ name: "pendingApproval", value: true });
         dispatch({
           type:NEW_LOCATION_ADDED,
           payload:{pendingSchool: pendingSchool.push(school)}

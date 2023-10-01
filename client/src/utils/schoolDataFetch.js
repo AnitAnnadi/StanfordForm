@@ -2,6 +2,8 @@ import schoolData from '../assets/school-data.json'
 import {common} from "@mui/material/colors";
 
 const narrowCounties = ({state}) => {
+
+    console.log('hi')
     const counties = schoolData
         .filter((school) => school.state.toUpperCase() === state.toUpperCase())
         .map((school) => school.county)

@@ -411,6 +411,7 @@ const reducer = (state, action) => {
   }
 
   if (action.type === NEW_LOCATION_ADDED) {
+    console.log('redducerr')
     return {
       ...state,
       pendingApproval:true,
