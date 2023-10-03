@@ -47,7 +47,7 @@ const narrowCities = ({state, county}) => {
             } else if (state === undefined) {
                 return school?.county.toUpperCase() === county.toUpperCase()
             } else {
-                return school?.state.toUpperCase() === state.toUpperCase() && school.county.toUpperCase() === county.toUpperCase()
+                return school?.state.toUpperCase() === state.toUpperCase() && school?.county?.toUpperCase() === county?.toUpperCase()
             }
         })
         .map((school) => school.city.toUpperCase())
