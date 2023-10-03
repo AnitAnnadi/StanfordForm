@@ -141,6 +141,12 @@ const Register = () => {
     if (!type || (type !== "teacher" && type !== "admin")) {
       return navigate("/landing");
     }
+    console.log(user?.role, user?.adminTeacher)
+    if (user?.role == "Stanford Staff" & !user?.adminTeacher){
+      setTimeout(() => {
+        navigate("/locationRequests");
+      }, 3000);
+    }
     if (user?.role == "Site Admin" && pendingLocations.length>=1){
       setTimeout(() => {
         navigate("/pendingLocation");
@@ -166,6 +172,7 @@ const Register = () => {
         }
       }))
       if (adminbool & !user.adminTeacher){
+      
         if (user.role == "Stanford Staff"){
           setTimeout(() => {
             navigate("/locationRequests");

@@ -29,7 +29,7 @@ const Home = () => {
   getLocations({ user })
       }, []);
 
-  useEffect(() => {
+  useEffect(() => {console.log('run')
       if (pendingLocations){
       if (pendingLocations?.length >= 1 && userLocations.length === 0) {
         successAlert("Redirecting to pending location");
@@ -38,7 +38,9 @@ const Home = () => {
         }, 2000);
       }
       if (user && user.adminTeacher && userLocations.length < 2) {
+        console.log(userLocations.length, user.role)
         if (userLocations.length === 1 && (user.role === 'Stanford Staff' || user.role === "Site Admin")) {
+          console.log('first')
           return;
         }
         else if (userLocations.length >= 1 && pendingLocations.length >= 1 ) {
@@ -56,7 +58,7 @@ const Home = () => {
           }, 2000);
           return;
         }
-        else if (userLocations.length === 0 && pendingLocations.length==9) {
+        else if (userLocations.length === 0 && pendingLocations.length==0) {
           if (user.adminTeacher && (user.role === 'Stanford Staff' || user.role === "Site Admin")) {
             successAlert("Redirecting to select school location");
             setTimeout(() => {
