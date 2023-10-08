@@ -136,7 +136,7 @@ const JoinForm = () => {
               noCode
             },
           });
-        }, 3000);
+        }, 2000);
       } else {
         displayAlert();
       }
@@ -161,7 +161,7 @@ const JoinForm = () => {
             teacher_id
           },
         });
-      }, 3000);
+      }, 2000);
     } else {
       displayAlert();
     }

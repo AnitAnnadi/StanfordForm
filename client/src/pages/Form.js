@@ -48,13 +48,13 @@ const Form = () => {
         setTimeout(() => {
           navigate("/certificateinfo", { state: { info } });
           handleChange({name:"isLoading",value:false})
-        }, 3000);
+        }, 2000);
       } else {
         setTimeout(() => {
           navigate("/success", {});
           handleChange({name:"isLoading",value:false})
 
-        }, 3000);
+        }, 2000);
       }
   
       captchaRef.current.reset();

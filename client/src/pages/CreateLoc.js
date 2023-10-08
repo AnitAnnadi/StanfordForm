@@ -93,7 +93,7 @@ const CreateLoc = () => {
       setTimeout(() => {
         navigate("/pendingLocation");
         // successAlert("Redirecting...");
-      }, 1000);
+      }, 2000);
     }
 
   } , [pendingApproval]);

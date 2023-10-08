@@ -21,7 +21,7 @@ const CertInfo = () => {
         if (certificate){
           setTimeout(() => {
             navigate("/certificate", {state:{name}});
-          }, 1000);
+          }, 2000);
         }
       },[certificate])
     const onSubmit = (e)=>{

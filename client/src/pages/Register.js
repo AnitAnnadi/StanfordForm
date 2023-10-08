@@ -145,24 +145,24 @@ const Register = () => {
     if (user?.role == "Stanford Staff" & !user?.adminTeacher){
       setTimeout(() => {
         navigate("/locationRequests");
-      }, 3000);
+      }, 2000);
     }
     if (user?.role == "Site Admin" && pendingLocations.length>=1){
       setTimeout(() => {
         navigate("/pendingLocation");
-      }, 3000);
+      }, 2000);
       return
     }
     else if (user?.role =="Teacher" && !hasLocation && pendingLocations.length>=1){
       setTimeout(() => {
         navigate("/pendingLocation");
-      }, 3000);
+      }, 2000);
       return
     }
     else if (user?.adminTeacher && userLocations.length==1 && pendingLocations.length>=1){
       setTimeout(() => {
         navigate("/pendingLocation");
-      }, 3000);
+      }, 2000);
       return
     }
     if ((user && hasLocation) || (user?.role === 'Stanford Staff' && !user.adminTeacher)) {
@@ -176,18 +176,18 @@ const Register = () => {
         if (user.role == "Stanford Staff"){
           setTimeout(() => {
             navigate("/locationRequests");
-          }, 3000);
+          }, 2000);
         }
         else{
         setTimeout(() => {
           navigate("/metrics");
-        }, 3000);
+        }, 2000);
       }
       }
       else{
         setTimeout(() => {
           navigate("/");
-        }, 3000);
+        }, 2000);
       }
     
     } else if (user && !hasLocation) {
@@ -231,7 +231,7 @@ const Register = () => {
     if (twofaSent === true){
     setTimeout(() => {
       navigate("/two-factor-sent",{ state: { currentUser } });
-    }, 3000);}
+    }, 2000);}
   }, [twofaSent]);
 
   return (

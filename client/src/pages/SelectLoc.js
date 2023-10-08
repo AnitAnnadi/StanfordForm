@@ -124,13 +124,13 @@ const SelectLoc = ({ noCode }) => {
         ? userLocations.length
         : 1
       : userLocations
-      ? userLocations.length + 1
+      ? userLocations.length
       : 1
   );
 
   useEffect(() => {
     if (userLocations) {
-      setNumOfLocations(userLocations.length + 1);
+      setNumOfLocations(userLocations.length);
     }
   }, [userLocations]);
   
@@ -197,7 +197,8 @@ const SelectLoc = ({ noCode }) => {
           setTimeout(() => {
             navigate("/");
           }, 2000);
-        } else {
+        } 
+        else {
           setTimeout(() => {
             navigate("/metrics");
           }, 2000);
@@ -325,7 +326,7 @@ const SelectLoc = ({ noCode }) => {
               noCode,
             },
           });
-        }, 3000);
+        }, 2000);
       } else {
         displayAlert();
       }
@@ -562,9 +563,10 @@ const SelectLoc = ({ noCode }) => {
               >
                 {isLoading ? "Please Wait..." : "submit"}
               </button>
-              {!noCode && (user?.adminTeacher && numOfLocations > 1) ||
+              {!noCode && (user?.adminTeacher && numOfLocations >= 1) ||
               user?.role == "Site Admin" ||
-              user?.role === "Teacher" ? (
+              user?.role === "Teacher"||
+              user?.role=="Stanford Staff" ? (
                 <p>
                   Don't see your school?{" "}
                   <button
