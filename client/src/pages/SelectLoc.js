@@ -130,7 +130,7 @@ const SelectLoc = ({ noCode }) => {
 
   useEffect(() => {
     if (userLocations) {
-      setNumOfLocations(userLocations.length);
+      setNumOfLocations(userLocations.length+1);
     }
   }, [userLocations]);
   
