@@ -13,9 +13,6 @@ const createLocation = async(req, res) =>{
   }
 
   const user = await User.findOne({ _id: req.user.userId });
-  // if (user.role !== 'Site Admin' && user.role !== 'Standford Staff' && user.role !== 'Teacher') {
-  //   throw new BadRequestError('You do not have permission to create a location');
-  // }
 
   const upperSchool = school.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   const upperDistrict = district ? district.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : undefined;
@@ -31,8 +28,10 @@ const createLocation = async(req, res) =>{
     return res.status(StatusCodes.OK).json({ location: locationExists });
   }
 
-  const location = await Location.create({ multiplePeriods, state: upperState, county: upperCounty, city: upperCity, district: upperDistrict, name: upperSchool, approved:false, requestedUser: userId })
-
+  const location = await Location.create({ multiplePeriods, state: upperState, county: upperCounty, city: upperCity, district: upperDistrict, name: upperSchool, approved:user.role=="Stanford Staff", requestedUser: userId })
+  if (user.role==="Stanford Staff"){
+  const newSchool = await School.create({ teacher: location.requestedUser, multiplePeriods:location.multiplePeriods, state:location.state, county:location.county, city:location.city, district:location.district, school:location.name})
+  }
   const token = user.createJWT();
   attachCookie({ res, token });
 
@@ -48,7 +47,6 @@ const approveLocation = async(req,res) =>{
   const location = await Location.findOne({_id });
   console.log(_id)
   location.approved = true;
-  const school = await School.create({ teacher: location.requestedUser, multiplePeriods:location.multiplePeriods, state:location.state, county:location.county, city:location.city, district:location.district, school:location.name})
   console.log(school)
   await location.save();
   return res.status(StatusCodes.CREATED).json({ school });

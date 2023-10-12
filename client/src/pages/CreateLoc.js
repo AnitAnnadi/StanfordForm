@@ -23,7 +23,8 @@ const CreateLoc = () => {
     addNewLocation,
     isLoading,
     pendingApproval,
-    successAlert
+    successAlert,
+    stanfordNewLoc
   } = useAppContext();
   const navigate = useNavigate();
 
@@ -87,16 +88,22 @@ const CreateLoc = () => {
     "Wyoming",
   ];
   useEffect(() => {
-    console.log('effect')
-    console.log(pendingApproval)
     if (pendingApproval){
+      console.log(pendingApproval)
       setTimeout(() => {
         navigate("/pendingLocation");
-        // successAlert("Redirecting...");
       }, 2000);
     }
+    if (stanfordNewLoc){
+      successAlert("New Location Created");
+      handleChange({ name: "stanfordNewLoc", value: false });
+      setTimeout(() => {
+        navigate("/metrics");
+      }, 2000);
+      
+    }
 
-  } , [pendingApproval]);
+  } , [pendingApproval,stanfordNewLoc]);
 
 
 

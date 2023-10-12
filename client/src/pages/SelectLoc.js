@@ -130,8 +130,7 @@ const SelectLoc = ({ noCode }) => {
 
   useEffect(() => {
     if (userLocations && !isFormSubmitted) {
-      console.log('in effect')
-      setNumOfLocations(userLocations.length+1);
+      setNumOfLocations(user.role=="Stanford Staff"?userLocations.length+1:userLocations.length);
     }
   }, [userLocations]);
   

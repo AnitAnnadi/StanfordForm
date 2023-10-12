@@ -117,7 +117,8 @@ const initialState = {
   pendingApproval:false,
   pendingSchool:[],
   approved:false,
-  declined:false
+  declined:false,
+  stanfordNewLoc:false
 };
 
 const stringDifScore = (str1, str2) => {
@@ -543,14 +544,22 @@ const AppProvider = ({ children }) => {
 
   const addNewLocation = async (locationData, bypassSimilar=false) => {
     const {
-      pendingSchool
+      pendingSchool,
+      user
   } = state;
     try {
       const {multiplePeriods, state, county, city, district, school} = locationData
       console.log(school)
       const {data} = await authFetch.post('/locations', locationData); 
       if (data.location){
+        if (user.role!="Stanford Staff"){
+
         handleChange({ name: "pendingApproval", value: true });
+        }
+        else{
+          handleChange({ name: "stanfordNewLoc", value: true });
+          handleChange({ name: "pendingApproval", value: false });
+        }
         dispatch({
           type:NEW_LOCATION_ADDED,
           payload:{pendingSchool: pendingSchool.push(school)}
