@@ -129,7 +129,8 @@ const SelectLoc = ({ noCode }) => {
   );
 
   useEffect(() => {
-    if (userLocations) {
+    if (userLocations && !isFormSubmitted) {
+      console.log('in effect')
       setNumOfLocations(userLocations.length+1);
     }
   }, [userLocations]);
