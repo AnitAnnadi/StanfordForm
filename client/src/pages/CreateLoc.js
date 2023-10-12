@@ -98,7 +98,7 @@ const CreateLoc = () => {
       successAlert("New Location Created");
       handleChange({ name: "stanfordNewLoc", value: false });
       setTimeout(() => {
-        navigate("/metrics");
+        navigate("/locationRequests");
       }, 2000);
       
     }
