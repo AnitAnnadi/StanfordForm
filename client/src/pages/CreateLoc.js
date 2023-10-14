@@ -24,7 +24,8 @@ const CreateLoc = () => {
     isLoading,
     pendingApproval,
     successAlert,
-    stanfordNewLoc
+    stanfordNewLoc,
+    errorAlert
   } = useAppContext();
   const navigate = useNavigate();
 
@@ -170,7 +171,15 @@ const CreateLoc = () => {
       displayAlert();
       return;
     }
+    const existingSchools = new Set(narrowSchools({ state, county, city, district }));
+    if (existingSchools.has(school)) {
+      errorAlert(`${school} already exists.`)
+      return;
+    } else {
+      
+  
     successAlert("Redirecting...")
+    
     addNewLocation({
       multiplePeriods: multiplePeriods,
       state: state,
@@ -179,6 +188,7 @@ const CreateLoc = () => {
       district: district !== "default" ? district : null,
       school: school !== "default" ? school : null,
     }, false);
+  }
   };
 
 

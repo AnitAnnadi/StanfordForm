@@ -22,9 +22,8 @@ const createLocation = async(req, res) =>{
  
   const userId= (req.user.userId)
   const locationExists = await Location.findOne({ state: upperState, county: upperCounty, city: upperCity, district: upperDistrict, name: upperSchool });
-
+  console.log('Exising'+locationExists)
   if (locationExists) {
-    // return existing location
     return res.status(StatusCodes.OK).json({ location: locationExists });
   }
 
