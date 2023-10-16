@@ -13,6 +13,7 @@ import {
   safety,
   healthy,
 } from "../questions.js";
+import NoCode from "../models/NoCode.js";
 let exportData = [];
 
 const findResponse = (list, questions, obj) => {
@@ -30,37 +31,72 @@ const findResponse = (list, questions, obj) => {
 const getExport = async (req, res) => {
   exportData = [];
   try {
-    const { teacherId, schoolId, period, grade, formType, when } = req.query;
+    const { noCode, teacherId, schoolId, period, grade, formType, when,
+      school: schoolName, state, city, county, district } = req.query;
     const { formCode } = req.params;
-    const school = await School.findOne({ _id: schoolId });
-    const teacher = await User.findOne({ _id: teacherId });
 
-    let responseQueryObject = {
-      formCode: formCode,
-      teacher: teacherId,
-      grade: grade,
-      formType: formType,
-      when: when,
-      school: school.school,
-    };
+    let responseQueryObject={}
 
-    if (period && period !== "undefined" && period!='null') {
+    if (period && period !== 'undefined' && period !== 'null') {
       responseQueryObject.period = period;
     }
 
-    const studentResponses = await StudentResponse.find(responseQueryObject);
+    let teacher;
+    let studentResponses;
+    let school = undefined;
+
+    if (noCode === "false") {
+      responseQueryObject = {
+        formCode: formCode,
+        teacher: teacherId,
+        grade: grade,
+        // formType: formType,
+        when: when,
+        school: schoolName,
+      }
+
+
+      school = await School.findOne({ _id: schoolId });
+      teacher = await User.findOne({ _id: teacherId });
+      studentResponses = await StudentResponse.find(responseQueryObject);
+    } else {
+      responseQueryObject = {
+        school: schoolName,
+        state: state,
+        city: city,
+        county: county,
+        district: district,
+        grade: grade,
+        // formType: formType,
+        period: period,
+        when: when,
+      }
+
+      studentResponses = await NoCode.find(responseQueryObject);
+
+      teacher = {
+        name: 'n/a',
+      };
+
+      school = {
+        school: schoolName,
+        state: state,
+        county: county,
+        district: district,
+        city: city,
+      }
+    }
+
+
     const map = await Promise.all(
       studentResponses.map(async (studentResponse) => {
         let obj = {
           teacher: teacher?.name,
-          school: school.school,
-          county: school.county,
-          district: school.district,
+          school: school?.school,
+          county: school.county === "custom" ? "n/a" : school.county,
+          district: school.district === "custom" ? "n/a" : school.district,
           state:school.state,
           city: school.city,
-          
-          
-          
         };
         obj.when = studentResponse.when;
         obj.grade = studentResponse.grade;

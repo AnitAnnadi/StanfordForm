@@ -52,6 +52,7 @@ const SearchContainer = ({ startReload }) => {
     shouldReload,
     allResponseGroups,
     getExport,
+    setToNarrowSchools,
     exportData,
     exportLoading,
   } = useAppContext();
@@ -63,6 +64,7 @@ const SearchContainer = ({ startReload }) => {
   const safety = [];
   const healthyTobacco = [];
   const healthyCannabis = [];
+
 
   useEffect(() => {
     if (exportClicked && exportData) {
@@ -148,17 +150,17 @@ const SearchContainer = ({ startReload }) => {
 
     if (user.role === "Teacher") {
       const allowedValues = userLocations.map(
-        (location) => location[searchType]
+        (location) => location[searchType].toUpperCase()
       );
-      values = searchValues.filter((value) => allowedValues.includes(value));
-    } else if (user.role === "Stanford Staff") {
+      values = searchValues.filter((value) => allowedValues.includes(value.toUpperCase()));
+    }  else if (user.role === "Stanford Staff") {
       values = searchValues;
     } else {
       if (userLocations[0][searchType] === null) {
         values = searchValues;
       } else {
         values = searchValues.filter(
-          (value) => value === userLocations[0][searchType]
+          (value) => value.toUpperCase() === userLocations[0][searchType].toUpperCase()
         );
       }
     }
@@ -187,18 +189,16 @@ const SearchContainer = ({ startReload }) => {
             narrowCounties({ state: e.target.value })
           ),
           cityOptions: narrowAllowedOptions(
-            "city",
-            narrowCities({ state: e.target.value })
-          ),
-          schoolOptions: narrowAllowedOptions(
-            "school",
-            narrowSchools({ state: e.target.value })
-          ),
+              "city",
+              narrowCities({ state: e.target.value })
+            ),
           districtOptions: narrowAllowedOptions(
             "district",
             narrowDistricts({ state: e.target.value })
           ),
         });
+
+        setToNarrowSchools({reactState: "schoolOptions", allowed: true, state: e.target.value})
         break;
       case "searchCounty":
         handleChanges({
@@ -211,15 +211,13 @@ const SearchContainer = ({ startReload }) => {
             "city",
             narrowCities({ county: e.target.value })
           ),
-          schoolOptions: narrowAllowedOptions(
-            "school",
-            narrowSchools({ county: e.target.value })
-          ),
           districtOptions: narrowAllowedOptions(
             "district",
-            narrowDistricts({ county: e.target.value })
+            narrowDistricts({ county: e.target.value, state: searchState })
           ),
         });
+
+        setToNarrowSchools({reactState: "schoolOptions", allowed: true, county: e.target.value})
         break;
       case "searchCity":
         handleChanges({
@@ -228,38 +226,25 @@ const SearchContainer = ({ startReload }) => {
           searchSchool: "all",
           searchTeacher: "all",
           districtOptions: narrowAllowedOptions(
-            "district",
-            narrowDistricts({
-              city: e.target.value,
-              county: searchCounty,
-              state: searchState,
-            })
-          ),
-          schoolOptions: narrowAllowedOptions(
-            "school",
-            narrowSchools({
-              city: e.target.value,
-              county: searchCounty,
-              state: searchState,
-            })
-          ),
+              "district",
+              narrowDistricts({
+                city: e.target.value === 'all' ? undefined : e.target.value,
+                county: searchCounty === 'all' ? undefined : searchCounty,
+                state: searchState === 'all' ? undefined : searchState
+              })
+            ),
         });
+
+        setToNarrowSchools({reactState: "schoolOptions", allowed: true, city: e.target.value, county: searchCounty, state: searchState})
         break;
       case "searchDistrict":
         handleChanges({
           [e.target.name]: e.target.value,
-          searchSchool: "all",
-          searchTeacher: "all",
-          schoolOptions: narrowAllowedOptions(
-            "school",
-            narrowSchools({
-              district: e.target.value,
-              county: searchCounty,
-              state: searchState,
-              city: searchCity,
-            })
-          ),
+          searchSchool: 'all',
+          searchTeacher: 'all',
         });
+
+        setToNarrowSchools({reactState: "schoolOptions", allowed: true, district: e.target.value, county: searchCounty, state: searchState, city: searchCity});
         break;
       case "searchSchool":
         handleChanges({
@@ -344,7 +329,7 @@ const SearchContainer = ({ startReload }) => {
             name="searchSchool"
             value={searchSchool}
             handleChange={handleLocalChange}
-            list={schoolOptions}
+            list={["all", ...schoolOptions]}
           />
           {/* search by teacher */}
           <FormRowSelect

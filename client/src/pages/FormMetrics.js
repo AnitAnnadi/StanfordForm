@@ -94,8 +94,9 @@ const FormMetrics = () => {
   
   };
 
-  
 
+  // NOTE: old responses with older versions of the form will not have the same questions as the current form leading
+  // to the results not rendering due to this funciton.
   const createQuestionsToAnswersMap = (array, questionsToAnswers) => {
     reorderedQuestionsToAnswers = {};
     array.forEach((question) => {
@@ -139,13 +140,18 @@ const FormMetrics = () => {
         responseGroups.map((responseGroup) => {
           const { school, uniqueResponseType } = responseGroup;
           const queryParameters = new URLSearchParams({
+            noCode: uniqueResponseType?.noCode,
             teacherId: school.teacher,
-            schoolId: school._id,
+            schoolId: school?._id,
             period: uniqueResponseType.period,
             grade: uniqueResponseType.grade,
             formType: uniqueResponseType.formType,
             when: uniqueResponseType.when,
-            overallBreakdown:true
+            school: school.school,
+            state: school.state,
+            city: school.city,
+            county: school.county,
+            district: school.district,
           });
   
           return fetch(`/api/v1/form/${uniqueResponseType.formCode}?${queryParameters.toString()}`)
@@ -155,11 +161,13 @@ const FormMetrics = () => {
     };
   
     if (!location.search) {
+      console.log('hi')
       setIsOverall(true);
       setIsLoading(true);
       
       fetchDataForResponseGroups()
         .then((responses) => {
+          // console.log(responses)
           responses.forEach((data) => {
             const currentQuestionsToAnswers = data.questionsToAnswers;
             Object.keys(currentQuestionsToAnswers).forEach((question) => {
@@ -189,6 +197,7 @@ const FormMetrics = () => {
       setIsOverall(false);
       setIsLoading(true);
       const queryParameters = new URLSearchParams(location.search);
+
       const formType = queryParameters.get("formType");
       const when = queryParameters.get("when");
       fetch(`/api/v1/form/${formCode}?${queryParameters.toString()}`)
@@ -347,10 +356,11 @@ const FormMetrics = () => {
                 icon={<AiOutlineNumber />}
                 text={`${numberOfResponses} response(s)`}
               />
+              {console.log(responseType)}
               <ResponseGroupInfo
                 icon={<TbListNumbers />}
                 text={
-                  responseType?.period
+                  (responseType?.period) && (responseType?.period !== "No Period")
                     ? "Period " + responseType.period
                     : "No specified period"
                 }

@@ -20,7 +20,7 @@ const VerifyTwoFactor = () => {
     if (alertText==="User Successfully Created"){
         if (user.role==="Stanford Staff" && !user.adminTeacher){
         setTimeout(() => {
-            navigate("/metrics");
+            navigate("/locationRequests");
             }, 2000)
         }
         else if(user.role==="Stanford Staff" && user.adminTeacher) {

@@ -18,13 +18,21 @@ const ResponseGroup = ({
   const formCode = uniqueResponseType.formCode
 
   const queryParams = new URLSearchParams({
+    noCode: uniqueResponseType?.noCode ? 'true' : 'false',
     teacherId: school.teacher,
-    schoolId: school._id,
+    schoolId: school?._id,
     period: uniqueResponseType.period,
     grade: uniqueResponseType.grade,
     formType: uniqueResponseType.formType,
     when: uniqueResponseType.when,
+    school: school.school,
+    state: school.state,
+    city: school.city,
+    county: school.county,
+    district: school.district,
   });
+
+  console.log(uniqueResponseType)
 
   return (
     <Wrapper>
@@ -40,7 +48,7 @@ const ResponseGroup = ({
           <ResponseGroupInfo icon={<FaChalkboardTeacher />} text={teacherName} />
           <ResponseGroupInfo icon={<AiOutlineNumber />} text={`${numberOfResponses} response(s)`} />
           <ResponseGroupInfo icon={<TbListNumbers />} text=
-          {uniqueResponseType?.period ? 'Period ' + uniqueResponseType.period:
+          {(uniqueResponseType?.period) && (uniqueResponseType?.period !== "No Period") ? 'Period ' + uniqueResponseType.period:
             'No specified period'}
           />
           <ResponseGroupInfo icon={<TbNumbers />} text={'Grade ' + uniqueResponseType.grade} />

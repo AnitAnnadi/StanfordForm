@@ -1,12 +1,13 @@
 import React, { useReducer, useContext, useEffect } from 'react';
 import {
   getSchoolDataValue,
+  getSchoolObject,
   narrowCities,
   narrowCounties,
   narrowDistricts,
   narrowSchools
 } from "../utils/schoolDataFetch";
-
+import { distance } from "fastest-levenshtein";
 import { tobacco,postTobacco, cannabis, postCannabis, safety  } from "../utils/questions";
 
 
@@ -30,7 +31,8 @@ import {
   FORM_FAIL,
   HANDLE_CHANGE,
   CLEAR_VALUES,
-
+  NEW_LOCATION_APPROVE,
+  NEW_LOCATION_DECLINE,
   GET_RESPONSE_GROUPS_BEGIN,
   GET_RESPONSE_GROUPS_SUCCESS,
   PAGE_FULL,
@@ -39,10 +41,10 @@ import {
   SHOW_STATS_SUCCESS,
   CLEAR_FILTERS,
   CHANGE_PAGE,
-
+  NEW_LOCATION_ADDED,
   ENTER_CODE,
   GET_TOTAL,
-  ADD_LOCATION_SUCCESS, HANDLE_MULTIPLE_CHANGES, SUCCESS_ALERT
+  ADD_LOCATION_SUCCESS, HANDLE_MULTIPLE_CHANGES, SUCCESS_ALERT, SIMILAR_LOCATIONS_FOUND
 } from './actions';
 const LSUser = JSON.parse(localStorage.getItem("user"));
 const LSUserLocations = JSON.parse(localStorage.getItem("userLocations"));
@@ -80,6 +82,7 @@ const initialState = {
   overallLoading:false,
   allResponseGroups:[],
   monthlyApplications: [],
+  pendingLocations:[],
   stateOptions: localStorage.getItem("stateOptions") ? (localStorage.getItem("stateOptions") !== "undefined" ? JSON.parse(localStorage.getItem("stateOptions")): stateList) : stateList,
   searchState: localStorage.getItem("searchState") ? (localStorage.getItem("searchState") !== "undefined" ? JSON.parse(localStorage.getItem("searchState")): 'all'): 'all',
   countyOptions: localStorage.getItem("countyOptions") ? (localStorage.getItem("countyOptions") !== "undefined" ? JSON.parse(localStorage.getItem("countyOptions")): ['all']): ['all'],
@@ -106,11 +109,26 @@ const initialState = {
   exportData:null,
   currentSchoolIndex:null,
   nextPg:false,
+  selectLocSchools:[],
+  searchContainerSchools:[],
   resetPassword:false,
-  twofaSent:false
+  resetPassword:false,
+  twofaSent:false,
+  pendingApproval:false,
+  pendingSchool:[],
+  approved:false,
+  declined:false,
+  stanfordNewLoc:false
 };
 
-const configureFormStates = (userLocations, user, formStates) => {
+const stringDifScore = (str1, str2) => {
+  const str1Arr = str1.toUpperCase().split(" ").sort().join("");
+  const str2Arr = str2.toUpperCase().split(" ").sort().join("");
+
+  return distance(str1Arr, str2Arr);
+}
+
+const configureFormStates = async (userLocations, user, formStates) => {
   let {
     newSearchState,
     newSearchCounty,
@@ -126,31 +144,33 @@ const configureFormStates = (userLocations, user, formStates) => {
 
   switch (user.role) {
     case "Site Admin":
-      newSearchState = userLocations[0].state;
-      newSearchCounty = userLocations[0].county;
-      newSearchDistrict = userLocations[0].district;
-      newSearchCity = userLocations[0].city;
-      newSearchSchool = userLocations[0].school;
+      newSearchState = userLocations[0]?.state;
+      newSearchCounty = userLocations[0]?.county;
+      newSearchDistrict = userLocations[0]?.district;
+      newSearchCity = userLocations[0]?.city;
+      newSearchSchool = userLocations[0]?.school;
 
-      newStateOptions = [userLocations[0].state];
-      newCountyOptions = [userLocations[0].county];
-      newDistrictOptions = [userLocations[0].district];
-      newCityOptions = [userLocations[0].city];
-      newSchoolOptions = [userLocations[0].school];
+      newStateOptions = [userLocations[0]?.state];
+      newCountyOptions = [userLocations[0]?.county];
+      newDistrictOptions = [userLocations[0]?.district === "district" ? "N/A" : userLocations[0]?.district];
+      newCityOptions = [userLocations[0]?.city];
+      newSchoolOptions = [userLocations[0]?.school];
 
       break;
     case "District Admin":
-      newSearchState = userLocations[0].state;
-      newSearchCounty = userLocations[0].county;
-      newSearchDistrict = userLocations[0].district;
+      newSearchState = userLocations[0]?.state;
+      newSearchCounty = userLocations[0]?.county;
+      newSearchDistrict = userLocations[0]?.district;
+      newSearchCity = userLocations[0]?.city;
       newSearchCity = "all";
       newSearchSchool = "all";
 
-      newStateOptions = [userLocations[0].state];
-      newCountyOptions = [userLocations[0].county];
-      newDistrictOptions = [userLocations[0].district];
-      newCityOptions = ["all", ...narrowCities({state: userLocations[0].state, county: userLocations[0].county, district: userLocations[0].district})];
-      newSchoolOptions = ["all", ...narrowSchools({state: userLocations[0].state, county: userLocations[0].county, district: userLocations[0].district})];
+      newStateOptions = [userLocations[0]?.state];
+      newCountyOptions = [userLocations[0]?.county];
+      newDistrictOptions = [userLocations[0]?.district === "district" ? "N/A" : userLocations[0]?.district];
+      newCityOptions = [userLocations[0]?.city];
+      console.log(narrowAllSchools({state: userLocations[0]?.state, county: userLocations[0]?.county, district: userLocations[0]?.district}))
+      newSchoolOptions = ["all", ...(await narrowAllSchools({state: userLocations[0]?.state, county: userLocations[0]?.county, district: userLocations[0]?.district}))];
       break;
     case "County Admin":
       newSearchState = userLocations[0]?.state;
@@ -159,21 +179,21 @@ const configureFormStates = (userLocations, user, formStates) => {
       newSearchCity = "all";
       newSearchSchool = "all";
 
-      newStateOptions = [userLocations[0].state];
-      newCountyOptions = [userLocations[0].county];
+      newStateOptions = [userLocations[0]?.state];
+      newCountyOptions = [userLocations[0]?.county];
 
-      newCityOptions = ["all", ...narrowCities({state: userLocations[0].state, county: userLocations[0].county})];
-      newDistrictOptions = ["all", ...narrowDistricts({state: userLocations[0].state, county: userLocations[0].county})];
+      newCityOptions = ["all", ...narrowCities({state: userLocations[0]?.state, county: userLocations[0]?.county})];
+      newDistrictOptions = ["all", ...narrowDistricts({state: userLocations[0]?.state, county: userLocations[0]?.county})];
       newSchoolOptions = ["all"];
       break;
     case "State Admin":
-      newSearchState = userLocations[0].state;
+      newSearchState = userLocations[0]?.state;
       newSearchCounty = "all";
       newSearchDistrict = "all";
       newSearchCity = "all";
       newSearchSchool = "all";
 
-      newStateOptions = [userLocations[0].state];
+      newStateOptions = [userLocations[0]?.state];
       newCountyOptions = ["all", ...narrowCounties({state: newSearchState})];
       newDistrictOptions = ["all"];
       newCityOptions = ["all"];
@@ -181,17 +201,17 @@ const configureFormStates = (userLocations, user, formStates) => {
       break;
     case "Teacher":
       if (userLocations.length === 1) {
-        newSearchState = userLocations[0].state;
-        newSearchCounty = userLocations[0].county;
-        newSearchDistrict = userLocations[0].district;
-        newSearchCity = userLocations[0].city;
-        newSearchSchool = userLocations[0].school;
+        newSearchState = userLocations[0]?.state;
+        newSearchCounty = userLocations[0]?.county;
+        newSearchDistrict = userLocations[0]?.district;
+        newSearchCity = userLocations[0]?.city;
+        newSearchSchool = userLocations[0]?.school;
 
-        newStateOptions = [userLocations[0].state];
-        newCountyOptions = [userLocations[0].county];
-        newDistrictOptions = [userLocations[0].district];
-        newCityOptions = [userLocations[0].city];
-        newSchoolOptions = [userLocations[0].school];
+        newStateOptions = [userLocations[0]?.state];
+        newCountyOptions = [userLocations[0]?.county];
+        newDistrictOptions = [userLocations[0]?.district === "district" ? "N/A" : userLocations[0]?.district];
+        newCityOptions = [userLocations[0]?.city];
+        newSchoolOptions = [userLocations[0]?.school];
       } else {
         newSearchState = "all";
         newSearchCounty = "all";
@@ -232,6 +252,55 @@ const configureFormStates = (userLocations, user, formStates) => {
     districtOptions: newDistrictOptions,
     cityOptions: newCityOptions,
     schoolOptions: newSchoolOptions,
+  }
+}
+
+const narrowAllSchools = async (getParams, allowed = false) => {
+  try {
+    if (allowed) {
+      const {data} = await axios.get(`/api/v1/schools/user`);
+      const { userLocations } = data;
+
+      const { state, county, city, district, school } = getParams;
+
+      // get all schoolnames that meet the getParams criteria, ignore undefined values
+
+      let userLocationsFiltered = userLocations
+
+      if (state && state !== "all") {
+        userLocationsFiltered = userLocationsFiltered.filter((location) => location.state.toUpperCase() === state.toUpperCase());
+      }
+
+      if (county && county !== "all") {
+        userLocationsFiltered = userLocationsFiltered.filter((location) => location.county?.toUpperCase() === county.toUpperCase());
+      }
+
+      if (city && city !== "all") {
+        userLocationsFiltered = userLocationsFiltered.filter((location) => location.city?.toUpperCase() === city.toUpperCase());
+      }
+
+      if (district && district !== "all") {
+        userLocationsFiltered = userLocationsFiltered.filter((location) => location.district?.toUpperCase() === district.toUpperCase());
+      }
+
+      if (school && school !== "all") {
+        userLocationsFiltered = userLocationsFiltered.filter((location) => location.school.toUpperCase() === school.toUpperCase());
+      }
+
+      return userLocationsFiltered.map((location) => location.school);
+    } else {
+      const urlSearchParams = new URLSearchParams(
+        Object.entries(getParams).filter(([key, value]) => value !== undefined)
+      );
+
+      const {data} = await axios.get(`/api/v1/locations?${urlSearchParams}`);
+      const {locations} = data;
+
+      return narrowSchools(getParams).concat(locations.map((location) => location.name));
+    }
+  } catch (error) {
+    console.log(error);
+    return [];
   }
 }
 
@@ -280,7 +349,15 @@ const AppProvider = ({ children }) => {
       dispatch({ type: CLEAR_ALERT });
     }, 3000);
   };
-
+  const getLocations = async({user})=>{
+    const { data } = await axios.post(
+      `/api/v1/auth/getLocations`,
+      {user}
+    );
+    const { userLocations,pendingLocations } = data;
+    handleChange({ name: "userLocations", value: userLocations });
+    handleChange({ name: "pendingLocations", value: pendingLocations });
+  }
   const setupUser = async ({ currentUser, captcha, adminTeacher, endPoint, alertText }) => {
     localStorage.clear()
     dispatch({ type: SETUP_USER_BEGIN });
@@ -294,7 +371,7 @@ const AppProvider = ({ children }) => {
       );
 
         
-      const { user, hasLocation, userLocations } = data;
+      const { user, hasLocation, userLocations, pendingLocations } = data;
       
      let role = currentUser.role
       if (
@@ -333,7 +410,7 @@ const AppProvider = ({ children }) => {
           'schoolOptions'
         ];
 
-        const newFormState = configureFormStates(userLocations, user,
+        const newFormState = await configureFormStates(userLocations, user,
           Object.fromEntries(stateKeys.map(key => {
               return ['new' + key[0].toUpperCase() + key.slice(1), state[key]]
           }))
@@ -348,7 +425,8 @@ const AppProvider = ({ children }) => {
         type: SETUP_USER_SUCCESS,
         payload: { user, alertText, hasLocation,
           userLocations: userLocations ? userLocations : [],
-          newFormStates: endPoint === 'login' ? newFormState : null
+          newFormStates: endPoint === 'login' ? newFormState : null,
+          pendingLocations: pendingLocations ? pendingLocations : [],
         },
       });
     } catch (error) {
@@ -360,6 +438,7 @@ const AppProvider = ({ children }) => {
     }
     clearAlert();
   };
+
   const toggleSidebar = () => {
     dispatch({ type: TOGGLE_SIDEBAR });
   };
@@ -393,8 +472,27 @@ const AppProvider = ({ children }) => {
 
   const addLocation = async (locationData) => {
     try {
-      const { data } = await authFetch.post('/schools/user', locationData);
-      const { data: data2 } = await authFetch.get('/schools/user', locationData);
+      const { state, county, district, city, school, multiplePeriods, requesterId } = locationData;
+
+      let newLocationData = {state, county, district, city, school, multiplePeriods, requesterId};
+      console.log(requesterId)
+      if (district === 'custom' || county === 'custom') {
+        const urlSearchParams = new URLSearchParams(
+          state,
+          city,
+          school,
+        );
+        const {data} = await axios.get(`/api/v1/locations?${urlSearchParams}`);
+        const {locations} = data;
+
+        if (locations.length > 0) {
+          newLocationData.county = locations[0].county;
+          newLocationData.district = locations[0].district;
+        }
+      }
+
+      const { data } = await authFetch.post('/schools/user', newLocationData);
+      const { data: data2 } = await authFetch.get('/schools/user');
 
       const { user, exists } = data;
       const { userLocations } = data2;
@@ -414,7 +512,7 @@ const AppProvider = ({ children }) => {
         'schoolOptions'
       ];
 
-      const newFormState = configureFormStates(userLocations, user,
+      const newFormState = await configureFormStates(userLocations, user,
           Object.fromEntries(stateKeys.map(key => {
               return ['new' + key[0].toUpperCase() + key.slice(1), state[key]]
           }))
@@ -433,7 +531,8 @@ const AppProvider = ({ children }) => {
         }
       });
     } catch (error) {
-      if (error.response.status !== 401) {
+      console.log(error)
+      if (error.response?.status !== 401) {
         dispatch({
           type: UPDATE_USER_ERROR,
           payload: { msg: error.response.data.msg },
@@ -443,9 +542,57 @@ const AppProvider = ({ children }) => {
     clearAlert();
   };
 
+  const addNewLocation = async (locationData, bypassSimilar=false) => {
+    const {
+      pendingSchool,
+      user
+  } = state;
+    try {
+      const {multiplePeriods, state, county, city, district, school} = locationData
+      console.log(school)
+      const {data} = await authFetch.post('/locations', locationData); 
+      if (! data.msg && data.location){
+        if (user.role!="Stanford Staff"){
+
+        handleChange({ name: "pendingApproval", value: true });
+        }
+        else{
+          handleChange({ name: "stanfordNewLoc", value: true });
+          handleChange({ name: "pendingApproval", value: false });
+        }
+        dispatch({
+          type:NEW_LOCATION_ADDED,
+          payload:{pendingSchool: pendingSchool.push(school)}
+        })
+      } 
+      else if (data.msg){
+        errorAlert(data.msg);
+      }
+      else{
+        errorAlert("There was an error submitting your location.")
+      }
+    }
+
+    catch(error){
+
+    }
+
+  };
+
+  const setToNarrowSchools = async ({reactState, allowed, state, county, city, district}) => {
+    try {
+      const schoolNames = await narrowAllSchools({state, county, city, district}, allowed);
+
+      dispatch({ type: HANDLE_CHANGE, payload: { name: reactState, value: schoolNames } });
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const enterCode = async (code) => {
     try {
       const { data } = await axios.post(`/api/v1/auth/enterCode/`, {code});
+
             const {id, name, email, state, city, school} = data;
       dispatch({ type: ENTER_CODE , payload:{teacher:data["user"],schools:data["schools"]}});
     } catch (error) {
@@ -460,6 +607,7 @@ const AppProvider = ({ children }) => {
   };
  const submitForm = async (formData,code,grade,when,type,school,period,state, city, county, district, captcha) => {
     try {
+      console.log(period)
       handleChange({name:"isLoading",value:true})
       const { data } = await axios.post(`/api/v1/auth/submitForm/`, {formData,code,grade,when,type,school,period,state, city, county, district,captcha});
       dispatch({
@@ -487,7 +635,7 @@ const AppProvider = ({ children }) => {
         dispatch({
           type: FORM_SUCCESS,
           payload: {msg: `An email with the password reset has been sent to ${email}`}
-  
+
         });
         clearAlert()
       }
@@ -513,7 +661,7 @@ const AppProvider = ({ children }) => {
         dispatch({
           type: FORM_SUCCESS,
           payload: {msg: "Password Changed"}
-  
+
         });
         handleChange({ name: "resetPassword", value: true });
         clearAlert()
@@ -539,6 +687,7 @@ const AppProvider = ({ children }) => {
 
 
   const handleChange = ({ name, value }) => {
+    console.log(name,value)
     dispatch({ type: HANDLE_CHANGE, payload: { name, value } });
   };
   const handleChanges = (newStates) => {
@@ -582,7 +731,7 @@ const AppProvider = ({ children }) => {
           searchState,
           searchCounty,
           searchCity,
-          searchDistrict,
+          searchDistrict : searchDistrict === 'N/A' ? undefined : searchDistrict,
           searchSchool,
           searchTeacher:
             user.role === 'Teacher' ? user._id :
@@ -594,13 +743,13 @@ const AppProvider = ({ children }) => {
       const filteredSchools = schools.filter((obj) => {
         switch (user.role) {
           case "Site Admin":
-            return obj.school === userLocations[0].school;
+            return obj.school === userLocations[0]?.school;
           case "District Admin":
-            return obj.district === userLocations[0].district;
+            return obj.district === userLocations[0]?.district;
           case "County Admin":
-            return obj.county === userLocations[0].county;
+            return obj.county === userLocations[0]?.county;
           case "State Admin":
-            return obj.state === userLocations[0].state;
+            return obj.state === userLocations[0]?.state;
           case "Stanford Staff":
             return true;
           case "Teacher":
@@ -613,9 +762,9 @@ const AppProvider = ({ children }) => {
 
       let newResponses = [];
       let teacherNames = [];
-      let schoolIndex = currentSchoolIndex&&!all?currentSchoolIndex:0
-            
-      while ( schoolIndex<filteredSchools.length) {
+      let schoolIndex = (currentSchoolIndex && !all) ? currentSchoolIndex : 0;
+
+      while ( schoolIndex < filteredSchools.length) {
 
         const { data: data2 } = await authFetch.get('/studentResponses', {
           params: {
@@ -679,8 +828,89 @@ const AppProvider = ({ children }) => {
         if (!overallBreakdown && !all && newResponses.length>=8){
           break
         }
-        
-        
+      }
+      if (user.role === 'Stanford Staff') {
+        console.log('hi')
+        if (schoolIndex >= filteredSchools.length && (newResponses.length === 0 || all)) {
+          const offsetIndex = schoolIndex - filteredSchools.length;
+
+          const { data: data3 } = await authFetch.get('/studentResponses/noCode', {
+            params: {
+              school: searchSchool,
+              state: searchState,
+              city: searchCity,
+              county: searchCounty,
+              district: searchDistrict,
+              grade: searchGrade,
+              period: searchPeriod,
+              formType: searchType,
+              when: searchBeforeAfter,
+              all
+            }
+          });
+
+          const { studentResponses: noCodeStudentResponses } = data3;
+
+          let uniqueResponseTypes = [];
+
+          for (const responseIndex in noCodeStudentResponses) {
+            let newResponseType = {
+              formCode: "noCode",
+              noCode: true,
+              teacher: "No Teacher",
+              grade: noCodeStudentResponses[responseIndex].grade,
+              when: noCodeStudentResponses[responseIndex].when,
+              formType: noCodeStudentResponses[responseIndex].formType,
+              school: {
+                school: noCodeStudentResponses[responseIndex].school,
+                state: noCodeStudentResponses[responseIndex].state,
+                teacher: "No Teacher",
+                multiplePeriods: false,
+                district: noCodeStudentResponses[responseIndex].district,
+                county: noCodeStudentResponses[responseIndex].county,
+                city: noCodeStudentResponses[responseIndex].city,
+              },
+              period: "No Period"
+            }
+
+            let match = uniqueResponseTypes.find(function(obj) {
+              return JSON.stringify(obj) === JSON.stringify(newResponseType);
+            });
+
+            if (!match) {
+              uniqueResponseTypes.push(newResponseType);
+            }
+          }
+
+          for (let i = (offsetIndex * 8); (i < uniqueResponseTypes.length && ((i < ((offsetIndex * 8) + 8)) || all)); i += 1) {
+            const currentResponse = uniqueResponseTypes[i]
+
+            // school: filteredSchools[schoolIndex],
+            // teacherName,
+            // uniqueResponseType: uniqueResponseTypes[responseTypeIndex],
+            // numberOfResponses: studentResponses.filter((response) => {
+            //   return Object.entries(uniqueResponseTypes[responseTypeIndex]).every(([key, value]) => {
+            //     return response[key] === value;
+            //   });
+            // }).length,
+
+            newResponses.push({
+              school: currentResponse.school,
+              teacherName: "No Teacher",
+              uniqueResponseType: currentResponse,
+              numberOfResponses: noCodeStudentResponses.filter((response) => {
+                return response.grade === currentResponse.grade &&
+                  response.when === currentResponse.when &&
+                  response.formType === currentResponse.formType &&
+                  response.school === currentResponse.school.school &&
+                  response.state === currentResponse.school.state &&
+                  response.district === currentResponse.school.district &&
+                  response.county === currentResponse.school.county &&
+                  response.city === currentResponse.school.city
+              }).length
+            });
+          }
+        }
       }
 
       if (all){
@@ -740,37 +970,43 @@ const AppProvider = ({ children }) => {
             dispatch({ type: GET_EXPORT_FAIL, payload: { msg: "Export Failed" } });
         }
     } else {
-
-        
         dispatch({ type: GET_EXPORT_BEGIN, payload: { exportData: null } });
 
         const allExportData = [];
+
         for (const responseGroup of (allResponseGroups ? allResponseGroups : responseGroups)) {
-        const { school, uniqueResponseType } = responseGroup;
-        const queryParameters = new URLSearchParams({
-          teacherId: school.teacher,
-          schoolId: school._id,
-          period: uniqueResponseType.period,
-          grade: uniqueResponseType.grade,
-          formType: uniqueResponseType.formType,
-          when: uniqueResponseType.when,
-        });
-  
-        try {
-          const data = await authFetch.get(
-            `/export/${uniqueResponseType.formCode}?${queryParameters}`
-          );
-          const exportDatas = data.data.exportData;
-          exportDatas.forEach((exportData) => {
-            allExportData.push(exportData);
+          const { school, uniqueResponseType } = responseGroup;
+
+          const queryParameters = new URLSearchParams({
+            noCode: uniqueResponseType?.noCode ? 'true' : 'false',
+            teacherId: school.teacher,
+            schoolId: school?._id,
+            period: uniqueResponseType.period,
+            grade: uniqueResponseType.grade,
+            formType: uniqueResponseType.formType,
+            when: uniqueResponseType.when,
+            school: school.school,
+            state: school.state,
+            city: school.city,
+            county: school.county,
+            district: school.district,
           });
-        } catch (error) {
-          console.error(`Error fetching data for responseGroup: ${responseGroup}`, error);
-          dispatch({ type: GET_EXPORT_FAIL, payload: { msg: "Export Failed" } });
-          return; // Exit the function early since there was an error
-        }
+
+          try {
+            const data = await authFetch.get(
+              `/export/${uniqueResponseType.formCode}?${queryParameters}`
+            );
+            const exportDatas = data.data.exportData;
+            exportDatas.forEach((exportData) => {
+              allExportData.push(exportData);
+            });
+          } catch (error) {
+            console.error(`Error fetching data for responseGroup: ${responseGroup}`, error);
+            dispatch({ type: GET_EXPORT_FAIL, payload: { msg: "Export Failed" } });
+            return; // Exit the function early since there was an error
+          }
         
-      }
+        }
 
         dispatch({
             type: GET_EXPORT_SUCCESS,
@@ -798,6 +1034,32 @@ const AppProvider = ({ children }) => {
   const changePage = (page) => {
     dispatch({ type: CHANGE_PAGE, payload: { page } });
   };
+
+  const approveLocationRequest = async(_id) => {
+    console.log(_id)
+    const {data} = await authFetch.post('/locations/approve', {_id}); 
+    if (data){
+      dispatch({ type: NEW_LOCATION_APPROVE });
+      clearAlert();
+    }
+  };
+  const declineLocationRequest = async(_id) => {
+    console.log(_id)
+    const {data} = await authFetch.post('/locations/decline', {_id}); 
+    if (data){
+      dispatch({ type: NEW_LOCATION_DECLINE });
+      clearAlert();
+    }
+  };
+
+  // const declineAndSelectLocationRequest = async(_id) => {
+  //   console.log(_id)
+  //   const {data} = await authFetch.post('/locations/decline', {_id}); 
+  //   if (data){
+  //     dispatch({ type: NEW_LOCATION_DECLINE });
+  //     clearAlert();
+  //   }
+  // };
 
   const createCertificate = async ({name,info}) => {
     try{
@@ -882,6 +1144,7 @@ const AppProvider = ({ children }) => {
         toggleSidebar,
         logoutUser,
         updateUser,
+        setToNarrowSchools,
         handleChange,
         handleChanges,
         clearValues,
@@ -890,6 +1153,7 @@ const AppProvider = ({ children }) => {
         successAlert,
         changePage,
         addLocation,
+        addNewLocation,
         enterCode,
         submitForm,
         getTotal,
@@ -897,7 +1161,10 @@ const AppProvider = ({ children }) => {
         verifyReset,
         createCertificate,
         resendEmail,
-        errorAlert
+        errorAlert,
+        approveLocationRequest,
+        declineLocationRequest,
+        getLocations
       }}
     >
       {children}

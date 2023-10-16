@@ -33,7 +33,7 @@ const Register = () => {
   let adminbool=false
   const [values, setValues] = useState(initialState);
   const [adminRole, setAdminRole] = useState("default");
-  const { twofaSent,user, isLoading, showAlert, displayAlert, setupUser, hasLocation,errorAlert,userLocations } =
+  const { twofaSent,user, pendingLocations,isLoading, showAlert, displayAlert, setupUser, hasLocation,errorAlert,userLocations } =
     useAppContext();
   const captchaRef = useRef(null)
 
@@ -109,14 +109,15 @@ const Register = () => {
     }
     if (role==="Stanford Staff"){
       const lowercaseEmail = email.toLowerCase();
-      if (!lowercaseEmail.endsWith('@stanford.edu')){
-        errorAlert("The email does not match with the role.");
-        return
-      }
+      // if (!lowercaseEmail.endsWith('@stanford.edu')){
+      //   errorAlert("The email does not match with the role.");
+      //   return
+      // }
   
     }
     const currentUser = { name, email, password, role, state, city, school };
     if (isMember) {
+      
       setupUser({
         currentUser,
         // null,
@@ -138,7 +139,31 @@ const Register = () => {
 
   useEffect(() => {
     if (!type || (type !== "teacher" && type !== "admin")) {
-      navigate("/landing");
+      return navigate("/landing");
+    }
+    console.log(user?.role, user?.adminTeacher)
+    if (user?.role == "Stanford Staff" & !user?.adminTeacher){
+      setTimeout(() => {
+        navigate("/locationRequests");
+      }, 2000);
+    }
+    if (user?.role == "Site Admin" && pendingLocations.length>=1){
+      setTimeout(() => {
+        navigate("/pendingLocation");
+      }, 2000);
+      return
+    }
+    else if (user?.role =="Teacher" && !hasLocation && pendingLocations.length>=1){
+      setTimeout(() => {
+        navigate("/pendingLocation");
+      }, 2000);
+      return
+    }
+    else if (user?.adminTeacher && userLocations.length==1 && pendingLocations.length>=1){
+      setTimeout(() => {
+        navigate("/pendingLocation");
+      }, 2000);
+      return
     }
     if ((user && hasLocation) || (user?.role === 'Stanford Staff' && !user.adminTeacher)) {
       adminroles.map((role=>{
@@ -147,14 +172,22 @@ const Register = () => {
         }
       }))
       if (adminbool & !user.adminTeacher){
+      
+        if (user.role == "Stanford Staff"){
+          setTimeout(() => {
+            navigate("/locationRequests");
+          }, 2000);
+        }
+        else{
         setTimeout(() => {
           navigate("/metrics");
-        }, 3000);
+        }, 2000);
+      }
       }
       else{
         setTimeout(() => {
           navigate("/");
-        }, 3000);
+        }, 2000);
       }
     
     } else if (user && !hasLocation) {
@@ -198,7 +231,7 @@ const Register = () => {
     if (twofaSent === true){
     setTimeout(() => {
       navigate("/two-factor-sent",{ state: { currentUser } });
-    }, 3000);}
+    }, 2000);}
   }, [twofaSent]);
 
   return (

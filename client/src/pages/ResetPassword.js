@@ -22,7 +22,7 @@ const ResetPassword = () => {
         if (resetPassword){
           setTimeout(() => {
             navigate("/", {});
-          }, 3000);
+          }, 2000);
         }
       },[resetPassword])
     const onSubmit = (e)=>{

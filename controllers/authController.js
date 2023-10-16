@@ -13,6 +13,7 @@ import crypto from 'crypto';
 import ResetPassword from '../models/ResetPassword.js';
 import Certificates from '../models/Certificates.js';
 import Pending from '../models/Pending.js';
+import Location from '../models/Location.js';
 
 
 
@@ -153,6 +154,15 @@ const register = async (req, res) => {
 }
 
 };
+
+const getLocations = async(req,res) =>{
+  const { user} = req.body;
+  const userLocations = await School.find({ teacher: user._id });  
+  const pendingLocations = await Location.find({ requestedUser: user._id });
+  console.log(pendingLocations)
+  res.status(StatusCodes.OK).json({ userLocations,pendingLocations });
+
+}
 const login = async (req, res) => {
   const { currentUser,captcha} = req.body;
   const {name, email, password, role} = currentUser
@@ -174,6 +184,7 @@ const login = async (req, res) => {
   user.password = undefined;
 
   const userLocations = await School.find({ teacher: user._id });
+  const pendingLocations = await Location.find({requestedUser:user._id})
 
   let hasLocation;
   if (user.adminTeacher && user.role!="Stanford Staff"){
@@ -186,7 +197,7 @@ const login = async (req, res) => {
   
 
 
-  res.status(StatusCodes.OK).json({ user,hasLocation, userLocations });
+  res.status(StatusCodes.OK).json({ user,hasLocation, userLocations, pendingLocations });
 };
 const updateUser = async (req, res) => {
   const { email, name } = req.body;
@@ -370,6 +381,7 @@ const submitForm = async(req,res) =>{
   }
 
   let StudentResponseData=''
+  console.log(period)
   if (period!=="default"){
     StudentResponseData= await StudentResponse.create({formCode:code,teacher:teacher._id,grade:grade,when:when,formType:type,school:school,period:period})
 
@@ -421,4 +433,4 @@ const submitForm = async(req,res) =>{
    
 }
 
-export { resendTwoFa,verify2fa,createCertificate, resetPassword,verifyToken, register, login, updateUser, forgotPassword, logout , enterCode, submitForm };
+export { getLocations, resendTwoFa,verify2fa,createCertificate, resetPassword,verifyToken, register, login, updateUser, forgotPassword, logout , enterCode, submitForm };

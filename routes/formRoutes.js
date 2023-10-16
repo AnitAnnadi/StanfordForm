@@ -1,6 +1,6 @@
 import express from 'express';
 const router = express.Router();
-import { createLocation, getLocations, getUserLocations } from "../controllers/schoolController.js";
+import { createSchool, getSchools, getUserSchools } from "../controllers/schoolController.js";
 import { getFormMetrics, getTotal } from "../controllers/formController.js";
 
 router.route('/:formCode').get(getFormMetrics);

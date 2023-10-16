@@ -48,13 +48,13 @@ const Form = () => {
         setTimeout(() => {
           navigate("/certificateinfo", { state: { info } });
           handleChange({name:"isLoading",value:false})
-        }, 3000);
+        }, 2000);
       } else {
         setTimeout(() => {
           navigate("/success", {});
           handleChange({name:"isLoading",value:false})
 
-        }, 3000);
+        }, 2000);
       }
   
       captchaRef.current.reset();
@@ -106,7 +106,7 @@ const Form = () => {
     } else {
       let period = info["period"];
       let code = localStorage.getItem("code");
-      submitForm(formData, code, grade, when, type, school, null, null, null, null, null, captcha);
+      submitForm(formData, code, grade, when, type, school, period, null, null, null, null, captcha);
       
     }
     

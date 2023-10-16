@@ -5,6 +5,7 @@ import StudentResponse from "../models/StudentResponse.js";
 import Question from "../models/Question.js";
 import attachCookie from "../utils/attachCookie.js";
 import {StatusCodes} from "http-status-codes";
+import NoCode from "../models/NoCode.js";
 
 const getFormMetrics = async(req,res) => {
   const user = await User.findOne({ _id: req.user.userId });
@@ -13,33 +14,71 @@ const getFormMetrics = async(req,res) => {
 
   const { formCode } = req.params;
   const {
+    noCode,
     teacherId,
     schoolId,
     period,
     grade,
     formType,
     when,
+    school: schoolName,
+    state,
+    city,
+    county,
+    district,
   } = req.query;
 
-  const school = await School.findOne({ _id: schoolId })
-  const teacher = await User.findOne({ _id: teacherId })
+  let teacher;
+  let studentResponses;
+
   let responseQueryObject={}
-  
-  responseQueryObject = {
-    formCode: formCode,
+  console.log(period)
+  if (period && period !== 'undefined' && period !== 'null') {
+    responseQueryObject.period = period;
+  }
+
+  let school = undefined;
+
+  if (noCode === "false" || noCode === undefined || noCode === "undefined") {
+    responseQueryObject = {
+      formCode: formCode,
       teacher: teacherId,
       grade: grade,
       formType: formType,
       when: when,
-      school: school.school,
-  }
+      school: schoolName,
+    }
 
-  if (period && period !== 'null' && period!="undefined") {
-    responseQueryObject.period = period;
-  }
-  
+    teacher = await User.findOne({ _id: teacherId });
+    studentResponses = await StudentResponse.find(responseQueryObject);
+    school = await School.findOne({ _id: schoolId });
+  } else {
+    responseQueryObject = {
+      school: schoolName,
+      state: state,
+      city: city,
+      county: county,
+      district: district,
+      grade: grade,
+      formType: formType,
+      period: period,
+      when: when,
+    }
 
-  const studentResponses = await StudentResponse.find(responseQueryObject);
+    studentResponses = await NoCode.find(responseQueryObject);
+
+    teacher = {
+      name: 'No Teacher',
+    };
+
+    school = {
+      school: schoolName,
+      state: state,
+      county: county,
+      district: district,
+      city: city,
+    }
+  }
 
   const questionsToAnswers = {};
 
@@ -49,14 +88,11 @@ const getFormMetrics = async(req,res) => {
     studentsQuestionsToAnswers.forEach((question) => {
       if (questionsToAnswers[question.Question]) {
         if (questionsToAnswers[question.Question][question.Answer]) {
-          // If its included add 1 to the value
           questionsToAnswers[question.Question][question.Answer] += 1;
         } else {
-          // If its not included add answer to array with value of 1
           questionsToAnswers[question.Question][question.Answer] = 1;
         }
       } else {
-        // If the question is not included add it to the object with the answer and value of 1
         questionsToAnswers[question.Question] = {
           [question.Answer]: 1,
         };

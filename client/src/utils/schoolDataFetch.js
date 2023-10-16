@@ -43,11 +43,11 @@ const narrowCities = ({state, county}) => {
     const cities = schoolData
         .filter((school) => {
             if (county === undefined) {
-                return school.state.toUpperCase() === state.toUpperCase()
+                return school?.state.toUpperCase() === state.toUpperCase()
             } else if (state === undefined) {
-                return school.county.toUpperCase() === county.toUpperCase()
+                return school?.county.toUpperCase() === county.toUpperCase()
             } else {
-                return school.state.toUpperCase() === state.toUpperCase() && school.county.toUpperCase() === county.toUpperCase()
+                return school?.state.toUpperCase() === state.toUpperCase() && school?.county?.toUpperCase() === county?.toUpperCase()
             }
         })
         .map((school) => school.city.toUpperCase())

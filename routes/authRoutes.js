@@ -20,7 +20,8 @@ import {
   resetPassword,
   createCertificate,
   verify2fa,
-  resendTwoFa
+  resendTwoFa,
+  getLocations
 } from '../controllers/authController.js';
 
 import authenticateUser from '../middleware/auth.js';
@@ -36,6 +37,8 @@ router.route('/verifyToken').post(verifyToken)
 router.route('/resetpassword').post(resetPassword)
 router.route('/updateUser').patch(authenticateUser, testUser, updateUser);
 router.route('/createCertificate').post(createCertificate);
+router.route('/getlocations').post(getLocations);
+
 router.route('/resend2fa').post(resendTwoFa);
 // router.route('/createLocation').post(authenticateUser, createLocation)
 export default router;

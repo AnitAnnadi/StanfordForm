@@ -571,3 +571,54 @@ li {
 /* .form-metrics-display{
   display: "block";
 } */
+
+.modal {
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
+    rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
+    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  border-radius: var(--borderRadius);
+  width: 400px;
+}
+
+.close {
+  position: absolute;
+  top: -0.75rem;
+  right: -0.65rem;
+  opacity: 0.7;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0rem;
+  margin: 0;
+  display: grid;
+  width: 1.75rem;
+  height: 1.75rem;
+  align-content: center;
+  border-radius: 1.75rem;
+  background-color: #24a47f;
+  border-color: transparent;
+  color: #ffffff;
+}
+
+.content-long {
+  display: block;
+}
+
+.content-short {
+  display: none;
+}
+
+.modal-btn-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 1rem;
+  align-self: flex-end;
+  margin-top: 0.5rem;
+  align-items: center;
+}
+
+.modal-clear-btn {
+  background: var(--grey-500);
+}
+.modal-clear-btn:hover {
+  background: var(--black);
+}

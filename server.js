@@ -20,6 +20,7 @@ import connectDB from './db/connect.js';
 // routers
 import authRouter from './routes/authRoutes.js';
 import schoolRouter from './routes/schoolRoutes.js';
+import locationRouter from './routes/locationRoutes.js';
 import studentResponseRouter from './routes/studentResponseRoutes.js';
 import formRouter from './routes/formRoutes.js';
 import exportRouter from './routes/exportRoutes.js';
@@ -46,6 +47,7 @@ app.use(cookieParser());
 
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/schools', authenticateUser, schoolRouter);
+app.use('/api/v1/locations', locationRouter);
 app.use('/api/v1/studentResponses', authenticateUser, studentResponseRouter);
 app.use('/api/v1/form', authenticateUser, formRouter);
 app.use('/api/v1/export', authenticateUser, exportRouter);

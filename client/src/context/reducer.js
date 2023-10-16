@@ -16,6 +16,8 @@ import {
   HANDLE_MULTIPLE_CHANGES,
   CLEAR_VALUES,
   GET_RESPONSE_GROUPS_BEGIN,
+  NEW_LOCATION_DECLINE,
+  NEW_LOCATION_APPROVE,
   GET_RESPONSE_GROUPS_SUCCESS,
   PAGE_FULL,
   GET_RESPONSE_GROUPS_ERROR,
@@ -31,7 +33,9 @@ import {
   SUCCESS_ALERT,
   FORM_SUCCESS,
   FORM_FAIL,
-  FORM_BEGIN
+  FORM_BEGIN,
+  SIMILAR_LOCATIONS_FOUND,
+  NEW_LOCATION_ADDED
 } from './actions';
 
 import { initialState } from './appContext';
@@ -87,6 +91,7 @@ const reducer = (state, action) => {
       userLocation: action.payload.location,
       userLocations: action.payload.userLocations,
       jobLocation: action.payload.location,
+      pendingLocations:action.payload.pendingLocations,
       ...action.payload.newFormStates,
       showAlert: true,
       alertType: 'success',
@@ -355,6 +360,28 @@ const reducer = (state, action) => {
       hasLocation: action.payload.hasLocation
     };
   }
+
+  if (action.type === NEW_LOCATION_APPROVE) {
+    console.log('hi')
+    return {
+      ...state,
+      approved: true,
+      alertText: "You have approved the new location" ,
+      alertType:"success",
+      showAlert:true
+    };
+  }
+
+  if (action.type === NEW_LOCATION_DECLINE) {
+    return {
+      ...state,
+      declined: true,
+      alertText: "You have declined the  location" ,
+      alertType:"danger",
+      showAlert:true
+    };
+  }
+
   if (action.type === ADD_LOCATION_SUCCESS) {
     if (action.payload.exists){
       return {
@@ -381,6 +408,17 @@ const reducer = (state, action) => {
       };
     }
     
+  }
+
+  if (action.type === NEW_LOCATION_ADDED) {
+    console.log('redducerr')
+    return {
+      ...state,
+      pendingApproval:true,
+      pendingSchool:action.payload.pendingSchool
+
+    };
+  
   }
   throw new Error(`no such action : ${action.type}`);
 };
