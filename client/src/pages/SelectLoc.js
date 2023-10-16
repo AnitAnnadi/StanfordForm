@@ -117,7 +117,7 @@ const SelectLoc = ({ noCode }) => {
   let grades = ["K", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   let adminbool = false;
   const [additionalLoc, setAdditionalLoc] = useState(false);
-
+  
   const [numOfLocations, setNumOfLocations] = useState(
     user?.adminTeacher && user?.role != "Stanford Staff"
       ? userLocations
@@ -130,7 +130,7 @@ const SelectLoc = ({ noCode }) => {
 
   useEffect(() => {
     if (userLocations && !isFormSubmitted) {
-      setNumOfLocations(user.role=="Stanford Staff"?userLocations.length+1:userLocations.length);
+      setNumOfLocations(user.role=="Stanford Staff" || user.role=="Teacher" ?userLocations.length+1:userLocations.length);
     }
   }, [userLocations]);
   

@@ -551,7 +551,7 @@ const AppProvider = ({ children }) => {
       const {multiplePeriods, state, county, city, district, school} = locationData
       console.log(school)
       const {data} = await authFetch.post('/locations', locationData); 
-      if (data.location){
+      if (! data.msg && data.location){
         if (user.role!="Stanford Staff"){
 
         handleChange({ name: "pendingApproval", value: true });
@@ -565,6 +565,9 @@ const AppProvider = ({ children }) => {
           payload:{pendingSchool: pendingSchool.push(school)}
         })
       } 
+      else if (data.msg){
+        errorAlert(data.msg);
+      }
       else{
         errorAlert("There was an error submitting your location.")
       }

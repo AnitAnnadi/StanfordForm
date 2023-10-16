@@ -22,9 +22,16 @@ const createLocation = async(req, res) =>{
  
   const userId= (req.user.userId)
   const locationExists = await Location.findOne({ state: upperState, county: upperCounty, city: upperCity, district: upperDistrict, name: upperSchool });
-  console.log('Exising'+locationExists)
+
   if (locationExists) {
-    return res.status(StatusCodes.OK).json({ location: locationExists });
+    console.log('in')
+    if (locationExists.approved ==false){
+      console.log('if')
+      return res.status(StatusCodes.OK).json({ location: locationExists, msg: "This location is already pending approval" });
+    }
+    else{
+      return res.status(StatusCodes.OK).json({ location: locationExists, msg: "This location has already been approved. Select from the select location page." });
+    }
   }
 
   const location = await Location.create({ multiplePeriods, state: upperState, county: upperCounty, city: upperCity, district: upperDistrict, name: upperSchool, approved:user.role=="Stanford Staff", requestedUser: userId })
@@ -46,7 +53,7 @@ const approveLocation = async(req,res) =>{
   const location = await Location.findOne({_id });
   console.log(_id)
   location.approved = true;
-  console.log(school)
+const school = await School.create({ teacher: location.requestedUser, multiplePeriods:location.multiplePeriods, state:location.state, county:location.county, city:location.city, district:location.district, school:location.name})
   await location.save();
   return res.status(StatusCodes.CREATED).json({ school });
   }
