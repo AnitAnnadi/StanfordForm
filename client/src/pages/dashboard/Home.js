@@ -102,7 +102,6 @@ const Home = () => {
   
   
 
-
   if (isLoading) {
     return <Loading center />;
   }
