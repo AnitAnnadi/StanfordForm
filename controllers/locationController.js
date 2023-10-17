@@ -24,9 +24,7 @@ const createLocation = async(req, res) =>{
   const locationExists = await Location.findOne({ state: upperState, county: upperCounty, city: upperCity, district: upperDistrict, name: upperSchool });
 
   if (locationExists) {
-    console.log('in')
     if (locationExists.approved ==false){
-      console.log('if')
       return res.status(StatusCodes.OK).json({ location: locationExists, msg: "This location is already pending approval" });
     }
     else{
@@ -53,7 +51,7 @@ const approveLocation = async(req,res) =>{
   const location = await Location.findOne({_id });
   console.log(_id)
   location.approved = true;
-const school = await School.create({ teacher: location.requestedUser, multiplePeriods:location.multiplePeriods, state:location.state, county:location.county, city:location.city, district:location.district, school:location.name})
+  const school = await School.create({ teacher: location.requestedUser, multiplePeriods:location.multiplePeriods, state:location.state, county:location.county, city:location.city, district:location.district, school:location.name})
   await location.save();
   return res.status(StatusCodes.CREATED).json({ school });
   }
@@ -88,19 +86,24 @@ const getLocations = async(req, res) => {
     city: upperCity,
     district: upperDistrict,
     name: upperSchool,
-    approved:false
   }
+  console.log(req.query.approved)
+  if (req.query.approved=='false'){
+    queryObject.approved=false
+  }
+  else{
+    queryObject.approved=true
+  }
+  console.log(queryObject)
 
   Object.keys(queryObject).forEach(key => queryObject[key] === undefined && delete queryObject[key])
 
   const locations = await Location.find(queryObject);
   let users=[]
   for (const location of locations) {
-    console.log(location.requestedUser)
     const foundUser = await User.findOne({ _id: location.requestedUser });
     users.push(foundUser);
   }
-  console.log(users)
   res.status(StatusCodes.OK).json({ locations, users });
 }
 

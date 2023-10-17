@@ -295,6 +295,7 @@ const narrowAllSchools = async (getParams, allowed = false) => {
 
       const {data} = await axios.get(`/api/v1/locations?${urlSearchParams}`);
       const {locations} = data;
+      console.log(locations)
 
       return narrowSchools(getParams).concat(locations.map((location) => location.name));
     }
