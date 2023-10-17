@@ -24,12 +24,11 @@ const Home = () => {
     getLocations
   } = useAppContext();
   const navigate = useNavigate();
-  useEffect(() => {
-    console.log('effect')
-  getLocations({ user })
-      }, []);
 
-  useEffect(() => {console.log('run')
+  
+
+  useEffect(() => {
+      getLocations({ user }).then(()=>{
       if (pendingLocations){
       if (pendingLocations?.length >= 1 && userLocations.length === 0) {
         successAlert("Redirecting to pending location");
@@ -80,6 +79,7 @@ const Home = () => {
         }
       }
       else if (user && !user.adminTeacher && userLocations.length < 1) {
+        console.log(userLocations)
         if (user.role === "Stanford Staff") {
           return;
         }
@@ -88,17 +88,16 @@ const Home = () => {
             navigate("/pendingLocation");
           }, 2000);
         }
-        else {
-          console.log(pendingLocations);
-          successAlert("Redirecting to select location");
-          setTimeout(() => {
-            navigate("/selectLoc");
-          }, 2000);
-          return;
-        }
+        // else {
+        //   successAlert("Redirecting to select location");
+        //   setTimeout(() => {
+        //     navigate("/selectLoc");
+        //   }, 2000);
+        //   return;
+        // }
       }
-    }
-    }, [pendingLocations,userLocations]);
+    }})
+    }, []);
   
   
 
