@@ -2,10 +2,13 @@ import Popup from "reactjs-popup";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/appContext";
+import {useTranslation} from "react-i18next";
+import { Trans } from 'react-i18next';
 
 const CreateLocPopup = ({ setDisplay }) => {
   const navigate = useNavigate();
   const { handleChange } = useAppContext();
+  const { t, i18n } = useTranslation();
 
   return (
     <div className="welcome">
@@ -29,7 +32,7 @@ const CreateLocPopup = ({ setDisplay }) => {
           {/* <h3 className="header"> Warning </h3> */}
           <div className="content">
             {" "}
-            BEFORE you add your own custom location please:
+            {t(`before_custom_loc_1`, 'BEFORE you add your own custom location please:')}
             <ul
               style={{
                 listStyle: "inside",
@@ -38,16 +41,12 @@ const CreateLocPopup = ({ setDisplay }) => {
                 textTransform: "capitalize",
               }}
             >
-              <li>Make sure the information you input is correct</li>
-              <li>Write an appropriate and correctly formatted school name</li>
-              <li>
-                Make sure that your location is not already listed (which may
-                have been listed slightly differently)
-              </li>
+              <li>{t(`before_custom_loc_2`, 'Make sure the information you input is correct')}</li>
+              <li>{t(`before_custom_loc_3`, 'Write an appropriate and correctly formatted school name')}</li>
+              <li>{t(`before_custom_loc_4`, 'Make sure that your location is not already listed (which may have been listed slightly differently)')}</li>
             </ul>
-            <strong>Return</strong> to go back to existing locations if you are
-            unsure about adding one, or <strong>Continue</strong> to add a new
-            location.
+            <strong>{t('UP_return', 'Return')}</strong>{`${t('before_custom_loc_5', ' to existing locations if you are unsure about adding one, or ')} `}
+           <strong>{t('UP_continue', 'Continue')}</strong>{` ${t('before_custom_loc_6', 'to add a new location.')}`}
           </div>
           <div className="modal-btn-container">
             <button

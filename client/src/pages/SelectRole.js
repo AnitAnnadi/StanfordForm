@@ -6,6 +6,7 @@ import Wrapper from "../assets/wrappers/LandingPage";
 import { useAppContext } from "../context/appContext";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import {useTranslation} from "react-i18next";
 
 function SelectRole() {
   const [role, setRole] = useState("");
@@ -14,11 +15,13 @@ function SelectRole() {
     localStorage.setItem("role", role);
   };
 
+  const { t, i18n } = useTranslation();
+
   return (
     // <React.Fragment>
     <Wrapper>
       <div className="content">
-        <h2>I am a...</h2>
+        <h2>{t('i_am_a', 'I am a') + "..."}</h2>
         <div className="landing-btns">
           <Link
             to="/register?type=teacher"
@@ -26,7 +29,7 @@ function SelectRole() {
             onClick={handleClick}
             value={"teacher"}
           >
-            Teacher
+            {t('UP_teacher', 'Teacher')}
           </Link>
           <Link
             to="/register?type=admin"
@@ -34,7 +37,7 @@ function SelectRole() {
             onClick={handleClick}
             value={"admin"}
           >
-            Admin
+            {t('UP_admin', 'Admin')}
           </Link>
         </div>
       </div>

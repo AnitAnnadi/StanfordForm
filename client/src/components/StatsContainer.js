@@ -40,6 +40,7 @@ const StatsContainer = () => {
       icon: <BsFillPeopleFill />,
       color: "#e9b949",
       bcg: "#fcefc7",
+      id: "teacherCode",
     },
     {
       title: "Total Responses",
@@ -47,13 +48,14 @@ const StatsContainer = () => {
       icon: <BiCheckDouble />,
       color: "#647acb",
       bcg: "#e0e8f9",
+      id: "totalResponses",
     },
   ];
 
   return (
     <Wrapper>
-      {defaultStats.map((item, index) => {
-        return <StatItem key={index} {...item} />;
+      {defaultStats.map((item) => {
+        return <StatItem key={item.id} {...item} />;
       })}
     </Wrapper>
   );

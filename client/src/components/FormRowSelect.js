@@ -1,8 +1,12 @@
+import {useTranslation} from "react-i18next";
+
 const FormRowSelect = ({ labelText, name, value, handleChange, list }) => {
+  const { t, i18n } = useTranslation();
+
   return (
     <div className='form-row'>
       <label htmlFor={name} className='form-label'>
-        {labelText || name}
+        {t(labelText, labelText)}
       </label>
       <select
         name={name}

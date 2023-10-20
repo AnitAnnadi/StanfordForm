@@ -15,6 +15,7 @@ import {
   healthy,
 } from "../utils/questions";
 import ReCAPTCHA from "react-google-recaptcha"
+import {useTranslation} from "react-i18next";
 
 const Form = () => {
   const {
@@ -110,10 +111,7 @@ const Form = () => {
       submitForm(formData, code, grade, when, type, school, period, null, null, null, null, captcha);
       
     }
-    
-    
-    
-    
+
   };
 
   const [usedForm, setUsedForm] = useState(() => {
@@ -136,6 +134,7 @@ const Form = () => {
     }
   });
 
+  const { t, i18n } = useTranslation();
 
   return (
     <Wrapper
@@ -185,7 +184,7 @@ const Form = () => {
           style={{ marginTop: "1.38rem" }}
           disabled={isLoading}
         >
-          submit
+          {t('UP_submit', 'Submit')}
         </button>
       </form>
     </Wrapper>

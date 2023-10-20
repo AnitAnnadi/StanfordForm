@@ -7,6 +7,7 @@ import {json, Link} from 'react-router-dom'
 import { useAppContext } from '../context/appContext'
 import Wrapper from '../assets/wrappers/ResponseGroup'
 import ResponseGroupInfo from './ResponseGroupInfo'
+import {useTranslation} from "react-i18next";
 
 const ResponseGroup = ({
   school,
@@ -33,6 +34,8 @@ const ResponseGroup = ({
   });
 
 
+  const { t, i18n } = useTranslation();
+
   return (
     <Wrapper>
       <header>
@@ -45,10 +48,10 @@ const ResponseGroup = ({
       <div className='content'>
         <div className='content-center'>
           <ResponseGroupInfo icon={<FaChalkboardTeacher />} text={teacherName} />
-          <ResponseGroupInfo icon={<AiOutlineNumber />} text={`${numberOfResponses} response(s)`} />
+          <ResponseGroupInfo icon={<AiOutlineNumber />} text={`${numberOfResponses} ${t('responses', 'responses')}`} />
           <ResponseGroupInfo icon={<TbListNumbers />} text=
-          {(uniqueResponseType?.period) && (uniqueResponseType?.period !== "No Period") ? 'Period ' + uniqueResponseType.period:
-            'No specified period'}
+          {(uniqueResponseType?.period) && (uniqueResponseType?.period !== "No Period") ? t('period', 'Period') + ' ' + uniqueResponseType.period:
+            t('no_specified_period', 'No specified period')}
           />
           <ResponseGroupInfo icon={<TbNumbers />} text={'Grade ' + uniqueResponseType.grade} />
           <ResponseGroupInfo icon={<AiOutlineForm />} text={uniqueResponseType.formType} />
@@ -57,7 +60,7 @@ const ResponseGroup = ({
         <footer>
           <div className='actions'>
             <Link className='btn edit-btn' to={`/api/v1/form/${formCode}?${queryParams.toString()}`}>
-              View Breakdown
+              {t('view_breakdown', 'View Breakdown')}
             </Link>
           </div>
         </footer>

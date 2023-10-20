@@ -6,6 +6,7 @@ import Wrapper from '../assets/wrappers/ErrorPage'
 import { useAppContext } from '../context/appContext';
 import { useNavigate,useLocation } from 'react-router-dom';
 import Error from './Error';
+import {useTranslation} from "react-i18next";
 const CertInfo = () => {
     const initialState = {
         name: "",
@@ -37,6 +38,8 @@ const CertInfo = () => {
         setValues({ ...values, [e.target.name]: e.target.value });
       };
 
+    const { t, i18n } = useTranslation();
+
   return (
     info?
     <div>
@@ -44,7 +47,7 @@ const CertInfo = () => {
       <form className="form" onSubmit={onSubmit}>
         {showAlert && <Alert />}
         <label  className='form-label'>
-        Thank you for completing Stanford REACH Lab’s course. In order to receive credit for completing the course AND to receive a certificate of completion, please enter your full first and last name.
+          {t('thanks_for_completion_certificate', 'Thank you for completing Stanford REACH Lab’s course. In order to receive credit for completing the course AND to receive a certificate of completion, please enter your full first and last name.')}
         </label>
  
         <FormRow
@@ -55,7 +58,7 @@ const CertInfo = () => {
           handleChange={handleChange}
         />
         <button type="submit" className="btn btn-block" disabled={isLoading}>
-          Generate Certificate
+          {t('generate_certificate', 'Generate Certificate')}
         </button>
       </form>
     </Wrapper>

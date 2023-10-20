@@ -4,6 +4,7 @@ import { useAppContext } from "../context/appContext";
 import { Alert, Loading } from "../components";
 import Wrapper from "../assets/wrappers/DashboardFormPage";
 import { ThreeDots } from 'react-loader-spinner';
+import {useTranslation} from "react-i18next";
 
 
 const TwoFactorSent = () => {
@@ -24,6 +25,8 @@ const TwoFactorSent = () => {
     }
   };
 
+  const { t, i18n } = useTranslation();
+
   return (
     <div
       className="full-page"
@@ -32,7 +35,7 @@ const TwoFactorSent = () => {
       <Wrapper>
         <div className="form">
           <h3>
-            Complete Two Factor Authentication from the link sent to {currentUser?.email}.
+            {`${t('two_factor_sent', 'Complete Two Factor Authentication from the link sent to')} ${currentUser?.email}.`}
           </h3>
           <form onSubmit={onSubmit}>
             {showAlert && <Alert />}
@@ -44,11 +47,11 @@ const TwoFactorSent = () => {
             >
             {isResending ? (
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                <p style={{ margin: 0 }}>Resending Email</p>
+                <p style={{ margin: 0 }}>{t('resending_email', 'Resending Email')}</p>
                 <ThreeDots color="black" height={20} width={20} style={{ marginLeft: '10px' }} />
                 </div>
             ) : (
-                "Resend Email"
+              t('resend_email', 'Resend Email')
             )}
             </button>
           </form>

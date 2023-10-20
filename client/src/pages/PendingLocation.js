@@ -1,13 +1,14 @@
 import { Link } from "react-router-dom";
-import img from "../assets/images/not-found.svg";
+// import img from "../assets/images/not-found.svg";
 import { useState, useEffect } from "react";
 import { Logo, FormRow, Alert } from "../components";
 import Wrapper from "../assets/wrappers/ErrorPage";
 import { useAppContext } from "../context/appContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { BsArrowRight } from "react-icons/bs";
-import { NavLink } from "react-router-dom";
-import { ThreeDots } from "react-loader-spinner";
+// import { NavLink } from "react-router-dom";
+// import { ThreeDots } from "react-loader-spinner";
+import {Trans, useTranslation} from 'react-i18next';
 
 const PendingLocation = () => {
   const {
@@ -21,6 +22,9 @@ const PendingLocation = () => {
     user,
     successAlert,
   } = useAppContext();
+
+  const { t, i18n } = useTranslation();
+
   useEffect(() => {
     getLocations({ user });
   }, []);
@@ -48,15 +52,13 @@ const PendingLocation = () => {
       <Wrapper className="full-page">
         <form className="form">
           {showAlert && <Alert />}
-          <label className="form-label">
-            Your custom location request for{" "}
-            {pendingLocations?.map((location) => location.name)} is currently
-            under review. Please check back in 24 hours and contact
-            sgerbert@stanford.edu if you have any questions.
+          <label
+            className="form-label">
+            {t('pending_location_1', 'Your custom location request for')}{" "}
+            {pendingLocations?.map((location) => location.name)}{" "}{t('pending_location_2', 'is currently under review. Please check back in 24 hours and contact sgerbert@stanford.edu if you have any questions.')}
           </label>
-
           <button onClick={anotherLocation} className="btn btn-block">
-            Select Another Location
+            {t('select_another_location', 'Select Another Location')}
           </button>
           {console.log(user.adminTeacher, userLocations)}
           {(user.adminTeacher && userLocations.length >= 2) ||
@@ -73,7 +75,7 @@ const PendingLocation = () => {
                 justifyContent: "flex-end",
               }}
             >
-              Go to Dashboard
+              {t('go_to_dashboard', 'Go to Dashboard')}
               <Link
                 to="/"
                 className="location-icon"

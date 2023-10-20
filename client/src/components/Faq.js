@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import SingleQuestion from "./FaqQuestion";
 import Wrapper from "../assets/wrappers/FaqQuestions";
 
+import { useTranslation } from 'react-i18next';
+
 const Faq = () => {
   const FaqQuestionData = [
     {
@@ -32,10 +34,12 @@ const Faq = () => {
   ];
 
   const [faqQuestions, setFaqQuestions] = useState(FaqQuestionData);
+  const { t, i18n } = useTranslation();
+
   return (
     <Wrapper>
       <div className="faq-container">
-        <h3>Frequently Asked Questions</h3>
+        <h3>{t('FRQ')}</h3>
         <section className="faq-info">
           {faqQuestions.map((faqQuestion) => {
             return (
