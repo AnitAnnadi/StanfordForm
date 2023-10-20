@@ -376,7 +376,7 @@ const reducer = (state, action) => {
     return {
       ...state,
       declined: true,
-      alertText: "You have declined the  location" ,
+      alertText: "You have declined the location" ,
       alertType:"danger",
       showAlert:true
     };

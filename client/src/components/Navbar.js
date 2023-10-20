@@ -3,9 +3,11 @@ import { FaAlignLeft, FaUserCircle, FaCaretDown } from "react-icons/fa";
 import { useAppContext } from "../context/appContext";
 import Logo from "./Logo";
 import { useState } from "react";
+import {useTranslation} from "react-i18next";
 const Navbar = () => {
   const [showLogout, setShowLogout] = useState(false);
   const { toggleSidebar, logoutUser, user } = useAppContext();
+  const { t, i18n } = useTranslation();
   return (
     <Wrapper>
       <div className="nav-center">
@@ -14,7 +16,7 @@ const Navbar = () => {
         </button>
         <div>
           {/* <Logo /> */}
-          <h3 className="logo-text">dashboard</h3>
+          <h3 className="logo-text">{t('dashboard', 'dashboard')}</h3>
         </div>
         <div className="btn-container">
           <button
@@ -28,7 +30,7 @@ const Navbar = () => {
           </button>
           <div className={showLogout ? "dropdown show-dropdown" : "dropdown"}>
             <button type="button" className="dropdown-btn" onClick={logoutUser}>
-              logout
+              {t('logout', 'logout')}
             </button>
           </div>
         </div>

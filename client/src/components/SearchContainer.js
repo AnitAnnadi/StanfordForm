@@ -19,6 +19,7 @@ import {
   healthy,
 } from "../utils/questions";
 import { ThreeDots } from "react-loader-spinner";
+import {useTranslation} from "react-i18next";
 
 const SearchContainer = ({ startReload }) => {
   const {
@@ -65,6 +66,7 @@ const SearchContainer = ({ startReload }) => {
   const healthyTobacco = [];
   const healthyCannabis = [];
 
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     if (exportClicked && exportData) {
@@ -285,7 +287,9 @@ const SearchContainer = ({ startReload }) => {
   return (
     <Wrapper>
       <form className="form">
-        <h4>search form</h4>
+        <h4>
+          {t('search_form', 'Search Form')}
+        </h4>
         <div className="form-center">
           {/* search by state */}
           <FormRowSelect
@@ -373,7 +377,7 @@ const SearchContainer = ({ startReload }) => {
           />
           {/* search by before/after */}
           <FormRowSelect
-            labelText="beforeAfter"
+            labelText="before or after"
             name="searchBeforeAfter"
             value={searchBeforeAfter}
             handleChange={handleLocalChange}
@@ -384,7 +388,7 @@ const SearchContainer = ({ startReload }) => {
             disabled={isLoading}
             onClick={handleSubmit}
           >
-            search forms
+            {t('search_forms', 'search forms')}
           </button>
           <button
             className="btn btn-block btn-apply"
@@ -398,11 +402,11 @@ const SearchContainer = ({ startReload }) => {
           >
             {exportLoading ? (
               <>
-                Exporting Data
+                {t('exporting_data', 'Exporting Data')}
                 <ThreeDots color="green" height={20} width={20} />
               </>
             ) : (
-              "Export all data"
+              t('export_all_data', 'Export All Data')
             )}
           </button>
 
@@ -411,7 +415,7 @@ const SearchContainer = ({ startReload }) => {
             disabled={isLoading}
             to={isLoading ? "#" : `/api/v1/form/`}
           >
-            Overall Breakdown
+            {t('overall_breakdown', 'Overall Breakdown')}
           </Link>
         </div>
       </form>

@@ -4,6 +4,7 @@ import Loading from './Loading';
 import ResponseGroup from './ResponseGroup';
 import Alert from './Alert';
 import Wrapper from '../assets/wrappers/JobsContainer';
+import {useTranslation} from "react-i18next";
 
 const SchoolsContainer = ({ shouldReload, stopReload }) => {
   const {
@@ -27,6 +28,8 @@ const SchoolsContainer = ({ shouldReload, stopReload }) => {
     showAlert,
     currentSchoolIndex
   } = useAppContext();
+
+  const { t, i18n } = useTranslation();
 
   const endDivRef = useRef(null);
 
@@ -80,7 +83,7 @@ const SchoolsContainer = ({ shouldReload, stopReload }) => {
   if (responseGroups.length === 0) {
     return (
       <Wrapper>
-        <h2>No classes to display...</h2>
+        <h2>{t('no_classes_to_display', 'No classes to display...')}</h2>
       </Wrapper>
     );
   }
@@ -98,7 +101,7 @@ const SchoolsContainer = ({ shouldReload, stopReload }) => {
       </div>
       <div ref={endDivRef} className='end'>
       </div>
-      {isLoading ? <div><Loading center />  <p>Please wait, getting all your data</p></div>: null}
+      {isLoading ? <div><Loading center />  <p>{t('please_wait_getting_data', 'Please wait, getting all your data')}</p></div>: null}
     </Wrapper>
   );
 };

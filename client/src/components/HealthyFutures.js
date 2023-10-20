@@ -1,5 +1,6 @@
 import { useAppContext } from "../context/appContext";
 import { useEffect } from "react";
+import {useTranslation} from "react-i18next";
 
 const HealthyFeatures = () => {
   const {
@@ -16,11 +17,13 @@ const HealthyFeatures = () => {
     getHealthyFutures(user._id);
   }, []);
 
+  const { t, i18n } = useTranslation();
+
   return (
     <div>
       <div>
         <p style={{ marginBottom: "0.25rem", marginTop: 0 }}>
-          Students Who Completed Healthy Futures: Tobacco/Nicotine/Vaping
+          {t('completed_healthy_tobacco_title', 'Students Who Completed Healthy Futures: Tobacco/Nicotine/Vaping')}
         </p>
         {healthyFuturesListTobacco.length > 0 ? (
           healthyFuturesListTobacco.map((response) => (
@@ -30,13 +33,13 @@ const HealthyFeatures = () => {
           ))
         ) : (
           <p className="location">
-            There are no current students who have completed this course
+            {t('no_students_completed', 'There are no current students who have completed this course')}
           </p>
         )}
       </div>
       <div>
         <p style={{ marginBottom: "0.25rem" }}>
-          Students Who Completed Healthy Futures: Cannabis
+          {t('completed_healthy_cannabis_title', 'Students Who Completed Healthy Futures: Cannabis')}
         </p>
         {healthyFuturesListCannabis.length > 0 ? (
           healthyFuturesListCannabis.map((response) => (
@@ -46,7 +49,7 @@ const HealthyFeatures = () => {
           ))
         ) : (
           <p className="location">
-            There are no current students who have completed this course
+            {t('no_students_completed', 'There are no current students who have completed this course')}
           </p>
         )}
       </div>

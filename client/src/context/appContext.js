@@ -112,7 +112,6 @@ const initialState = {
   selectLocSchools:[],
   searchContainerSchools:[],
   resetPassword:false,
-  resetPassword:false,
   twofaSent:false,
   pendingApproval:false,
   pendingSchool:[],
