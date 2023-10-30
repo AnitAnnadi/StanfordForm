@@ -130,7 +130,7 @@ const SelectLoc = ({ noCode }) => {
 
   useEffect(() => {
     if (userLocations && !isFormSubmitted) {
-      setNumOfLocations(user.role=="Stanford Staff" || user.role=="Teacher" ?userLocations.length+1:userLocations.length);
+      setNumOfLocations(user?.role=="Stanford Staff" || user?.role=="Teacher" ?userLocations.length+1:userLocations.length);
     }
   }, [userLocations]);
   
@@ -174,14 +174,14 @@ const SelectLoc = ({ noCode }) => {
   useEffect(() => {
     if (isFormSubmitted && !exists && !additionalLoc) {
       adminroles.map((role) => {
-        if (role === user.role) {
+        if (role === user?.role) {
           adminbool = true;
         }
       });
       setIsFormSubmitted(false);
       setAdditionalLoc(false);
       if (adminbool) {
-        if (adminTeacher && user.role !== "Site Admin") {
+        if (adminTeacher && user?.role !== "Site Admin") {
           setTimeout(() => {
             navigate("/selectLoc", {
               state: {
@@ -193,7 +193,7 @@ const SelectLoc = ({ noCode }) => {
           }, 2000);
           return;
         }
-        if (user.adminTeacher) {
+        if (user?.adminTeacher) {
           setTimeout(() => {
             navigate("/");
           }, 2000);
@@ -388,7 +388,7 @@ const SelectLoc = ({ noCode }) => {
                     selectSchool ||
                     fromProfile
                   ? "Select School"
-                  : user.role === "Site Admin"
+                  : user?.role === "Site Admin"
                   ? "Select School Location"
                   : "Select Admin Location"}
                 {forOther
@@ -535,7 +535,7 @@ const SelectLoc = ({ noCode }) => {
                   </label>
                 </>
               )}
-              {!noCode && showAdditionalLoc && user.role !== "Site Admin" && (
+              {!noCode && showAdditionalLoc && user?.role !== "Site Admin" && (
                 <>
                   <hr />
                   <label className="checkbox-container">
