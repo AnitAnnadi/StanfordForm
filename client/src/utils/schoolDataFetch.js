@@ -2,14 +2,21 @@ import schoolData from '../assets/school-data.json'
 import {common} from "@mui/material/colors";
 
 const narrowCounties = ({state}) => {
-
-    console.log('hi')
-    const counties = schoolData
+   const counties = schoolData
         .filter((school) => school.state.toUpperCase() === state.toUpperCase())
         .map((school) => school.county)
         .sort();
 
     return [...new Set(counties)]
+}
+
+const narrowStates = ({country}) => {
+    const states = schoolData
+        .filter((school) => school.country.toUpperCase() === country.toUpperCase())
+        .map((school) => school.state)
+        .sort();
+
+    return [...new Set(states.map((state) => state.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')))]
 }
 
 const narrowDistricts = ({state, county, city}) => {
@@ -39,10 +46,14 @@ const narrowDistricts = ({state, county, city}) => {
     return [...new Set(districts)]
 }
 
-const narrowCities = ({state, county}) => {
+const narrowCities = ({state, county, country}) => {
     const cities = schoolData
         .filter((school) => {
-            if (county === undefined) {
+            if (country && state) {
+               return school?.country.toUpperCase() === country.toUpperCase() && school?.state.toUpperCase() === state.toUpperCase()
+            } else if (country) {
+              return school?.country.toUpperCase() === country.toUpperCase()
+            } else if (county === undefined) {
                 return school?.state.toUpperCase() === state.toUpperCase()
             } else if (state === undefined) {
                 return school?.county.toUpperCase() === county.toUpperCase()
@@ -103,4 +114,4 @@ const getSchoolDataValue = (value) => {
 }
 
 
-export { narrowCounties, narrowCities, narrowDistricts, narrowSchools, getDistrictCounty, getSchoolDataValue, getSchoolObject }
+export { narrowCounties, narrowStates, narrowCities, narrowDistricts, narrowSchools, getDistrictCounty, getSchoolDataValue, getSchoolObject }

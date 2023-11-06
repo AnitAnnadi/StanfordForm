@@ -2,6 +2,7 @@ import React, { useReducer, useContext, useEffect } from 'react';
 import {
   getSchoolDataValue,
   getSchoolObject,
+  narrowStates,
   narrowCities,
   narrowCounties,
   narrowDistricts,
@@ -83,6 +84,7 @@ const initialState = {
   allResponseGroups:[],
   monthlyApplications: [],
   pendingLocations:[],
+  countryOptions: ['all', 'United States'],
   stateOptions: localStorage.getItem("stateOptions") ? (localStorage.getItem("stateOptions") !== "undefined" ? JSON.parse(localStorage.getItem("stateOptions")): stateList) : stateList,
   searchState: localStorage.getItem("searchState") ? (localStorage.getItem("searchState") !== "undefined" ? JSON.parse(localStorage.getItem("searchState")): 'all'): 'all',
   countyOptions: localStorage.getItem("countyOptions") ? (localStorage.getItem("countyOptions") !== "undefined" ? JSON.parse(localStorage.getItem("countyOptions")): ['all']): ['all'],
@@ -109,7 +111,9 @@ const initialState = {
   exportData:null,
   currentSchoolIndex:null,
   nextPg:false,
+  selectLocStates:[],
   selectLocSchools:[],
+  selectLocCities:[],
   searchContainerSchools:[],
   resetPassword:false,
   twofaSent:false,
@@ -254,6 +258,104 @@ const configureFormStates = async (userLocations, user, formStates) => {
   }
 }
 
+const narrowAllCities = async (getParams, allowed) => {
+  if (allowed) {
+    const {data} = await axios.get(`/api/v1/schools/user`);
+    const { userLocations } = data;
+
+    const { state, county, city, district, school } = getParams;
+
+    let userLocationsFiltered = userLocations
+
+    if (state && state !== "all") {
+      userLocationsFiltered = userLocationsFiltered.filter((location) => location.state.toUpperCase() === state.toUpperCase());
+    }
+
+    if (county && county !== "all") {
+      userLocationsFiltered = userLocationsFiltered.filter((location) => location.county?.toUpperCase() === county.toUpperCase());
+    }
+
+    if (city && city !== "all") {
+      userLocationsFiltered = userLocationsFiltered.filter((location) => location.city?.toUpperCase() === city.toUpperCase());
+    }
+
+    if (district && district !== "all") {
+      userLocationsFiltered = userLocationsFiltered.filter((location) => location.district?.toUpperCase() === district.toUpperCase());
+    }
+
+    if (school && school !== "all") {
+      userLocationsFiltered = userLocationsFiltered.filter((location) => location.school.toUpperCase() === school.toUpperCase());
+    }
+
+    return userLocationsFiltered.map((location) => location.city);
+
+  } else {
+    try {
+      const urlSearchParams = new URLSearchParams(
+        Object.entries(getParams).filter(([key, value]) => value !== undefined)
+      );
+
+      const {data} = await axios.get(`/api/v1/locations?${urlSearchParams}`);
+      const {locations} = data;
+
+      return [...new Set(narrowCities(getParams).concat(locations.map((location) => location.city.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '))))];
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  }
+}
+
+const narrowAllStates = async (getParams, allowed) => {
+  if (allowed) {
+    const {data} = await axios.get(`/api/v1/schools/user`);
+
+    const { userLocations } = data;
+
+    const { state, county, city, district, school } = getParams;
+
+    let userLocationsFiltered = userLocations
+
+    if (state && state !== "all") {
+      userLocationsFiltered = userLocationsFiltered.filter((location) => location.state.toUpperCase() === state.toUpperCase());
+    }
+
+    if (county && county !== "all") {
+      userLocationsFiltered = userLocationsFiltered.filter((location) => location.county?.toUpperCase() === county.toUpperCase());
+    }
+
+    if (city && city !== "all") {
+      userLocationsFiltered = userLocationsFiltered.filter((location) => location.city?.toUpperCase() === city.toUpperCase());
+    }
+
+    if (district && district !== "all") {
+      userLocationsFiltered = userLocationsFiltered.filter((location) => location.district?.toUpperCase() === district.toUpperCase());
+    }
+
+    if (school && school !== "all") {
+      userLocationsFiltered = userLocationsFiltered.filter((location) => location.school.toUpperCase() === school.toUpperCase());
+    }
+
+    return userLocationsFiltered.map((location) => location.state);
+  } else {
+    try {
+      const urlSearchParams = new URLSearchParams(
+        Object.entries(getParams).filter(([key, value]) => value !== undefined)
+      );
+
+      const {data} = await axios.get(`/api/v1/locations?${urlSearchParams}`);
+      const {locations} = data;
+
+      // uppercase first letter of each word in state
+      const values = narrowStates(getParams).concat(locations.map((location) => location.state)).map((state) => state.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '));
+      return [...new Set(values)];
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  }
+}
+
 const narrowAllSchools = async (getParams, allowed = false) => {
   try {
     if (allowed) {
@@ -295,7 +397,7 @@ const narrowAllSchools = async (getParams, allowed = false) => {
       const {data} = await axios.get(`/api/v1/locations?${urlSearchParams}`);
       const {locations} = data;
 
-      return narrowSchools(getParams).concat(locations.map((location) => location.name));
+      return [...new Set(narrowSchools(getParams).concat(locations.map((location) => location.name)))];
     }
   } catch (error) {
     console.log(error);
@@ -580,6 +682,26 @@ const AppProvider = ({ children }) => {
       const schoolNames = await narrowAllSchools({state, county, city, district}, allowed);
 
       dispatch({ type: HANDLE_CHANGE, payload: { name: reactState, value: schoolNames } });
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const setToNarrowCities = async ({reactState, allowed, country, state}) => {
+    try {
+      const cityNames = await narrowAllCities({country, state}, allowed);
+
+      dispatch({ type: HANDLE_CHANGE, payload: { name: reactState, value: cityNames } });
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const setToNarrowStates = async ({reactState, allowed, country}) => {
+    try {
+      const stateNames = await narrowAllStates({country}, allowed);
+
+      dispatch({ type: HANDLE_CHANGE, payload: { name: reactState, value: stateNames } });
     } catch (error) {
       console.log(error)
     }
@@ -1140,6 +1262,8 @@ const AppProvider = ({ children }) => {
         toggleSidebar,
         logoutUser,
         updateUser,
+        setToNarrowStates,
+        setToNarrowCities,
         setToNarrowSchools,
         handleChange,
         handleChanges,

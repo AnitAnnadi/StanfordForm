@@ -212,14 +212,14 @@ const CreateLoc = () => {
                 );
               })}
             </select>
-            <h4 className="form-title">{t('UP_country', 'Country')}*</h4>
+            <h4 className="form-title">{t('UP_county', 'County')}*</h4>
             <select
               name="aliasChoice"
               value={county}
               onChange={(e) => handleChange("county", e.target.value)}
               className="form-select"
             >
-              <option value={"default"}>{t('choose_your_country', 'Choose your Country')}</option>
+              <option value={"default"}>{t('choose_your_county', 'Choose your County')}</option>
               {counties.map((county, index) => {
                 return (
                   <option key={index} value={county}>

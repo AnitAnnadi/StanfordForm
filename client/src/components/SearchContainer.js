@@ -26,6 +26,7 @@ const SearchContainer = ({ startReload }) => {
     user,
     handleChange,
     isLoading,
+    searchCountry,
     searchState,
     searchCounty,
     searchDistrict,
@@ -36,6 +37,7 @@ const SearchContainer = ({ startReload }) => {
     searchType,
     searchTeacher,
     searchBeforeAfter,
+    countryOptions,
     stateOptions,
     countyOptions,
     districtOptions,
@@ -54,6 +56,8 @@ const SearchContainer = ({ startReload }) => {
     allResponseGroups,
     getExport,
     setToNarrowSchools,
+    setToNarrowStates,
+    setToNarrowCities,
     exportData,
     exportLoading,
   } = useAppContext();
@@ -65,6 +69,20 @@ const SearchContainer = ({ startReload }) => {
   const safety = [];
   const healthyTobacco = [];
   const healthyCannabis = [];
+
+  const [isUnitedStates, setIsUnitedStates] = useState(false);
+
+  const [showCounty, setShowCounty] = useState(false);
+  const [showDistrict, setShowDistrict] = useState(false);
+
+  useEffect(() => {
+    setShowCounty(
+      isUnitedStates
+    );
+    setShowDistrict(
+      isUnitedStates
+    );
+  }, [isUnitedStates]);
 
   const { t, i18n } = useTranslation();
 
@@ -176,29 +194,62 @@ const SearchContainer = ({ startReload }) => {
 
   const handleLocalChange = (e) => {
     switch (e.target.name) {
-      case "searchState":
+      case "searchCountry":
+        if (e.target.value === "United States") {
+          setIsUnitedStates(true);
+        } else {
+          setIsUnitedStates(false);
+        }
+
         handleChanges({
           [e.target.name]: e.target.value,
+          searchState: "all",
           searchCounty: "all",
           searchCity: "all",
           searchDistrict: "all",
           searchSchool: "all",
           searchTeacher: "all",
-          countyOptions: narrowAllowedOptions(
-            "county",
-            narrowCounties({ state: e.target.value })
-          ),
-          cityOptions: narrowAllowedOptions(
-              "city",
-              narrowCities({ state: e.target.value })
-            ),
-          districtOptions: narrowAllowedOptions(
-            "district",
-            narrowDistricts({ state: e.target.value })
-          ),
         });
 
-        setToNarrowSchools({reactState: "schoolOptions", allowed: true, state: e.target.value})
+        setToNarrowStates({reactState: "stateOptions", allowed: true, country: e.target.value})
+        break;
+      case "searchState":
+        if (isUnitedStates) {
+          handleChanges({
+            [e.target.name]: e.target.value,
+            searchCounty: "all",
+            searchCity: "all",
+            searchDistrict: "all",
+            searchSchool: "all",
+            searchTeacher: "all",
+            countyOptions: narrowAllowedOptions(
+              "county",
+              narrowCounties({ state: e.target.value })
+            ),
+            cityOptions: narrowAllowedOptions(
+                "city",
+                narrowCities({ state: e.target.value })
+              ),
+            districtOptions: narrowAllowedOptions(
+              "district",
+              narrowDistricts({ state: e.target.value })
+            ),
+          });
+
+          setToNarrowSchools({reactState: "schoolOptions", allowed: true, state: e.target.value})
+        } else {
+          handleChanges({
+            [e.target.name]: e.target.value,
+            searchCounty: "all",
+            searchCity: "all",
+            searchDistrict: "all",
+            searchSchool: "all",
+            searchTeacher: "all",
+          });
+
+          setToNarrowCities({reactState: "cityOptions", allowed: true, country: searchCountry, state: e.target.value})
+        }
+
         break;
       case "searchCounty":
         handleChanges({
@@ -220,12 +271,13 @@ const SearchContainer = ({ startReload }) => {
         setToNarrowSchools({reactState: "schoolOptions", allowed: true, county: e.target.value})
         break;
       case "searchCity":
-        handleChanges({
-          [e.target.name]: e.target.value,
-          searchDistrict: "all",
-          searchSchool: "all",
-          searchTeacher: "all",
-          districtOptions: narrowAllowedOptions(
+        if (isUnitedStates) {
+          handleChanges({
+            [e.target.name]: e.target.value,
+            searchDistrict: "all",
+            searchSchool: "all",
+            searchTeacher: "all",
+            districtOptions: narrowAllowedOptions(
               "district",
               narrowDistricts({
                 city: e.target.value === 'all' ? undefined : e.target.value,
@@ -233,9 +285,24 @@ const SearchContainer = ({ startReload }) => {
                 state: searchState === 'all' ? undefined : searchState
               })
             ),
-        });
+          });
+        } else {
+          handleChanges({
+            [e.target.name]: e.target.value,
+            searchDistrict: "all",
+            searchSchool: "all",
+            searchTeacher: "all",
+          });
+        }
 
-        setToNarrowSchools({reactState: "schoolOptions", allowed: true, city: e.target.value, county: searchCounty, state: searchState})
+        setToNarrowSchools({
+          reactState: "schoolOptions",
+          allowed: true,
+          city: e.target.value,
+          county: searchCounty,
+          state: searchState
+        })
+
         break;
       case "searchDistrict":
         handleChanges({
@@ -291,6 +358,14 @@ const SearchContainer = ({ startReload }) => {
           {t('search_form', 'Search Form')}
         </h4>
         <div className="form-center">
+          {/* search by country */}
+          <FormRowSelect
+            labelText="country"
+            name="searchCountry"
+            value={searchCountry}
+            handleChange={handleLocalChange}
+            list={countryOptions}
+          />
           {/* search by state */}
           <FormRowSelect
             labelText="state"
@@ -300,13 +375,15 @@ const SearchContainer = ({ startReload }) => {
             list={stateOptions}
           />
           {/* search by county */}
-          <FormRowSelect
-            labelText="county"
-            name="searchCounty"
-            value={searchCounty}
-            handleChange={handleLocalChange}
-            list={countyOptions}
-          />
+          {showCounty ? (
+            <FormRowSelect
+              labelText="county"
+              name="searchCounty"
+              value={searchCounty}
+              handleChange={handleLocalChange}
+              list={countyOptions}
+            />
+          ) : null}
           {/* search by city */}
           {user.role !== "District Admin" && (
             <FormRowSelect
@@ -318,20 +395,22 @@ const SearchContainer = ({ startReload }) => {
             />
           )}
           {/* search by district */}
-          <FormRowSelect
-            labelText="district"
-            name="searchDistrict"
-            value={searchDistrict}
-            handleChange={handleLocalChange}
-            list={districtOptions}
-          />
+          {showDistrict ? (
+            <FormRowSelect
+              labelText="district"
+              name="searchDistrict"
+              value={searchDistrict}
+              handleChange={handleLocalChange}
+              list={districtOptions}
+            />
+          ) : null}
           {/* search by school */}
           <FormRowSelect
             labelText="school"
             name="searchSchool"
             value={searchSchool}
             handleChange={handleLocalChange}
-            list={["all", ...schoolOptions]}
+            list={[schoolOptions]}
           />
           {/* search by teacher */}
           <FormRowSelect

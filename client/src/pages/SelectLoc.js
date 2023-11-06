@@ -28,13 +28,18 @@ const SelectLoc = ({ noCode }) => {
     successAlert,
     exists,
     selectLocSchools,
+    selectLocStates,
+    selectLocCities,
+    setToNarrowCities,
     setToNarrowSchools,
+    setToNarrowStates,
   } = useAppContext();
 
   const { t, i18n } = useTranslation();
 
   const navigate = useNavigate();
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+  const [country, setCountry] = useState("default");
   const [state, setState] = useState("default");
   const [city, setCity] = useState("default");
   const [school, setSchool] = useState("default");
@@ -43,59 +48,11 @@ const SelectLoc = ({ noCode }) => {
   const [form, setForm] = useState("default");
   const [when, setWhen] = useState("default");
 
-  const states = [
-    "Alabama",
-    "Alaska",
-    "Arizona",
-    "Arkansas",
-    "California",
-    "Colorado",
-    "Connecticut",
-    "Delaware",
-    "District of Columbia",
-    "Florida",
-    "Georgia",
-    "Hawaii",
-    "Idaho",
-    "Illinois",
-    "Indiana",
-    "Iowa",
-    "Kansas",
-    "Kentucky",
-    "Louisiana",
-    "Maine",
-    "Maryland",
-    "Massachusetts",
-    "Michigan",
-    "Minnesota",
-    "Mississippi",
-    "Missouri",
-    "Montana",
-    "Nebraska",
-    "Nevada",
-    "New Hampshire",
-    "New Jersey",
-    "New Mexico",
-    "New York",
-    "North Carolina",
-    "North Dakota",
-    "Ohio",
-    "Oklahoma",
-    "Oregon",
-    "Pennsylvania",
-    "Rhode Island",
-    "South Carolina",
-    "South Dakota",
-    "Tennessee",
-    "Texas",
-    "Utah",
-    "Vermont",
-    "Virginia",
-    "Washington",
-    "West Virginia",
-    "Wisconsin",
-    "Wyoming",
-  ];
+  const [states, setStates] = useState([]);
+
+  const [isUnitedStates, setIsUnitedStates] = useState(false);
+
+  const [countries, setCountries] = useState(["United States"]);
 
   const [cities, setCities] = useState([]);
   const [schools, setSchools] = useState([]);
@@ -138,20 +95,31 @@ const SelectLoc = ({ noCode }) => {
     }
   }, [userLocations]);
   
-  const showCounty =
-    !fromProfile &&
-    !selectSchool &&
-    (user?.role === "District Admin" || user?.role === "County Admin");
-  const showCity =
+  const [showCounty, setShowCounty] = useState(false);
+  const [showDistrict, setShowDistrict] = useState(false);
+
+
+  useEffect(() => {
+    setShowCounty(
+      isUnitedStates && (
+      !fromProfile &&
+      !selectSchool &&
+      (user?.role === "District Admin" || user?.role === "County Admin"))
+    );
+    setShowDistrict(
+      isUnitedStates && (
+      !fromProfile && !selectSchool && user?.role === "District Admin")
+    );
+  }, [isUnitedStates]);
+
+  const showSchool =
     user?.role === "Site Admin" ||
     user?.role === "Teacher" ||
     noCode ||
     selectSchool ||
     fromProfile ||
     forOther;
-  const showDistrict =
-    !fromProfile && !selectSchool && user?.role === "District Admin";
-  const showSchool =
+  const showCity =
     user?.role === "Site Admin" ||
     user?.role === "Teacher" ||
     noCode ||
@@ -166,6 +134,7 @@ const SelectLoc = ({ noCode }) => {
   const showAdditionalLoc =
     user?.role === "Teacher" || selectSchool || fromProfile;
   useEffect(() => {
+    setCountry("default")
     setState("default");
     setCity("default");
     setSchool("default");
@@ -242,14 +211,40 @@ const SelectLoc = ({ noCode }) => {
   }, [school]);
 
   const handleChange = (field, value) => {
-    if (field === "state") {
+    if (field === "country") {
+      setCountry(value);
+      setState("default");
+      setCity("default");
+      setSchool("default");
+
+      if (value !== "United States") {
+        setIsUnitedStates(false);
+      } else {
+        setIsUnitedStates(true);
+      }
+
+      if (value !== "default") {
+        setToNarrowStates({
+          reactState: "selectLocStates",
+          country: value,
+        });
+      }
+    } else if (field === "state") {
       setState(value);
       setCity("default");
       setSchool("default");
 
       if (value !== "default") {
-        setCities(narrowCities({ state: value }));
-        setCounties(narrowCounties({ state: value }));
+        if (isUnitedStates) {
+          setCities(narrowCities({ state: value }));
+          setCounties(narrowCounties({ state: value }));
+        } else {
+          setToNarrowCities({
+            reactState: "selectLocCities",
+            country,
+            state: value,
+          });
+        }
       }
     } else if (field === "county") {
       setCounty(value);
@@ -263,7 +258,10 @@ const SelectLoc = ({ noCode }) => {
       setSchool("default");
 
       if (value !== "default") {
-        setDistricts(narrowDistricts({ state, city: value }));
+        if (isUnitedStates) {
+          setDistricts(narrowDistricts({state, city: value}));
+        }
+
         setToNarrowSchools({
           reactState: "selectLocSchools",
           state,
@@ -283,6 +281,18 @@ const SelectLoc = ({ noCode }) => {
     }
   }, [selectLocSchools]);
 
+  useEffect(() => {
+    if (selectLocStates.length > 0) {
+      setStates(selectLocStates);
+    }
+  }, [selectLocStates]);
+
+  useEffect(() => {
+    if (selectLocCities.length > 0) {
+      setCities(selectLocCities);
+    }
+  }, [selectLocCities]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (forOther) {
@@ -298,6 +308,7 @@ const SelectLoc = ({ noCode }) => {
         return;
       }
       await addLocation({
+        country: country !== "default" ? country : null,
         state: state,
         county: county !== "default" ? county : null,
         city: city !== "default" ? city : null,
@@ -310,6 +321,7 @@ const SelectLoc = ({ noCode }) => {
     }
     if (noCode) {
       if (
+        country != "default" ||
         state != "default" ||
         grade != "default" ||
         county != "default" ||
@@ -322,6 +334,7 @@ const SelectLoc = ({ noCode }) => {
         setTimeout(() => {
           navigate("/joinedForm", {
             state: {
+              country,
               state,
               county,
               district,
@@ -336,6 +349,7 @@ const SelectLoc = ({ noCode }) => {
       }
     } else {
       if (
+        country === "default" ||
         state === "default" ||
         (showCounty && county === "default") ||
         (showCity && city === "default") ||
@@ -348,6 +362,7 @@ const SelectLoc = ({ noCode }) => {
 
       await addLocation({
         multiplePeriods: multiplePeriods,
+        country: country !== "default" ? country : null,
         state: state,
         county: county !== "default" ? county : null,
         city: city !== "default" ? city : null,
@@ -356,6 +371,7 @@ const SelectLoc = ({ noCode }) => {
       });
 
       if (additionalLoc) {
+        setCountry("default");
         setState("default");
         setCounty("default");
         setCity("default");
@@ -369,6 +385,7 @@ const SelectLoc = ({ noCode }) => {
     }
 
     handleChange({ name: "selectLocSchools", value: [] });
+    handleChange({ name: "selectLocStates", value: [] });
   };
 
   const [displayAddPopup, setDisplayAddPopup] = useState(false);
@@ -403,7 +420,25 @@ const SelectLoc = ({ noCode }) => {
                   : ""}
               </h3>
 
-              <h4 className="form-title">{t('UP_staate', 'State')}</h4>
+              <h4 className="form-title">{t('UP_country', 'Country')}</h4>
+              <select
+                name="aliasChoice"
+                value={country}
+                onChange={(e) => handleChange("country", e.target.value)}
+                className="form-select"
+              >
+                <option value={"default"}>
+                  {t('choose_your_country', 'Choose your Country')}
+                </option>
+                {countries.map((country, index) => {
+                  return (
+                    <option key={index} value={country}>
+                      {country}
+                    </option>
+                  );
+                })}
+              </select>
+              <h4 className="form-title">{t('UP_state_slash_province', 'State/Province')}</h4>
               <select
                 name="aliasChoice"
                 value={state}

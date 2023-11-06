@@ -69,7 +69,8 @@ const declineLocation = async(req,res) =>{
 
 }
 const getLocations = async(req, res) => {
-  const { state, county, city, district, school, approved } = req.query;
+  const { country, state, county, city, district, school, approved } = req.query;
+  const upperCountry = country ? country.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : undefined;
   const upperSchool = school ? school.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : undefined;
   const upperDistrict = district ? district.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : undefined;
   const upperCity = city ? city.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : undefined;
@@ -77,6 +78,7 @@ const getLocations = async(req, res) => {
   const upperState = state ? state.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : undefined;
 
   const queryObject = {
+    country: upperCountry,
     state: upperState,
     county: upperCounty,
     city: upperCity,
