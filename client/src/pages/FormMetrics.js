@@ -29,6 +29,7 @@ const FormMetrics = () => {
     responseGroups,
     overallLoading,
     handleChange,
+    searchCountry,
     searchState,
     searchCounty,
     searchDistrict,
@@ -148,6 +149,7 @@ const FormMetrics = () => {
             formType: uniqueResponseType.formType,
             when: uniqueResponseType.when,
             school: school.school,
+            country: school.country,
             state: school.state,
             city: school.city,
             county: school.county,
@@ -262,6 +264,14 @@ const FormMetrics = () => {
                 <ResponseGroupInfo
                   icon={<FaLocationArrow />}
                   text={
+                    searchCountry === "all"
+                      ? t('all_countries', 'All countries') + ','
+                      : searchCountry + ","
+                  }
+                />
+                <ResponseGroupInfo
+                  icon={<FaLocationArrow />}
+                  text={
                     searchState === "all" ? t('all_states', 'All states') + ',' : searchState + ","
                   }
                 />
@@ -323,13 +333,14 @@ const FormMetrics = () => {
             </div>
           </div>
         </>
-      ) : (
+      ) : school ? (
         <>
           <header>
             <div className="info">
               <h3>{school.school}</h3>
+              <h4>{school.country}</h4>
               <h4>
-                {school.city}, {school.state}
+                {school.city ? school.city + ", " : ""} {school.state}
               </h4>
             </div>
           </header>
@@ -385,6 +396,8 @@ const FormMetrics = () => {
             </div>
           </div>
         </>
+      ) : (
+        <h3>No responses yet</h3>
       )}
       {responseGroups.length === 0 && isOverall ? (
         <h3>No responses yet</h3>

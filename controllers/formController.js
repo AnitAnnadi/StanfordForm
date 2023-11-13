@@ -22,6 +22,7 @@ const getFormMetrics = async(req,res) => {
     formType,
     when,
     school: schoolName,
+    country,
     state,
     city,
     county,
@@ -55,6 +56,7 @@ const getFormMetrics = async(req,res) => {
   } else {
     responseQueryObject = {
       school: schoolName,
+      country: country,
       state: state,
       city: city,
       county: county,
@@ -73,6 +75,7 @@ const getFormMetrics = async(req,res) => {
 
     school = {
       school: schoolName,
+      country: country,
       state: state,
       county: county,
       district: district,

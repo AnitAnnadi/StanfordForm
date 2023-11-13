@@ -10,6 +10,11 @@ const LocationSchema = new mongoose.Schema({
     type:Boolean,
     default:false
   },
+  country: {
+    type: String,
+    trim: true,
+    default: 'United States',
+  },
   state: {
     type: String,
     trim: true,

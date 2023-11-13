@@ -7,7 +7,7 @@ import School from "../models/School.js";
 
 const createLocation = async(req, res) =>{
   try{
-  const { multiplePeriods, state, county, city, district, school } = req.body;
+  const { multiplePeriods, state, country, county, city, district, school } = req.body;
   if (!state || !county || !city || !school) {
     throw new BadRequestError('All fields but district are required');
   }
@@ -19,18 +19,19 @@ const createLocation = async(req, res) =>{
   const upperCity = city.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   const upperCounty = county.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   const upperState = state.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  const upperCountry = country.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
  
   const userId= (req.user.userId)
-  const locationExists = await Location.findOne({ state: upperState, county: upperCounty, city: upperCity, district: upperDistrict, name: upperSchool });
+  const locationExists = await Location.findOne({ country: upperCountry, state: upperState, county: upperCounty, city: upperCity, district: upperDistrict, name: upperSchool });
 
   if (locationExists) {
     // return existing location
     return res.status(StatusCodes.OK).json({ location: locationExists });
   }
 
-  const location = await Location.create({ multiplePeriods, state: upperState, county: upperCounty, city: upperCity, district: upperDistrict, name: upperSchool, approved:user.role=="Stanford Staff", requestedUser: userId })
+  const location = await Location.create({ multiplePeriods, country: upperCountry, state: upperState, county: upperCounty, city: upperCity, district: upperDistrict, name: upperSchool, approved:user.role=="Stanford Staff", requestedUser: userId })
   if (user.role==="Stanford Staff"){
-  const newSchool = await School.create({ teacher: location.requestedUser, multiplePeriods:location.multiplePeriods, state:location.state, county:location.county, city:location.city, district:location.district, school:location.name})
+  const newSchool = await School.create({ teacher: location.requestedUser, multiplePeriods:location.multiplePeriods, country:location.country, state:location.state, county:location.county, city:location.city, district:location.district, school:location.name})
   }
   const token = user.createJWT();
   attachCookie({ res, token });

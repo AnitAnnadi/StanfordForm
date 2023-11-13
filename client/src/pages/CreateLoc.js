@@ -29,11 +29,16 @@ const CreateLoc = () => {
   } = useAppContext();
   const navigate = useNavigate();
 
+  const [isUnitedStates, setIsUnitedStates] = useState(true);
+
+  const [country, setCountry] = useState("default");
   const [state, setState] = useState("default");
   const [city, setCity] = useState("default");
   const [school, setSchool] = useState("default");
   const [district, setDistrict] = useState("default");
   const [county, setCounty] = useState("default");
+
+  const countries = ["United States"];
 
   const states = [
     "Alabama",
@@ -88,6 +93,7 @@ const CreateLoc = () => {
     "Wisconsin",
     "Wyoming",
   ];
+
   useEffect(() => {
     if (pendingApproval){
       console.log(pendingApproval)
@@ -129,7 +135,21 @@ const CreateLoc = () => {
   );
 
   const handleChange = (field, value) => {
-    if (field === "state") {
+    if (field === "country") {
+      setCountry(value);
+      setState("default");
+      setCounty("default");
+      setCity("default");
+      setDistrict("default");
+      setSchool("default");
+
+      if (value === "United States") {
+        setIsUnitedStates(true);
+      } else {
+        setIsUnitedStates(false);
+      }
+
+    } else if (field === "state") {
       setState(value);
       setCity("default");
       setSchool("default");
@@ -164,8 +184,8 @@ const CreateLoc = () => {
     e.preventDefault();
     if (
       state === "default" ||
-      (county === "default") ||
-      (city === "default") ||
+      (county === "default" && isUnitedStates) ||
+      (city === "default" && isUnitedStates) ||
       (school === "default")
     ) {
       displayAlert();
@@ -174,6 +194,7 @@ const CreateLoc = () => {
     successAlert("Redirecting...")
     addNewLocation({
       multiplePeriods: multiplePeriods,
+      country: country,
       state: state,
       county: county !== "default" ? county : null,
       city: city !== "default" ? city : null,
@@ -196,6 +217,22 @@ const CreateLoc = () => {
               {t('create_location', 'Create Location')}{" "}
               {numOfLocations > 1 ? numOfLocations : ""}
             </h3>
+            <h4 className="form-title">{t('UP_country', 'Country')}*</h4>
+            <select
+              name="aliasChoice"
+              value={country}
+              onChange={(e) => handleChange("country", e.target.value)}
+              className="form-select"
+            >
+              <option value={"default"}>{t('choose_your_country', 'Choose your Country')}</option>
+              {countries.map((country, index) => {
+                return (
+                  <option key={index} value={country}>
+                    {country}
+                  </option>
+                );
+              })}
+            </select>
             <h4 className="form-title">{t('UP_state', 'State')}*</h4>
             <select
               name="aliasChoice"
@@ -212,54 +249,56 @@ const CreateLoc = () => {
                 );
               })}
             </select>
-            <h4 className="form-title">{t('UP_county', 'County')}*</h4>
-            <select
-              name="aliasChoice"
-              value={county}
-              onChange={(e) => handleChange("county", e.target.value)}
-              className="form-select"
-            >
-              <option value={"default"}>{t('choose_your_county', 'Choose your County')}</option>
-              {counties.map((county, index) => {
-                return (
-                  <option key={index} value={county}>
-                    {county}
-                  </option>
-                );
-              })}
-            </select>
-            <h4 className="form-title">{t('UP_city', 'city')}*</h4>
-            <select
-              name="aliasChoice"
-              value={city}
-              onChange={(e) => handleChange("city", e.target.value)}
-              className="form-select"
-            >
-              <option value={"default"}>{t('choose_your_city', 'Choose your City')}</option>
-              {cities.map((city, index) => {
-                return (
-                  <option key={index} value={city}>
-                    {city}
-                  </option>
-                );
-              })}
-            </select>
-            <h4 className="form-title">{t('UP_district', 'District')}</h4>
-            <select
-              name="aliasChoice"
-              value={district}
-              onChange={(e) => handleChange("district", e.target.value)}
-              className="form-select"
-            >
-              <option value={"default"}>{t('choose_your_district', 'Choose your District')}</option>
-              {districts.map((district, index) => {
-                return (
-                  <option key={index} value={district}>
-                    {district}
-                  </option>
-                );
-              })}
-            </select>
+            { isUnitedStates && <>
+              <h4 className="form-title">{t('UP_county', 'County')}*</h4>
+              <select
+                name="aliasChoice"
+                value={county}
+                onChange={(e) => handleChange("county", e.target.value)}
+                className="form-select"
+              >
+                <option value={"default"}>{t('choose_your_county', 'Choose your County')}</option>
+                {counties.map((county, index) => {
+                  return (
+                    <option key={index} value={county}>
+                      {county}
+                    </option>
+                  );
+                })}
+              </select>
+              <h4 className="form-title">{t('UP_city', 'city')}*</h4>
+              <select
+                name="aliasChoice"
+                value={city}
+                onChange={(e) => handleChange("city", e.target.value)}
+                className="form-select"
+              >
+                <option value={"default"}>{t('choose_your_city', 'Choose your City')}</option>
+                {cities.map((city, index) => {
+                  return (
+                    <option key={index} value={city}>
+                      {city}
+                    </option>
+                  );
+                })}
+              </select>
+              <h4 className="form-title">{t('UP_district', 'District')}</h4>
+              <select
+                name="aliasChoice"
+                value={district}
+                onChange={(e) => handleChange("district", e.target.value)}
+                className="form-select"
+              >
+                <option value={"default"}>{t('choose_your_district', 'Choose your District')}</option>
+                {districts.map((district, index) => {
+                  return (
+                    <option key={index} value={district}>
+                      {district}
+                    </option>
+                  );
+                })}
+              </select>
+            </>}
             <h4 className="form-title">{t('UP_school', 'School')}*</h4>
             <input
               name="aliasChoice"

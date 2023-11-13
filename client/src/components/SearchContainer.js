@@ -70,7 +70,9 @@ const SearchContainer = ({ startReload }) => {
   const healthyTobacco = [];
   const healthyCannabis = [];
 
-  const [isUnitedStates, setIsUnitedStates] = useState(false);
+  const [isUnitedStates, setIsUnitedStates] = useState(searchCountry === "United States");
+  console.log({isUnitedStates})
+  console.log({searchCountry})
 
   const [showCounty, setShowCounty] = useState(false);
   const [showDistrict, setShowDistrict] = useState(false);
@@ -167,6 +169,8 @@ const SearchContainer = ({ startReload }) => {
     let values;
 
     if (user.role === "Teacher") {
+      console.log({userLocations})
+      console.log({teacherOptions})
       const allowedValues = userLocations.map(
         (location) => location[searchType].toUpperCase()
       );

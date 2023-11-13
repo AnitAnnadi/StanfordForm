@@ -59,6 +59,8 @@ const stateList = ["all", "Alabama", "Alaska", "Arizona", "Arkansas", "Californi
       "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont",
       "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"];
 
+const countryList = ["United States"];
+
 const initialState = {
   userLoading: false,
   exportLoading:false,
@@ -84,7 +86,8 @@ const initialState = {
   allResponseGroups:[],
   monthlyApplications: [],
   pendingLocations:[],
-  countryOptions: ['all', 'United States'],
+  countryOptions: localStorage.getItem("countryOptions") ? (localStorage.getItem("countryOptions") !== "undefined" ? JSON.parse(localStorage.getItem("countryOptions")): countryList) : countryList,
+  searchCountry: 'all',
   stateOptions: localStorage.getItem("stateOptions") ? (localStorage.getItem("stateOptions") !== "undefined" ? JSON.parse(localStorage.getItem("stateOptions")): stateList) : stateList,
   searchState: localStorage.getItem("searchState") ? (localStorage.getItem("searchState") !== "undefined" ? JSON.parse(localStorage.getItem("searchState")): 'all'): 'all',
   countyOptions: localStorage.getItem("countyOptions") ? (localStorage.getItem("countyOptions") !== "undefined" ? JSON.parse(localStorage.getItem("countyOptions")): ['all']): ['all'],
@@ -134,6 +137,8 @@ const stringDifScore = (str1, str2) => {
 const configureFormStates = async (userLocations, user, formStates) => {
   let {
     newSearchState,
+    newSearchCountry,
+    newCountryOptions,
     newSearchCounty,
     newSearchDistrict,
     newSearchCity,
@@ -147,12 +152,14 @@ const configureFormStates = async (userLocations, user, formStates) => {
 
   switch (user.role) {
     case "Site Admin":
+      newSearchCountry = userLocations[0]?.country;
       newSearchState = userLocations[0]?.state;
       newSearchCounty = userLocations[0]?.county;
       newSearchDistrict = userLocations[0]?.district;
       newSearchCity = userLocations[0]?.city;
       newSearchSchool = userLocations[0]?.school;
 
+      newCountryOptions = [userLocations[0]?.country];
       newStateOptions = [userLocations[0]?.state];
       newCountyOptions = [userLocations[0]?.county];
       newDistrictOptions = [userLocations[0]?.district === "district" ? "N/A" : userLocations[0]?.district];
@@ -161,6 +168,7 @@ const configureFormStates = async (userLocations, user, formStates) => {
 
       break;
     case "District Admin":
+      newSearchCountry = "United States"
       newSearchState = userLocations[0]?.state;
       newSearchCounty = userLocations[0]?.county;
       newSearchDistrict = userLocations[0]?.district;
@@ -168,6 +176,7 @@ const configureFormStates = async (userLocations, user, formStates) => {
       newSearchCity = "all";
       newSearchSchool = "all";
 
+      newCountryOptions = ["United States"];
       newStateOptions = [userLocations[0]?.state];
       newCountyOptions = [userLocations[0]?.county];
       newDistrictOptions = [userLocations[0]?.district === "district" ? "N/A" : userLocations[0]?.district];
@@ -176,12 +185,14 @@ const configureFormStates = async (userLocations, user, formStates) => {
       newSchoolOptions = ["all", ...(await narrowAllSchools({state: userLocations[0]?.state, county: userLocations[0]?.county, district: userLocations[0]?.district}))];
       break;
     case "County Admin":
+      newSearchCountry = "United States"
       newSearchState = userLocations[0]?.state;
       newSearchCounty = userLocations[0]?.county;
       newSearchDistrict = "all";
       newSearchCity = "all";
       newSearchSchool = "all";
 
+      newCountryOptions = ["United States"];
       newStateOptions = [userLocations[0]?.state];
       newCountyOptions = [userLocations[0]?.county];
 
@@ -190,12 +201,14 @@ const configureFormStates = async (userLocations, user, formStates) => {
       newSchoolOptions = ["all"];
       break;
     case "State Admin":
+      newSearchCountry = "United States"
       newSearchState = userLocations[0]?.state;
       newSearchCounty = "all";
       newSearchDistrict = "all";
       newSearchCity = "all";
       newSearchSchool = "all";
 
+      newCountryOptions = ["United States"];
       newStateOptions = [userLocations[0]?.state];
       newCountyOptions = ["all", ...narrowCounties({state: newSearchState})];
       newDistrictOptions = ["all"];
@@ -204,6 +217,9 @@ const configureFormStates = async (userLocations, user, formStates) => {
       break;
     case "Teacher":
       if (userLocations.length === 1) {
+        console.log(userLocations[0])
+        console.log("HERE^")
+        newSearchCountry = userLocations[0]?.country;
         newSearchState = userLocations[0]?.state;
         newSearchCounty = userLocations[0]?.county;
         newSearchDistrict = userLocations[0]?.district;
@@ -216,12 +232,14 @@ const configureFormStates = async (userLocations, user, formStates) => {
         newCityOptions = [userLocations[0]?.city];
         newSchoolOptions = [userLocations[0]?.school];
       } else {
+        newSearchCountry = "all";
         newSearchState = "all";
         newSearchCounty = "all";
         newSearchDistrict = "all";
         newSearchCity = "all";
         newSearchSchool = "all";
 
+        newCountryOptions = ["all", ...new Set(userLocations.map((location) => location.country))];
         newStateOptions = ["all", ...new Set(userLocations.map((location) => location.state))];
         newCountyOptions = ["all"];
         newDistrictOptions = ["all"];
@@ -230,12 +248,14 @@ const configureFormStates = async (userLocations, user, formStates) => {
       }
       break;
     case "Stanford Staff":
+      newSearchCountry = "all";
       newSearchState = "all";
       newSearchCounty = "all";
       newSearchDistrict = "all";
       newSearchCity = "all";
       newSearchSchool = "all";
 
+      newCountryOptions = countryList;
       newStateOptions = stateList;
       newCountyOptions = ["all"];
       newDistrictOptions = ["all"];
@@ -245,11 +265,13 @@ const configureFormStates = async (userLocations, user, formStates) => {
   }
 
   return {
+    searchCountry: newSearchCountry,
     searchState: newSearchState,
     searchCounty: newSearchCounty,
     searchDistrict: newSearchDistrict,
     searchCity: newSearchCity,
     searchSchool: newSearchSchool,
+    countryOptions: newCountryOptions,
     stateOptions: newStateOptions,
     countyOptions: newCountyOptions,
     districtOptions: newDistrictOptions,
@@ -499,6 +521,7 @@ const AppProvider = ({ children }) => {
 
       if (endPoint === 'login') {
         const stateKeys = [
+          'searchCountry',
           'searchState',
           'searchCounty',
           'searchDistrict',
@@ -649,7 +672,7 @@ const AppProvider = ({ children }) => {
       user
   } = state;
     try {
-      const {multiplePeriods, state, county, city, district, school} = locationData
+      const {multiplePeriods, country, state, county, city, district, school} = locationData
       console.log(school)
       const {data} = await authFetch.post('/locations', locationData); 
       if (data.location){

@@ -217,10 +217,10 @@ const SelectLoc = ({ noCode }) => {
       setCity("default");
       setSchool("default");
 
-      if (value !== "United States") {
-        setIsUnitedStates(false);
-      } else {
+      if (value === "United States") {
         setIsUnitedStates(true);
+      } else {
+        setIsUnitedStates(false);
       }
 
       if (value !== "default") {
@@ -448,7 +448,7 @@ const SelectLoc = ({ noCode }) => {
                 <option value={"default"}>
                   {t('choose_your_state', 'Choose your State')}
                 </option>
-                {states.map((state, index) => {
+                {selectLocStates.map((state, index) => {
                   return (
                     <option key={index} value={state}>
                       {state}

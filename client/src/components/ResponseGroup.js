@@ -27,6 +27,7 @@ const ResponseGroup = ({
     formType: uniqueResponseType.formType,
     when: uniqueResponseType.when,
     school: school.school,
+    country: school.country,
     state: school.state,
     city: school.city,
     county: school.county,
