@@ -50,7 +50,7 @@ const getExport = async (req, res) => {
         formCode: formCode,
         teacher: teacherId,
         grade: grade,
-        // formType: formType,
+        formType: formType,
         when: when,
         school: schoolName,
       }
@@ -67,7 +67,7 @@ const getExport = async (req, res) => {
         county: county,
         district: district,
         grade: grade,
-        // formType: formType,
+        formType: formType,
         period: period,
         when: when,
       }

@@ -226,6 +226,7 @@ const configureFormStates = async (userLocations, user, formStates) => {
         newSearchCity = userLocations[0]?.city;
         newSearchSchool = userLocations[0]?.school;
 
+        newCountryOptions = [userLocations[0]?.country];
         newStateOptions = [userLocations[0]?.state];
         newCountyOptions = [userLocations[0]?.county];
         newDistrictOptions = [userLocations[0]?.district === "district" ? "N/A" : userLocations[0]?.district];
@@ -1117,7 +1118,6 @@ const AppProvider = ({ children }) => {
 
         for (const responseGroup of (allResponseGroups ? allResponseGroups : responseGroups)) {
           const { school, uniqueResponseType } = responseGroup;
-
           const queryParameters = new URLSearchParams({
             noCode: uniqueResponseType?.noCode ? 'true' : 'false',
             teacherId: school.teacher,

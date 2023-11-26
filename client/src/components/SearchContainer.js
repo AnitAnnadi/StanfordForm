@@ -71,8 +71,6 @@ const SearchContainer = ({ startReload }) => {
   const healthyCannabis = [];
 
   const [isUnitedStates, setIsUnitedStates] = useState(searchCountry === "United States");
-  console.log({isUnitedStates})
-  console.log({searchCountry})
 
   const [showCounty, setShowCounty] = useState(false);
   const [showDistrict, setShowDistrict] = useState(false);
@@ -94,9 +92,7 @@ const SearchContainer = ({ startReload }) => {
         const formtype = obj["form type"];
         if (formtype === "You and Me, Together Vape-Free") {
           vape.push(obj);
-        } else if (
-          formtype === "Smart Talk: Cannabis Prevention & Education Awareness"
-        ) {
+        } else if (formtype === "Smart Talk: Cannabis Prevention & Education Awareness") {
           cannabis.push(obj);
         } else if (formtype === "Safety First") {
           safety.push(obj);
@@ -110,29 +106,25 @@ const SearchContainer = ({ startReload }) => {
       const vapeSheet = XLSXUtils.json_to_sheet(vape);
       const cannabisSheet = XLSXUtils.json_to_sheet(cannabis);
       const safetySheet = XLSXUtils.json_to_sheet(safety);
-      const healthySheet = XLSXUtils.json_to_sheet(healthy);
+      const healthyTobaccoSheet = XLSXUtils.json_to_sheet(healthyTobacco);
+      const healthyCannabisSheet = XLSXUtils.json_to_sheet(healthyCannabis);
+
       const workbook = XLSXUtils.book_new();
+
       XLSXUtils.book_append_sheet(workbook, vapeSheet, "Vape-Free");
       XLSXUtils.book_append_sheet(workbook, cannabisSheet, "Smart Talk");
       XLSXUtils.book_append_sheet(workbook, safetySheet, "Safety First");
-      XLSXUtils.book_append_sheet(
-        workbook,
-        healthyTobacco,
-        "Healthy Futures:Tobacco"
-      );
-      XLSXUtils.book_append_sheet(
-        workbook,
-        healthyCannabis,
-        "Healthy Futures:Cannabis"
-      );
+      XLSXUtils.book_append_sheet(workbook, healthyTobaccoSheet, "Healthy Futures:Tobacco");
+      XLSXUtils.book_append_sheet(workbook, healthyCannabisSheet, "Healthy Futures:Cannabis");
+
       writeXLSXFile(workbook, `data.xlsx`);
       handleChange(exportData, []);
       setExportClicked(false);
     }
-  }, [exportData, exportClicked]);
+  }, [exportData]);
 
   const createExcelSheet = async () => {
-    await getResponseGroups(currentSchoolIndex, shouldReload, true);
+    await getResponseGroups(currentSchoolIndex, shouldReload, true, false);
     setExportClicked(true);
   };
 
