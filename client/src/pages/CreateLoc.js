@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Alert } from "../components";
-import { useAppContext } from "../context/appContext";
+import {countryList, useAppContext} from "../context/appContext";
 import Wrapper from "../assets/wrappers/DashboardFormPage";
 import { useEffect } from "react";
 import Logo2 from "../assets/images/logo.png";
@@ -29,7 +29,7 @@ const CreateLoc = () => {
   } = useAppContext();
   const navigate = useNavigate();
 
-  const [isUnitedStates, setIsUnitedStates] = useState(true);
+  const [isUnitedStates, setIsUnitedStates] = useState(false);
 
   const [country, setCountry] = useState("default");
   const [state, setState] = useState("default");
@@ -37,8 +37,6 @@ const CreateLoc = () => {
   const [school, setSchool] = useState("default");
   const [district, setDistrict] = useState("default");
   const [county, setCounty] = useState("default");
-
-  const countries = ["United States"];
 
   const states = [
     "Alabama",
@@ -225,7 +223,7 @@ const CreateLoc = () => {
               className="form-select"
             >
               <option value={"default"}>{t('choose_your_country', 'Choose your Country')}</option>
-              {countries.map((country, index) => {
+              {countryList.map((country, index) => {
                 return (
                   <option key={index} value={country}>
                     {country}
@@ -234,21 +232,30 @@ const CreateLoc = () => {
               })}
             </select>
             <h4 className="form-title">{t('UP_state', 'State')}*</h4>
-            <select
-              name="aliasChoice"
-              value={state}
-              onChange={(e) => handleChange("state", e.target.value)}
-              className="form-select"
-            >
-              <option value={"default"}>{t('choose_your_state', 'Choose your State')}</option>
-              {states.map((state, index) => {
-                return (
-                  <option key={index} value={state}>
-                    {state}
-                  </option>
-                );
-              })}
-            </select>
+            {isUnitedStates ? <>
+              <select
+                name="aliasChoice"
+                value={state}
+                onChange={(e) => handleChange("state", e.target.value)}
+                className="form-select"
+              >
+                <option value={"default"}>{t('choose_your_state', 'Choose your State')}</option>
+                {states.map((state, index) => {
+                  return (
+                    <option key={index} value={state}>
+                      {state}
+                    </option>
+                  );
+                })}
+              </select>
+            </> : <>
+              <input
+                name="aliasChoice"
+                onChange={(e) => handleChange("state", e.target.value)}
+                className="form-input"
+                placeholder="Enter your state"
+              />
+            </>}
             { isUnitedStates && <>
               <h4 className="form-title">{t('UP_county', 'County')}*</h4>
               <select
@@ -266,7 +273,9 @@ const CreateLoc = () => {
                   );
                 })}
               </select>
-              <h4 className="form-title">{t('UP_city', 'city')}*</h4>
+            </>}
+            <h4 className="form-title">{t('UP_city', 'city')}*</h4>
+            { isUnitedStates ? <>
               <select
                 name="aliasChoice"
                 value={city}
@@ -282,6 +291,15 @@ const CreateLoc = () => {
                   );
                 })}
               </select>
+            </> : <>
+              <input
+                name="aliasChoice"
+                onChange={(e) => handleChange("city", e.target.value)}
+                className="form-input"
+                placeholder="Enter your city"
+              />
+            </>}
+            { isUnitedStates && <>
               <h4 className="form-title">{t('UP_district', 'District')}</h4>
               <select
                 name="aliasChoice"

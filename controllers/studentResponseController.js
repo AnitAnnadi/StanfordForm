@@ -41,7 +41,6 @@ const getStudentResponses = async(req, res) => {
   if (grade && grade !== 'all') {
     queryObject.grade = grade;
   }
-  console.log(period)
   if (period && period !== 'all') {
     queryObject.period = period;
   }
@@ -68,6 +67,7 @@ const getNoCodeStudentResponses = async(req, res) => {
     state,
     city,
     county,
+    country,
     district,
     grade,
     period,
@@ -105,6 +105,9 @@ const getNoCodeStudentResponses = async(req, res) => {
   if (county && county !== 'all') {
     queryObject.county = county;
   }
+  if (country && country !== 'all') {
+    queryObject.country = country;
+  }
   if (district && district !== 'all') {
     queryObject.district = district;
   }
@@ -115,7 +118,6 @@ const getNoCodeStudentResponses = async(req, res) => {
 
 const getHealthyFutures = async(req,res) =>{
   const {teacherId} = req.query
-  console.log(teacherId)
   const responses = await Certificates.find({teacherId:teacherId})
   const responsesByCannabis = responses.filter(response => response.formType === 'Healthy Futures: Cannabis');
   const responsesByTobacco = responses.filter(response => response.formType === 'Healthy Futures: Tobacco/Nicotine/Vaping');

@@ -33,6 +33,11 @@ const NoCodeSchema = new mongoose.Schema(
         type: String,
         required: [true, 'Please provide county'],
       },
+    country:{
+        type: String,
+        required: [true, 'Please provide country'],
+        default: 'United States'
+      },
     district:{
     type: String,
     required: [true, 'Please provide district'],

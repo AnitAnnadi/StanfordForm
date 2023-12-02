@@ -59,7 +59,43 @@ const stateList = ["all", "Alabama", "Alaska", "Arizona", "Arkansas", "Californi
       "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont",
       "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"];
 
-const countryList = ["United States"];
+export const countryList = ['Afghanistan', 'Aland Islands', 'Albania', 'Algeria', 'American Samoa',
+  'Andorra', 'Angola', 'Anguilla', 'Antarctica', 'Antigua and Barbuda', 'Argentina', 'Armenia',
+  'Aruba', 'Australia', 'Austria', 'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados',
+  'Belarus', 'Belgium', 'Belize', 'Benin', 'Bermuda', 'Bhutan', 'Bolivia, Plurinational State of',
+  'Bonaire, Sint Eustatius and Saba', 'Bosnia and Herzegovina', 'Botswana', 'Bouvet Island',
+  'Brazil', 'British Indian Ocean Territory', 'Brunei Darussalam', 'Bulgaria', 'Burkina Faso',
+  'Burundi', 'Cambodia', 'Cameroon', 'Canada', 'Cape Verde', 'Cayman Islands',
+  'Central African Republic', 'Chad', 'Chile', 'China', 'Christmas Island', 'Cocos (Keeling) Islands',
+  'Colombia', 'Comoros', 'Congo', 'Congo, The Democratic Republic of the', 'Cook Islands',
+  'Costa Rica', "Côte d'Ivoire", 'Croatia', 'Cuba', 'Curaçao', 'Cyprus', 'Czech Republic',
+  'Denmark', 'Djibouti', 'Dominica', 'Dominican Republic', 'Ecuador', 'Egypt', 'El Salvador',
+  'Equatorial Guinea', 'Eritrea', 'Estonia', 'Ethiopia', 'Falkland Islands (Malvinas)',
+  'Faroe Islands', 'Fiji', 'Finland', 'France', 'French Guiana', 'French Polynesia',
+  'French Southern Territories', 'Gabon', 'Gambia', 'Georgia', 'Germany', 'Ghana', 'Gibraltar',
+  'Greece', 'Greenland', 'Grenada', 'Guadeloupe', 'Guam', 'Guatemala', 'Guernsey', 'Guinea',
+  'Guinea-Bissau', 'Guyana', 'Haiti', 'Heard Island and McDonald Islands', 'Holy See (Vatican City State)',
+  'Honduras', 'Hong Kong', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Iran, Islamic Republic of',
+  'Iraq', 'Ireland', 'Isle of Man', 'Israel', 'Italy', 'Jamaica', 'Japan', 'Jersey', 'Jordan', 'Kazakhstan',
+  'Kenya', 'Kiribati', "Korea, Democratic People's Republic of", 'Korea, Republic of', 'Kuwait', 'Kyrgyzstan',
+  "Lao People's Democratic Republic", 'Latvia', 'Lebanon', 'Lesotho', 'Liberia', 'Libya', 'Liechtenstein',
+  'Lithuania', 'Luxembourg', 'Macao', 'Macedonia, Republic of', 'Madagascar', 'Malawi', 'Malaysia', 'Maldives',
+  'Mali', 'Malta', 'Marshall Islands', 'Martinique', 'Mauritania', 'Mauritius', 'Mayotte', 'Mexico', 'Micronesia,' +
+  ' Federated States of', 'Moldova, Republic of', 'Monaco', 'Mongolia', 'Montenegro', 'Montserrat', 'Morocco',
+  'Mozambique', 'Myanmar', 'Namibia', 'Nauru', 'Nepal', 'Netherlands', 'New Caledonia', 'New Zealand', 'Nicaragua',
+  'Niger', 'Nigeria', 'Niue', 'Norfolk Island', 'Northern Mariana Islands', 'Norway', 'Oman', 'Pakistan', 'Palau',
+  'Palestinian Territory, Occupied', 'Panama', 'Papua New Guinea', 'Paraguay', 'Peru', 'Philippines', 'Pitcairn',
+  'Poland', 'Portugal', 'Puerto Rico', 'Qatar', 'Réunion', 'Romania', 'Russian Federation', 'Rwanda', 'Saint Barthélemy',
+  'Saint Helena, Ascension and Tristan da Cunha', 'Saint Kitts and Nevis', 'Saint Lucia', 'Saint Martin (French part)',
+  'Saint Pierre and Miquelon', 'Saint Vincent and the Grenadines', 'Samoa', 'San Marino', 'Sao Tome and Principe',
+  'Saudi Arabia', 'Senegal', 'Serbia', 'Seychelles', 'Sierra Leone', 'Singapore', 'Sint Maarten (Dutch part)',
+  'Slovakia', 'Slovenia', 'Solomon Islands', 'Somalia', 'South Africa', 'South Georgia and the South Sandwich Islands',
+  'Spain', 'Sri Lanka', 'Sudan', 'Suriname', 'South Sudan', 'Svalbard and Jan Mayen', 'Swaziland', 'Sweden', 'Switzerland',
+  'Syrian Arab Republic', 'Taiwan, Province of China', 'Tajikistan', 'Tanzania, United Republic of', 'Thailand', 'Timor-Leste',
+  'Togo', 'Tokelau', 'Tonga', 'Trinidad and Tobago', 'Tunisia', 'Turkey', 'Turkmenistan', 'Turks and Caicos Islands', 'Tuvalu',
+  'Uganda', 'Ukraine', 'United Arab Emirates', 'United Kingdom', 'United States', 'United States Minor Outlying Islands', 'Uruguay',
+  'Uzbekistan', 'Vanuatu', 'Venezuela, Bolivarian Republic of', 'Viet Nam', 'Virgin Islands, British', 'Virgin Islands, U.S.',
+  'Wallis and Futuna', 'Yemen', 'Zambia', 'Zimbabwe']
 
 const initialState = {
   userLoading: false,
@@ -181,7 +217,6 @@ const configureFormStates = async (userLocations, user, formStates) => {
       newCountyOptions = [userLocations[0]?.county];
       newDistrictOptions = [userLocations[0]?.district === "district" ? "N/A" : userLocations[0]?.district];
       newCityOptions = [userLocations[0]?.city];
-      console.log(narrowAllSchools({state: userLocations[0]?.state, county: userLocations[0]?.county, district: userLocations[0]?.district}))
       newSchoolOptions = ["all", ...(await narrowAllSchools({state: userLocations[0]?.state, county: userLocations[0]?.county, district: userLocations[0]?.district}))];
       break;
     case "County Admin":
@@ -217,8 +252,6 @@ const configureFormStates = async (userLocations, user, formStates) => {
       break;
     case "Teacher":
       if (userLocations.length === 1) {
-        console.log(userLocations[0])
-        console.log("HERE^")
         newSearchCountry = userLocations[0]?.country;
         newSearchState = userLocations[0]?.state;
         newSearchCounty = userLocations[0]?.county;
@@ -597,10 +630,10 @@ const AppProvider = ({ children }) => {
 
   const addLocation = async (locationData) => {
     try {
-      const { state, county, district, city, school, multiplePeriods, requesterId } = locationData;
+      const { state, county, country, district, city, school, multiplePeriods, requesterId } = locationData;
 
-      let newLocationData = {state, county, district, city, school, multiplePeriods, requesterId};
-      console.log(requesterId)
+      let newLocationData = {state, county, country, district, city, school, multiplePeriods, requesterId};
+
       if (district === 'custom' || county === 'custom') {
         const urlSearchParams = new URLSearchParams(
           state,
@@ -849,6 +882,7 @@ const AppProvider = ({ children }) => {
       page,
       searchState,
       searchCounty,
+      searchCountry,
       searchCity,
       searchDistrict,
       searchSchool,
@@ -872,6 +906,7 @@ const AppProvider = ({ children }) => {
         params: {
           searchState,
           searchCounty,
+          searchCountry,
           searchCity,
           searchDistrict : searchDistrict === 'N/A' ? undefined : searchDistrict,
           searchSchool,
@@ -982,6 +1017,7 @@ const AppProvider = ({ children }) => {
               state: searchState,
               city: searchCity,
               county: searchCounty,
+              country: searchCountry,
               district: searchDistrict,
               grade: searchGrade,
               period: searchPeriod,
@@ -1010,6 +1046,7 @@ const AppProvider = ({ children }) => {
                 multiplePeriods: false,
                 district: noCodeStudentResponses[responseIndex].district,
                 county: noCodeStudentResponses[responseIndex].county,
+                country: noCodeStudentResponses[responseIndex].country,
                 city: noCodeStudentResponses[responseIndex].city,
               },
               period: "No Period"

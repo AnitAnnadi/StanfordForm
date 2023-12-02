@@ -5,7 +5,6 @@ import "../assets/css/fonts.css"
 const Certificate = () => {
   const location = useLocation();
   const info = location.state
-  console.log(info)
   const currentDate = new Date();
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth() + 1; // Months are 0-indexed, so add 1

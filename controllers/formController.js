@@ -33,7 +33,6 @@ const getFormMetrics = async(req,res) => {
   let studentResponses;
 
   let responseQueryObject={}
-  console.log(period)
   if (period && period !== 'undefined' && period !== 'null') {
     responseQueryObject.period = period;
   }

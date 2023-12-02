@@ -32,8 +32,8 @@ const getExport = async (req, res) => {
   exportData = [];
   try {
     const { noCode, teacherId, schoolId, period, grade, formType, when,
-      school: schoolName, state, city, county, district } = req.query;
-    const { formCode } = req.params;
+      school: schoolName, state, city, county, country, district } = req.query;
+    const { formCode } = req.params
 
     let responseQueryObject={}
 
@@ -65,6 +65,7 @@ const getExport = async (req, res) => {
         state: state,
         city: city,
         county: county,
+        country: country,
         district: district,
         grade: grade,
         formType: formType,
@@ -82,6 +83,7 @@ const getExport = async (req, res) => {
         school: schoolName,
         state: state,
         county: county,
+        country: country,
         district: district,
         city: city,
       }
@@ -93,8 +95,8 @@ const getExport = async (req, res) => {
         let obj = {
           teacher: teacher?.name,
           school: school?.school,
-          county: school.county === "custom" ? "n/a" : school.county,
-          district: school.district === "custom" ? "n/a" : school.district,
+          county: (county && county !== "null") ? school.county === "custom" ? "n/a" : school.county : "n/a",
+          district: (district && district !== "null") ? school.district === "custom" ? "n/a" : school.district : "n/a",
           state:school.state,
           city: school.city,
         };
@@ -102,7 +104,6 @@ const getExport = async (req, res) => {
         obj.grade = studentResponse.grade;
         obj.period =
           studentResponse.period === undefined || studentResponse.period === null? "n/a" : studentResponse.period;
-        console.log(obj.period)
           obj["form type"] = studentResponse.formType;
 
         let questions = await Question.find({

@@ -6,7 +6,7 @@ import {StatusCodes} from "http-status-codes";
 import Location from "../models/Location.js";
 
 const createSchool = async(req, res) =>{
-  let { multiplePeriods, state, county, city, district, school, requesterId } = req.body;
+  let { multiplePeriods, state, county, country, city, district, school, requesterId } = req.body;
   try{
   if (!state) {
     throw new BadRequestError('State is required');
@@ -22,11 +22,11 @@ const createSchool = async(req, res) =>{
     user = await User.findOne({ _id: req.user.userId });
   }
   // ignore case
-  const userLocations = await School.find({ teacher: user._id, state, county, city, district, school})
+  const userLocations = await School.find({ teacher: user._id, state, county, country, city, district, school})
   let location;
   let exists = false;
   if (userLocations.length===0){
-  location = await School.create({ teacher: user._id, multiplePeriods, state, county, city, district, school })
+  location = await School.create({ teacher: user._id, multiplePeriods, state, county, country, city, district, school })
   if (requesterId){
     const location = await Location.findOne({_id:requesterId });
     await location.remove();
@@ -66,6 +66,7 @@ const getSchools = async(req, res) =>{
   const {
     searchState,
     searchCounty,
+    searchCountry,
     searchCity,
     searchDistrict,
     searchSchool,
@@ -79,6 +80,9 @@ const getSchools = async(req, res) =>{
   }
   if (searchCounty && searchCounty !== 'all') {
     queryObject.county = searchCounty;
+  }
+  if (searchCountry && searchCountry !== 'all') {
+    queryObject.country = searchCountry;
   }
   if (searchCity && searchCity !== 'all') {
     queryObject.city = searchCity;

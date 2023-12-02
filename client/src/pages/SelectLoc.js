@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FormRow, Alert } from "../components";
-import { useAppContext } from "../context/appContext";
+import { useAppContext, countryList } from "../context/appContext";
 import Wrapper from "../assets/wrappers/DashboardFormPage";
 import Dropdown from "react-dropdown";
 import { useEffect, useRef } from "react";
@@ -52,8 +52,6 @@ const SelectLoc = ({ noCode }) => {
 
   const [isUnitedStates, setIsUnitedStates] = useState(false);
 
-  const [countries, setCountries] = useState(["United States"]);
-
   const [cities, setCities] = useState([]);
   const [schools, setSchools] = useState([]);
   const [counties, setCounties] = useState([]);
@@ -91,7 +89,7 @@ const SelectLoc = ({ noCode }) => {
 
   useEffect(() => {
     if (userLocations && !isFormSubmitted) {
-      setNumOfLocations(user.role=="Stanford Staff"?userLocations.length+1:userLocations.length);
+      setNumOfLocations(user?.role=="Stanford Staff"?userLocations.length+1:userLocations.length);
     }
   }, [userLocations]);
   
@@ -147,14 +145,14 @@ const SelectLoc = ({ noCode }) => {
   useEffect(() => {
     if (isFormSubmitted && !exists && !additionalLoc) {
       adminroles.map((role) => {
-        if (role === user.role) {
+        if (role === user?.role) {
           adminbool = true;
         }
       });
       setIsFormSubmitted(false);
       setAdditionalLoc(false);
       if (adminbool) {
-        if (adminTeacher && user.role !== "Site Admin") {
+        if (adminTeacher && user?.role !== "Site Admin") {
           setTimeout(() => {
             navigate("/selectLoc", {
               state: {
@@ -166,7 +164,7 @@ const SelectLoc = ({ noCode }) => {
           }, 2000);
           return;
         }
-        if (user.adminTeacher) {
+        if (user?.adminTeacher) {
           setTimeout(() => {
             navigate("/");
           }, 2000);
@@ -186,29 +184,29 @@ const SelectLoc = ({ noCode }) => {
     setAdditionalLoc(false);
   }, [isFormSubmitted]);
   useEffect(() => {
-    if (user?.role === "Site Admin" || user?.role === "Teacher" || noCode) {
-      if (state !== "default" && city !== "default" && school !== "default") {
-        // just do this whole thing in app context later
+    if (isUnitedStates) {
+      if (user?.role === "Site Admin" || user?.role === "Teacher" || noCode) {
+        if (state !== "default" && city !== "default" && school !== "default") {
+          // just do this whole thing in app context later
 
-        try {
-          console.log("getting district and county");
-          console.log(state, city, school);
-          const { foundDistrict, foundCounty } = getDistrictCounty(
-            state,
-            city,
-            school
-          );
-          console.log(foundDistrict, foundCounty);
+          try {
+            const { foundDistrict, foundCounty } = getDistrictCounty(
+              state,
+              city,
+              school
+            );
+            console.log(foundDistrict, foundCounty);
 
-          setDistrict(foundDistrict);
-          setCounty(foundCounty);
-        } catch (err) {
-          setDistrict("custom");
-          setCounty("custom");
+            setDistrict(foundDistrict);
+            setCounty(foundCounty);
+          } catch (err) {
+            setDistrict("custom");
+            setCounty("custom");
+          }
         }
       }
     }
-  }, [school]);
+  }, [state, city, school, isUnitedStates]);
 
   const handleChange = (field, value) => {
     if (field === "country") {
@@ -296,7 +294,6 @@ const SelectLoc = ({ noCode }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (forOther) {
-      console.log("hi");
       if (
         state === "default" ||
         (showCounty && county === "default") ||
@@ -409,7 +406,7 @@ const SelectLoc = ({ noCode }) => {
                     selectSchool ||
                     fromProfile
                   ? t('select_school', "Select School")
-                  : user.role === "Site Admin"
+                  : user?.role === "Site Admin"
                   ? t('select_school_location', "Select School Location")
                   : t('select_admin_location', "Select Admin Location")
                 }
@@ -430,7 +427,7 @@ const SelectLoc = ({ noCode }) => {
                 <option value={"default"}>
                   {t('choose_your_country', 'Choose your Country')}
                 </option>
-                {countries.map((country, index) => {
+                {countryList.map((country, index) => {
                   return (
                     <option key={index} value={country}>
                       {country}
@@ -577,7 +574,7 @@ const SelectLoc = ({ noCode }) => {
                   </label>
                 </>
               )}
-              {!noCode && showAdditionalLoc && user.role !== "Site Admin" && (
+              {!noCode && showAdditionalLoc && user?.role !== "Site Admin" && (
                 <>
                   <hr />
                   <label className="checkbox-container">

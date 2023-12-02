@@ -315,7 +315,6 @@ const logout = async (req, res) => {
 
 const resetPassword = async(req,res) =>{
   try{
-  console.log('hi')
   const {password,token} = req.body
   const reset = await ResetPassword.find({token})
   const userId = reset[0].userId
@@ -334,7 +333,6 @@ const resetPassword = async(req,res) =>{
 }
 const createCertificate =async(req,res)=>{
   const {name,info} = req.body
-  console.log(req.body)
   try{
   await Certificates.create({name:name, formType:info["form"], teacherId:info["teacher_id"] })
   return res.status(StatusCodes.OK).json({ msg: 'Certificate Created' });
@@ -374,14 +372,12 @@ const submitForm = async(req,res) =>{
     throw new BadRequestError('Please complete the reCaptcha. ');
   }}
   if (code){
-    console.log(code)
   const teacher = await User.findOne({ code });
   if (!teacher){
     throw new BadRequestError('Invalid Code. Try Again or Ask Teacher for Code');
   }
 
   let StudentResponseData=''
-  console.log(period)
   if (period!=="default"){
     StudentResponseData= await StudentResponse.create({formCode:code,teacher:teacher._id,grade:grade,when:when,formType:type,school:school,period:period})
 

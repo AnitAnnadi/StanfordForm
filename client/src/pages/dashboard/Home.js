@@ -25,7 +25,6 @@ const Home = () => {
   } = useAppContext();
   const navigate = useNavigate();
   useEffect(() => {
-    console.log('effect')
   getLocations({ user })
       }, []);
 
@@ -40,7 +39,6 @@ const Home = () => {
       if (user && user.adminTeacher && userLocations.length < 2) {
         console.log(userLocations.length, user.role)
         if (userLocations.length === 1 && (user.role === 'Stanford Staff' || user.role === "Site Admin")) {
-          console.log('first')
           return;
         }
         else if (userLocations.length >= 1 && pendingLocations.length >= 1 ) {

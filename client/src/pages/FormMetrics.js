@@ -275,25 +275,29 @@ const FormMetrics = () => {
                     searchState === "all" ? t('all_states', 'All states') + ',' : searchState + ","
                   }
                 />
-                <ResponseGroupInfo
-                  text={
-                    searchCounty === "all"
-                      ? t('all_counties', 'All counties') + ","
-                      : searchCounty + ","
-                  }
-                />
+                {searchCounty ? (
+                  <ResponseGroupInfo
+                    text={
+                      searchCounty === "all"
+                        ? t('all_counties', 'All counties') + ","
+                        : searchCounty + ","
+                    }
+                  />
+                ) : null}
                 <ResponseGroupInfo
                   text={
                     searchCity === "all" ? t('all_cities', 'All cities') + "," : (searchCity + ",")
                   }
                 />
-                <ResponseGroupInfo
-                  text={
-                    searchDistrict === "all"
-                      ? t('all_districts', 'All districts') + ","
-                      : searchDistrict + ","
-                  }
-                />
+                {searchDistrict ? (
+                  <ResponseGroupInfo
+                    text={
+                      searchDistrict === "all"
+                        ? t('all_districts', 'All districts') + ","
+                        : searchDistrict + ","
+                    }
+                  />
+                ) : null}
                 <ResponseGroupInfo
                   text={searchSchool === "all" ? t('all_schools', 'All schools') : searchSchool}
                 />

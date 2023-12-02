@@ -8,18 +8,18 @@ import School from "../models/School.js";
 const createLocation = async(req, res) =>{
   try{
   const { multiplePeriods, state, country, county, city, district, school } = req.body;
-  if (!state || !county || !city || !school) {
-    throw new BadRequestError('All fields but district are required');
+  if (!country || !state || !school) {
+    throw new BadRequestError('All fields but district, county, amd city are required');
   }
 
   const user = await User.findOne({ _id: req.user.userId });
 
-  const upperSchool = school.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  const upperSchool = school ? school.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : undefined;
   const upperDistrict = district ? district.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : undefined;
-  const upperCity = city.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-  const upperCounty = county.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-  const upperState = state.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-  const upperCountry = country.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  const upperCity = city ? city.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : undefined;
+  const upperCounty = county ? county.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : undefined;
+  const upperState = state ? state.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : undefined;
+  const upperCountry = country ? country.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : undefined;
  
   const userId= (req.user.userId)
   const locationExists = await Location.findOne({ country: upperCountry, state: upperState, county: upperCounty, city: upperCity, district: upperDistrict, name: upperSchool });

@@ -121,6 +121,7 @@ const JoinForm = () => {
         when !== "default" 
       ) {
         let county = info["county"]
+        let country = info["country"]
         let school = info["school"]
         let district = info["district"]
         let state = info["state"]
@@ -136,6 +137,7 @@ const JoinForm = () => {
               school,
               state,
               county,
+              country,
               district,
               city,
               noCode

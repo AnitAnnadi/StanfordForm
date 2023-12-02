@@ -34,8 +34,6 @@ const ResponseGroup = ({
     district: school.district,
   });
 
-  console.log(uniqueResponseType)
-
   const { t, i18n } = useTranslation();
 
   return (
