@@ -37,9 +37,7 @@ const getExport = async (req, res) => {
 
     let responseQueryObject={}
 
-    if (period && period !== 'undefined' && period !== 'null') {
-      responseQueryObject.period = period;
-    }
+
 
     let teacher;
     let studentResponses;
@@ -50,15 +48,22 @@ const getExport = async (req, res) => {
         formCode: formCode,
         teacher: teacherId,
         grade: grade,
-        // formType: formType,
+        formType: formType,
         when: when,
         school: schoolName,
       }
-
+      if (period && period !== 'undefined' && period !== 'null') {
+        responseQueryObject.period = period;
+      }
+      else{
+        responseQueryObject.period = null;
+      }
 
       school = await School.findOne({ _id: schoolId });
       teacher = await User.findOne({ _id: teacherId });
       studentResponses = await StudentResponse.find(responseQueryObject);
+      console.log(responseQueryObject)
+      console.log(studentResponses)
     } else {
       responseQueryObject = {
         school: schoolName,
@@ -71,6 +76,7 @@ const getExport = async (req, res) => {
         period: period,
         when: when,
       }
+
 
       studentResponses = await NoCode.find(responseQueryObject);
 

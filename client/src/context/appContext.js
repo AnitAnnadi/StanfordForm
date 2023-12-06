@@ -810,6 +810,7 @@ const AppProvider = ({ children }) => {
             uniqueResponseTypes.push(newResponseType);
           }
         }
+        console.log(uniqueResponseTypes)
 
         for (const responseTypeIndex in uniqueResponseTypes) {
           newResponses.push({
@@ -882,19 +883,8 @@ const AppProvider = ({ children }) => {
               uniqueResponseTypes.push(newResponseType);
             }
           }
-
           for (let i = (offsetIndex * 8); (i < uniqueResponseTypes.length && ((i < ((offsetIndex * 8) + 8)) || all)); i += 1) {
             const currentResponse = uniqueResponseTypes[i]
-
-            // school: filteredSchools[schoolIndex],
-            // teacherName,
-            // uniqueResponseType: uniqueResponseTypes[responseTypeIndex],
-            // numberOfResponses: studentResponses.filter((response) => {
-            //   return Object.entries(uniqueResponseTypes[responseTypeIndex]).every(([key, value]) => {
-            //     return response[key] === value;
-            //   });
-            // }).length,
-
             newResponses.push({
               school: currentResponse.school,
               teacherName: "No Teacher",

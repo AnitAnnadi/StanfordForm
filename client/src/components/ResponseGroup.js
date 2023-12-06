@@ -32,7 +32,6 @@ const ResponseGroup = ({
     district: school.district,
   });
 
-  console.log(uniqueResponseType)
 
   return (
     <Wrapper>
