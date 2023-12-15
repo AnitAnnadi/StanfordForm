@@ -188,17 +188,23 @@ const SelectLoc = ({ noCode }) => {
       if (user?.role === "Site Admin" || user?.role === "Teacher" || noCode) {
         if (state !== "default" && city !== "default" && school !== "default") {
           // just do this whole thing in app context later
-
           try {
             const { foundDistrict, foundCounty } = getDistrictCounty(
               state,
               city,
               school
             );
-            console.log(foundDistrict, foundCounty);
 
-            setDistrict(foundDistrict);
-            setCounty(foundCounty);
+            if (foundDistrict === undefined) {
+              setDistrict("custom");
+            } else {
+              setDistrict(foundDistrict);
+            }
+            if (foundCounty === undefined) {
+              setCounty("custom");
+            } else {
+              setCounty(foundCounty);
+            }
           } catch (err) {
             setDistrict("custom");
             setCounty("custom");

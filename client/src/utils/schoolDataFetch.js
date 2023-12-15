@@ -106,7 +106,7 @@ const getDistrictCounty = (state, city, schoolName) => {
     const {district, county} = schoolData
         .find((school) => school.state.toUpperCase() === state.toUpperCase() && school.city.toUpperCase() === city.toUpperCase() && school.name.toUpperCase() === schoolName.toUpperCase() && school.district)
 
-    return { foundDistrict: district.toUpperCase(), foundCounty: county.toUpperCase()}
+    return { foundDistrict: district ? district.toUpperCase(): undefined, foundCounty: county ? county.toUpperCase() : undefined }
 }
 
 const getSchoolDataValue = (value) => {
