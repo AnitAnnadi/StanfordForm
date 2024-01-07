@@ -26,13 +26,14 @@ const JoinForm = () => {
 
 
   let teacher_name = localStorage.getItem("teacher_name");
-  const [form, setForm] = useState("default");
-  const [grade, setGrade] = useState("default");
-  const [when, setWhen] = useState("default");
-  const [school, setSchool] = useState("default");
-  const [period, setPeriod] = useState("default");
   let location = useLocation();
   let info = location.state;
+  const [form, setForm] = useState(info.formName ?? "default");
+  const [grade, setGrade] = useState("default");
+  const [when, setWhen] = useState(info.when ?? "default");
+  const [school, setSchool] = useState("default");
+  const [period, setPeriod] = useState("default");
+  console.log(form, when)
   let grades = ["K", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   let periods = [0, 1, 2, 3, 4, 5, 6, 7, 8];
   let schools = null;
@@ -142,6 +143,7 @@ const JoinForm = () => {
       }
     }
     else{
+      console.log(form)
     if (
       form !== "default" &&
       grade !== "default" &&
@@ -226,14 +228,14 @@ const JoinForm = () => {
               </option>
               {info["noCode"]?null:
               <option
-                value={"Healthy Futures: Tobacco/Nicotine/Vaping"}
+                value={"HealthyFutures:Tobacco"}
               >
                 Healthy Futures: Tobacco/Nicotine/Vaping
               </option>
               }
               {info["noCode"]?null:
               <option
-                value={"Healthy Futures: Cannabis"}
+                value={"HealthyFutures:Cannabis"}
               >
                 Healthy Futures: Cannabis
               </option>

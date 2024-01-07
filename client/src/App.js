@@ -74,6 +74,7 @@ function App() {
         {/* <Route path="/register/admin" element={<Register />} /> */}
         <Route path="/landing" element={<SelectRole />} />
         <Route path="/enterCode" element={<EnterCode />} />
+        <Route path="/enterCode/:formName/:when" element={<EnterCode />} />
         <Route path="/success" element={<Success />} />
         <Route path="/certificate" element={<Certificate />} />
         <Route path="*" element={<Error />} />

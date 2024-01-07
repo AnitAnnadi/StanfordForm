@@ -20,9 +20,10 @@ const EnterCode = () => {
     enterCode,
     schools,
   } = useAppContext();
+  const currentURL = new URL(window.location.href);
+  const [, , formName, when] = currentURL.pathname.split('/');
+  console.log(formName, when)
   useEffect(() => {
-    // let teacher_info=(((teacher["teacher"])))
-
     if (teacher != "") {
       let teacher_name = teacher["name"];
       let teacher_id = teacher["_id"];
@@ -35,7 +36,9 @@ const EnterCode = () => {
           navigate("/joinedForm", {
             state: {
               schools,
-              noCode:false
+              noCode:false,
+              formName,
+              when
             },
           });
         }, 2000);
