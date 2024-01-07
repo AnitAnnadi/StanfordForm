@@ -35,6 +35,7 @@ const Form = () => {
   const navigate = useNavigate();
   let location = useLocation();
   let info = location.state;
+  console.log(info)
   let selected = [];
   let names = [];
   const captchaRef = useRef(null)
