@@ -34,6 +34,15 @@ const JoinForm = () => {
   else if (info.formName=="HealthyFutures:Cannabis"){
     info.formName = "Healthy Futures: Cannabis"
   }
+  else if (info.formName=="SmartTalk"){
+    info.formName="Smart Talk: Cannabis Prevention & Education Awareness"
+  }
+  else if (info.formName=="VapeFree"){
+    info.formName = "You and Me, Together Vape-Free"
+  }
+  else if (info.formName=="SafetyFirst"){
+    info.formName = "Safety First"
+  }
   const [form, setForm] = useState(info.formName??"default");
   const [grade, setGrade] = useState("default");
   const [when, setWhen] = useState(info.when ?? "default");
