@@ -57,7 +57,7 @@ const getUserSchools = async(req, res) => {
   res.status(StatusCodes.OK).json({ user, userLocations });
 }
 
-const getSchools = async(req, res) =>{
+const getSchools = async (req, res) => {
   const user = await User.findOne({ _id: req.user.userId });
 
   const token = user.createJWT();
@@ -75,27 +75,28 @@ const getSchools = async(req, res) =>{
   const queryObject = {};
 
   if (searchState && searchState !== 'all') {
-    queryObject.state = searchState;
+    queryObject.state = { $regex: new RegExp(searchState, 'i') };
   }
   if (searchCounty && searchCounty !== 'all') {
-    queryObject.county = searchCounty;
+    queryObject.county = { $regex: new RegExp(searchCounty, 'i') };
   }
   if (searchCity && searchCity !== 'all') {
-    queryObject.city = searchCity;
+    queryObject.city = { $regex: new RegExp(searchCity, 'i') };
   }
   if (searchDistrict && searchDistrict !== 'all') {
-    queryObject.district = searchDistrict;
+    queryObject.district = { $regex: new RegExp(searchDistrict, 'i') };
   }
   if (searchSchool && searchSchool !== 'all') {
-    queryObject.school = searchSchool;
+    queryObject.school = { $regex: new RegExp(searchSchool, 'i') };
   }
   if (searchTeacher && searchTeacher !== 'all') {
-    queryObject.teacher = searchTeacher;
+    queryObject.teacher = { $regex: new RegExp(searchTeacher, 'i') };
   }
 
-  const schools = await School.find(queryObject)
+  const schools = await School.find(queryObject);
+
 
   res.status(StatusCodes.OK).json({ schools });
-}
+};
 
 export { createSchool, getUserSchools, getSchools }
