@@ -325,6 +325,7 @@ const AppProvider = ({ children }) => {
     },
     (error) => {
       if (error.response.status === 401) {
+        console.log('hi')
         logoutUser();
       }
       return Promise.reject(error);
@@ -925,11 +926,12 @@ const AppProvider = ({ children }) => {
       });
       return Promise.resolve();
     } catch (error) {
+      console.error("Error fetching schools:", error);
       dispatch({
         type: GET_RESPONSE_GROUPS_ERROR,
         payload: { msg: error.response },
       });
-      logoutUser();
+      // logoutUser();
     }
     clearAlert();
   };

@@ -47,7 +47,8 @@ catch(error){
   
 }
 
-const getUserSchools = async(req, res) => {
+
+const getUserSchools = async (req, res) => {
   const user = await User.findOne({ _id: req.user.userId });
   const userLocations = await School.find({ teacher: user._id });
 
@@ -74,29 +75,33 @@ const getSchools = async (req, res) => {
 
   const queryObject = {};
 
+  const applyCaseInsensitive = (value) => new RegExp(`^${value}$`, 'i');
+
   if (searchState && searchState !== 'all') {
-    queryObject.state = { $regex: new RegExp(searchState, 'i') };
+    queryObject.state = applyCaseInsensitive(searchState);
   }
   if (searchCounty && searchCounty !== 'all') {
-    queryObject.county = { $regex: new RegExp(searchCounty, 'i') };
+    queryObject.county = applyCaseInsensitive(searchCounty);
   }
   if (searchCity && searchCity !== 'all') {
-    queryObject.city = { $regex: new RegExp(searchCity, 'i') };
+    queryObject.city = applyCaseInsensitive(searchCity);
   }
   if (searchDistrict && searchDistrict !== 'all') {
-    queryObject.district = { $regex: new RegExp(searchDistrict, 'i') };
+    queryObject.district = applyCaseInsensitive(searchDistrict);
   }
   if (searchSchool && searchSchool !== 'all') {
-    queryObject.school = { $regex: new RegExp(searchSchool, 'i') };
+    queryObject.school = applyCaseInsensitive(searchSchool);
   }
   if (searchTeacher && searchTeacher !== 'all') {
-    queryObject.teacher = { $regex: new RegExp(searchTeacher, 'i') };
+    // Convert teacher to ObjectId
+    queryObject.teacher = user._id; // Assuming user._id is the ObjectId
   }
 
   const schools = await School.find(queryObject);
 
-
   res.status(StatusCodes.OK).json({ schools });
 };
+
+
 
 export { createSchool, getUserSchools, getSchools }
