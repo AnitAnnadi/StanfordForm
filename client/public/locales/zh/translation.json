@@ -105,5 +105,21 @@
   "Location added!": "位置已添加！",
   "Login Successful! Redirecting...": "登陆成功！",
   "User Created! Redirecting...": "用户已创建！",
-  "search_form": "搜索表格"
+  "search_form": "搜索表格",
+  "UP_submit": "提交",
+  "grade_level": "年级水平",
+  "form_type": "表格类型",
+  "choose_your_form": "选择您的表格",
+  "vape_title": "你和我，一起无电子烟",
+  "cannabis_title": "聪明的谈话：大麻预防",
+  "safety_title": "安全第一",
+  "when_are_you_taking_this_form": "您什么时候填写此表格",
+  "choose_when": "选择时间",
+  "before_lesson": "课前",
+  "after_lesson": "课后",
+  "UP_state_slash_province": "州/省",
+  "enter_code": "输入代码",
+  "go_to_form": "前往表格",
+  "dont_have_teacher_code": "没有教师代码？",
+  "Teacher Code": "教师代码"
 }

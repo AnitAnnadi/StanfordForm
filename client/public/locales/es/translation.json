@@ -105,5 +105,21 @@
   "Location added!": "¡Ubicación agregada!",
   "Login Successful! Redirecting...": "¡Inicio de sesión correcto! ",
   "User Created! Redirecting...": "Usuario creado! ",
-  "search_form": "Formulario de búsqueda"
+  "search_form": "Formulario de búsqueda",
+  "UP_submit": "Entregar",
+  "grade_level": "Nivel de grado",
+  "form_type": "Tipo de formulario",
+  "choose_your_form": "Elige tu formulario",
+  "vape_title": "Tú y yo, juntos sin vapeo",
+  "cannabis_title": "Charla inteligente: prevención del cannabis",
+  "safety_title": "Seguridad primero",
+  "when_are_you_taking_this_form": "¿Cuándo tomarás este formulario?",
+  "choose_when": "Elige cuando",
+  "before_lesson": "Antes de la lección",
+  "after_lesson": "Después de la lección",
+  "UP_state_slash_province": "Provincia del estado",
+  "enter_code": "Introduzca el código",
+  "go_to_form": "Ir al formulario",
+  "dont_have_teacher_code": "¿No tienes un código de maestro?",
+  "Teacher Code": "Código de maestro"
 }
