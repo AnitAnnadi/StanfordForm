@@ -16,6 +16,7 @@ import {
 } from "../utils/schoolDataFetch";
 import CreateLocPopup from "../components/CreateLocPopup";
 import {useTranslation} from "react-i18next";
+import {MdLanguage} from "react-icons/md";
 
 const SelectLoc = ({ noCode }) => {
   const {
@@ -32,6 +33,14 @@ const SelectLoc = ({ noCode }) => {
   } = useAppContext();
 
   const { t, i18n } = useTranslation();
+
+  const [currentLanguage, setCurrentLanguage] = useState('en');
+
+  useEffect(() => {
+    const currentLanguage = i18n.language;
+
+    setCurrentLanguage(currentLanguage);
+  });
 
   const navigate = useNavigate();
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
@@ -286,7 +295,6 @@ const SelectLoc = ({ noCode }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (forOther) {
-      console.log("hi");
       if (
         state === "default" ||
         (showCounty && county === "default") ||
@@ -620,6 +628,19 @@ const SelectLoc = ({ noCode }) => {
               ) : null}
             </div>
           </form>
+          <div className="language-select-container">
+            <MdLanguage className="language-select-icon"/>
+            <select
+              className="language-select"
+              value={currentLanguage}
+              onChange={(e) => i18n.changeLanguage(e.target.value)}
+            >
+              <option value="en">English</option>
+              <option value="fr">Français</option>
+              <option value="es">Español</option>
+              <option value="zh">中文</option>
+            </select>
+          </div>
         </Wrapper>
         <img width="200" height="100" src={Logo2} className="corner-logo" />
       </div>

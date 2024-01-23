@@ -16,6 +16,7 @@ import {
 } from "../utils/questions";
 import ReCAPTCHA from "react-google-recaptcha"
 import {useTranslation} from "react-i18next";
+import {MdLanguage} from "react-icons/md";
 
 const Form = () => {
   const {
@@ -136,12 +137,33 @@ const Form = () => {
 
   const { t, i18n } = useTranslation();
 
+  const [currentLanguage, setCurrentLanguage] = useState('en');
+
+  useEffect(() => {
+    const currentLanguage = i18n.language;
+
+    setCurrentLanguage(currentLanguage);
+  });
+
   return (
     <Wrapper
       style={{ margin: "2rem auto", maxWidth: "90%", width: "700px" }}
     >
       <form className="form" onSubmit={handleSubmit}>
         <h3>{`${info.form}`}</h3>
+        <div className="language-select-container">
+          <MdLanguage className="language-select-icon"/>
+          <select
+            className="language-select"
+            value={currentLanguage}
+            onChange={(e) => i18n.changeLanguage(e.target.value)}
+          >
+            <option value="en">English</option>
+            <option value="fr">Français</option>
+            <option value="es">Español</option>
+            <option value="zh">中文</option>
+          </select>
+        </div>
         {usedForm.map((element, index) => (
           <div key={index}>
             <div style={{ display: "flex", columnGap: "0.35rem" }}>
