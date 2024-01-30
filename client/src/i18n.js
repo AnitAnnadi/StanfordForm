@@ -30,7 +30,8 @@ i18n
     },
     fallbackLng: 'en',
     debug: true,
-    // saveMissing: true,
+    // if you add tags using t('key', 'value') then you need to uncomment this line to generate tags
+    saveMissing: true,
     // updateMissing: true,
 
     interpolation: {

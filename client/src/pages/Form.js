@@ -150,7 +150,7 @@ const Form = () => {
       style={{ margin: "2rem auto", maxWidth: "90%", width: "700px" }}
     >
       <form className="form" onSubmit={handleSubmit}>
-        <h3>{`${info.form}`}</h3>
+        <h3>{`${t(info.form, info.form)}`}</h3>
         <div className="language-select-container">
           <MdLanguage className="language-select-icon"/>
           <select
@@ -168,12 +168,12 @@ const Form = () => {
           <div key={index}>
             <div style={{ display: "flex", columnGap: "0.35rem" }}>
               <p>{names.push(element["question"])}.</p>
-              <p>{element["question"]}</p>
+              <p>{t(element["question"], element["question"])}</p>
             </div>
             {element["question"].includes("check all that apply")
               ? element["answers"].map((answer, index) => (
                   <label key={index} className="container">
-                    <span>{answer}</span>
+                    <span>{t(answer, answer)}</span>
                     <input
                       type="checkbox"
                       name={element["question"]}
@@ -184,7 +184,7 @@ const Form = () => {
                 ))
               : element["answers"].map((answer, index) => (
                   <label key={index} className="container">
-                    <span>{answer}</span>
+                    <span>{t(answer, answer)}</span>
                     <input
                       type="radio"
                       value={answer}

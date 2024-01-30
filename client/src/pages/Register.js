@@ -9,6 +9,7 @@ import ReCAPTCHA from "react-google-recaptcha"
 ;
 import { useRef } from "react";
 import {useTranslation} from "react-i18next";
+import {MdLanguage} from "react-icons/md";
 // import { Select } from "@mui/material";
 const initialState = {
   name: "",
@@ -43,6 +44,14 @@ const Register = () => {
   };
 
   const { t, i18n } = useTranslation();
+
+  const [currentLanguage, setCurrentLanguage] = useState('en');
+
+  useEffect(() => {
+    const currentLanguage = i18n.language;
+
+    setCurrentLanguage(currentLanguage);
+  });
 
   function AdminRole() {
     if (type == "admin") {
@@ -316,6 +325,21 @@ const Register = () => {
             {values.isMember ? t('UP_register', "Register") : t('UP_login', "Login")}
           </button>
         </p>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <div className="language-select-container">
+            <MdLanguage className="language-select-icon"/>
+            <select
+              className="language-select"
+              value={currentLanguage}
+              onChange={(e) => i18n.changeLanguage(e.target.value)}
+            >
+              <option value="en">English</option>
+              <option value="fr">Français</option>
+              <option value="es">Español</option>
+              <option value="zh">中文</option>
+            </select>
+          </div>
+        </div>
       </form>
     </Wrapper>
   <img width="200" height="90" src={Logo2} className="corner-logo" />
