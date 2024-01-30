@@ -7,6 +7,7 @@ import { useAppContext } from "../context/appContext";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import {useTranslation} from "react-i18next";
+import {MdLanguage} from "react-icons/md";
 
 function SelectRole() {
   const [role, setRole] = useState("");
@@ -16,6 +17,14 @@ function SelectRole() {
   };
 
   const { t, i18n } = useTranslation();
+
+  const [currentLanguage, setCurrentLanguage] = useState('en');
+
+  useEffect(() => {
+    const currentLanguage = i18n.language;
+
+    setCurrentLanguage(currentLanguage);
+  });
 
   return (
     // <React.Fragment>
@@ -39,6 +48,19 @@ function SelectRole() {
           >
             {t('UP_admin', 'Admin')}
           </Link>
+        </div>
+        <div className="language-select-container">
+          <MdLanguage className="language-select-icon"/>
+          <select
+            className="language-select"
+            value={currentLanguage}
+            onChange={(e) => i18n.changeLanguage(e.target.value)}
+          >
+            <option value="en">English</option>
+            <option value="fr">Français</option>
+            <option value="es">Español</option>
+            <option value="zh">中文</option>
+          </select>
         </div>
       </div>
       <img width="200" height="100" src={Logo2} className="corner-home-logo" />
