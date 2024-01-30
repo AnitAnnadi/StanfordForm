@@ -31,8 +31,10 @@ i18n
     fallbackLng: 'en',
     debug: true,
     // if you add tags using t('key', 'value') then you need to uncomment this line to generate tags
-    saveMissing: true,
+    // saveMissing: true,
     // updateMissing: true,
+    // saveMissingTo: 'en',
+
 
     interpolation: {
       escapeValue: false, // not needed for react as it escapes by default
