@@ -12,7 +12,7 @@ export const tobacco = [
   },
   {
     question:
-      "Imagine you vape nicotine daily.  How harmful would this be for your health?",
+      "Imagine you vape nicotine daily. How harmful would this be for your health?",
     answers: [
       "Not at all harmful",
       "Slightly harmful",
@@ -33,7 +33,7 @@ export const tobacco = [
   },
   {
     question:
-      "Imagine you vape nicotine occasionally:  How likely are you to become addicted?",
+      "Imagine you vape nicotine occasionally: How likely are you to become addicted?",
     answers: [
       "Not at all likely to become addicted",
       "Slightly likely to become addicted",
@@ -44,7 +44,7 @@ export const tobacco = [
   },
   {
     question:
-      "Imagine you vape nicotine daily:  How likely are you to become addicted?",
+      "Imagine you vape nicotine daily: How likely are you to become addicted?",
     answers: [
       "Not at all likely to become addicted",
       "Slightly likely to become addicted",
@@ -182,7 +182,7 @@ export const cannabis = [
   },
   {
     question:
-      "Imagine you use cannabis products (smoke, vape, eat, or drink) daily.  How harmful would this be for your health?",
+      "Imagine you use cannabis products (smoke, vape, eat, or drink) daily. How harmful would this be for your health?",
     answers: [
       "Not at all harmful",
       "Slightly harmful",
@@ -368,7 +368,7 @@ export const safety = [
 
   {
     question:
-      "Imagine you use cannabis products (smoke, vape, eat, or drink) daily.  How harmful would this be for your health?",
+      "Imagine you use cannabis products (smoke, vape, eat, or drink) daily. How harmful would this be for your health?",
     answers: [
       "Not at all harmful",
       "Slightly harmful",
@@ -392,7 +392,7 @@ export const safety = [
 
   {
     question:
-      "If someone has had too much to drink and fallen asleep on the floor, I should do the following:  (check all that apply)",
+      "If someone has had too much to drink and fallen asleep on the floor, I should do the following: (check all that apply)",
     answers: [
       "Just let them sleep it off",
       "Call 911",
@@ -405,7 +405,7 @@ export const safety = [
 
   {
     question:
-      "Imagine someone has taken a pill and you don't know what was in, and the person is now passed out on the floor.  What should you do? (check all that apply)",
+      "Imagine someone has taken a pill and you don't know what was in, and the person is now passed out on the floor. What should you do? (check all that apply)",
     answers: [
       "Let them sleep it off",
       "Call 911",
