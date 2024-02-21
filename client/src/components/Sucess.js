@@ -11,7 +11,7 @@ const Success = () => {
     <Wrapper>
       <div className="success-container">
         <h1>
-          {t('thanks_for_filling_form', 'Thanks for filling out our form!')}</h1>
+          {t('Thanks for filling out our form!', 'Thanks for filling out our form!')}</h1>
         <div className="success-logo-container">
           <img src={YAMTVF} alt="" />
           <img src={cannabis} alt="" />
