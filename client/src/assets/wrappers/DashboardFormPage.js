@@ -56,6 +56,7 @@ const Wrapper = styled.section`
   }
   .language-select {
     border-color: transparent;
+    background: transparent;
   }
   .language-select-icon {
     font-size: 1.3rem;
