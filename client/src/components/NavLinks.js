@@ -4,8 +4,11 @@ import { useEffect } from "react";
 import { FaUser, FaSchool } from "react-icons/fa";
 import { ImStatsBars } from "react-icons/im";
 import { MdDashboard } from "react-icons/md";
+import {useTranslation} from "react-i18next";
 
 const NavLinks = ({ toggleSidebar }) => {
+  const { t, i18n } = useTranslation();
+
   const user = JSON.parse(localStorage.getItem("user"));
   let adminroles = [
     "Site Admin",
@@ -74,7 +77,7 @@ const NavLinks = ({ toggleSidebar }) => {
             end
           >
             <span className="icon">{icon}</span>
-            {text}
+            {t(text, text)}
           </NavLink>
         );
       })}

@@ -1,4 +1,5 @@
 import express from 'express';
+
 const app = express();
 import dotenv from 'dotenv';
 dotenv.config();
@@ -30,6 +31,15 @@ import notFoundMiddleware from './middleware/not-found.js';
 import errorHandlerMiddleware from './middleware/error-handler.js';
 import authenticateUser from './middleware/auth.js';
 
+import i18next from 'i18next';
+import middleware from 'i18next-http-middleware';
+import * as fs from "fs";
+
+i18next.init({
+  preload: ['en', 'fr', 'es', 'zh'],
+})
+
+
 if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev'));
 }
@@ -52,6 +62,39 @@ app.use('/api/v1/studentResponses', authenticateUser, studentResponseRouter);
 app.use('/api/v1/form', authenticateUser, formRouter);
 app.use('/api/v1/export', authenticateUser, exportRouter);
 
+app.use(
+  middleware.handle(i18next, {
+    removeLngFromUrl: false // removes the language from the url when language detected in path
+  })
+)
+
+// missing keys make sure the body is parsed (i.e. with [body-parser](https://github.com/expressjs/body-parser#bodyparserjsonoptions))
+app.post('/locales/add/:lng/:ns', (req, res) => {
+  try {
+    const filePath = `./client/public/locales/${req.params.lng}/${req.params.ns}.json`;
+
+    const data = fs.readFileSync(filePath);
+    const jsonData = JSON.parse(data);
+    fs.writeFileSync(filePath, JSON.stringify({...jsonData, ...req.body}));
+
+    res.send('ok');
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.get('/locales/resources.json', middleware.getResourcesHandler(i18next))
+
+// serve translations:
+app.use('/locales', express.static('locales'))
+
+// or instead of static
+app.get('/locales/:lng/:ns', middleware.getResourcesHandler(i18next))
+
+app.get('/locales/:lng/:ns', middleware.getResourcesHandler(i18next, {
+  maxAge: 60 * 60 * 24 * 30, // adds appropriate cache header if cache option is passed or NODE_ENV === 'production', defaults to 30 days
+  cache: true // defaults to false
+}))
 
 // only when ready to deploy
 app.get('*', (req, res) => {

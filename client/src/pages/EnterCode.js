@@ -6,6 +6,8 @@ import Dropdown from "react-dropdown";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Logo2 from "../assets/images/logo.png";
+import {useTranslation} from "react-i18next";
+import {MdLanguage} from "react-icons/md";
 
 
 
@@ -65,6 +67,16 @@ const EnterCode = () => {
     }
   };
 
+  const { t, i18n } = useTranslation();
+
+  const [currentLanguage, setCurrentLanguage] = useState('en');
+
+  useEffect(() => {
+    const currentLanguage = i18n.language;
+
+    setCurrentLanguage(currentLanguage);
+  });
+
   return (
     <div
       className="full-page"
@@ -74,8 +86,7 @@ const EnterCode = () => {
         <form className="form" onSubmit={handleSubmit}>
           {showAlert && <Alert />}
           <div className="form">
-            <h3>Enter Code</h3>
-
+            <h3>{t('enter_code', 'Enter Code')}</h3>
             <FormRow
               type="text"
               name="Teacher Code"
@@ -90,14 +101,27 @@ const EnterCode = () => {
               disabled={isLoading}
               style={{ marginTop: "1.38rem" }}
             >
-              Go To Form
+              {t('go_to_form', 'Go To Form')}
             </button>
             <p>
-              Don't have a teacher code?{" "}
+              {t('dont_have_teacher_code', "Don't have a teacher code?")}{" "}
               <a className="link" href="/selectStudentLoc">
-                Click here
+                {t('click_here', 'Click here')}
               </a>
             </p>
+            <div className="language-select-container">
+              <MdLanguage className="language-select-icon"/>
+              <select
+                className="language-select"
+                value={currentLanguage}
+                onChange={(e) => i18n.changeLanguage(e.target.value)}
+              >
+                <option value="en">English</option>
+                <option value="fr">Français</option>
+                <option value="es">Español</option>
+                <option value="zh">中文</option>
+              </select>
+            </div>
           </div>
         </form>
       </Wrapper>

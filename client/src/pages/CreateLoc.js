@@ -13,6 +13,7 @@ import {
   getDistrictCounty, getSchoolObject,
 } from "../utils/schoolDataFetch";
 import CreateLocPopup from "../components/CreateLocPopup";
+import {useTranslation} from "react-i18next";
 
 const CreateLoc = () => {
   const {
@@ -106,7 +107,7 @@ const CreateLoc = () => {
 
   } , [pendingApproval,stanfordNewLoc]);
 
-
+  const { t, i18n } = useTranslation();
 
   const [cities, setCities] = useState([]);
   const [counties, setCounties] = useState([]);
@@ -202,17 +203,17 @@ const CreateLoc = () => {
           {showAlert && <Alert />}
           <div className="form">
             <h3 className="form-title">
-              Create Location{" "}
+              {t('create_location', 'Create Location')}{" "}
               {numOfLocations > 1 ? numOfLocations : ""}
             </h3>
-            <h4 className="form-title">State*</h4>
+            <h4 className="form-title">{t('UP_state', 'State')}*</h4>
             <select
               name="aliasChoice"
               value={state}
               onChange={(e) => handleChange("state", e.target.value)}
               className="form-select"
             >
-              <option value={"default"}>Choose your State</option>
+              <option value={"default"}>{t('choose_your_state', 'Choose your State')}</option>
               {states.map((state, index) => {
                 return (
                   <option key={index} value={state}>
@@ -221,14 +222,14 @@ const CreateLoc = () => {
                 );
               })}
             </select>
-            <h4 className="form-title">County*</h4>
+            <h4 className="form-title">{t('UP_country', 'Country')}*</h4>
             <select
               name="aliasChoice"
               value={county}
               onChange={(e) => handleChange("county", e.target.value)}
               className="form-select"
             >
-              <option value={"default"}>Choose your County</option>
+              <option value={"default"}>{t('choose_your_country', 'Choose your Country')}</option>
               {counties.map((county, index) => {
                 return (
                   <option key={index} value={county}>
@@ -237,14 +238,14 @@ const CreateLoc = () => {
                 );
               })}
             </select>
-            <h4 className="form-title">City*</h4>
+            <h4 className="form-title">{t('UP_city', 'city')}*</h4>
             <select
               name="aliasChoice"
               value={city}
               onChange={(e) => handleChange("city", e.target.value)}
               className="form-select"
             >
-              <option value={"default"}>Choose your City</option>
+              <option value={"default"}>{t('choose_your_city', 'Choose your City')}</option>
               {cities.map((city, index) => {
                 return (
                   <option key={index} value={city}>
@@ -253,14 +254,14 @@ const CreateLoc = () => {
                 );
               })}
             </select>
-            <h4 className="form-title">District</h4>
+            <h4 className="form-title">{t('UP_district', 'District')}</h4>
             <select
               name="aliasChoice"
               value={district}
               onChange={(e) => handleChange("district", e.target.value)}
               className="form-select"
             >
-              <option value={"default"}>Choose your District</option>
+              <option value={"default"}>{t('choose_your_district', 'Choose your District')}</option>
               {districts.map((district, index) => {
                 return (
                   <option key={index} value={district}>
@@ -269,7 +270,7 @@ const CreateLoc = () => {
                 );
               })}
             </select>
-            <h4 className="form-title">School*</h4>
+            <h4 className="form-title">{t('UP_school', 'School')}*</h4>
             <input
               name="aliasChoice"
               onChange={(e) => handleChange("school", e.target.value)}
@@ -278,7 +279,7 @@ const CreateLoc = () => {
             />
             <hr />
             <label className="checkbox-container">
-              I teach multiple classes/periods at this location
+              {t('i_teach_multiple_classes', 'I teach multiple classes/periods at this location')}
               <input
                 type="checkbox"
                 className="checkbox"
@@ -299,7 +300,7 @@ const CreateLoc = () => {
               {isLoading ? "Please Wait..." : "submit"}
             </button>
             <Link to="/selectLoc" className="link">
-              Go Back
+              {t('go_back', 'Go Back')}
             </Link>
           </div>
         </form>

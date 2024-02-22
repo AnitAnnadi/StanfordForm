@@ -54,6 +54,24 @@ const Wrapper = styled.section`
     margin: 0rem;
     text-indent: 2rem;
   }
+  .language-select {
+    border-color: transparent;
+    background: transparent;
+  }
+  .language-select-icon {
+    font-size: 1.3rem;
+  }
+  .language-select-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0 0.2rem;
+    border: 1px solid black;
+    border-radius: 8px;
+    padding: 0.2rem;
+    width: 150px;
+    margin-top: 0.5rem;
+  }
 
 
   /* @media (min-width: 992px) {

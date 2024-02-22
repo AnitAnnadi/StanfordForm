@@ -7,6 +7,7 @@ import { NavLink } from "react-router-dom";
 import { BiPlus } from "react-icons/bi";
 import HealthyFeatures from "../../components/HealthyFutures";
 import { useNavigate } from "react-router-dom";
+import {useTranslation} from "react-i18next";
 
 // Inside your component...
 
@@ -22,6 +23,8 @@ const Profile = () => {
     getLocations
   } = useAppContext();
   const navigate = useNavigate();
+
+  const { t, i18n } = useTranslation();
 
   const [name, setName] = useState(user?.name);
   const [email, setEmail] = useState(user?.email);
@@ -52,7 +55,7 @@ const Profile = () => {
   return (
     <Wrapper>
       <form className="form" onSubmit={handleSubmit}>
-        <h3>profile</h3>
+        <h3>{t('profile', 'profile')}</h3>
         {showAlert && <Alert />}
         <div className="form-center">
           <FormRow
@@ -73,9 +76,9 @@ const Profile = () => {
             className="form-label"
             style={{ fontSize: "1rem", marginBottom: 0 }}
           >
-            role -{" "}
+            {`${t('role', 'role')} - `}
             <span style={{ letterSpacing: "0", color: "#102a43" }}>
-              {user.adminTeacher?user.role + " and teacher": user.role}
+              {user.adminTeacher?user.role + " " + t('and_teacher', 'and teacher'): user.role}
             </span>
           </label>
           <div
@@ -91,8 +94,8 @@ const Profile = () => {
                 style={{ fontSize: "1rem", marginBottom: 0 }}
               >
                 {user.adminTeacher && user.role != "Site Admin"
-                  ? "admin location"
-                  : "locations"}
+                  ? t('admin_location', 'admin location')
+                  : t('locations', 'locations')}
               </label>
             ) : (
               <></>
@@ -193,7 +196,7 @@ const Profile = () => {
             <HealthyFeatures />
           ) : null}
           <button className="btn btn-block" type="submit" disabled={isLoading}>
-            {isLoading ? "Please Wait..." : "save changes"}
+            {isLoading ? t('please_wait', 'Please Wait') + "...": t('save_changes', 'save changes')}
           </button>
         </div>
       </form>

@@ -4,6 +4,7 @@ import { useAppContext } from "../context/appContext";
 import { useNavigate } from "react-router-dom";
 import { Alert } from "../components";
 import Wrapper from "../assets/wrappers/ResponseGroup";
+import {useTranslation} from "react-i18next";
 
 const LocationRequests = () => {
   const {
@@ -16,6 +17,9 @@ const LocationRequests = () => {
     approved,
     declined,
   } = useAppContext();
+
+  const { t, i18n } = useTranslation();
+
   const navigate = useNavigate();
   const [locations, setLocations] = useState([]);
   const [users, setUsers] = useState([]);
@@ -89,7 +93,7 @@ const LocationRequests = () => {
                     className="btn edit-btn"
                     onClick={() => approveLocationRequest(location._id)}
                   >
-                    Approve Request
+                    {t('approve_request', 'Approve Request')}
                   </button>
                   <button
                     style={{
@@ -99,7 +103,7 @@ const LocationRequests = () => {
                     className="btn edit-btn"
                     onClick={() => declineLocationRequest(location._id)}
                   >
-                    Decline Request
+                    {t('decline_request', 'Decline Request')}
                   </button>
                   <button
                     style={{ backgroundColor: "#627d98", color: "#fff" }}
@@ -111,7 +115,7 @@ const LocationRequests = () => {
                       )
                     }
                   >
-                    Decline Request & Add Location
+                    {t('decline_request_add_location', 'Decline Request & Add Location')}
                   </button>
                 </div>
               </footer>
@@ -119,7 +123,7 @@ const LocationRequests = () => {
           </Wrapper>
         ))
       ) : (
-        <p> No pending requests</p>
+        <p>{t('no_pending_requests', 'No pending requests')}</p>
       )}
     </div>
   );

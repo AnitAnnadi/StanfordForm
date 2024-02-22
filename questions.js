@@ -1,270 +1,3 @@
-export const tobacco = [
-  {
-    question:
-      "Imagine you vape nicotine occasionally. How harmful would this be for your health?",
-    answers: [
-      "Not at all harmful",
-      "Slightly harmful",
-      "Moderately harmful",
-      "Very harmful",
-      "Extremely harmful",
-    ],
-  },
-  {
-    question:
-      "Imagine you vape nicotine daily.  How harmful would this be for your health?",
-    answers: [
-      "Not at all harmful",
-      "Slightly harmful",
-      "Moderately harmful",
-      "Very harmful",
-      "Extremely harmful",
-    ],
-  },
-  {
-    question: "Nicotine vapes are safer than cigarettes.",
-    answers: [
-      "Strongly agree",
-      "Agree",
-      "Neither disagree nor agree",
-      "Disagree",
-      "Strongly disagree",
-    ],
-  },
-  {
-    question:
-      "Imagine you vape nicotine occasionally:  How likely are you to become addicted?",
-    answers: [
-      "Not at all likely to become addicted",
-      "Slightly likely to become addicted",
-      "Moderately likely to become addicted",
-      "Very likely to become addicted",
-      "Extremely likely to become addicted",
-    ],
-  },
-  {
-    question:
-      "Imagine you vape nicotine daily:  How likely are you to become addicted?",
-    answers: [
-      "Not at all likely to become addicted",
-      "Slightly likely to become addicted",
-      "Moderately likely to become addicted",
-      "Very likely to become addicted",
-      "Extremely likely to become addicted",
-    ],
-  },
-  {
-    question:
-      "How hard would it be for you to refuse, or say “no” to, a friend who offered you a cigarette to smoke? ",
-    answers: [
-      "Very easy",
-      "Easy",
-      "Neither hard nor easy",
-      "Hard",
-      "Very hard",
-    ],
-  },
-  {
-    question:
-      "How hard would it be for you to refuse, or say “no” to, a friend who offered you an e-cigarette/vape?",
-    answers: [
-      "Very easy",
-      "Easy",
-      "Neither hard nor easy",
-      "Hard",
-      "Very hard",
-    ],
-  },
-  {
-    question:
-      "How much do you agree or disagree with the following statement: tobacco and vaping (e-cigarette) companies target youth?",
-    answers: [
-      "Strongly agree",
-      "Agree",
-      "Neither disagree nor agree",
-      "Disagree",
-      "Strongly disagree",
-    ],
-  },
-  {
-    question:
-      "How much do you agree or disagree with the following statement: tobacco and vaping (e-cigarette) companies target adults?",
-    answers: [
-      "Strongly agree",
-      "Agree",
-      "Neither disagree nor agree",
-      "Disagree",
-      "Strongly disagree",
-    ],
-  },
-  {
-    question:
-      "How much do you agree or disagree with the following statement: tobacco and vaping (e-cigarette) companies target brown and black communities?",
-    answers: [
-      "Strongly agree",
-      "Agree",
-      "Neither disagree nor agree",
-      "Disagree",
-      "Strongly disagree",
-    ],
-  },
-  {
-    question:
-      "How much do you agree or disagree with the following statement: tobacco and vaping (e-cigarette) companies target LGBTQI+ communities?",
-    answers: [
-      "Strongly agree",
-      "Agree",
-      "Neither disagree nor agree",
-      "Disagree",
-      "Strongly disagree",
-    ],
-  },
-  {
-    question:
-      "How much do you agree or disagree with the following statement: tobacco and vaping (e-cigarette) companies target current cigarette smokers?",
-    answers: ["Not at all", "A little", "A moderate amount", "A lot"],
-  },
-  {
-    question: "How harmful are e-cigarettes to the environment?",
-    answers: [
-      "Not at all harmful",
-      "Slightly harmful",
-      "Moderately harmful",
-      "Very harmful",
-      "Extremely harmful",
-    ],
-  },
-  {
-    question: "The 'vapor' that comes out of a vaping device is:",
-    answers: [
-      "Harmless water vapor",
-      "Mostly water vapor with a few aerosolized chemicals in it",
-      "An equal amount of water vapor with aerosolized and harmful chemicals",
-      "Mostly aerosolized and harmful chemicals with a little water vapor",
-      "Just aerosolized chemicals (no water vapor)",
-    ],
-  },
-  {
-    question: "What are your goals regarding vaping?",
-    answers: [
-      "I want to never use",
-      "I want to cut back my vaping",
-      "I want to quit completely",
-      "I want to change what I vape",
-      "I have not decided yet",
-    ],
-  },
-];
-
-export const postTobacco = [
-  {
-    question:
-      "Which best describes your plans regarding Tobacco/Nicotine/Vaping:",
-    answers: [
-      "Stay Tobacco/Nicotine/Vapingfree",
-      "Reduce my use (cut-back)",
-      "Quit",
-    ],
-  },
-];
-
-export const cannabis = [
-  {
-    question:
-      "Imagine you use cannabis products (smoke, vape, eat, or drink) occasionally. How harmful would this be for your health?",
-    answers: [
-      "Not at all harmful",
-      "Slightly harmful",
-      "Moderately harmful",
-      "Very harmful",
-      "Extremely harmful",
-    ],
-  },
-  {
-    question:
-      "Imagine you use cannabis products (smoke, vape, eat, or drink) daily.  How harmful would this be for your health?",
-    answers: [
-      "Not at all harmful",
-      "Slightly harmful",
-      "Moderately harmful",
-      "Very harmful",
-      "Extremely harmful",
-    ],
-  },
-  {
-    question:
-      "How hard would it be for you to refuse, or say “no” to, a friend who offered you cannabis to smoke or vape?",
-    answers: [
-      "Very easy",
-      "Easy",
-      "Neither hard nor easy",
-      "Hard",
-      "Very hard",
-    ],
-  },
-  {
-    question:
-      "How hard would it be for you to refuse, or say “no” to, a friend who offered you a cannabis edible?",
-    answers: [
-      "Very easy",
-      "Easy",
-      "Neither hard nor easy",
-      "Hard",
-      "Very hard",
-    ],
-  },
-  {
-    question:
-      "How harmful are “disposable” (single use) cannabis vaping products to the environment? ",
-    answers: [
-      "Not at all harmful",
-      "Slightly harmful",
-      "Moderately harmful",
-      "Very harmful",
-      "Extremely harmful",
-    ],
-  },
-  {
-    question: "The “vapor” that comes out of cannabis vaping devices is:",
-    answers: [
-      "Harmless water vapor",
-      "Mostly water vapor with a few aerosolized chemicals in it",
-      "An equal amount of water vapor with aerosolized and harmful chemicals",
-      "Mostly aerosolized and harmful chemicals with a little water vapor",
-      "Just aerosolized chemicals (no water vapor)",
-    ],
-  },
-  {
-    question:
-      "How much do agree or disagree with the following statement: Cannabis smoke/vapor is harmful to your lungs?",
-    answers: [
-      "Strongly agree",
-      "Agree",
-      "Neither agree nor disagree",
-      "Disagree",
-      "Strongly disagree",
-    ],
-  },
-  {
-    question:
-      "How much do agree or disagree with the following statement: Cannabis (any type) is harmful to the brain development of someone under the age of 21?",
-    answers: [
-      "Strongly agree",
-      "Agree",
-      "Neither agree nor disagree",
-      "Disagree",
-      "Strongly disagree",
-    ],
-  },
-];
-
-export const postCannabis = [
-  {
-    question: "Which best describes your plans regarding cannabis:",
-    answers: ["Stay cannabis free", "Reduce my use (cut-back)", "Quit"],
-  },
-];
-
 export const safety = [
   {
     question:
@@ -431,6 +164,284 @@ export const safety = [
     answers: ["Agree", "Disagree", "Strongly disagree", "Don't know"],
   },
 ];
+export const tobacco = [
+  {
+    question:
+      "Imagine you vape nicotine occasionally. How harmful would this be for your health?",
+    answers: [
+      "Not at all harmful",
+      "Slightly harmful",
+      "Moderately harmful",
+      "Very harmful",
+      "Extremely harmful"
+    ],
+  },
+  {
+    question:
+      "Imagine you vape nicotine daily. How harmful would this be for your health?",
+    answers: [
+      "Not at all harmful",
+      "Slightly harmful",
+      "Moderately harmful",
+      "Very harmful",
+      "Extremely harmful"
+    ],
+  },
+  {
+    question:
+      "Nicotine vapes are safer than cigarettes.",
+    answers: [
+      "Strongly agree",
+      "Disagree",
+      "Neither disagree nor agree",
+      "Agree",
+      "Strongly agree"
+    ],
+  },
+  {
+    question:
+      "Imagine you vape nicotine occasionally:  How likely are you to become addicted?",
+    answers: [
+      "Not at all likely to become addicted",
+      "Slightly likely to become addicted",
+      "Moderately likely to become addicted",
+      "Very likely to become addicted",
+      "Extremely likely to become addicted"
+    ],
+  },
+  {
+    question:
+      "Imagine you vape nicotine daily:  How likely are you to become addicted?",
+
+    answers: [
+      "Not at all likely to become addicted",
+      "Slightly likely to become addicted",
+      "Moderately likely to become addicted",
+      "Very likely to become addicted",
+      "Extremely likely to become addicted"
+    ],
+  },
+  {
+    question:
+      "How hard would it be for you to refuse, or say “no” to, a friend who offered you a cigarette to smoke? ",
+    answers: [
+      "Very easy",
+      "Easy",
+      "Neither hard nor easy",
+      "Hard",
+      "Very hard"
+    ],
+  },
+  {
+    question:
+      "How hard would it be for you to refuse, or say “no” to, a friend who offered you an e-cigarette/vape?",
+    answers: [
+      "Very easy",
+      "Easy",
+      "Neither hard nor easy",
+      "Hard",
+      "Very hard"
+    ],
+  },
+  {
+    question:
+      "How much do you agree or disagree with the following statement: tobacco and vaping (e-cigarette) companies target youth?",
+      answers: [
+        "Strongly agree",
+        "Disagree",
+        "Neither disagree nor agree",
+        "Agree",
+        "Strongly agree"
+      ],
+  },
+  {
+    question:
+      "How much do you agree or disagree with the following statement: tobacco and vaping (e-cigarette) companies target adults?",
+      answers: [
+        "Strongly agree",
+        "Disagree",
+        "Neither disagree nor agree",
+        "Agree",
+        "Strongly agree"
+      ],
+  },
+  {
+    question:
+      "How much do you agree or disagree with the following statement: tobacco and vaping (e-cigarette) companies target brown and black communities?",
+      answers: [
+        "Strongly agree",
+        "Disagree",
+        "Neither disagree nor agree",
+        "Agree",
+        "Strongly agree"
+      ],
+  },
+  {
+    question:
+      "How much do you agree or disagree with the following statement: tobacco and vaping (e-cigarette) companies target LGBTQI+ communities?",
+      answers: [
+        "Strongly agree",
+        "Disagree",
+        "Neither disagree nor agree",
+        "Agree",
+        "Strongly agree"
+      ],
+  },
+  {
+    question:
+      "How much do you agree or disagree with the following statement: tobacco and vaping (e-cigarette) companies target current cigarette smokers?",
+    answers: ["Not at all", "A little", "A moderate amount", "A lot"],
+  },
+  {
+    question:
+      "How harmful are e-cigarettes to the environment?",
+    answers: [
+      "Not at all harmful",
+      "Slightly harmful",
+      "Moderately harmful",
+      "Very harmful",
+      "Extremely harmful"
+    ],
+  },
+  {
+    question:
+      "The 'vapor' that comes out of a vaping device is:",
+    answers: [
+      "Harmless water vapor",
+      "Mostly water vapor with a few aerosolized chemicals in it",
+      "An equal amount of water vapor with aerosolized and harmful chemicals",
+      "Mostly aerosolized and harmful chemicals with a little water vapor",
+      "Just aerosolized chemicals (no water vapor)"
+    ],
+  },
+  {
+    question:
+      "What are your goals regarding vaping?",
+    answers: [
+      "I want to never use",
+      "I want to cut back my vaping",
+      "I want to quit completely",
+      "I want to change what I vape",
+      "I have not decided yet"
+    ],
+  }
+];
+
+export const postTobacco = [
+  {
+    question:
+      "Which best describes your plans regarding Tobacco/Nicotine/Vaping:",
+    answers: [
+      "Stay Tobacco/Nicotine/Vapingfree",
+      "Reduce my use (cut-back)",
+      "Quit",
+
+    ]
+  }
+]
+
+
+export const cannabis = [
+  {
+    question:
+      "Imagine you use cannabis products (smoke, vape, eat, or drink) occasionally. How harmful would this be for your health?",
+    answers: [
+      "Not at all harmful",
+      "Slightly harmful",
+      "Moderately harmful",
+      "Very harmful",
+      "Extremely harmful"
+    ],
+  },
+  {
+    question:
+      "Imagine you use cannabis products (smoke, vape, eat, or drink) daily. How harmful would this be for your health?",
+    answers: [
+      "Not at all harmful",
+      "Slightly harmful",
+      "Moderately harmful",
+      "Very harmful",
+      "Extremely harmful"
+    ],
+  },
+  {
+    question:
+      "How hard would it be for you to refuse, or say “no” to, a friend who offered you cannabis to smoke or vape?",
+    answers: [
+      "Very easy",
+      "Easy",
+      "Neither hard nor easy",
+      "Hard",
+      "Very hard"
+    ],
+  },
+  {
+    question:
+      "How hard would it be for you to refuse, or say “no” to, a friend who offered you a cannabis edible?",
+    answers: [
+      "Very easy",
+      "Easy",
+      "Neither hard nor easy",
+      "Hard",
+      "Very hard"
+    ],
+  },
+  {
+    question:
+      "How harmful are “disposable” (single use) cannabis vaping products to the environment? ",
+    answers: [
+      "Not at all harmful",
+      "Slightly harmful",
+      "Moderately harmful",
+      "Very harmful",
+      "Extremely harmful"
+    ],
+  },
+  {
+    question:
+      "The “vapor” that comes out of cannabis vaping devices is:",
+    answers: [
+      "Harmless water vapor",
+      "Mostly water vapor with a few aerosolized chemicals in it",
+      "An equal amount of water vapor with aerosolized and harmful chemicals",
+      "Mostly aerosolized and harmful chemicals with a little water vapor",
+      "Just aerosolized chemicals (no water vapor)"
+    ],
+  },
+  {
+    question: "How much do agree or disagree with the following statement: Cannabis smoke/vapor is harmful to your lungs?",
+    answers: [
+      "Strongly agree",
+      "Agree",
+      "Neither agree nor disagree",
+      "Disagree",
+      "Strongly disagree"
+    ],
+  },
+  {
+    question: "How much do agree or disagree with the following statement: Cannabis (any type) is harmful to the brain development of someone under the age of 21?",
+    answers: [
+      "Strongly agree",
+      "Agree",
+      "Neither agree nor disagree",
+      "Disagree",
+      "Strongly disagree"
+    ],
+  },
+];
+
+export const postCannabis = [
+  {
+    question:
+      "Which best describes your plans regarding cannabis:",
+    answers: [
+      "Stay cannabis free",
+      "Reduce my use (cut-back)",
+      "Quit",
+
+    ]
+  }
+]
 
 export const healthy = [
   {

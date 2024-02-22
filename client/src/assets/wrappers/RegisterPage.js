@@ -30,5 +30,26 @@ const Wrapper = styled.section`
     cursor: pointer;
     letter-spacing: var(--letterSpacing);
   }
+  
+  .language-select {
+    border-color: transparent;
+    background: transparent;
+  }
+  .language-select-icon {
+    font-size: 1.3rem;
+  }
+  .language-select-container {
+    align-self: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0 0.2rem;
+    border: 1px solid black;
+    border-radius: 8px;
+    padding: 0.2rem;
+    width: 150px;
+    margin-top: 0.5rem;
+  }
+
 `;
 export default Wrapper;

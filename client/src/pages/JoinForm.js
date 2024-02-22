@@ -8,6 +8,8 @@ import { useLocation } from "react-router-dom";
 import Logo2 from "../assets/images/logo.png";
 
 import { useNavigate } from "react-router-dom";
+import {useTranslation} from "react-i18next";
+import {MdLanguage} from "react-icons/md";
 
 const JoinForm = () => {
   const {
@@ -58,13 +60,25 @@ const JoinForm = () => {
     schools = info["schools"];
   }
 
+  const { t, i18n } = useTranslation();
+
+  const [currentLanguage, setCurrentLanguage] = useState('en');
+
+  useEffect(() => {
+    const currentLanguage = i18n.language;
+
+    setCurrentLanguage(currentLanguage);
+  });
+
   const MultipleSchools = () => {
     const actualSchools = schools.filter((school) => school["school"]);
 
     if (actualSchools.length > 1) {
       return (
         <div>
-          <h4 className="form-title">School Name</h4>
+          <h4 className="form-title">
+            t('school_name', 'School Name')
+          </h4>
           <select
             name="school"
             value={school}
@@ -72,7 +86,7 @@ const JoinForm = () => {
             className="form-select"
           >
             <option value="default" disabled>
-              Choose your School
+              {t('choose_your_school', 'Choose your School')}
             </option>
             
             {actualSchools.map((school, index) => (
@@ -107,7 +121,7 @@ const JoinForm = () => {
             className="form-select"
           >
             <option value={"default"} disabled>
-              Choose your Period
+              {t('choose_your_period', 'Choose your Period')}
             </option>
             {periods.map((period, index) => {
               return (
@@ -193,7 +207,9 @@ const JoinForm = () => {
         <form className="form" onSubmit={handleSubmit}>
           {showAlert && <Alert />}
           {info["noCode"]?null:
-          <h4>You have joined {teacher_name}'s class</h4>}
+          <h4>
+            {`${t('you_have_joined', 'You have joined')} ${teacher_name}'s ${t('class', 'class')}`}
+          </h4>}
           <div className="form">
             {info["noCode"]?null
             :
@@ -201,7 +217,7 @@ const JoinForm = () => {
             <MultipleSchools />
             <MultiplePeriods />
             </div>}
-            <h4 className="form-title">Grade Level</h4>
+            <h4 className="form-title">{t('grade_level', 'Grade Level')}</h4>
             <select
               name="grade"
               value={grade}
@@ -209,7 +225,7 @@ const JoinForm = () => {
               className="form-select"
             >
               <option value={"default"} disabled>
-                Grade Level
+                {t('grade_level', 'Grade Level')}
               </option>
               {grades.map((grade, index) => {
                 return (
@@ -220,7 +236,8 @@ const JoinForm = () => {
               })}
             </select>
 
-            <h4 className="form-title">Form Type</h4>
+            <h4 className="form-title">
+              {t('form_type', 'Form Type')}</h4>
             <select
               name="type"
               value={form}
@@ -228,38 +245,40 @@ const JoinForm = () => {
               className="form-select"
             >
               <option value={"default"} disabled>
-                Choose your Form
+                {t('choose_your_form', 'Choose your Form')}
               </option>
               <option value={"You and Me, Together Vape-Free"}>
-                You and Me, Together Vape-Free
+                {t('vape_title', 'You and Me, Together Vape-Free')}
               </option>
               <option
                 value={"Smart Talk: Cannabis Prevention & Education Awareness"}
               >
-                Smart Talk: Cannabis Prevention & Education Awareness
+                {t('cannabis_title', 'Smart Talk: Cannabis Prevention & Education Awareness')}
               </option>
               <option value={"Safety First"}>
-                Safety First
+                {t('safety_title', 'Safety First')}
               </option>
               {info["noCode"]?null:
               <option
                 value={"Healthy Futures: Tobacco/Nicotine/Vaping"}
               >
-                Healthy Futures: Tobacco/Nicotine/Vaping
+                {t('healthy_tobacco_title', 'Healthy Futures: Tobacco/Nicotine/Vaping')}
               </option>
               }
               {info["noCode"]?null:
               <option
                 value={"Healthy Futures: Cannabis"}
               >
-                Healthy Futures: Cannabis
+                {t('healthy_cannabis_title', 'Healthy Futures: Cannabis')}
               </option>
               }
 {/* } */}
 
             </select>
 
-            <h4 className="form-title">When are you taking this form</h4>
+            <h4 className="form-title">
+              {t('when_are_you_taking_this_form', 'When are you taking this form')}
+            </h4>
             <select
               name="when"
               value={when}
@@ -267,10 +286,14 @@ const JoinForm = () => {
               className="form-select"
             >
               <option value={"default"} disabled>
-                Choose When
+                {t('choose_when', 'Choose When')}
               </option>
-              <option value={"before"}>Before Lesson</option>
-              <option value={"after"}>After Lesson</option>
+              <option value={"before"}>
+                {t('before_lesson', 'Before Lesson')}
+              </option>
+              <option value={"after"}>
+                {t('after_lesson', 'After Lesson')}
+              </option>
             </select>
 
             <button
@@ -279,11 +302,24 @@ const JoinForm = () => {
               // disabled={isLoading}
               style={{ marginTop: "1.38rem" }}
             >
-              submit
+              {t('UP_submit', 'Submit')}
               {/* {isLoading ? "Please Wait..." : "submit"} */}
             </button>
           </div>
         </form>
+        <div className="language-select-container">
+          <MdLanguage className="language-select-icon"/>
+          <select
+            className="language-select"
+            value={currentLanguage}
+            onChange={(e) => i18n.changeLanguage(e.target.value)}
+          >
+            <option value="en">English</option>
+            <option value="fr">Français</option>
+            <option value="es">Español</option>
+            <option value="zh">中文</option>
+          </select>
+        </div>
       </Wrapper>
       <img width="200" height="100" src={Logo2} className="corner-logo" />
     </div>

@@ -8,6 +8,8 @@ import Logo2 from "../assets/images/logo.png";
 import ReCAPTCHA from "react-google-recaptcha"
 ;
 import { useRef } from "react";
+import {useTranslation} from "react-i18next";
+import {MdLanguage} from "react-icons/md";
 // import { Select } from "@mui/material";
 const initialState = {
   name: "",
@@ -40,12 +42,23 @@ const Register = () => {
   const toggleMember = () => {
     setValues({ ...values, isMember: !values.isMember });
   };
+
+  const { t, i18n } = useTranslation();
+
+  const [currentLanguage, setCurrentLanguage] = useState('en');
+
+  useEffect(() => {
+    const currentLanguage = i18n.language;
+
+    setCurrentLanguage(currentLanguage);
+  });
+
   function AdminRole() {
     if (type == "admin") {
       return (
         <div>
           <label className="form-label" style={{ fontSize: "1rem" }}>
-            Role
+            {t('UP_role', 'Role')}
           </label>
           <select
             name="adminRole"
@@ -53,11 +66,13 @@ const Register = () => {
             onChange={handleAdminRole}
             className="form-row form-select"
           >
-            <option value={"default"}>Choose your Role</option>
+            <option value={"default"}>
+              {t('choose_your_role', 'Choose your Role')}
+            </option>
             {adminroles.map((role, index) => {
               return (
                 <option key={index} value={role}>
-                  {role}
+                  {t(role, role)}
                 </option>
               );
             })}
@@ -238,7 +253,7 @@ const Register = () => {
     <div>
     <Wrapper className="full-page">
       <form className="form" onSubmit={onSubmit}>
-        <h3>{values.isMember ? "Login" : "Register"}</h3>
+        <h3>{values.isMember ? t('UP_login', "Login") : t('UP_register', "Register")}</h3>
         {showAlert && <Alert />}
         {/* name input */}
         {!values.isMember && (
@@ -276,15 +291,15 @@ const Register = () => {
 
         )}
         {values.isMember?
-        <button type="button" onClick={resetPassword} className="member-btn">
-            Forgot Passsword?
+          <button type="button" onClick={resetPassword} className="member-btn">
+            {t('forgot_password', 'Forgot Password?')}
           </button>:
         null}
 
         {!values.isMember && <AdminRole />}
         {!values.isMember && type=='admin' && 
         <label className="checkbox-container">
-              I am also a teacher
+          {t('i_am_also_a_teacher', 'I am also a teacher')}
               <input
                 type="checkbox"
                 className="checkbox"
@@ -302,14 +317,29 @@ const Register = () => {
           />
         )}
         <button type="submit" className="btn btn-block" disabled={isLoading}>
-          submit
+          {t('submit', 'submit')}
         </button>
         <p>
-          {values.isMember ? "Don't have an account?" : "Have an account?"}
+          {values.isMember ? t('dont_have_an_account', "Don't have an account?") : t('have_an_account', "Have an account?")}
           <button type="button" onClick={toggleMember} className="member-btn">
-            {values.isMember ? "Register" : "Login"}
+            {values.isMember ? t('UP_register', "Register") : t('UP_login', "Login")}
           </button>
         </p>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <div className="language-select-container">
+            <MdLanguage className="language-select-icon"/>
+            <select
+              className="language-select"
+              value={currentLanguage}
+              onChange={(e) => i18n.changeLanguage(e.target.value)}
+            >
+              <option value="en">English</option>
+              <option value="fr">Français</option>
+              <option value="es">Español</option>
+              <option value="zh">中文</option>
+            </select>
+          </div>
+        </div>
       </form>
     </Wrapper>
   <img width="200" height="90" src={Logo2} className="corner-logo" />

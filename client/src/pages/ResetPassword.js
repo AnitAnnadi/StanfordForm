@@ -5,6 +5,7 @@ import { Logo, FormRow, Alert } from "../components";
 import Wrapper from '../assets/wrappers/ErrorPage'
 import { useAppContext } from '../context/appContext';
 import { useNavigate } from 'react-router-dom';
+import {useTranslation} from "react-i18next";
 
 const ResetPassword = () => {
     const initialState = {
@@ -37,11 +38,16 @@ const ResetPassword = () => {
     const handleChange = (e) => {
         setValues({ ...values, [e.target.name]: e.target.value });
       };
+
+    const { t, i18n } = useTranslation();
+
   return (
     <div>
     <Wrapper className="full-page">
       <form className="form" onSubmit={onSubmit}>
-        <h3>Reset Password</h3>
+        <h3>
+          {t('reset_password', 'Reset Password')}
+        </h3>
         {showAlert && <Alert />}
 
  
@@ -60,7 +66,7 @@ const ResetPassword = () => {
             handleChange={handleChange}
           />   
         <button type="submit" className="btn btn-block" disabled={isLoading}>
-          Reset Password
+          {t('reset_password', 'Reset Password')}
         </button>
       </form>
     </Wrapper>

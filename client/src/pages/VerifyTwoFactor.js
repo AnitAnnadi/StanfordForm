@@ -6,8 +6,11 @@ import Wrapper from '../assets/wrappers/ErrorPage'
 import { useAppContext } from '../context/appContext';
 import { useNavigate,useLocation } from 'react-router-dom';
 import { ThreeDots } from 'react-loader-spinner';
+import {useTranslation} from "react-i18next";
 
 const VerifyTwoFactor = () => {
+
+    const { t, i18n } = useTranslation();
 
     const currentURL = new URL(window.location.href);
     const [, , _id] = currentURL.pathname.split('/');
@@ -52,7 +55,9 @@ const VerifyTwoFactor = () => {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <p>Creating User</p>
+            <p>
+              {t('creating_user', 'Creating User')}
+            </p>
             <ThreeDots color="black" height={20} width={20} style={{ marginLeft: '10px' }} />
           </div>
           <div>

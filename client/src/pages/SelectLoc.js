@@ -15,6 +15,8 @@ import {
   getDistrictCounty,
 } from "../utils/schoolDataFetch";
 import CreateLocPopup from "../components/CreateLocPopup";
+import {useTranslation} from "react-i18next";
+import {MdLanguage} from "react-icons/md";
 
 const SelectLoc = ({ noCode }) => {
   const {
@@ -29,6 +31,17 @@ const SelectLoc = ({ noCode }) => {
     selectLocSchools,
     setToNarrowSchools,
   } = useAppContext();
+
+  const { t, i18n } = useTranslation();
+
+  const [currentLanguage, setCurrentLanguage] = useState('en');
+
+  useEffect(() => {
+    const currentLanguage = i18n.language;
+
+    setCurrentLanguage(currentLanguage);
+  });
+
   const navigate = useNavigate();
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [state, setState] = useState("default");
@@ -117,7 +130,7 @@ const SelectLoc = ({ noCode }) => {
   let grades = ["K", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   let adminbool = false;
   const [additionalLoc, setAdditionalLoc] = useState(false);
-  
+
   const [numOfLocations, setNumOfLocations] = useState(
     user?.adminTeacher && user?.role != "Stanford Staff"
       ? userLocations
@@ -282,7 +295,6 @@ const SelectLoc = ({ noCode }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (forOther) {
-      console.log("hi");
       if (
         state === "default" ||
         (showCounty && county === "default") ||
@@ -382,15 +394,16 @@ const SelectLoc = ({ noCode }) => {
             <div className="form">
               <h3 className="form-title">
                 {forOther
-                  ? "Select Location for "
+                  ? t('select_location_for', "Select Location for") + " "
                   : noCode ||
                     user?.role === "Teacher" ||
                     selectSchool ||
                     fromProfile
-                  ? "Select School"
+                  ? t('select_school', "Select School")
                   : user?.role === "Site Admin"
-                  ? "Select School Location"
-                  : "Select Admin Location"}
+                  ? t('select_school_location', "Select School Location")
+                  : t('select_admin_location', "Select Admin Location")
+                }
                 {forOther
                   ? requestedName
                   : numOfLocations > 1 && !noCode
@@ -398,14 +411,16 @@ const SelectLoc = ({ noCode }) => {
                   : ""}
               </h3>
 
-              <h4 className="form-title">State</h4>
+              <h4 className="form-title">{t('UP_staate', 'State')}</h4>
               <select
                 name="aliasChoice"
                 value={state}
                 onChange={(e) => handleChange("state", e.target.value)}
                 className="form-select"
               >
-                <option value={"default"}>Choose your State</option>
+                <option value={"default"}>
+                  {t('choose_your_state', 'Choose your State')}
+                </option>
                 {states.map((state, index) => {
                   return (
                     <option key={index} value={state}>
@@ -416,20 +431,20 @@ const SelectLoc = ({ noCode }) => {
               </select>
               {showCounty && (
                 <>
-                  <h4 className="form-title">County</h4>
+                  <h4 className="form-title">{t('UP_country', 'County')}</h4>
                   <select
                     name="aliasChoice"
                     value={county}
                     onChange={(e) => handleChange("county", e.target.value)}
                     className="form-select"
                   >
-                    <option value={"default"}>Choose your County</option>
+                    <option value={"default"}>{t('choose_your_country', 'Choose your County')}</option>
                     {counties.map((county, index) => {
                       if (county === "custom") {
                         if (counties.length === 1) {
                           return (
                             <option key={index} value={county}>
-                              Doesn't apply
+                              {t('doesnt_apply', "Doesn't apply")}
                             </option>
                           );
                         } else {
@@ -448,14 +463,14 @@ const SelectLoc = ({ noCode }) => {
               )}
               {showCity && (
                 <>
-                  <h4 className="form-title">City</h4>
+                  <h4 className="form-title">{t('UP_city', 'City')}</h4>
                   <select
                     name="aliasChoice"
                     value={city}
                     onChange={(e) => handleChange("city", e.target.value)}
                     className="form-select"
                   >
-                    <option value={"default"}>Choose your City</option>
+                    <option value={"default"}>{t('choose_your_city', 'Choose your City')}</option>
                     {cities.map((city, index) => {
                       return (
                         <option key={index} value={city}>
@@ -468,20 +483,20 @@ const SelectLoc = ({ noCode }) => {
               )}
               {showDistrict && (
                 <>
-                  <h4 className="form-title">District</h4>
+                  <h4 className="form-title">{t('UP_district', 'District')}</h4>
                   <select
                     name="aliasChoice"
                     value={district}
                     onChange={(e) => handleChange("district", e.target.value)}
                     className="form-select"
                   >
-                    <option value={"default"}>Choose your District</option>
+                    <option value={"default"}>{t('choose_your_district', 'Choose your District')}</option>
                     {districts.map((district, index) => {
                       if (district === "custom") {
                         if (districts.length === 1) {
                           return (
                             <option key={index} value={district}>
-                              Doesn't apply
+                              {t('doesnt_apply', "Doesn't apply")}
                             </option>
                           );
                         } else {
@@ -500,14 +515,14 @@ const SelectLoc = ({ noCode }) => {
               )}
               {showSchool && (
                 <>
-                  <h4 className="form-title">School</h4>
+                  <h4 className="form-title">{t('UP_school', 'School')}</h4>
                   <select
                     name="aliasChoice"
                     value={school}
                     onChange={(e) => handleChange("school", e.target.value)}
                     className="form-select"
                   >
-                    <option value={"default"}>Choose your School</option>
+                    <option value={"default"}>{t('choose_your_school', 'Choose your School')}</option>
                     {schools.map((school, index) => {
                       return (
                         <option key={index} value={school}>
@@ -523,7 +538,7 @@ const SelectLoc = ({ noCode }) => {
                 <>
                   <hr />
                   <label className="checkbox-container">
-                    I teach multiple classes/periods at this location
+                    {t('i_teach_multiple', 'I teach multiple classes/periods at this location')}
                     <input
                       type="checkbox"
                       className="checkbox"
@@ -539,7 +554,7 @@ const SelectLoc = ({ noCode }) => {
                 <>
                   <hr />
                   <label className="checkbox-container">
-                    I would like to submit an additional location
+                    {t('like_to_submit_additional_loc', 'I would like to submit an additional location')}
                     <input
                       type="checkbox"
                       className="checkbox"
@@ -561,14 +576,14 @@ const SelectLoc = ({ noCode }) => {
                 onSubmit={(e) => handleSubmit(e.target.value)}
                 style={{ marginTop: "1.38rem" }}
               >
-                {isLoading ? "Please Wait..." : "submit"}
+                {isLoading ? t('please_wait', 'Please Wait') + "...": t('submit', 'submit')}
               </button>
               {!noCode && (user?.adminTeacher && numOfLocations >= 1) ||
               user?.role == "Site Admin" ||
               user?.role === "Teacher"||
               user?.role=="Stanford Staff" ? (
                 <p>
-                  Don't see your school?{" "}
+                  {t('dont_see_your_school', "Don't see your school?")}{" "}
                   <button
                     className="link"
                     style={{
@@ -581,7 +596,7 @@ const SelectLoc = ({ noCode }) => {
                       setDisplayAddPopup(true);
                     }}
                   >
-                    Click here
+                    {t('click_here', 'Click here')}
                   </button>
                 </p>
               ) : null}
@@ -599,7 +614,7 @@ const SelectLoc = ({ noCode }) => {
                       justifyContent: "flex-end",
                     }}
                   >
-                    {isLoading ? "Please Wait..." : "Go to Dashboard"}
+                    {isLoading ? t('please_wait', 'Please Wait') + "...": t('go_to_dashboard', 'Go to Dashboard')}
                     <Link
                       to="/"
                       disabled={isLoading}
@@ -613,6 +628,19 @@ const SelectLoc = ({ noCode }) => {
               ) : null}
             </div>
           </form>
+          <div className="language-select-container">
+            <MdLanguage className="language-select-icon"/>
+            <select
+              className="language-select"
+              value={currentLanguage}
+              onChange={(e) => i18n.changeLanguage(e.target.value)}
+            >
+              <option value="en">English</option>
+              <option value="fr">Français</option>
+              <option value="es">Español</option>
+              <option value="zh">中文</option>
+            </select>
+          </div>
         </Wrapper>
         <img width="200" height="100" src={Logo2} className="corner-logo" />
       </div>

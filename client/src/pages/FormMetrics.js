@@ -18,6 +18,7 @@ import { utils as XLSXUtils, writeFile as writeXLSXFile } from 'xlsx';
 import { tobacco, postTobacco, cannabis, postCannabis, safety, healthy
 } from "../utils/questions";
 import { ThreeDots } from 'react-loader-spinner';
+import {useTranslation} from "react-i18next";
 
 
 
@@ -46,8 +47,7 @@ const FormMetrics = () => {
     exportLoading
   } = useAppContext();
 
-
-
+  const { t, i18n } = useTranslation();
 
   const [isLoading, setIsLoading] = useState(true);
   const [exportClicked, setExportClicked] = useState(false);
@@ -161,7 +161,6 @@ const FormMetrics = () => {
     };
   
     if (!location.search) {
-      console.log('hi')
       setIsOverall(true);
       setIsLoading(true);
       
@@ -216,7 +215,9 @@ const FormMetrics = () => {
       
   if (isLoading || overallLoading) return (
   <div>
-    {isOverall?<p >This may take a while. We have to retrieve all your data</p>:null}
+    {isOverall?<p>
+      {t('may_take_awhile_retrieving_data', 'This may take a while. We have to retrieve all your data')}
+    </p>:null}
   <Loading center />
   </div>
   
@@ -228,7 +229,8 @@ const FormMetrics = () => {
         <>
           <header>
             <div className="info">
-              <h3>Overall Form Metrics</h3>
+              <h3>
+                {t('overall_form_metrics', 'Overall Form Metrics')}</h3>
             </div>
           </header>
           
@@ -243,76 +245,78 @@ const FormMetrics = () => {
             </span>
             {exportLoading ? (
               <div style={{ display: 'flex', alignItems: 'center', marginLeft: '10px' }}>
-                <p style={{ margin: 0 }}>Exporting</p>
+                <p style={{ margin: 0 }}>{t('UP_exporting', "Exporting")}</p>
                 <ThreeDots color="white" height={20} width={20} style={{ marginLeft: '10px' }} />
               </div>
             ) : (
-              "Export To Excel"
+              t('export_to_excel', "Export To Excel")
             )}
           </button>
 
             <div className="content-center">
               <ResponseGroupInfo
                 icon={<AiOutlineNumber />}
-                text={`${numberOfResponses} response(s)`}
+                text={`${numberOfResponses} ${t('responses', 'responses')}`}
               />
               <div >
                 <ResponseGroupInfo
                   icon={<FaLocationArrow />}
                   text={
-                    searchState === "all" ? "All states," : searchState + ","
+                    searchState === "all" ? t('all_states', 'All states') + ',' : searchState + ","
                   }
                 />
                 <ResponseGroupInfo
                   text={
                     searchCounty === "all"
-                      ? "All counties,"
+                      ? t('all_counties', 'All counties') + ","
                       : searchCounty + ","
                   }
                 />
                 <ResponseGroupInfo
                   text={
-                    searchCity === "all" ? "All cities," : (searchCity + ",")
+                    searchCity === "all" ? t('all_cities', 'All cities') + "," : (searchCity + ",")
                   }
                 />
                 <ResponseGroupInfo
                   text={
                     searchDistrict === "all"
-                      ? "All districts,"
+                      ? t('all_districts', 'All districts') + ","
                       : searchDistrict + ","
                   }
                 />
                 <ResponseGroupInfo
-                  text={searchSchool === "all" ? "All schools" : searchSchool}
+                  text={searchSchool === "all" ? t('all_schools', 'All schools') : searchSchool}
                 />
               </div>
               <ResponseGroupInfo
                 icon={<FaChalkboardTeacher />}
-                text={searchTeacher === "all" ? "All teachers" : searchTeacher}
+                text={searchTeacher === "all" ? t('all_teachers', 'All teachers') : searchTeacher}
               />
               <ResponseGroupInfo
                 icon={<TbListNumbers />}
                 text={
                   searchPeriod === "all"
-                    ? "All periods"
-                    : "Period " + searchPeriod
+                    ? t('all_periods', 'All periods')
+                    : t('period', 'Period') + " " + searchPeriod
                 }
               />
               <ResponseGroupInfo
                 icon={<TbNumbers />}
                 text={
-                  searchGrade === "all" ? "All grades" : "Grade " + searchGrade
+                  searchGrade === "all" ?
+                  t('all_grades', 'All grades') :
+                  t('grade', 'Grade') + " " + searchGrade
                 }
               />
               <ResponseGroupInfo
                 icon={<AiOutlineForm />}
-                text={searchType === "all" ? "All types" : searchType}
+                text={searchType === "all" ? t('all_types', 'All types') : searchType}
               />
               <ResponseGroupInfo
                 icon={<FaRegCalendarAlt />}
                 text={
                   searchBeforeAfter === "all"
-                    ? "Before and after"
+                    ? t('before_and_after', 'Before and after')
                     : searchBeforeAfter
                 }
               />
@@ -341,11 +345,12 @@ const FormMetrics = () => {
             </span>
             {exportLoading ? (
               <div style={{ display: 'flex', alignItems: 'center', marginLeft: '10px' }}>
-                <p style={{ margin: 0 }}>Exporting</p>
+                <p style={{ margin: 0 }}>{t('UP_exporting', "Exporting")}</p>
                 <ThreeDots color="white" height={20} width={20} style={{ marginLeft: '10px' }} />
               </div>
             ) : (
-              "Export To Excel"
+              t('export_to_excel',
+              "Export To Excel")
             )}
           </button>
               <ResponseGroupInfo
@@ -361,13 +366,13 @@ const FormMetrics = () => {
                 icon={<TbListNumbers />}
                 text={
                   (responseType?.period) && (responseType?.period !== "No Period")
-                    ? "Period " + responseType.period
-                    : "No specified period"
+                    ? t('UP_period', 'Period') + " " + responseType.period
+                    : t('no_specified_period', 'No specified period')
                 }
               />
               <ResponseGroupInfo
                 icon={<TbNumbers />}
-                text={"Grade " + responseType.grade}
+                text={t('UP_grade', "Grade") + " " + responseType.grade}
               />
               <ResponseGroupInfo
                 icon={<AiOutlineForm />}
@@ -397,7 +402,7 @@ const FormMetrics = () => {
                         labels: Object.keys(questionsToAnswers[question]),
                         datasets: [
                           {
-                            label: "How many gave this answer",
+                            label: t('how_many_gave_this_answer', 'How many gave this answer'),
                             data: Object.values(questionsToAnswers[question]),
                             // backgroundColor: Object.keys(
                             //   questionsToAnswers[question]
@@ -435,7 +440,7 @@ const FormMetrics = () => {
       )}
       <footer>
         <button className="btn btn-block" onClick={() => navigate("/metrics")}>
-          Go back
+          {t('go_back', 'Go Back')}
         </button>
       </footer>
     </Wrapper>
