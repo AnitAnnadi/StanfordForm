@@ -146,7 +146,7 @@ const SelectLoc = ({ noCode }) => {
       setNumOfLocations(user?.role=="Stanford Staff" || user?.role=="Teacher" ?userLocations.length+1:userLocations.length);
     }
   }, [userLocations]);
-  
+
   const showCounty =
     !fromProfile &&
     !selectSchool &&
@@ -210,7 +210,7 @@ const SelectLoc = ({ noCode }) => {
           setTimeout(() => {
             navigate("/");
           }, 2000);
-        } 
+        }
         else {
           setTimeout(() => {
             navigate("/metrics");
@@ -431,14 +431,14 @@ const SelectLoc = ({ noCode }) => {
               </select>
               {showCounty && (
                 <>
-                  <h4 className="form-title">{t('UP_country', 'County')}</h4>
+                  <h4 className="form-title">{t('UP_county', 'County')}</h4>
                   <select
                     name="aliasChoice"
                     value={county}
                     onChange={(e) => handleChange("county", e.target.value)}
                     className="form-select"
                   >
-                    <option value={"default"}>{t('choose_your_country', 'Choose your County')}</option>
+                    <option value={"default"}>{t('choose_your_county', 'Choose your County')}</option>
                     {counties.map((county, index) => {
                       if (county === "custom") {
                         if (counties.length === 1) {
