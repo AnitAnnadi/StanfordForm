@@ -55,7 +55,7 @@
     "react-multi-select-component": "^4.3.4",
     "react-scripts": "^5.0.1",
     "reactjs-popup": "^2.0.5",
-    "translation-check": "^1.0.3",
+    "translation-check": "^1.1.0",
     "uuidv4": "^6.2.13",
     "validator": "^13.7.0",
     "xlsx": "^0.18.5",
