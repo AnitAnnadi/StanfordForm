@@ -14,7 +14,7 @@ const StudentResponseSchema = new mongoose.Schema(
     grade: {
       type: String,
       required: [true, 'Please provide grade'],
-      maxlength:10,
+      maxlength:20,
     },
     when: {
       type: String,

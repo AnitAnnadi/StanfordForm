@@ -51,7 +51,7 @@ const JoinForm = () => {
   const [school, setSchool] = useState("default");
   const [period, setPeriod] = useState("default");
   console.log(form, when)
-  let grades = ["K", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  let grades = ["K", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, "College or Above"];
   let periods = [0, 1, 2, 3, 4, 5, 6, 7, 8];
   let schools = null;
 
