@@ -40,7 +40,7 @@ const JoinForm = () => {
     info.formName="Smart Talk: Cannabis Prevention & Education Awareness"
   }
   else if (info.formName=="VapeFree"){
-    info.formName = "You and Me Vape Free (middle school and above)"
+    info.formName = "You and Me, Together Vape-Free"
   }
   else if (info.formName=="SafetyFirst"){
     info.formName = "Safety First"
@@ -247,8 +247,8 @@ const JoinForm = () => {
               <option value={"default"} disabled>
                 {t('choose_your_form', 'Choose your Form')}
               </option>
-              <option value={"You and Me Vape Free (middle school and above)"}>
-                {t('vape_title', 'You and Me Vape Free (middle school and above)')}
+              <option value={"You and Me, Together Vape-Free"}>
+              {t('vape_title', 'You and Me, Together Vape-Free')}
               </option>
               <option
                 value={"Smart Talk: Cannabis Prevention & Education Awareness"}
