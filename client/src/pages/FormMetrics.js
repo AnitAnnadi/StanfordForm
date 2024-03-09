@@ -108,7 +108,7 @@ const FormMetrics = () => {
   };
 
   const formTimeType = (formType, when, data) => {
-    if (formType === "You and Me, Together Vape-Free") {
+    if (formType === "You and Me Vape Free (middle school and above)") {
       return when === "before" ? createQuestionsToAnswersMap(tobacco, data) : createQuestionsToAnswersMap(tobacco.concat(postTobacco), data);
     } else if (formType === "Smart Talk: Cannabis Prevention & Education Awareness") {
       return when === "before" ? createQuestionsToAnswersMap(cannabis, data) : createQuestionsToAnswersMap(cannabis.concat(postCannabis),data);

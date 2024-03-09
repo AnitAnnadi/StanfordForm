@@ -113,7 +113,7 @@ const getExport = async (req, res) => {
         let questions = await Question.find({
           StudentResponse: studentResponse._id,
         });
-        if (studentResponse.formType === "You and Me, Together Vape-Free") {
+        if (studentResponse.formType === "You and Me Vape Free (middle school and above)") {
           if (studentResponse.when === "before") {
             findResponse(tobacco, questions, obj);
           } else {

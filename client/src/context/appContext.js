@@ -99,8 +99,8 @@ const initialState = {
   searchPeriod: 'all',
   teacherOptions: [], // [[teacherName, teacherId], [teacherName, teacherId], ...]
   searchTeacher: 'all',
-  typeOptions: ['You and Me, Together Vape-Free', 'Smart Talk: Cannabis Prevention & Education Awareness', 'Safety First', 'Healthy Futures: Tobacco/Nicotine/Vaping','Healthy Futures: Cannabis'],
-  searchType: 'You and Me, Together Vape-Free',
+  typeOptions: ['You and Me Vape Free (middle school and above)', 'Smart Talk: Cannabis Prevention & Education Awareness', 'Safety First', 'Healthy Futures: Tobacco/Nicotine/Vaping','Healthy Futures: Cannabis'],
+  searchType: 'You and Me Vape Free (middle school and above)',
   beforeAfterOptions: ['all', 'before', 'after'],
   searchBeforeAfter: 'all',
   teacher:'',

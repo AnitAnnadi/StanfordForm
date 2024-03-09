@@ -116,7 +116,7 @@ const Form = () => {
   };
 
   const [usedForm, setUsedForm] = useState(() => {
-    if (info["form"] === "You and Me, Together Vape-Free") {
+    if (info["form"] === "You and Me Vape Free (middle school and above)") {
       return info["when"] === "before" ? tobacco : tobacco.concat(postTobacco);
     } else if (
       info["form"] === "Smart Talk: Cannabis Prevention & Education Awareness"

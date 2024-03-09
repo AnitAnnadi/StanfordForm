@@ -72,7 +72,7 @@ const SearchContainer = ({ startReload }) => {
     if (exportClicked && exportData) {
       exportData.forEach((obj) => {
         const formtype = obj["form type"];
-        if (formtype === "You and Me, Together Vape-Free") {
+        if (formtype === "You and Me Vape Free (middle school and above)") {
           vape.push(obj);
         } else if (
           formtype === "Smart Talk: Cannabis Prevention & Education Awareness"
@@ -130,7 +130,7 @@ const SearchContainer = ({ startReload }) => {
   };
 
   const formTimeType = (formType, when, data) => {
-    if (formType === "You and Me, Together Vape-Free") {
+    if (formType === "You and Me Vape Free (middle school and above)") {
       return when === "before"
         ? createQuestionsToAnswersMap(tobacco, data)
         : createQuestionsToAnswersMap(tobacco.concat(postTobacco), data);
