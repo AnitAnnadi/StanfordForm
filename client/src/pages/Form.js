@@ -13,12 +13,16 @@ import {
   postCannabis,
   safety,
   healthy,
+  tobaccoElem
 } from "../utils/questions";
 import ReCAPTCHA from "react-google-recaptcha"
 import {useTranslation} from "react-i18next";
 import {MdLanguage} from "react-icons/md";
 
 const Form = () => {
+  const BlackBox = () => {
+    return <div style={{ backgroundColor: 'black', width: '100px', height: '100px' }}></div>;
+  };
   const {
     user,
     showAlert,
@@ -116,10 +120,12 @@ const Form = () => {
   };
 
   const [usedForm, setUsedForm] = useState(() => {
-    console.log(info["form"])
     if (info["form"] === "You and Me, Together Vape-Free") {
       return info["when"] === "before" ? tobacco : tobacco.concat(postTobacco);
-    } else if (
+    } 
+    else if(info["form"] ==="You and Me, Together Vape-Free(elem)"){
+      return info["when"] === "before" ? tobaccoElem : tobacco.concat(postTobacco); 
+    }else if (
       info["form"] === "Smart Talk: Cannabis Prevention & Education Awareness"
     ) {
       return info["when"] === "before"

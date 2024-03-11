@@ -40,7 +40,7 @@ const JoinForm = () => {
     info.formName="Smart Talk: Cannabis Prevention & Education Awareness"
   }
   else if (info.formName=="VapeFree"){
-    info.formName = "You and Me, Together Vape-Free"
+      info.formName = "You and Me, Together Vape-Free"
   }
   else if (info.formName=="SafetyFirst"){
     info.formName = "Safety First"
@@ -50,7 +50,6 @@ const JoinForm = () => {
   const [when, setWhen] = useState(info.when ?? "default");
   const [school, setSchool] = useState("default");
   const [period, setPeriod] = useState("default");
-  console.log(form, when)
   let grades = ["K", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, "College or Above"];
   let periods = [0, 1, 2, 3, 4, 5, 6, 7, 8];
   let schools = null;
@@ -139,6 +138,7 @@ const JoinForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     handleChange({name:"isLoading",value:false})
+    let newForm = form; // Create a new variable to hold the updated form value
     if (info["noCode"]){
       if (
         form !== "default" &&
@@ -155,7 +155,7 @@ const JoinForm = () => {
         setTimeout(() => {
           navigate("/form", {
             state: {
-              form,
+              form: newForm, // Use the new variable here
               grade,
               when,
               school,
@@ -172,33 +172,35 @@ const JoinForm = () => {
       }
     }
     else{
-      console.log(form)
-    if (
-      form !== "default" &&
-      grade !== "default" &&
-      when !== "default" &&
-      school !== "default"
-    ) {
-      let teacher_id = localStorage.getItem("teacher_id")
-      successAlert("Redirecting...");
-      setTimeout(() => {
-        navigate("/form", {
-          state: {
-            form,
-            grade,
-            when,
-            school,
-            period,
-            teacher_id
-          },
-        });
-      }, 2000);
-    } else {
-      displayAlert();
+      if (form==="You and Me, Together Vape-Free" && (parseInt(grade)<8 || grade =="K")){
+        newForm="You and Me, Together Vape-Free(elem)"
+      }
+      if (
+        newForm !== "default" &&
+        grade !== "default" &&
+        when !== "default" &&
+        school !== "default"
+      ) {
+        let teacher_id = localStorage.getItem("teacher_id")
+        successAlert("Redirecting...");
+        setTimeout(() => {
+          navigate("/form", {
+            state: {
+              form: newForm, // Use the new variable here
+              grade,
+              when,
+              school,
+              period,
+              teacher_id
+            },
+          });
+        }, 2000);
+      } else {
+        displayAlert();
+      }
     }
-  }
   };
-  return (
+    return (
     <div
       className="full-page"
       style={{ display: "flex", alignItems: "center", padding: "0 1.5rem" }}
