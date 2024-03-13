@@ -13,12 +13,16 @@ import {
   postCannabis,
   safety,
   healthy,
+  tobaccoElem
 } from "../utils/questions";
 import ReCAPTCHA from "react-google-recaptcha"
 import {useTranslation} from "react-i18next";
 import {MdLanguage} from "react-icons/md";
 
 const Form = () => {
+  const BlackBox = () => {
+    return <div style={{ backgroundColor: 'black', width: '20px', height: '20px' }}></div>;
+  };
   const {
     user,
     showAlert,
@@ -85,8 +89,10 @@ const Form = () => {
     let grade = info["grade"];
     let when = info["when"];
     let type = info["form"];
+    if (type === "You and Me, Together Vape-Free"){
+      type = "You and Me Vape Free (middle school and above)"
+    }
     let school = info["school"];
-    // Rest of the code
     if (info["noCode"]) {
       let state = info["state"];
       let city = info["city"];
@@ -116,10 +122,12 @@ const Form = () => {
   };
 
   const [usedForm, setUsedForm] = useState(() => {
-    console.log(info["form"])
     if (info["form"] === "You and Me, Together Vape-Free") {
       return info["when"] === "before" ? tobacco : tobacco.concat(postTobacco);
-    } else if (
+    } 
+    else if(info["form"] ==="You and Me, Together Vape-Free(elem)"){
+      return info["when"] === "before" ? tobaccoElem : tobaccoElem.concat(postTobacco); 
+    }else if (
       info["form"] === "Smart Talk: Cannabis Prevention & Education Awareness"
     ) {
       return info["when"] === "before"
@@ -166,36 +174,66 @@ const Form = () => {
           </select>
         </div>
         {usedForm.map((element, index) => (
-          <div key={index}>
-            <div style={{ display: "flex", columnGap: "0.35rem" }}>
-              <p>{names.push(element["question"])}.</p>
-              <p>{t(element["question"], element["question"])}</p>
-            </div>
-            {element["question"].includes("check all that apply")
-              ? element["answers"].map((answer, index) => (
-                  <label key={index} className="container">
-                    <span>{t(answer, answer)}</span>
-                    <input
-                      type="checkbox"
-                      name={element["question"]}
-                      value={answer}
-                    />
-                    <span className="checkmark"></span>
-                  </label>
-                ))
-              : element["answers"].map((answer, index) => (
-                  <label key={index} className="container">
-                    <span>{t(answer, answer)}</span>
-                    <input
-                      type="radio"
-                      value={answer}
-                      name={element["question"]}
-                    />
-                    <span className="checkmark"></span>
-                  </label>
-                ))}
-          </div>
-        ))}
+  <div key={index}>
+    <div style={{ display: "flex", columnGap: "0.35rem" }}>
+      <p>{names.push(element["question"])}.</p>
+      <p>{t(element["question"], element["question"])}</p>
+    </div>
+    {element["question"].includes("check all that apply")
+      ? element["answers"].map((answer, index) => (
+          <label key={index} className="container">
+            <span>{t(answer, answer)}</span>
+            <input
+              type="checkbox"
+              name={element["question"]}
+              value={answer}
+            />
+            <span className="checkmark"></span>
+          </label>
+        ))
+      : element["answers"].map((answer, index) => {
+        let box = false;
+          if (index < 5) {
+            let blackBoxes = [];
+            if (info.form === "You and Me, Together Vape-Free(elem)" && element["answers"].length === 6) {
+              box = true
+              for (let i = 0; i < index + 1; i++) {
+                blackBoxes.push(<BlackBox key={i} />);
+              }
+            }
+            return (
+              <label key={index} className="container">
+                {box?
+                blackBoxes.map((box, boxIndex) => (
+                  <div key={boxIndex} style={{ display: "inline-block", padding: "0.2rem" }}>
+                    {box}
+                  </div>
+                )):
+                <span>{t(answer, answer)}</span>}
+                <input
+                  type="radio"
+                  value={answer}
+                  name={element["question"]}
+                />
+                <span className="checkmark"></span>
+              </label>
+            );
+          } else {
+            return (
+              <label key={index} className="container">
+                <p>I don't know</p>
+                <input
+                  type="radio"
+                  value={answer}
+                  name={element["question"]}
+                />
+                <span className="checkmark"></span>
+              </label>
+            );
+          }
+        })}
+  </div>
+))}
         <ReCAPTCHA 
             ref={captchaRef}
             sitekey={"6LerfqAnAAAAAB86YDhcCf0XanGHJXHQkvyxY6fJ"} />
