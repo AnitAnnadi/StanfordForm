@@ -532,11 +532,11 @@ export const tobaccoElem = [{
   question:
     "Imagine you vape nicotine once in a while. How would this affect your body?",
     answers: [
-      1,
-      2,
-      3,
-      4,
-      5,
+      "Not at all harmful",
+      "Slightly harmful",
+      "Moderately harmful",
+      "Very harmful",
+      "Extremely harmful",
       "I don't know"
     ]
 },
@@ -544,11 +544,11 @@ export const tobaccoElem = [{
   question:
     "Imagine you vape nicotine daily. How would this affect your body?",
   answers: [
-    1,
-    2,
-    3,
-    4,
-    5,
+    "Not at all harmful",
+    "Slightly harmful",
+    "Moderately harmful",
+    "Very harmful",
+    "Extremely harmful",
     "I don't know"
   ],
 },
@@ -569,12 +569,13 @@ export const tobaccoElem = [{
     "Slightly likely to become addicted",
     "Moderately likely to become addicted",
     "Very likely to become addicted",
-    "Extremely likely to become addicted"
+    "Extremely likely to become addicted",
+    "I Don't Know"
   ],
 },
 {
   question:
-    "Imagine you vape nicotine daily:  How likely are you to become addicted?",
+    "Imagine you vape nicotine daily:  How likely are you to become addicted? (More squares = more addiction)",
 
   answers: [
     "Not at all likely to become addicted",
@@ -586,29 +587,26 @@ export const tobaccoElem = [{
 },
 {
   question:
-    "How hard would it be for you to refuse, or say “no” to, a friend who offered you a cigarette to smoke? ",
+    "Can vaping hurt other people too? ",
   answers: [
-    "Very easy",
-    "Easy",
-    "Neither hard nor easy",
-    "Hard",
-    "Very hard"
+    "Yes, vaping can hurt other people",
+    "No, vaping cannot hurt other people",
+    "I don't know"
   ],
 },
 {
   question:
-    "How hard would it be for you to refuse, or say “no” to, a friend who offered you an e-cigarette/vape?",
+    "Why do you think that tobacco companies try to trick kids to start smoking or vaping?",
   answers: [
-    "Very easy",
-    "Easy",
-    "Neither hard nor easy",
-    "Hard",
-    "Very hard"
+    "They like kids",
+    "They think kids should try tobacco",
+    "They want to make more money",
+    "They don't trick kids"  
   ],
 },
 {
   question:
-    "How much do you agree or disagree with the following statement: tobacco and vaping (e-cigarette) companies target youth?",
+    "How harmful are e-cigarettes to the environment?",
     answers: [
       "Strongly agree",
       "Disagree",
@@ -616,44 +614,6 @@ export const tobaccoElem = [{
       "Agree",
       "Strongly agree"
     ],
-},
-{
-  question:
-    "How much do you agree or disagree with the following statement: tobacco and vaping (e-cigarette) companies target adults?",
-    answers: [
-      "Strongly agree",
-      "Disagree",
-      "Neither disagree nor agree",
-      "Agree",
-      "Strongly agree"
-    ],
-},
-{
-  question:
-    "How much do you agree or disagree with the following statement: tobacco and vaping (e-cigarette) companies target brown and black communities?",
-    answers: [
-      "Strongly agree",
-      "Disagree",
-      "Neither disagree nor agree",
-      "Agree",
-      "Strongly agree"
-    ],
-},
-{
-  question:
-    "How much do you agree or disagree with the following statement: tobacco and vaping (e-cigarette) companies target LGBTQI+ communities?",
-    answers: [
-      "Strongly agree",
-      "Disagree",
-      "Neither disagree nor agree",
-      "Agree",
-      "Strongly agree"
-    ],
-},
-{
-  question:
-    "How much do you agree or disagree with the following statement: tobacco and vaping (e-cigarette) companies target current cigarette smokers?",
-  answers: ["Not at all", "A little", "A moderate amount", "A lot"],
 },
 {
   question:
@@ -668,13 +628,13 @@ export const tobaccoElem = [{
 },
 {
   question:
-    "The 'vapor' that comes out of a vaping device is:",
+    "I know healthy ways to cope with stress",
   answers: [
-    "Harmless water vapor",
-    "Mostly water vapor with a few aerosolized chemicals in it",
-    "An equal amount of water vapor with aerosolized and harmful chemicals",
-    "Mostly aerosolized and harmful chemicals with a little water vapor",
-    "Just aerosolized chemicals (no water vapor)"
+    "I don't know any other ways to cope with stress",
+    "I might know other ways to cope with stress",
+    "I know a few other ways to cope with stress",
+    "I know more than a few other ways to cope with stress",
+    "I know lots of other ways to cope with stress"
   ],
 },
 {
@@ -689,3 +649,4 @@ export const tobaccoElem = [{
   ],
 }
 ]
+

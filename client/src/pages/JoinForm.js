@@ -139,6 +139,9 @@ const JoinForm = () => {
     e.preventDefault();
     handleChange({name:"isLoading",value:false})
     let newForm = form; // Create a new variable to hold the updated form value
+    if (form==="You and Me, Together Vape-Free" && (parseInt(grade)<6 || grade =="K")){
+      newForm="You and Me, Together Vape-Free(elem)"
+    }
     if (info["noCode"]){
       if (
         form !== "default" &&
