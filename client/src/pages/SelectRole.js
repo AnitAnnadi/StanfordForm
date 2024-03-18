@@ -30,6 +30,8 @@ function SelectRole() {
     // <React.Fragment>
     <Wrapper>
       <div className="content">
+      {/* <p>I will display &#129335;</p> */}
+
         <h2>{t('i_am_a', 'I am a') + "..."}</h2>
         <div className="landing-btns">
           <Link

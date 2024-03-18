@@ -193,16 +193,22 @@ const Form = () => {
         ))
       : element["answers"].map((answer, index) => {
         let box = false;
+        let emoji = false;
           if (index < 5) {
             let blackBoxes = [];
+            let emojis = ['👍', '👎', '🤷'];
             if (info.form === "You and Me, Together Vape-Free(elem)" && element["answers"].length === 6) {
               box = true
               for (let i = 0; i < index + 1; i++) {
                 blackBoxes.push(<BlackBox key={i} />);
               }
             }
+            else if (info.form === "You and Me, Together Vape-Free(elem)" && element["answers"].length===3 ){
+              emoji = emojis[index];
+            }
             return (
               <label key={index} className="container">
+               {emoji?emoji:null}
                 {box?
                 blackBoxes.map((box, boxIndex) => (
                   <div key={boxIndex} style={{ display: "inline-block", padding: "0.2rem" }}>
@@ -221,7 +227,9 @@ const Form = () => {
           } else {
             return (
               <label key={index} className="container">
-                <p>I don't know</p>
+                <p style={{ fontSize: "15px" }}> 🤷(I don't know)</p>
+
+                {/* <p>&#129335; I don't know</p> */}
                 <input
                   type="radio"
                   value={answer}
