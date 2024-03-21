@@ -173,8 +173,8 @@ const Form = () => {
             <option value="zh">中文</option>
           </select>
         </div>
-        {usedForm.map((element, index) => (
-  <div key={index}>
+  {usedForm.map((element, qindex) => (
+  <div key={qindex}>
     <div style={{ display: "flex", columnGap: "0.35rem" }}>
       <p>{names.push(element["question"])}.</p>
       <p>{t(element["question"], element["question"])}</p>
@@ -194,6 +194,11 @@ const Form = () => {
       : element["answers"].map((answer, index) => {
         let box = false;
         let emoji = false;
+        console.log(index)
+          if (qindex==9){
+            let emojis = ['🙁', '🙁', '🙂', '😊','😁'];
+            emoji = emojis[index]
+          }
           if (index < 5) {
             let blackBoxes = [];
             let emojis = ['👍', '👎', '🤷'];
