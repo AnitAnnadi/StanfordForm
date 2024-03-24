@@ -392,48 +392,55 @@ const FormMetrics = () => {
         <>
           <div className="content">
             <div className="content-center">
-              {Object.keys(questionsToAnswers).map((question, index) => (
-                
-                <div key={index}>
-                  <h5 style={{ padding: "1rem 0" }}>{question}</h5>
-                  <div className="chartCanvas" >
-                    <Doughnut
-                      data={{
-                        labels: Object.keys(questionsToAnswers[question]),
-                        datasets: [
-                          {
-                            label: t('how_many_gave_this_answer', 'How many gave this answer'),
-                            data: Object.values(questionsToAnswers[question]),
-                            // backgroundColor: Object.keys(
-                            //   questionsToAnswers[question]
-                            // ).map(() => dynamicColors()),
-                            backgroundColor: [
-                              "#d0203f",
-                              "#A2C3DB",
-                              "#8871A0",
-                              "#8AAF22",
-                              "#DCB12D",
-                              "#3F9F9F",
-                            ],
-                            borderWidth: 1,
-                          },
-                        ],
-                      }}
-                      options={{
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        plugins: {},
-                      }}
-                    />
+              {Object.keys(questionsToAnswers).map((question, index) => {
+
+                const backgroundColors = [
+                  "#3be320",
+                  "#99e018",
+                  "#e4ee1b",
+                  "#ecb533",
+                  "#e56a16",
+                  "#e7420e",
+                ]
+
+                const newBackgroundColors = []
+
+                Object.keys(questionsToAnswers[question]).sort().forEach((answer, index) => {
+                  newBackgroundColors.push(backgroundColors[index % backgroundColors.length])
+                })
+
+                return (
+                  <div key={index}>
+                    <h5 style={{ padding: "1rem 0" }}>{question}</h5>
+                    <div className="chartCanvas" >
+                      <Doughnut
+                        data={{
+                          labels: Object.keys(questionsToAnswers[question]),
+                          datasets: [
+                            {
+                              label: t('how_many_gave_this_answer', 'How many gave this answer'),
+                              data: Object.values(questionsToAnswers[question]),
+                              backgroundColor: newBackgroundColors,
+                              borderWidth: 1,
+                            }
+                          ],
+                        }}
+                        options={{
+                          responsive: true,
+                          maintainAspectRatio: true,
+                          plugins: {},
+                        }}
+                      />
+                    </div>
+                    {/*{Object.keys(questionsToAnswers[question]).map((answer, index) => (*/}
+                    {/*  <div key={index}>*/}
+                    {/*    <p>{`Answer: ${answer}`}</p>*/}
+                    {/*    <p>{`How many gave this answer: ${questionsToAnswers[question][answer]}`}</p>*/}
+                    {/*  </div>*/}
+                    {/*))}*/}
                   </div>
-                  {/*{Object.keys(questionsToAnswers[question]).map((answer, index) => (*/}
-                  {/*  <div key={index}>*/}
-                  {/*    <p>{`Answer: ${answer}`}</p>*/}
-                  {/*    <p>{`How many gave this answer: ${questionsToAnswers[question][answer]}`}</p>*/}
-                  {/*  </div>*/}
-                  {/*))}*/}
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </>
