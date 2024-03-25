@@ -617,17 +617,6 @@ export const tobaccoElem = [{
 },
 {
   question:
-    "How harmful are e-cigarettes to the environment?",
-  answers: [
-    "Not at all harmful",
-    "Slightly harmful",
-    "Moderately harmful",
-    "Very harmful",
-    "Extremely harmful"
-  ],
-},
-{
-  question:
     "I know healthy ways to cope with stress",
   answers: [
     "I don't know any other ways to cope with stress",
