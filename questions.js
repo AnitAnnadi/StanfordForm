@@ -191,7 +191,7 @@ export const tobacco = [
     question:
       "Nicotine vapes are safer than cigarettes.",
     answers: [
-      "Strongly agree",
+      "Strongly disagree",
       "Disagree",
       "Neither disagree nor agree",
       "Agree",
@@ -247,7 +247,7 @@ export const tobacco = [
     question:
       "How much do you agree or disagree with the following statement: tobacco and vaping (e-cigarette) companies target youth?",
       answers: [
-        "Strongly agree",
+        "Strongly disagree",
         "Disagree",
         "Neither disagree nor agree",
         "Agree",
@@ -258,7 +258,7 @@ export const tobacco = [
     question:
       "How much do you agree or disagree with the following statement: tobacco and vaping (e-cigarette) companies target adults?",
       answers: [
-        "Strongly agree",
+        "Strongly disagree",
         "Disagree",
         "Neither disagree nor agree",
         "Agree",
@@ -269,7 +269,7 @@ export const tobacco = [
     question:
       "How much do you agree or disagree with the following statement: tobacco and vaping (e-cigarette) companies target brown and black communities?",
       answers: [
-        "Strongly agree",
+        "Strongly disagree",
         "Disagree",
         "Neither disagree nor agree",
         "Agree",
@@ -280,7 +280,7 @@ export const tobacco = [
     question:
       "How much do you agree or disagree with the following statement: tobacco and vaping (e-cigarette) companies target LGBTQI+ communities?",
       answers: [
-        "Strongly agree",
+        "Strongly disagree",
         "Disagree",
         "Neither disagree nor agree",
         "Agree",
@@ -527,3 +527,117 @@ export const healthy = [
     ],
   },
 ];
+
+export const tobaccoElem = [{
+  question:
+    "Imagine you vape nicotine once in a while. How would this affect your body?",
+    answers: [
+      "Not at all harmful",
+      "Slightly harmful",
+      "Moderately harmful",
+      "Very harmful",
+      "Extremely harmful",
+      "I don't know"
+    ]
+},
+{
+  question:
+    "Imagine you vape nicotine daily. How would this affect your body?",
+  answers: [
+    "Not at all harmful",
+    "Slightly harmful",
+    "Moderately harmful",
+    "Very harmful",
+    "Extremely harmful",
+    "I don't know"
+  ],
+},
+{
+  question:
+    "Nicotine vapes are safer than cigarettes.",
+  answers: [
+    "Yes, vapes are safer than cigarettes",
+    "No, vapes are not safer than cigarettes",
+    "I don't know"
+  ],
+},
+{
+  question:
+    "Imagine you vape nicotine once in a while: How likely are you to become addicted? (More squares = more addiction)",
+  answers: [
+    "Not at all likely to become addicted",
+    "Slightly likely to become addicted",
+    "Moderately likely to become addicted",
+    "Very likely to become addicted",
+    "Extremely likely to become addicted",
+    "I Don't Know"
+  ],
+},
+{
+  question:
+    "Imagine you vape nicotine daily:  How likely are you to become addicted? (More squares = more addiction)",
+
+  answers: [
+    "Not at all likely to become addicted",
+    "Slightly likely to become addicted",
+    "Moderately likely to become addicted",
+    "Very likely to become addicted",
+    "Extremely likely to become addicted",
+    "I Don't Know"
+  ],
+},
+{
+  question:
+    "Can vaping hurt other people too? ",
+  answers: [
+    "Yes, vaping can hurt other people",
+    "No, vaping cannot hurt other people",
+    "I don't know"
+  ],
+},
+{
+  question:
+    "Why do you think that tobacco companies try to trick kids to start smoking or vaping?",
+  answers: [
+    "They like kids",
+    "They think kids should try tobacco",
+    "They want to make more money",
+    "They don't trick kids"  
+  ],
+},
+{
+  question:
+    "How harmful are e-cigarettes to the environment?",
+    answers: [
+      "Not at all harmful",
+      "Slightly harmful",
+      "Moderately harmful",
+      "Very harmful",
+      "Extremely harmful",
+      "I Don't Know"
+    ],
+},
+{
+  question:
+    "I know healthy ways to cope with stress",
+  answers: [
+    "I don't know any other ways to cope with stress",
+    "I might know other ways to cope with stress",
+    "I know a few other ways to cope with stress",
+    "I know more than a few other ways to cope with stress",
+    "I know lots of other ways to cope with stress"
+  ],
+},
+{
+  question:
+    "What are your goals regarding vaping?",
+  answers: [
+    "I want to never use",
+    "I want to cut back my vaping",
+    "I want to quit completely",
+    "I want to change what I vape",
+    "I have not decided yet"
+  ],
+}
+]
+

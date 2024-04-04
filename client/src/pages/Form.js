@@ -195,7 +195,7 @@ const Form = () => {
         let box = false;
         let emoji = false;
         console.log(index)
-          if (qindex==9){
+          if (qindex==8 && info.form === "You and Me, Together Vape-Free(elem)" ){
             let emojis = ['🙁', '🙁', '🙂', '😊','😁'];
             emoji = emojis[index]
           }

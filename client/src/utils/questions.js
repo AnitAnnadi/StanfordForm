@@ -191,7 +191,7 @@ export const tobacco = [
     question:
       "Nicotine vapes are safer than cigarettes.",
     answers: [
-      "Strongly agree",
+      "Strongly disagree",
       "Disagree",
       "Neither disagree nor agree",
       "Agree",
@@ -247,7 +247,7 @@ export const tobacco = [
     question:
       "How much do you agree or disagree with the following statement: tobacco and vaping (e-cigarette) companies target youth?",
       answers: [
-        "Strongly agree",
+        "Strongly disagree",
         "Disagree",
         "Neither disagree nor agree",
         "Agree",
@@ -258,7 +258,7 @@ export const tobacco = [
     question:
       "How much do you agree or disagree with the following statement: tobacco and vaping (e-cigarette) companies target adults?",
       answers: [
-        "Strongly agree",
+        "Strongly disagree",
         "Disagree",
         "Neither disagree nor agree",
         "Agree",
@@ -269,7 +269,7 @@ export const tobacco = [
     question:
       "How much do you agree or disagree with the following statement: tobacco and vaping (e-cigarette) companies target brown and black communities?",
       answers: [
-        "Strongly agree",
+        "Strongly disagree",
         "Disagree",
         "Neither disagree nor agree",
         "Agree",
@@ -280,7 +280,7 @@ export const tobacco = [
     question:
       "How much do you agree or disagree with the following statement: tobacco and vaping (e-cigarette) companies target LGBTQI+ communities?",
       answers: [
-        "Strongly agree",
+        "Strongly disagree",
         "Disagree",
         "Neither disagree nor agree",
         "Agree",
@@ -582,7 +582,8 @@ export const tobaccoElem = [{
     "Slightly likely to become addicted",
     "Moderately likely to become addicted",
     "Very likely to become addicted",
-    "Extremely likely to become addicted"
+    "Extremely likely to become addicted",
+    "I Don't Know"
   ],
 },
 {
@@ -608,11 +609,12 @@ export const tobaccoElem = [{
   question:
     "How harmful are e-cigarettes to the environment?",
     answers: [
-      "Strongly agree",
-      "Disagree",
-      "Neither disagree nor agree",
-      "Agree",
-      "Strongly agree"
+      "Not at all harmful",
+      "Slightly harmful",
+      "Moderately harmful",
+      "Very harmful",
+      "Extremely harmful",
+      "I Don't Know"
     ],
 },
 {
