@@ -161,6 +161,7 @@ const FormMetrics = () => {
     };
   
     if (!location.search) {
+      console.log('1')
       setIsOverall(true);
       setIsLoading(true);
       
@@ -193,6 +194,7 @@ const FormMetrics = () => {
     } 
     
     else {
+      // console.log('2')
       setIsOverall(false);
       setIsLoading(true);
       const queryParameters = new URLSearchParams(location.search);
@@ -202,6 +204,7 @@ const FormMetrics = () => {
       fetch(`/api/v1/form/${formCode}?${queryParameters.toString()}`)
         .then((res) => res.json())
         .then((data) => {
+          console.log(data)
           setSchool(data.school);
           setTeacher(data.teacher);
           formTimeType(formType, when, data.questionsToAnswers)
