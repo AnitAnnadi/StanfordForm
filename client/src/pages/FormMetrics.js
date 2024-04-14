@@ -15,7 +15,7 @@ import { AiOutlineForm, AiOutlineNumber } from "react-icons/ai";
 import { TbListNumbers, TbNumbers } from "react-icons/tb";
 import { useAppContext } from "../context/appContext";
 import { utils as XLSXUtils, writeFile as writeXLSXFile } from 'xlsx';
-import { tobacco, postTobacco, cannabis, postCannabis, safety, healthy
+import { tobaccoElem, tobacco, postTobacco, cannabis, postCannabis, safety, healthy
 } from "../utils/questions";
 import { ThreeDots } from 'react-loader-spinner';
 import {useTranslation} from "react-i18next";
@@ -108,9 +108,14 @@ const FormMetrics = () => {
   };
 
   const formTimeType = (formType, when, data) => {
+    console.log(formType)
     if (formType === "You and Me Vape Free (middle school and above)") {
       return when === "before" ? createQuestionsToAnswersMap(tobacco, data) : createQuestionsToAnswersMap(tobacco.concat(postTobacco), data);
-    } else if (formType === "Smart Talk: Cannabis Prevention & Education Awareness") {
+    } 
+    else if(formType === "You and Me, Together Vape-Free(elem)") {
+      return when === "before" ? createQuestionsToAnswersMap(tobaccoElem, data) : createQuestionsToAnswersMap(tobaccoElem.concat(postTobacco), data);
+    } 
+    else if (formType === "Smart Talk: Cannabis Prevention & Education Awareness") {
       return when === "before" ? createQuestionsToAnswersMap(cannabis, data) : createQuestionsToAnswersMap(cannabis.concat(postCannabis),data);
     }
     else if (formType === "Safety First"){

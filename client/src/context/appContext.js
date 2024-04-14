@@ -810,7 +810,6 @@ const AppProvider = ({ children }) => {
             uniqueResponseTypes.push(newResponseType);
           }
         }
-        console.log(uniqueResponseTypes)
 
         for (const responseTypeIndex in uniqueResponseTypes) {
           newResponses.push({
