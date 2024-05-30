@@ -140,7 +140,6 @@ const configureFormStates = async (userLocations, user, formStates) => {
     newCityOptions,
     newSchoolOptions,
   } = formStates;
-
   switch (user.role) {
     case "Site Admin":
       newSearchState = userLocations[0]?.state;
@@ -259,6 +258,7 @@ const narrowAllSchools = async (getParams, allowed = false) => {
     if (allowed) {
       const {data} = await axios.get(`/api/v1/schools/user`);
       const { userLocations } = data;
+      console.log(userLocations)
 
       const { state, county, city, district, school } = getParams;
 
@@ -744,27 +744,27 @@ const AppProvider = ({ children }) => {
       const filteredSchools = schools.filter((obj) => {
         switch (user.role) {
           case "Site Admin":
-            return obj.school === userLocations[0]?.school;
+            return obj.school.toLowerCase() === userLocations[0]?.school.toLowerCase();
           case "District Admin":
-            return obj.district === userLocations[0]?.district;
+            return obj.district.toLowerCase() === userLocations[0]?.district.toLowerCase();
           case "County Admin":
-            return obj.county === userLocations[0]?.county;
+            return obj.county.toLowerCase() === userLocations[0]?.county.toLowerCase();
           case "State Admin":
-            return obj.state === userLocations[0]?.state;
+            return obj.state.toLowerCase() === userLocations[0]?.state.toLowerCase();
           case "Stanford Staff":
             return true;
           case "Teacher":
-            return obj.teacher === user._id;
+            return obj.teacher.toLowerCase() === user._id.toLowerCase();
           default:
             return false;
         }
       });
-
+      
 
       let newResponses = [];
       let teacherNames = [];
       let schoolIndex = (currentSchoolIndex && !all) ? currentSchoolIndex : 0;
-
+      console.log(filteredSchools)
       while ( schoolIndex < filteredSchools.length) {
 
         const { data: data2 } = await authFetch.get('/studentResponses', {
@@ -778,7 +778,7 @@ const AppProvider = ({ children }) => {
             all
           }
         });
-        const { teacherName, studentResponses } = data2;
+        const {teacherId, teacherName, studentResponses } = data2;
 
         // let teacherMatch = teacherNames.find(function(obj) {
         //     return obj[1] === filteredSchools[schoolIndex].teacher;
@@ -831,7 +831,6 @@ const AppProvider = ({ children }) => {
         }
       }
       if (user.role === 'Stanford Staff') {
-        console.log('hi')
         if (schoolIndex >= filteredSchools.length && (newResponses.length === 0 || all)) {
           const offsetIndex = schoolIndex - filteredSchools.length;
 

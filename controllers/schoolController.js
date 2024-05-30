@@ -49,6 +49,7 @@ catch(error){
 
 
 const getUserSchools = async (req, res) => {
+  console.log('firstone')
   const user = await User.findOne({ _id: req.user.userId });
   const userLocations = await School.find({ teacher: user._id });
 
@@ -98,6 +99,8 @@ const getSchools = async (req, res) => {
   }
 
   const schools = await School.find(queryObject);
+  console.log(schools)
+  
 
   res.status(StatusCodes.OK).json({ schools });
 };

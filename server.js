@@ -79,7 +79,6 @@ app.post('/locales/add/:lng/:ns', (req, res) => {
 
     res.send('ok');
   } catch (error) {
-    console.log(error);
   }
 });
 

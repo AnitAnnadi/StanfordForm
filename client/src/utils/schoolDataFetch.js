@@ -3,7 +3,7 @@ import {common} from "@mui/material/colors";
 
 const narrowCounties = ({state}) => {
 
-    console.log('hi')
+    console.log('1')
     const counties = schoolData
         .filter((school) => school.state.toUpperCase() === state.toUpperCase())
         .map((school) => school.county)
@@ -13,12 +13,12 @@ const narrowCounties = ({state}) => {
 }
 
 const narrowDistricts = ({state, county, city}) => {
+    console.log('2')
     const districts = schoolData
         .filter((school) => {
             if (!school?.district) {
               return false
             }
-
             if (state && county && city) {
                 return (school.state.toUpperCase() === state.toUpperCase() && school.county.toUpperCase() === county.toUpperCase() && school.city.toUpperCase() === city.toUpperCase())
             } else if (state && county) {
@@ -40,6 +40,7 @@ const narrowDistricts = ({state, county, city}) => {
 }
 
 const narrowCities = ({state, county}) => {
+    // console.lo
     const cities = schoolData
         .filter((school) => {
             if (county === undefined) {
@@ -57,6 +58,8 @@ const narrowCities = ({state, county}) => {
 }
 
 const narrowSchools = ({state, county, city, district}) => {
+    console.log('3')
+    console.log(state, county, city, district)
     const schools = schoolData
         .filter((school) => {
           // Seems like there should be a better way to do this but I can't think of it right now
@@ -83,6 +86,7 @@ const narrowSchools = ({state, county, city, district}) => {
 }
 
 const getSchoolObject = ({state, county, city, school: schoolName}) => {
+    console.log('4')
     return schoolData
         .find((school) =>
           school.state.toUpperCase() === state.toUpperCase()
@@ -92,6 +96,7 @@ const getSchoolObject = ({state, county, city, school: schoolName}) => {
 }
 
 const getDistrictCounty = (state, city, schoolName) => {
+    console.log('5')
     const {district, county} = schoolData
         .find((school) => school.state.toUpperCase() === state.toUpperCase() && school.city.toUpperCase() === city.toUpperCase() && school.name.toUpperCase() === schoolName.toUpperCase() && school.district)
 

@@ -27,7 +27,7 @@ const getStudentResponses = async(req, res) => {
 
   let form = all=='true' ? 'all' : formType
   const teacher = await User.findOne({ _id: teacherId })
-
+  // console.log(county)
 
   const queryObject = {
     school,
@@ -41,7 +41,6 @@ const getStudentResponses = async(req, res) => {
   if (grade && grade !== 'all') {
     queryObject.grade = grade;
   }
-  console.log(period)
   if (period && period !== 'all') {
     queryObject.period = period;
   }
@@ -50,7 +49,7 @@ const getStudentResponses = async(req, res) => {
   }
 
   const studentResponses = await StudentResponse.find(queryObject)
-  res.status(StatusCodes.OK).json({ teacherName: teacher?.name, studentResponses });
+  res.status(StatusCodes.OK).json({ teacherId: teacher?.id, nameteacherName: teacher?.name, studentResponses });
 }
 catch(error){
   console.log(error)
@@ -115,7 +114,6 @@ const getNoCodeStudentResponses = async(req, res) => {
 
 const getHealthyFutures = async(req,res) =>{
   const {teacherId} = req.query
-  console.log(teacherId)
   const responses = await Certificates.find({teacherId:teacherId})
   const responsesByCannabis = responses.filter(response => response.formType === 'Healthy Futures: Cannabis');
   const responsesByTobacco = responses.filter(response => response.formType === 'Healthy Futures: Tobacco/Nicotine/Vaping');

@@ -222,6 +222,7 @@ const SearchContainer = ({ startReload }) => {
         setToNarrowSchools({reactState: "schoolOptions", allowed: true, county: e.target.value})
         break;
       case "searchCity":
+        console.log('district')
         handleChanges({
           [e.target.name]: e.target.value,
           searchDistrict: "all",
