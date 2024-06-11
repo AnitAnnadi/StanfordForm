@@ -200,7 +200,7 @@ export const tobacco = [
   },
   {
     question:
-      "Imagine you vape nicotine occasionally:  How likely are you to become addicted?",
+      "Imagine you vape nicotine occasionally: How likely are you to become addicted?",
     answers: [
       "Not at all likely to become addicted",
       "Slightly likely to become addicted",
@@ -211,7 +211,7 @@ export const tobacco = [
   },
   {
     question:
-      "Imagine you vape nicotine daily:  How likely are you to become addicted?",
+      "Imagine you vape nicotine daily: How likely are you to become addicted?",
 
     answers: [
       "Not at all likely to become addicted",
@@ -575,7 +575,7 @@ export const tobaccoElem = [{
 },
 {
   question:
-    "Imagine you vape nicotine daily:  How likely are you to become addicted? (More squares = more addiction)",
+    "Imagine you vape nicotine daily: How likely are you to become addicted? (More squares = more addiction)",
 
   answers: [
     "Not at all likely to become addicted",
