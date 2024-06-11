@@ -49,7 +49,7 @@ const getStudentResponses = async(req, res) => {
   }
 
   const studentResponses = await StudentResponse.find(queryObject)
-  res.status(StatusCodes.OK).json({ teacherId: teacher?.id, nameteacherName: teacher?.name, studentResponses });
+  res.status(StatusCodes.OK).json({ teacherName: teacher?.name, studentResponses });
 }
 catch(error){
   console.log(error)

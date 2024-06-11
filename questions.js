@@ -101,7 +101,7 @@ export const safety = [
 
   {
     question:
-      "Imagine you use cannabis products (smoke, vape, eat, or drink) daily.  How harmful would this be for your health?",
+      "Imagine you use cannabis products (smoke, vape, eat, or drink) daily. How harmful would this be for your health?",
     answers: [
       "Not at all harmful",
       "Slightly harmful",

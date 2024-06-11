@@ -175,7 +175,7 @@ const JoinForm = () => {
       }
     }
     else{
-      if (form==="You and Me, Together Vape-Free" && (parseInt(grade)<8 || grade =="K")){
+      if (form==="You and Me, Together Vape-Free" && (parseInt(grade)<6 || grade =="K")){
         newForm="You and Me, Together Vape-Free(elem)"
       }
       if (

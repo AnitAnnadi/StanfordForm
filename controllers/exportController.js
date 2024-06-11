@@ -62,8 +62,8 @@ const getExport = async (req, res) => {
       school = await School.findOne({ _id: schoolId });
       teacher = await User.findOne({ _id: teacherId });
       studentResponses = await StudentResponse.find(responseQueryObject);
-      console.log(responseQueryObject)
-      console.log(studentResponses)
+      // console.log(responseQueryObject)
+      // console.log(studentResponses)
     } else {
       responseQueryObject = {
         school: schoolName,
@@ -115,6 +115,7 @@ const getExport = async (req, res) => {
         });
         if (studentResponse.formType === "You and Me Vape Free (middle school and above)") {
           if (studentResponse.when === "before") {
+            console.log(questions)
             findResponse(tobacco, questions, obj);
           } else {
             findResponse(tobacco.concat(postTobacco), questions, obj);

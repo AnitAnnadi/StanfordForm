@@ -85,6 +85,7 @@ const SearchContainer = ({ startReload }) => {
         } else if (formtype === "Healthy Futures: Cannabis") {
           healthyCannabis.push(obj);
         }
+
       });
 
       const vapeSheet = XLSXUtils.json_to_sheet(vape);
