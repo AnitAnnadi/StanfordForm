@@ -61,6 +61,7 @@ const SearchContainer = ({ startReload }) => {
   const [questionsToAnswers, setQuestionsToAnswers] = useState({});
   let reorderedQuestionsToAnswers = {};
   const vape = [];
+  const vapeElem = []; 
   const cannabis = [];
   const safety = [];
   const healthyTobacco = [];
@@ -74,7 +75,11 @@ const SearchContainer = ({ startReload }) => {
         const formtype = obj["form type"];
         if (formtype === "You and Me Vape Free (middle school and above)") {
           vape.push(obj);
-        } else if (
+        }
+        // else if (formtype === "You and Me Vape Free (middle school and above)") {
+        //   vapeElem.push(obj);
+        // }  
+        else if (
           formtype === "Smart Talk: Cannabis Prevention & Education Awareness"
         ) {
           cannabis.push(obj);

@@ -76,7 +76,7 @@ const JoinForm = () => {
       return (
         <div>
           <h4 className="form-title">
-            t('school_name', 'School Name')
+            {t('school_name', 'School Name')}
           </h4>
           <select
             name="school"
