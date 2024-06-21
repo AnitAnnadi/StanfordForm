@@ -12,6 +12,7 @@ import {
   postCannabis,
   safety,
   healthy,
+  tobaccoElem
 } from "../questions.js";
 import NoCode from "../models/NoCode.js";
 let exportData = [];
@@ -120,7 +121,16 @@ const getExport = async (req, res) => {
           } else {
             findResponse(tobacco.concat(postTobacco), questions, obj);
           }
-        } else if (
+        }
+        else if (studentResponse.formType === "You and Me, Together Vape-Free(elem)") {
+          if (studentResponse.when === "before") {
+            console.log(questions)
+            findResponse(tobaccoElem, questions, obj);
+          } else {
+            findResponse(tobaccoElem.concat(postTobacco), questions, obj);
+          }
+        }
+        else if (
           studentResponse.formType ===
           "Smart Talk: Cannabis Prevention & Education Awareness"
         ) {

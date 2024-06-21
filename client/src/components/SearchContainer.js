@@ -76,9 +76,9 @@ const SearchContainer = ({ startReload }) => {
         if (formtype === "You and Me Vape Free (middle school and above)") {
           vape.push(obj);
         }
-        // else if (formtype === "You and Me Vape Free (middle school and above)") {
-        //   vapeElem.push(obj);
-        // }  
+        else if (formtype === "You and Me, Together Vape-Free(elem)") {
+          vapeElem.push(obj);
+        }  
         else if (
           formtype === "Smart Talk: Cannabis Prevention & Education Awareness"
         ) {

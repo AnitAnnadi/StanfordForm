@@ -104,11 +104,12 @@ const FormMetrics = () => {
         reorderedQuestionsToAnswers[question.question] = questionsToAnswers[question.question];
       }
     });
+    console.log(reorderedQuestionsToAnswers)
     setQuestionsToAnswers(reorderedQuestionsToAnswers);
   };
 
   const formTimeType = (formType, when, data) => {
-    console.log(formType)
+    console.log(formType === "You and Me, Together Vape-Free(elem)")
     if (formType === "You and Me Vape Free (middle school and above)") {
       return when === "before" ? createQuestionsToAnswersMap(tobacco, data) : createQuestionsToAnswersMap(tobacco.concat(postTobacco), data);
     } 
@@ -199,7 +200,6 @@ const FormMetrics = () => {
     } 
     
     else {
-      // console.log('2')
       setIsOverall(false);
       setIsLoading(true);
       const queryParameters = new URLSearchParams(location.search);
@@ -369,7 +369,7 @@ const FormMetrics = () => {
                 icon={<AiOutlineNumber />}
                 text={`${numberOfResponses} response(s)`}
               />
-              {console.log(responseType)}
+              {/* {console.log(responseType)} */}
               <ResponseGroupInfo
                 icon={<TbListNumbers />}
                 text={

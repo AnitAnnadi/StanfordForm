@@ -941,6 +941,7 @@ const AppProvider = ({ children }) => {
         exportLoading
     } = state;
     handleChange({ name: "exportLoading", value: true });
+    console.log('context export')
     if (search) {
         try {
             dispatch({
@@ -950,6 +951,7 @@ const AppProvider = ({ children }) => {
 
             const data = await authFetch.get(`/export/${formCode}${search}`);
             const exportData = data.data.exportData;
+            console.log(exportData)
             
             
             dispatch({
