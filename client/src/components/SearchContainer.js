@@ -94,6 +94,7 @@ const SearchContainer = ({ startReload }) => {
       });
 
       const vapeSheet = XLSXUtils.json_to_sheet(vape);
+      const vapeElemSheet = XLSXUtils.json_to_sheet(vapeElem);
       const cannabisSheet = XLSXUtils.json_to_sheet(cannabis);
       const safetySheet = XLSXUtils.json_to_sheet(safety);
       const healthyTobaccoSheet = XLSXUtils.json_to_sheet(healthyTobacco);
@@ -101,6 +102,7 @@ const SearchContainer = ({ startReload }) => {
 
       const workbook = XLSXUtils.book_new();
       XLSXUtils.book_append_sheet(workbook, vapeSheet, "Vape-Free");
+      XLSXUtils.book_append_sheet(workbook, vapeElemSheet, "Vape-Free(elem)");
       XLSXUtils.book_append_sheet(workbook, cannabisSheet, "Smart Talk");
       XLSXUtils.book_append_sheet(workbook, safetySheet, "Safety First");
       XLSXUtils.book_append_sheet(
