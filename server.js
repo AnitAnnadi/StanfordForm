@@ -25,6 +25,8 @@ import locationRouter from './routes/locationRoutes.js';
 import studentResponseRouter from './routes/studentResponseRoutes.js';
 import formRouter from './routes/formRoutes.js';
 import exportRouter from './routes/exportRoutes.js';
+import userRouter from './routes/userRoutes.js';
+
 
 // middleware
 import notFoundMiddleware from './middleware/not-found.js';
@@ -61,6 +63,7 @@ app.use('/api/v1/locations', locationRouter);
 app.use('/api/v1/studentResponses', authenticateUser, studentResponseRouter);
 app.use('/api/v1/form', authenticateUser, formRouter);
 app.use('/api/v1/export', authenticateUser, exportRouter);
+app.use('/api/v1/user', authenticateUser, userRouter);
 
 app.use(
   middleware.handle(i18next, {

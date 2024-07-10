@@ -61,6 +61,7 @@ const stateList = ["all", "Alabama", "Alaska", "Arizona", "Arkansas", "Californi
 const initialState = {
   userLoading: false,
   exportLoading:false,
+  userExportLoading:false,
   certificate:false,
   isLoading: false,
   showAlert: false,
@@ -117,7 +118,8 @@ const initialState = {
   pendingSchool:[],
   approved:false,
   declined:false,
-  stanfordNewLoc:false
+  stanfordNewLoc:false,
+  allUsers:null
 };
 
 const stringDifScore = (str1, str2) => {
@@ -629,6 +631,7 @@ const AppProvider = ({ children }) => {
     // clearAlert();
   };
 
+
   const forgotPassword = async({email})=>{
     try{
       const { data } = await axios.post(`/api/v1/auth/forgotPassword`,{email})
@@ -1094,6 +1097,17 @@ const AppProvider = ({ children }) => {
     }
   }
 
+  const getUsers = async()=>{
+    try{
+      handleChange({ name: "userExportLoading", value: true });
+      const { data } = await axios.post(`/api/v1/user/all`)
+      console.log(data)
+      handleChange({ name: "allUsers", value: data });
+    }
+    catch(error){
+
+    }
+  }
   const verify2fa = async(_id) => {
     try{
       const { data } = await axios.post(`/api/v1/auth/verify2fa`,{_id})
@@ -1156,7 +1170,8 @@ const AppProvider = ({ children }) => {
         errorAlert,
         approveLocationRequest,
         declineLocationRequest,
-        getLocations
+        getLocations,
+        getUsers
       }}
     >
       {children}

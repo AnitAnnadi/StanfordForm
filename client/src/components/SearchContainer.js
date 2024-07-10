@@ -51,14 +51,18 @@ const SearchContainer = ({ startReload }) => {
     userLocations,
     currentSchoolIndex,
     shouldReload,
-    allResponseGroups,
+    getUsers,
     getExport,
     setToNarrowSchools,
     exportData,
+    allUsers,
     exportLoading,
+    userExportLoading
   } = useAppContext();
   const [exportClicked, setExportClicked] = useState(false);
   const [questionsToAnswers, setQuestionsToAnswers] = useState({});
+  const [usersSheetCreated, setUsersSheetCreated] = useState(false);
+
   let reorderedQuestionsToAnswers = {};
   const vape = [];
   const vapeElem = []; 
@@ -121,10 +125,34 @@ const SearchContainer = ({ startReload }) => {
     }
   }, [exportData, exportClicked]);
 
+  useEffect(() => {
+    if (allUsers && !usersSheetCreated) {
+      
+      console.log("Creating users sheet...");
+      console.log(allUsers)
+      const usersSheet = XLSXUtils.json_to_sheet(allUsers);
+      const workbook = XLSXUtils.book_new();
+      XLSXUtils.book_append_sheet(workbook, usersSheet, "All Users");
+      writeXLSXFile(workbook, `users.xlsx`);
+      // Set a flag to indicate that the sheet has been created
+      setUsersSheetCreated(true);
+      handleChange({ name: "userExportLoading", value: false });
+
+    }
+  }, [allUsers, usersSheetCreated]);
+
+
   const createExcelSheet = async () => {
     await getResponseGroups(currentSchoolIndex, shouldReload, true);
     setExportClicked(true);
   };
+
+  const createUserSheet = async(e) =>{
+    e.preventDefault()
+    console.log('h')
+    await getUsers();
+
+  }
 
   const createQuestionsToAnswersMap = (array, questionsToAnswers) => {
     reorderedQuestionsToAnswers = {};
@@ -418,6 +446,25 @@ const SearchContainer = ({ startReload }) => {
               </>
             ) : (
               t('export_all_data', 'Export All Data')
+            )}
+          </button>
+          <button
+            className="btn btn-block btn-apply"
+            disabled={isLoading}
+            onClick={createUserSheet}
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              placeItems: "center",
+            }}
+          >
+            {userExportLoading ? (
+              <>
+                {t('exporting_data', 'Exporting Data')}
+                <ThreeDots color="green" height={20} width={20} />
+              </>
+            ) : (
+              t('export_user_data', 'Export User Data')
             )}
           </button>
 

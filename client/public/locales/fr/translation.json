@@ -20,6 +20,7 @@
   "dashboard": "tableau de bord",
   "search_forms": "formulaires de recherche",
   "export_all_data": "Exporter toutes les données",
+  "export_user_data":"exporter les données utilisateur",
   "overall_breakdown": "Répartition globale",
   "state": "État",
   "county": "comté",

@@ -20,6 +20,8 @@
   "dashboard": "仪表板",
   "search_forms": "搜索表格",
   "export_all_data": "导出所有数据",
+  "export_user_data": "导出用户数据",
+
   "overall_breakdown": "整体细分",
   "state": "状态",
   "county": "县",

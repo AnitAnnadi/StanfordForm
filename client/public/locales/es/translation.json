@@ -20,6 +20,7 @@
   "dashboard": "panel",
   "search_forms": "formularios de búsqueda",
   "export_all_data": "Exportar todos los datos",
+  "export_user_data": "exportar datos de usuario",
   "overall_breakdown": "Desglose general",
   "state": "estado",
   "county": "condado",
