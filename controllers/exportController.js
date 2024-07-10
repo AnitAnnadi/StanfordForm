@@ -63,8 +63,7 @@ const getExport = async (req, res) => {
       school = await School.findOne({ _id: schoolId });
       teacher = await User.findOne({ _id: teacherId });
       studentResponses = await StudentResponse.find(responseQueryObject);
-      // console.log(responseQueryObject)
-      // console.log(studentResponses)
+      console.log(studentResponses)
     } else {
       responseQueryObject = {
         school: schoolName,
@@ -97,6 +96,15 @@ const getExport = async (req, res) => {
 
     const map = await Promise.all(
       studentResponses.map(async (studentResponse) => {
+        const date = new Date(studentResponse.createdAt);
+        const options = {
+            timeZone: 'America/Los_Angeles',
+        };
+
+        const readableDate = date.toLocaleString('en-US', options);
+        console.log(readableDate);
+
+
         let obj = {
           teacher: teacher?.name,
           school: school?.school,
@@ -104,6 +112,7 @@ const getExport = async (req, res) => {
           district: school.district === "custom" ? "n/a" : school.district,
           state:school.state,
           city: school.city,
+          date: readableDate
         };
         obj.when = studentResponse.when;
         obj.grade = studentResponse.grade;
@@ -116,7 +125,6 @@ const getExport = async (req, res) => {
         });
         if (studentResponse.formType === "You and Me Vape Free (middle school and above)") {
           if (studentResponse.when === "before") {
-            console.log(questions)
             findResponse(tobacco, questions, obj);
           } else {
             findResponse(tobacco.concat(postTobacco), questions, obj);
@@ -124,7 +132,6 @@ const getExport = async (req, res) => {
         }
         else if (studentResponse.formType === "You and Me, Together Vape-Free(elem)") {
           if (studentResponse.when === "before") {
-            console.log(questions)
             findResponse(tobaccoElem, questions, obj);
           } else {
             findResponse(tobaccoElem.concat(postTobacco), questions, obj);
@@ -150,6 +157,7 @@ const getExport = async (req, res) => {
         }
       })
     );
+    console.log(exportData)
     res.status(StatusCodes.OK).json({ exportData });
   } catch (error) {
     console.error("Error exporting exportData:", error);
