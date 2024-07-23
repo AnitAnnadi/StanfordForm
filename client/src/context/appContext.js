@@ -119,7 +119,8 @@ const initialState = {
   approved:false,
   declined:false,
   stanfordNewLoc:false,
-  allUsers:null
+  allUsers:null,
+  checkedYears:[]
 };
 
 const stringDifScore = (str1, str2) => {
@@ -719,8 +720,7 @@ const AppProvider = ({ children }) => {
       searchTeacher,
       searchType,
       searchBeforeAfter,
-      responseGroups,
-      exportLoading
+      checkedYears
     } = state;
     dispatch({ type: GET_RESPONSE_GROUPS_BEGIN, payload:{shouldReload} });
     try {
@@ -778,7 +778,8 @@ const AppProvider = ({ children }) => {
             period: searchPeriod,
             formType: searchType,
             when: searchBeforeAfter,
-            all
+            all,
+            checkedYears
           }
         });
         const {teacherId, teacherName, studentResponses } = data2;

@@ -9,6 +9,7 @@ import {
   narrowSchools,
 } from "../utils/schoolDataFetch";
 import { Link } from "react-router-dom";
+import SchoolYearCheckboxes from "./SchoolYearCheckboxes";
 import { utils as XLSXUtils, writeFile as writeXLSXFile } from "xlsx";
 import {
   tobacco,
@@ -62,6 +63,7 @@ const SearchContainer = ({ startReload }) => {
   const [exportClicked, setExportClicked] = useState(false);
   const [questionsToAnswers, setQuestionsToAnswers] = useState({});
   const [usersSheetCreated, setUsersSheetCreated] = useState(false);
+  const [schoolYearsList, setSchoolYearsList] = useState([]);
 
   let reorderedQuestionsToAnswers = {};
   const vape = [];
@@ -70,6 +72,11 @@ const SearchContainer = ({ startReload }) => {
   const safety = [];
   const healthyTobacco = [];
   const healthyCannabis = [];
+  const startYear = 2023
+  let currentYear = new Date().getFullYear() 
+  
+
+
 
   const { t, i18n } = useTranslation();
 
@@ -141,6 +148,14 @@ const SearchContainer = ({ startReload }) => {
     }
   }, [allUsers, usersSheetCreated]);
 
+  useEffect(() => {
+    const fetchSchoolYears = async () => {
+      const years = await schoolYears(startYear, currentYear);
+      setSchoolYearsList(years);
+    };
+    fetchSchoolYears();
+  }, [startYear, currentYear]);
+
 
   const createExcelSheet = async () => {
     await getResponseGroups(currentSchoolIndex, shouldReload, true);
@@ -153,6 +168,23 @@ const SearchContainer = ({ startReload }) => {
     await getUsers();
 
   }
+
+  const schoolYears = async (startYear, endYear) => {
+    if (startYear >= endYear) {
+        console.log("Invalid input: Start year should be less than end year");
+        return [];
+    }
+
+    const schoolYearList = [];
+    for (let year = startYear; year <= endYear; year++) {
+        const nextYear = year + 1;
+        schoolYearList.push(`${year}-${nextYear}`);
+    }
+
+    return schoolYearList;
+};
+
+ 
 
   const createQuestionsToAnswersMap = (array, questionsToAnswers) => {
     reorderedQuestionsToAnswers = {};
@@ -212,6 +244,14 @@ const SearchContainer = ({ startReload }) => {
     return values;
   };
 
+  const handleCheckboxChange = (e)=>{
+    if (e.target.checked){
+
+    }
+    else{
+
+    }
+  }
   const handleLocalChange = (e) => {
     switch (e.target.name) {
       case "searchState":
@@ -429,6 +469,11 @@ const SearchContainer = ({ startReload }) => {
           >
             {t('search_forms', 'search forms')}
           </button>
+           {/* Render school years checkboxes */}
+          <div>
+          <label>{t("Select School Year(s)")}</label>
+          <SchoolYearCheckboxes schoolYears={schoolYearsList} />
+        </div>
           <button
             className="btn btn-block btn-apply"
             disabled={isLoading}
