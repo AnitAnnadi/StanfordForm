@@ -67,7 +67,18 @@ const CreateLocPopup = ({ setDisplay }) => {
                 }, 500);
               }}
             >
-              Continue
+              Create US Location
+            </button>
+            <button
+              className="btn btn-block modal-clear-btn"
+              onClick={() => {
+                handleChange({ name: "pendingApproval", value: false });
+                setTimeout(() => {
+                  navigate("/createLoc");
+                }, 500);
+              }}
+            >
+              Create Foreign Location
             </button>
           </div>
         </div>

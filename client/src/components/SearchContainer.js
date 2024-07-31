@@ -493,7 +493,7 @@ const SearchContainer = ({ startReload }) => {
               t('export_all_data', 'Export All Data')
             )}
           </button>
-          {user.role === "Stanford Admin?"?
+          {user.role === "Stanford Staff"?
           <button
             className="btn btn-block btn-apply"
             disabled={isLoading}
