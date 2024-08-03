@@ -14,7 +14,8 @@ import {
 } from "../utils/schoolDataFetch";
 import CreateLocPopup from "../components/CreateLocPopup";
 import {useTranslation} from "react-i18next";
-
+import countries from "../utils/countries";
+import states from "../utils/states";
 const CreateLoc = () => {
   const {
     user,
@@ -29,66 +30,20 @@ const CreateLoc = () => {
     errorAlert
   } = useAppContext();
   const navigate = useNavigate();
+  const currentURL = new URL(window.location.href);
+  const [, , type] = currentURL.pathname.split('/');
+  console.log(type)
 
   const [state, setState] = useState("default");
+  const [country, setCountry] = useState("default");
+
   const [city, setCity] = useState("default");
   const [school, setSchool] = useState("default");
   const [district, setDistrict] = useState("default");
   const [county, setCounty] = useState("default");
 
-  const states = [
-    "Alabama",
-    "Alaska",
-    "Arizona",
-    "Arkansas",
-    "California",
-    "Colorado",
-    "Connecticut",
-    "Delaware",
-    "District of Columbia",
-    "Florida",
-    "Georgia",
-    "Hawaii",
-    "Idaho",
-    "Illinois",
-    "Indiana",
-    "Iowa",
-    "Kansas",
-    "Kentucky",
-    "Louisiana",
-    "Maine",
-    "Maryland",
-    "Massachusetts",
-    "Michigan",
-    "Minnesota",
-    "Mississippi",
-    "Missouri",
-    "Montana",
-    "Nebraska",
-    "Nevada",
-    "New Hampshire",
-    "New Jersey",
-    "New Mexico",
-    "New York",
-    "North Carolina",
-    "North Dakota",
-    "Ohio",
-    "Oklahoma",
-    "Oregon",
-    "Pennsylvania",
-    "Rhode Island",
-    "South Carolina",
-    "South Dakota",
-    "Tennessee",
-    "Texas",
-    "Utah",
-    "Vermont",
-    "Virginia",
-    "Washington",
-    "West Virginia",
-    "Wisconsin",
-    "Wyoming",
-  ];
+
+  
   useEffect(() => {
     if (pendingApproval){
       console.log(pendingApproval)
@@ -130,6 +85,9 @@ const CreateLoc = () => {
   );
 
   const handleChange = (field, value) => {
+    if (field === "country"){
+      setCountry(value)
+    }
     if (field === "state") {
       setState(value);
       setCity("default");
@@ -162,32 +120,44 @@ const CreateLoc = () => {
   };
 
   const handleSubmit = (e) => {
+    console.log(country)
+
     e.preventDefault();
-    if (
-      state === "default" ||
-      (county === "default") ||
-      (city === "default") ||
-      (school === "default")
-    ) {
-      displayAlert();
-      return;
+    if(type==="us"){
+      if (
+        state === "default" ||
+        (county === "default") ||
+        (city === "default") ||
+        (school === "default")
+      ) {
+        displayAlert();
+        return;
+      }
     }
+    else if (type==="foreign"){
+      if (country==="default"|| school ==="default"){
+        displayAlert();
+        return;
+      }
+    }
+
     const existingSchools = new Set(narrowSchools({ state, county, city, district }));
     if (existingSchools.has(school)) {
       errorAlert(`${school} already exists.`)
       return;
     } else {
-      
   
     successAlert("Redirecting...")
     
     addNewLocation({
       multiplePeriods: multiplePeriods,
+      country: country !== "default" ? country : null,
       state: state,
       county: county !== "default" ? county : null,
       city: city !== "default" ? city : null,
       district: district !== "default" ? district : null,
       school: school !== "default" ? school : null,
+      type
     }, false);
   }
   };
@@ -206,6 +176,8 @@ const CreateLoc = () => {
               {t('create_location', 'Create Location')}{" "}
               {numOfLocations > 1 ? numOfLocations : ""}
             </h3>
+            {type=="us"?
+            <div>
             <h4 className="form-title">{t('UP_state', 'State')}*</h4>
             <select
               name="aliasChoice"
@@ -222,14 +194,14 @@ const CreateLoc = () => {
                 );
               })}
             </select>
-            <h4 className="form-title">{t('UP_country', 'Country')}*</h4>
+            <h4 className="form-title">{t('UP_country', 'County')}*</h4>
             <select
               name="aliasChoice"
               value={county}
               onChange={(e) => handleChange("county", e.target.value)}
               className="form-select"
             >
-              <option value={"default"}>{t('choose_your_country', 'Choose your Country')}</option>
+              <option value={"default"}>{t('choose_your_country', 'Choose your County')}</option>
               {counties.map((county, index) => {
                 return (
                   <option key={index} value={county}>
@@ -270,6 +242,25 @@ const CreateLoc = () => {
                 );
               })}
             </select>
+            </div>:
+            <div>
+            <h4 className="form-title">Country</h4>
+            <select
+              name="aliasChoice"
+              value={country}
+              onChange={(e) => handleChange("country", e.target.value)}
+              className="form-select"
+            >
+              <option value={"default"}>Chose your country</option>
+              {countries.map((country, index) => {
+                return (
+                  <option key={index} value={country}>
+                    {country}
+                  </option>
+                );
+              })}
+            </select>
+            </div>}
             <h4 className="form-title">{t('UP_school', 'School')}*</h4>
             <input
               name="aliasChoice"

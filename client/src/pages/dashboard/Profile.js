@@ -111,6 +111,7 @@ const Profile = () => {
               </>
             )}
           </div>
+          {console.log(userLocations)}
           {userLocations.map((location, index) => {
             const renderLocationInfo = () => {
               if (user.role === "Teacher" || user.role === "Site Admin") {
@@ -144,8 +145,11 @@ const Profile = () => {
                     return <></>;
                   }
                 } else {
+                  
                   schoolLocations.push(
-                    `${location.school} - ${location.city}, ${location.state}`
+                    location.country=="country"?
+                    `${location.school} - ${location.city}, ${location.state}`:
+                    `${location.school} - ${location.country}`
                   );
                 }
               }

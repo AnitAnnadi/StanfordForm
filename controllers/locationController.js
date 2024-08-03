@@ -7,21 +7,33 @@ import School from "../models/School.js";
 
 const createLocation = async(req, res) =>{
   try{
-  const { multiplePeriods, state, county, city, district, school } = req.body;
-  if (!state || !county || !city || !school) {
-    throw new BadRequestError('All fields but district are required');
+    console.log(req.body)
+  const { multiplePeriods, country,  state, county, city, district, school, type } = req.body;
+  if (type==="us"){
+    if (!state || !county || !city || !school) {
+      throw new BadRequestError('All fields but district are required');
+    }
   }
+  if (type === "foreign" ){
+    if (!country || !school){
+      throw new BadRequestError('All fields  are required');
+    }
+  }
+
+
 
   const user = await User.findOne({ _id: req.user.userId });
 
   const upperSchool = school.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   const upperDistrict = district ? district.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : undefined;
-  const upperCity = city.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-  const upperCounty = county.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-  const upperState = state.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  const upperCity = city?.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  const upperCounty = county?.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  const upperState = state?.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
  
   const userId= (req.user.userId)
-  const locationExists = await Location.findOne({ state: upperState, county: upperCounty, city: upperCity, district: upperDistrict, name: upperSchool });
+  let locationExists;
+  if(type=="us"){ locationExists = await Location.findOne({ state: upperState, county: upperCounty, city: upperCity, district: upperDistrict, name: upperSchool });}
+  else if (type==="foreign"){locationExists = await Location.findOne({ country:country, name: upperSchool })}
 
   if (locationExists) {
     if (locationExists.approved ==false){
@@ -32,9 +44,9 @@ const createLocation = async(req, res) =>{
     }
   }
 
-  const location = await Location.create({ multiplePeriods, state: upperState, county: upperCounty, city: upperCity, district: upperDistrict, name: upperSchool, approved:user.role=="Stanford Staff", requestedUser: userId })
+  const location = await Location.create({ multiplePeriods, country:country, state: upperState, county: upperCounty, city: upperCity, district: upperDistrict, name: upperSchool, approved:user.role=="Stanford Staff", requestedUser: userId })
   if (user.role==="Stanford Staff"){
-  const newSchool = await School.create({ teacher: location.requestedUser, multiplePeriods:location.multiplePeriods, state:location.state, county:location.county, city:location.city, district:location.district, school:location.name})
+  const newSchool = await School.create({ teacher: location.requestedUser, multiplePeriods:location.multiplePeriods, country:location.country, state:location.state, county:location.county, city:location.city, district:location.district, school:location.name})
   }
   const token = user.createJWT();
   attachCookie({ res, token });
@@ -51,7 +63,7 @@ const approveLocation = async(req,res) =>{
   const location = await Location.findOne({_id });
   console.log(_id)
   location.approved = true;
-  const school = await School.create({ teacher: location.requestedUser, multiplePeriods:location.multiplePeriods, state:location.state, county:location.county, city:location.city, district:location.district, school:location.name})
+  const school = await School.create({ teacher: location.requestedUser, multiplePeriods:location.multiplePeriods,country:location.country, state:location.state, county:location.county, city:location.city, district:location.district, school:location.name})
   await location.save();
   return res.status(StatusCodes.CREATED).json({ school });
   }

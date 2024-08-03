@@ -63,7 +63,7 @@ const CreateLocPopup = ({ setDisplay }) => {
               onClick={() => {
                 handleChange({ name: "pendingApproval", value: false });
                 setTimeout(() => {
-                  navigate("/createLoc");
+                  navigate("/createLoc/us");
                 }, 500);
               }}
             >
@@ -74,7 +74,7 @@ const CreateLocPopup = ({ setDisplay }) => {
               onClick={() => {
                 handleChange({ name: "pendingApproval", value: false });
                 setTimeout(() => {
-                  navigate("/createLoc");
+                  navigate("/createLoc/foreign");
                 }, 500);
               }}
             >

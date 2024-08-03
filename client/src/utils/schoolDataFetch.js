@@ -58,8 +58,6 @@ const narrowCities = ({state, county}) => {
 }
 
 const narrowSchools = ({state, county, city, district}) => {
-    console.log('3')
-    console.log(state, county, city, district)
     const schools = schoolData
         .filter((school) => {
           // Seems like there should be a better way to do this but I can't think of it right now

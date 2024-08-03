@@ -73,6 +73,16 @@ const LocationRequests = () => {
                 <h5>
                   {users[index]?.name} ({users[index]?.email})
                 </h5>
+                {location.country?
+                <div>
+                <p>
+                Country: {location.country}
+                </p>  
+                <p>
+                {location.name}
+                </p>  
+                </div>:
+              <div>
                 <p>
                   {location.city}, {location.state}
                 </p>
@@ -80,6 +90,7 @@ const LocationRequests = () => {
                   {location.county}, {location.district}
                 </p>
                 <p>{location.name}</p>
+               </div>} 
               </div>
             </header>
             <div className="content" key={location._id}>

@@ -55,7 +55,7 @@ function App() {
           </ProtectedRoute>
         } />
 
-        <Route path="/createLoc" element={
+        <Route path="/createLoc/:type" element={
           <ProtectedRoute>
             <CreateLoc />
           </ProtectedRoute>
