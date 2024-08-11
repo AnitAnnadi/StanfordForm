@@ -583,7 +583,8 @@ const SelectLoc = ({ noCode }) => {
               user?.role === "Teacher"||
               user?.role=="Stanford Staff" ? (
                 <p>
-                  {t('dont_see_your_school', "Don't see your school?")}{" "}
+                  {t('dont_see_your_school', "Don't see your school")}{" "}
+                  or have a school outside the United States?
                   <button
                     className="link"
                     style={{

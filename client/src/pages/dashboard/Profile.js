@@ -149,7 +149,7 @@ const Profile = () => {
                   schoolLocations.push(
                     location.country=="country"?
                     `${location.school} - ${location.city}, ${location.state}`:
-                    `${location.school} - ${location.country}`
+                    `${location.school} - ${location.city}, ${location.country}`
                   );
                 }
               }

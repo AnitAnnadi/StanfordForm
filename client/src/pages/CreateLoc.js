@@ -120,7 +120,7 @@ const CreateLoc = () => {
   };
 
   const handleSubmit = (e) => {
-    console.log(country)
+    console.log(country, city, school)
 
     e.preventDefault();
     if(type==="us"){
@@ -135,7 +135,7 @@ const CreateLoc = () => {
       }
     }
     else if (type==="foreign"){
-      if (country==="default"|| school ==="default"){
+      if (country==="default"|| school ==="default" || city === "default"){
         displayAlert();
         return;
       }
@@ -261,6 +261,14 @@ const CreateLoc = () => {
               })}
             </select>
             </div>}
+            <h4 className="form-title">{t('UP_city', 'city')}*</h4>
+            <input
+              name="aliasChoice"
+              onChange={(e) => handleChange("city", e.target.value)}
+              className="form-input"
+              placeholder="Enter your city name"
+            >
+            </input>
             <h4 className="form-title">{t('UP_school', 'School')}*</h4>
             <input
               name="aliasChoice"

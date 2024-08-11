@@ -77,6 +77,9 @@ const LocationRequests = () => {
                 <div>
                 <p>
                 Country: {location.country}
+                </p>
+                <p>
+                City:{location.city}
                 </p>  
                 <p>
                 {location.name}
