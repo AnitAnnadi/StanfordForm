@@ -45,12 +45,13 @@ const getFormMetrics = async(req,res) => {
       school: schoolName,
     }
     if (period && period !== 'undefined' && period !== 'null') {
-      console.log('period')
       responseQueryObject.period = period;
       // console.log(responseQueryObject.period)
     }
     // console.log(responseQueryObject)
     teacher = await User.findOne({ _id: teacherId });
+    console.log('hihihi')
+    console.log(teacher)
     studentResponses = await StudentResponse.find(responseQueryObject);
     school = await School.findOne({ _id: schoolId });
   } else {

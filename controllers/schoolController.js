@@ -60,49 +60,67 @@ const getUserSchools = async (req, res) => {
 }
 
 const getSchools = async (req, res) => {
-  const user = await User.findOne({ _id: req.user.userId });
+  try {
+    // Fetch user data
+    const user = await User.findOne({ _id: req.user.userId });
 
-  const token = user.createJWT();
-  attachCookie({ res, token });
+    // Generate and attach JWT
+    const token = user.createJWT();
+    attachCookie({ res, token });
 
-  const {
-    searchState,
-    searchCounty,
-    searchCity,
-    searchDistrict,
-    searchSchool,
-    searchTeacher,
-  } = req.query;
+    // Destructure search query parameters
+    const {
+      searchState,
+      searchCounty,
+      searchCity,
+      searchDistrict,
+      searchSchool,
+      searchTeacher,
+    } = req.query;
 
-  const queryObject = {};
+    console.log("Search District:", searchDistrict);
 
-  const applyCaseInsensitive = (value) => new RegExp(`^${value}$`, 'i');
+    // Create query object
+    const queryObject = {};
 
-  if (searchState && searchState !== 'all') {
-    queryObject.state = applyCaseInsensitive(searchState);
+    // Function to apply case-insensitive regex
+    const applyCaseInsensitive = (value) => {
+      return new RegExp(`^${value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i');
+    };
+
+    // Add conditions to queryObject based on the provided search criteria
+    if (searchState && searchState !== 'all') {
+      queryObject.state = applyCaseInsensitive(searchState);
+    }
+    if (searchCounty && searchCounty !== 'all') {
+      queryObject.county = applyCaseInsensitive(searchCounty);
+    }
+    if (searchCity && searchCity !== 'all') {
+      queryObject.city = applyCaseInsensitive(searchCity);
+    }
+    if (searchDistrict && searchDistrict !== 'all') {
+      queryObject.district = applyCaseInsensitive(searchDistrict);
+    }
+    if (searchSchool && searchSchool !== 'all') {
+      queryObject.school = applyCaseInsensitive(searchSchool);
+    }
+    if (searchTeacher && searchTeacher !== 'all') {
+      queryObject.teacher = user._id; // Assuming user._id is the ObjectId
+    }
+
+    console.log("Query Object:", queryObject);
+
+    // Fetch schools from the database
+    const schools = await School.find(queryObject);
+
+    console.log("Schools found:", schools);
+
+    // Send the response
+    res.status(StatusCodes.OK).json({ schools });
+  } catch (error) {
+    console.error("Error fetching schools:", error);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Error fetching schools" });
   }
-  if (searchCounty && searchCounty !== 'all') {
-    queryObject.county = applyCaseInsensitive(searchCounty);
-  }
-  if (searchCity && searchCity !== 'all') {
-    queryObject.city = applyCaseInsensitive(searchCity);
-  }
-  if (searchDistrict && searchDistrict !== 'all') {
-    queryObject.district = applyCaseInsensitive(searchDistrict);
-  }
-  if (searchSchool && searchSchool !== 'all') {
-    queryObject.school = applyCaseInsensitive(searchSchool);
-  }
-  if (searchTeacher && searchTeacher !== 'all') {
-    // Convert teacher to ObjectId
-    queryObject.teacher = user._id; // Assuming user._id is the ObjectId
-  }
-
-  const schools = await School.find(queryObject);
-  console.log(schools)
-  
-
-  res.status(StatusCodes.OK).json({ schools });
 };
 
 

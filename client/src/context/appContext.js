@@ -552,7 +552,7 @@ const AppProvider = ({ children }) => {
       user
   } = state;
     try {
-      const {multiplePeriods, state, county, city, district, school} = locationData
+      const {multiplePeriods, country, state, county, city, district, school} = locationData
       console.log(school)
       const {data} = await authFetch.post('/locations', locationData); 
       if (! data.msg && data.location){

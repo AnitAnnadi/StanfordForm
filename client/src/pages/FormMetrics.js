@@ -133,6 +133,7 @@ const FormMetrics = () => {
 
   useEffect(()=>{
     if (isOverall){
+      console.log('isover')
       getResponseGroups(currentSchoolIndex,shouldReload, false, true);
     }
   },[isOverall])
@@ -141,10 +142,12 @@ const FormMetrics = () => {
     let combinedQuestionsToAnswers = {};
   
     const fetchDataForResponseGroups = () => {
-      // getResponseGroups(currentSchoolIndex,shouldReload, false, true)
+      console.log('new called' )
+      console.log(responseGroups) // this is returning null
       return Promise.all(
         responseGroups.map((responseGroup) => {
           const { school, uniqueResponseType } = responseGroup;
+    
           const queryParameters = new URLSearchParams({
             noCode: uniqueResponseType?.noCode,
             teacherId: school.teacher,
@@ -167,7 +170,6 @@ const FormMetrics = () => {
     };
   
     if (!location.search) {
-      console.log('1')
       setIsOverall(true);
       setIsLoading(true);
       
@@ -199,7 +201,9 @@ const FormMetrics = () => {
         .catch((error) => console.error(error));
     } 
     
+
     else {
+
       setIsOverall(false);
       setIsLoading(true);
       const queryParameters = new URLSearchParams(location.search);
