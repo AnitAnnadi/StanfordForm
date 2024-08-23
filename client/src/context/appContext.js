@@ -8,7 +8,7 @@ import {
   narrowSchools
 } from "../utils/schoolDataFetch";
 import { distance } from "fastest-levenshtein";
-import { tobacco,postTobacco, cannabis, postCannabis, safety  } from "../utils/questions";
+import { tobacco,postTobacco, cannabis, postCannabis, safety  } from "../utils/questions23-24";
 
 
 import reducer from './reducer';
