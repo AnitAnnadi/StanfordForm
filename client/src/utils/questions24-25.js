@@ -673,6 +673,6 @@ export const cannabis = [
     }
 ]  
 
-// export const healthyCannabis = []
+export const healthyCannabis = []
 
-// export const healthyTobacco = []
+export const healthyTobacco = []

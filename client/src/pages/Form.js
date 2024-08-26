@@ -6,15 +6,28 @@ import Dropdown from "react-dropdown";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+
+//still using 23-24 safety
+import {
+//   tobacco,
+//   postTobacco,
+//   cannabis,
+//   postCannabis,
+  safety,
+//   healthy,
+//   tobaccoElem
+} from "../utils/questions23-24";
+
+
 import {
   tobacco,
-  postTobacco,
+  tobaccoElem,
   cannabis,
-  postCannabis,
-  safety,
   healthy,
-  tobaccoElem
-} from "../utils/questions23-24";
+  // safety,
+  healthyCannabis,
+  healthyTobacco
+} from "../utils/questions24-25";
 import ReCAPTCHA from "react-google-recaptcha"
 import {useTranslation} from "react-i18next";
 import {MdLanguage} from "react-icons/md";
@@ -123,16 +136,17 @@ const Form = () => {
 
   const [usedForm, setUsedForm] = useState(() => {
     if (info["form"] === "You and Me, Together Vape-Free") {
-      return info["when"] === "before" ? tobacco : tobacco.concat(postTobacco);
+      // return info["when"] === "before" ? tobacco : tobacco.concat(postTobacco); //this was for 23-24
+      return tobacco;
     } 
     else if(info["form"] ==="You and Me, Together Vape-Free(elem)"){
-      return info["when"] === "before" ? tobaccoElem : tobaccoElem.concat(postTobacco); 
+      // return info["when"] === "before" ? tobaccoElem : tobaccoElem.concat(postTobacco);  //this was for 23-24
+      return tobaccoElem;
     }else if (
       info["form"] === "Smart Talk: Cannabis Prevention & Education Awareness"
     ) {
-      return info["when"] === "before"
-        ? cannabis
-        : cannabis.concat(postCannabis);
+      // return info["when"] === "before"? cannabis: cannabis.concat(postCannabis); //this was for 23-24
+      return cannabis
     } else if (info["form"] === "Safety First") {
       return safety;
     }
@@ -182,7 +196,8 @@ const Form = () => {
     {element["question"].includes("check all that apply")
       ? element["answers"].map((answer, index) => (
           <label key={index} className="container">
-            <span>{t(answer, answer)}</span>
+            <span>{info["form"]==safety?answer:answer.text}</span> 
+            {/* temporarily removed translate */}
             <input
               type="checkbox"
               name={element["question"]}
@@ -220,7 +235,8 @@ const Form = () => {
                     {box}
                   </div>
                 )):
-                <span>{t(answer, answer)}</span>}
+                <span>{info["form"]==safety?answer:answer.text}</span>} 
+                {/*  temporarily removed translate */}
                 <input
                   type="radio"
                   value={answer}
@@ -232,7 +248,9 @@ const Form = () => {
           } else {
             return (
               <label key={index} className="container">
-                <p style={{ fontSize: "15px" }}> 🤷(I don't know)</p>
+                {element["question"]!="What are your goals regarding vaping?"?
+                <p style={{ fontSize: "15px" }}> 🤷(I don't know)</p>:
+                <p>{answer.text}</p>}
 
                 {/* <p>&#129335; I don't know</p> */}
                 <input
