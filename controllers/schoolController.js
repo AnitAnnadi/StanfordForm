@@ -78,7 +78,7 @@ const getSchools = async (req, res) => {
       searchTeacher,
     } = req.query;
 
-    console.log("Search District:", searchDistrict);
+    // console.log("Search District:", searchDistrict);
 
     // Create query object
     const queryObject = {};
@@ -108,12 +108,12 @@ const getSchools = async (req, res) => {
       queryObject.teacher = user._id; // Assuming user._id is the ObjectId
     }
 
-    console.log("Query Object:", queryObject);
+    // console.log("Query Object:", queryObject);
 
     // Fetch schools from the database
     const schools = await School.find(queryObject);
 
-    console.log("Schools found:", schools);
+    // console.log("Schools found:", schools);
 
     // Send the response
     res.status(StatusCodes.OK).json({ schools });

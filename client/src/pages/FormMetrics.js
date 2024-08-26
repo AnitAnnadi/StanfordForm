@@ -16,7 +16,7 @@ import { TbListNumbers, TbNumbers } from "react-icons/tb";
 import { useAppContext } from "../context/appContext";
 import { utils as XLSXUtils, writeFile as writeXLSXFile } from 'xlsx';
 import { tobaccoElem, tobacco, postTobacco, cannabis, postCannabis, safety, healthy
-} from "../utils/questions";
+} from "../utils/questions23-24";
 import { ThreeDots } from 'react-loader-spinner';
 import {useTranslation} from "react-i18next";
 
@@ -133,7 +133,6 @@ const FormMetrics = () => {
 
   useEffect(()=>{
     if (isOverall){
-      console.log('isover')
       getResponseGroups(currentSchoolIndex,shouldReload, false, true);
     }
   },[isOverall])

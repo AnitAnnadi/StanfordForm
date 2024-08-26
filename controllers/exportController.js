@@ -13,7 +13,7 @@ import {
   safety,
   healthy,
   tobaccoElem
-} from "../questions.js";
+} from "../utils/questions.js";
 import NoCode from "../models/NoCode.js";
 let exportData = [];
 

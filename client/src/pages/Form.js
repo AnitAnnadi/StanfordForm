@@ -14,7 +14,7 @@ import {
   safety,
   healthy,
   tobaccoElem
-} from "../utils/questions";
+} from "../utils/questions23-24";
 import ReCAPTCHA from "react-google-recaptcha"
 import {useTranslation} from "react-i18next";
 import {MdLanguage} from "react-icons/md";

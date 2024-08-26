@@ -18,7 +18,7 @@ import {
   postCannabis,
   safety,
   healthy,
-} from "../utils/questions";
+} from "../utils/questions23-24";
 import { ThreeDots } from "react-loader-spinner";
 import {useTranslation} from "react-i18next";
 

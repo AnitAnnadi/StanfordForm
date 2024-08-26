@@ -8,7 +8,7 @@ import {
   narrowSchools
 } from "../utils/schoolDataFetch";
 import { distance } from "fastest-levenshtein";
-import { tobacco,postTobacco, cannabis, postCannabis, safety  } from "../utils/questions";
+import { tobacco,postTobacco, cannabis, postCannabis, safety  } from "../utils/questions23-24";
 
 
 import reducer from './reducer';
@@ -745,23 +745,16 @@ const AppProvider = ({ children }) => {
 
       const { schools } = data;
       const filteredSchools = schools.filter((obj) => {
-        switch (user.role) {
-          case "Site Admin":
-            return obj.school.toLowerCase() === userLocations[0]?.school.toLowerCase();
-          case "District Admin":
-            return obj.district.toLowerCase() === userLocations[0]?.district.toLowerCase();
-          case "County Admin":
-            return obj.county.toLowerCase() === userLocations[0]?.county.toLowerCase();
-          case "State Admin":
-            return obj.state.toLowerCase() === userLocations[0]?.state.toLowerCase();
-          case "Stanford Staff":
-            return true;
-          case "Teacher":
-            return obj.teacher.toLowerCase() === user._id.toLowerCase();
-          default:
-            return false;
-        }
+        const isTeacher = user.role.includes("Teacher") && obj.teacher.toLowerCase() === user._id.toLowerCase();
+        const isSiteAdmin = user.role.includes("Site Admin") && obj.school.toLowerCase() === userLocations[0]?.school.toLowerCase();
+        const isDistrictAdmin = user.role.includes("District Admin") && obj.district.toLowerCase() === userLocations[0]?.district.toLowerCase();
+        const isCountyAdmin = user.role.includes("County Admin") && obj.county.toLowerCase() === userLocations[0]?.county.toLowerCase();
+        const isStateAdmin = user.role.includes("State Admin") && obj.state.toLowerCase() === userLocations[0]?.state.toLowerCase();
+        const isStanfordStaff = user.role.includes("Stanford Staff");
+      
+        return isTeacher || isSiteAdmin || isDistrictAdmin || isCountyAdmin || isStateAdmin || isStanfordStaff;
       });
+      
       
 
       let newResponses = [];
@@ -769,7 +762,6 @@ const AppProvider = ({ children }) => {
       let schoolIndex = (currentSchoolIndex && !all) ? currentSchoolIndex : 0;
       console.log(filteredSchools)
       while ( schoolIndex < filteredSchools.length) {
-
         const { data: data2 } = await authFetch.get('/studentResponses', {
           params: {
             school: filteredSchools[schoolIndex].school,
@@ -782,6 +774,7 @@ const AppProvider = ({ children }) => {
             checkedYears
           }
         });
+        console.log(filteredSchools[schoolIndex].teacher,)
         const {teacherId, teacherName, studentResponses } = data2;
 
         // let teacherMatch = teacherNames.find(function(obj) {
