@@ -205,7 +205,10 @@ const Register = () => {
         }, 2000);
       }
     
-    // } else if (user && !hasLocation) {
+    } else if (user && !hasLocation) {
+      // setTimeout(() => {
+      //         navigate("/selectLoc");
+      //       }, 2000);
     //   if (user.adminTeacher){
     //     if ((userLocations.length>=1 && user.role!=="Stanford Staff" && user.role !== "Site Admin" )|| (user.role=="Stanford Staff" && userLocations.length<1) || (user.role == "Site Admin" && userLocations.length<1)){
     //       console.log(userLocations.length)
@@ -215,12 +218,12 @@ const Register = () => {
     //         });
     //       }, 2000);
     //     }
-    //     else if( (user.role=="Stanford Staff" && userLocations.length>=1) || (user.role == "Site Admin" && userLocations.length>=1)){
-    //       setTimeout(() => {
-    //         navigate("/");
-    //       }, 2000);
-    //       return
-    //     }
+        if( (user.role=="Stanford Staff" && userLocations.length>=1) || (user.role == "Site Admin" && userLocations.length>=1)){
+          setTimeout(() => {
+            navigate("/");
+          }, 2000);
+          return
+        }
     //     else{
     //       setTimeout(() => {
     //         navigate("/selectLoc", {
@@ -229,11 +232,11 @@ const Register = () => {
     //       }, 2000);
     //     }
     //   }
-    //   else{
-    //     setTimeout(() => {
-    //       navigate("/selectLoc");
-    //     }, 2000);
-    //   }
+      else{
+        setTimeout(() => {
+          navigate("/selectLoc");
+        }, 2000);
+      }
       
       
     }
