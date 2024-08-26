@@ -46,7 +46,7 @@ const getStudentResponses = async (req, res) => {
       if (isChecked === 'true') {
         // Parse the year to create date ranges
         const [startYear, endYear] = year.split('-');
-        const startDate = new Date(`${startYear}-09-01T00:00:00.000Z`);
+        const startDate = new Date(`${startYear}-07-01T00:00:00.000Z`);
         const endDate = new Date(`${endYear}-06-30T23:59:59.999Z`);
 
         orConditions.push({
@@ -64,7 +64,7 @@ const getStudentResponses = async (req, res) => {
 
     // Query the database
     const studentResponses = await StudentResponse.find(queryObject);
-
+    console.log(queryObject)
     res.status(StatusCodes.OK).json({ teacherName: teacher?.name, studentResponses });
   } catch (error) {
     console.log(error);

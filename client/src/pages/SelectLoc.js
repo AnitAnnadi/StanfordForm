@@ -226,10 +226,12 @@ const SelectLoc = ({ noCode }) => {
     setAdditionalLoc(false);
   }, [isFormSubmitted]);
   useEffect(() => {
-    if (user?.role === "Site Admin" || user?.role === "Teacher" || noCode) {
+    console.log('effect')
+    console.log(user)
+    if (user?.role === "Site Admin" || user?.role === "Teacher" || noCode || user.adminTeacher) {
+      console.log('netx')
       if (state !== "default" && city !== "default" && school !== "default") {
         // just do this whole thing in app context later
-
         try {
           console.log("getting district and county");
           console.log(state, city, school);
@@ -305,6 +307,7 @@ const SelectLoc = ({ noCode }) => {
         displayAlert();
         return;
       }
+      
       await addLocation({
         state: state,
         county: county !== "default" ? county : null,
