@@ -260,7 +260,6 @@ const CreateLoc = () => {
                 );
               })}
             </select>
-            </div>}
             <h4 className="form-title">{t('UP_city', 'city')}*</h4>
             <input
               name="aliasChoice"
@@ -269,6 +268,8 @@ const CreateLoc = () => {
               placeholder="Enter your city name"
             >
             </input>
+            </div>}
+
             <h4 className="form-title">{t('UP_school', 'School')}*</h4>
             <input
               name="aliasChoice"
