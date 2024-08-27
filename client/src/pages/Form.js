@@ -85,19 +85,18 @@ const Form = () => {
     e.preventDefault();
     const captcha =  captchaRef.current.getValue();
     const formData = [];
-
+    // console.log(names)
     names.forEach((name) => {
       const question = name;
       const answers = [];
-
       let checks = document.getElementsByName(name);
       for (var check of checks) {
         if (check.checked) {
           answers.push(check.value);
         }
       }
-
       formData.push({ question, answers });
+      console.log(formData)
     });
     let grade = info["grade"];
     let when = info["when"];
@@ -188,20 +187,23 @@ const Form = () => {
           </select>
         </div>
   {usedForm.map((element, qindex) => (
+    
   <div key={qindex}>
+    {console.log(element)}
     <div style={{ display: "flex", columnGap: "0.35rem" }}>
-      <p>{names.push(element["question"])}.</p>
+      {/* {} */}
+      <p>{names.push(info["form"]=="Safety First"?element["question"]:element["name"])}.</p>
       <p>{t(element["question"], element["question"])}</p>
     </div>
     {element["question"].includes("check all that apply")
       ? element["answers"].map((answer, index) => (
           <label key={index} className="container">
-            <span>{info["form"]==safety?answer:answer.text}</span> 
+            <span>{info["form"]=="Safety First"?answer:answer.text}</span> 
             {/* temporarily removed translate */}
             <input
               type="checkbox"
-              name={element["question"]}
-              value={answer}
+              name={element["name"]}
+              value={info["form"]=="Safety First"?answer:answer.code}
             />
             <span className="checkmark"></span>
           </label>
@@ -209,7 +211,6 @@ const Form = () => {
       : element["answers"].map((answer, index) => {
         let box = false;
         let emoji = false;
-        console.log(index)
           if (qindex==8 && info.form === "You and Me, Together Vape-Free(elem)" ){
             let emojis = ['🙁', '🙁', '🙂', '😊','😁'];
             emoji = emojis[index]
@@ -226,6 +227,7 @@ const Form = () => {
             else if (info.form === "You and Me, Together Vape-Free(elem)" && element["answers"].length===3 ){
               emoji = emojis[index];
             }
+            // console.log(answer)
             return (
               <label key={index} className="container">
                {emoji?emoji:null}
@@ -235,12 +237,12 @@ const Form = () => {
                     {box}
                   </div>
                 )):
-                <span>{info["form"]==safety?answer:answer.text}</span>} 
+                
+                <span>{info["form"]=="Safety First"?answer:answer.text}</span>} 
                 {/*  temporarily removed translate */}
                 <input
                   type="radio"
-                  value={answer}
-                  name={element["question"]}
+                  value={info["form"]=="Safety First"?answer:answer.code}                  name={element["name"]}
                 />
                 <span className="checkmark"></span>
               </label>
@@ -255,8 +257,7 @@ const Form = () => {
                 {/* <p>&#129335; I don't know</p> */}
                 <input
                   type="radio"
-                  value={answer}
-                  name={element["question"]}
+                  value={info["form"]=="Safety First"?answer:answer.code}                  name={element["name"]}
                 />
                 <span className="checkmark"></span>
               </label>

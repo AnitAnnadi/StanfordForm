@@ -315,7 +315,6 @@ const logout = async (req, res) => {
 
 const resetPassword = async(req,res) =>{
   try{
-  console.log('hi')
   const {password,token} = req.body
   const reset = await ResetPassword.find({token})
   const userId = reset[0].userId
@@ -394,10 +393,10 @@ const submitForm = async(req,res) =>{
   let _id=(StudentResponseData["_id"])
   
   formData.forEach(async (item) => {
-    const { question, answers } = item;
+    const {question, answers } = item;
   
     for (const answer of answers) {
-      await Question.create({ StudentResponse: _id, Question: question, Answer: answer });
+      await Question.create({ StudentResponse: _id, Question: question, Answer:answer });
     }
   }
   
@@ -415,7 +414,7 @@ const submitForm = async(req,res) =>{
       const { question, answers } = item;
     
       for (const answer of answers) {
-        await Question.create({ StudentResponse: _id, Question: question, Answer: answer });
+        await Question.create({ StudentResponse: _id, Question: question, Answer:answer });
       }
       
     })
