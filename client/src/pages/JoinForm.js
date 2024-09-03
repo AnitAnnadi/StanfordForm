@@ -241,49 +241,45 @@ const JoinForm = () => {
               })}
             </select>
 
-            <h4 className="form-title">
-              {t('form_type', 'Form Type')}</h4>
-            <select
-              name="type"
-              value={form}
-              onChange={(e) => setForm(e.target.value)}
-              className="form-select"
-            >
-              <option value={"default"} disabled>
-                {t('choose_your_form', 'Choose your Form')}
-              </option>
-              <option value={"You and Me, Together Vape-Free"}>
-              {t('vape_title', 'You and Me, Together Vape-Free')}
-              </option>
-              <option
-                value={"Smart Talk: Cannabis Prevention & Education Awareness"}
+            <h4 className="form-title">{t('form_type', 'Form Type')}</h4>
+            {info.formName ? (
+              <div>{form}</div> // Display form name as static text
+            ) : (
+              <select
+                name="type"
+                value={form}
+                onChange={(e) => setForm(e.target.value)}
+                className="form-select"
               >
-                {t('cannabis_title', 'Smart Talk: Cannabis Prevention & Education Awareness')}
-              </option>
-              <option value={"Safety First"}>
-                {t('safety_title', 'Safety First')}
-              </option>
-              {info["noCode"]?null:
-              <option
-                value={"Healthy Futures: Tobacco/Nicotine/Vaping"}
-              >
-                {t('healthy_tobacco_title', 'Healthy Futures: Tobacco/Nicotine/Vaping')}
-              </option>
-              }
-              {info["noCode"]?null:
-              <option
-                value={"Healthy Futures: Cannabis"}
-              >
-                {t('healthy_cannabis_title', 'Healthy Futures: Cannabis')}
-              </option>
-              }
-{/* } */}
-
-            </select>
+                <option value={"default"} disabled>
+                  {t('choose_your_form', 'Choose your Form')}
+                </option>
+                <option value={"You and Me, Together Vape-Free"}>
+                  {t('vape_title', 'You and Me, Together Vape-Free')}
+                </option>
+                <option value={"Smart Talk: Cannabis Prevention & Education Awareness"}>
+                  {t('cannabis_title', 'Smart Talk: Cannabis Prevention & Education Awareness')}
+                </option>
+                <option value={"Safety First"}>
+                  {t('safety_title', 'Safety First')}
+                </option>
+                {info["noCode"] ? null : (
+                  <>
+                    <option value={"Healthy Futures: Tobacco/Nicotine/Vaping"}>
+                      {t('healthy_tobacco_title', 'Healthy Futures: Tobacco/Nicotine/Vaping')}
+                    </option>
+                    <option value={"Healthy Futures: Cannabis"}>
+                      {t('healthy_cannabis_title', 'Healthy Futures: Cannabis')}
+                    </option>
+                  </>
+                )}
+              </select>
+            )}
 
             <h4 className="form-title">
               {t('when_are_you_taking_this_form', 'When are you taking this form')}
             </h4>
+            {info.when?<div>{when}</div>:
             <select
               name="when"
               value={when}
@@ -299,21 +295,19 @@ const JoinForm = () => {
               <option value={"after"}>
                 {t('after_lesson', 'After Lesson')}
               </option>
-            </select>
+            </select>}
 
             <button
               className="btn btn-block"
               type="submit"
-              // disabled={isLoading}
               style={{ marginTop: "1.38rem" }}
             >
               {t('UP_submit', 'Submit')}
-              {/* {isLoading ? "Please Wait..." : "submit"} */}
             </button>
           </div>
         </form>
         <div className="language-select-container">
-          <MdLanguage className="language-select-icon"/>
+          <MdLanguage className="language-select-icon" />
           <select
             className="language-select"
             value={currentLanguage}
