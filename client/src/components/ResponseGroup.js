@@ -39,7 +39,6 @@ const ResponseGroup = ({
   return (
     <Wrapper>
       <header>
-        {console.log(school)}
         <div className='main-icon'>{school?.school?.charAt(0)}</div>
         <div className='info'>
           <h5>{school.school}</h5>

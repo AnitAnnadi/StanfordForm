@@ -206,9 +206,7 @@ const Register = () => {
       }
     
     } else if (user && !hasLocation) {
-      // setTimeout(() => {
-      //         navigate("/selectLoc");
-      //       }, 2000);
+
     //   if (user.adminTeacher){
     //     if ((userLocations.length>=1 && user.role!=="Stanford Staff" && user.role !== "Site Admin" )|| (user.role=="Stanford Staff" && userLocations.length<1) || (user.role == "Site Admin" && userLocations.length<1)){
     //       console.log(userLocations.length)
@@ -218,7 +216,7 @@ const Register = () => {
     //         });
     //       }, 2000);
     //     }
-        if( (user.role=="Stanford Staff" && userLocations.length>=1) || (user.role == "Site Admin" && userLocations.length>=1)){
+        if( user.adminTeacher && ((user.role=="Stanford Staff" && userLocations.length>=1) || (user.role == "Site Admin" && userLocations.length>=1))){
           setTimeout(() => {
             navigate("/");
           }, 2000);

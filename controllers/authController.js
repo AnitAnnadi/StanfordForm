@@ -365,6 +365,7 @@ const verifyToken = async (req, res) => {
 };
 const submitForm = async(req,res) =>{
   const {formData,code,grade,when,type,school,period,state, city, county, district, captcha}=req.body;
+  console.log(formData)
   if (captcha!=undefined){
   const response = await axios.post(
     `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.REACT_APP_SECRET_KEY}&response=${captcha}`

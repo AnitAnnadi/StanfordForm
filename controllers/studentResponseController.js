@@ -13,7 +13,7 @@ const getStudentResponses = async (req, res) => {
     const token = user.createJWT();
     attachCookie({ res, token });
 
-    const { school, teacherId, grade, period, formType, when, all, checkedYears } = req.query;
+    const { school, teacherId, grade, period, formType, when, all, selectedYear } = req.query;
     let form = all === 'true' ? 'all' : formType;
 
     const teacher = await User.findOne({ _id: teacherId });
@@ -38,33 +38,28 @@ const getStudentResponses = async (req, res) => {
       queryObject.when = when;
     }
 
-    // Create an array to store the $or conditions based on checkedYears
+    // Create an array to store the $or conditions based on selectedYear
     const orConditions = [];
-    console.log(checkedYears)
-    if (checkedYears!=[] && checkedYears !==undefined ){
-    for (const [year, isChecked] of Object.entries(checkedYears)) {
-      if (isChecked === 'true') {
-        // Parse the year to create date ranges
-        const [startYear, endYear] = year.split('-');
-        const startDate = new Date(`${startYear}-07-01T00:00:00.000Z`);
-        const endDate = new Date(`${endYear}-06-30T23:59:59.999Z`);
-
-        orConditions.push({
-          createdAt: {
-            $gte: startDate,
-            $lt: endDate,
-          },
-        });
-      }
+    console.log(selectedYear)
+    if (selectedYear!=null && selectedYear !==undefined ){
+      const [startYear, endYear] = selectedYear.split('-');
+      const startDate = new Date(`${startYear}-07-01T00:00:00.000Z`);
+      const endDate = new Date(`${endYear}-06-30T23:59:59.999Z`);
+      orConditions.push({
+        createdAt: {
+          $gte: startDate,
+          $lt: endDate,
+        },
+      });
     }
-  }
+    
+  
     if (orConditions.length > 0) {
       queryObject.$or = orConditions;
     }
-
     // Query the database
     const studentResponses = await StudentResponse.find(queryObject);
-    console.log(queryObject)
+    // console.log(studentResponses)
     res.status(StatusCodes.OK).json({ teacherName: teacher?.name, studentResponses });
   } catch (error) {
     console.log(error);
@@ -79,7 +74,7 @@ const getNoCodeStudentResponses = async (req, res) => {
     const token = user.createJWT();
     attachCookie({ res, token });
 
-    const { school, state, city, county, district, grade, period, formType, when, all, checkedYears } = req.query;
+    const { school, state, city, county, district, grade, period, formType, when, all, selectedYear } = req.query;
     let form = all === 'true' ? 'all' : formType;
 
     // Prepare the query object
@@ -113,10 +108,10 @@ const getNoCodeStudentResponses = async (req, res) => {
       queryObject.district = district;
     }
 
-    // Create an array to store the $or conditions based on checkedYears
+    // Create an array to store the $or conditions based on selectedYear
     const orConditions = [];
-    if (checkedYears!=[] && checkedYears !==undefined ){
-      for (const [year, isChecked] of Object.entries(checkedYears)) {
+    if (selectedYear!=[] && selectedYear !==undefined ){
+      for (const [year, isChecked] of Object.entries(selectedYear)) {
       if (isChecked === 'true') {
         // Parse the year to create date ranges
         const [startYear, endYear] = year.split('-');

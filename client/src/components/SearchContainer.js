@@ -58,7 +58,7 @@ const SearchContainer = ({ startReload }) => {
     exportData,
     allUsers,
     exportLoading,
-    userExportLoading
+    userExportLoading,
   } = useAppContext();
   const [exportClicked, setExportClicked] = useState(false);
   const [questionsToAnswers, setQuestionsToAnswers] = useState({});
@@ -135,8 +135,6 @@ const SearchContainer = ({ startReload }) => {
   useEffect(() => {
     if (allUsers && !usersSheetCreated) {
       
-      console.log("Creating users sheet...");
-      console.log(allUsers)
       const usersSheet = XLSXUtils.json_to_sheet(allUsers);
       const workbook = XLSXUtils.book_new();
       XLSXUtils.book_append_sheet(workbook, usersSheet, "All Users");
@@ -164,14 +162,12 @@ const SearchContainer = ({ startReload }) => {
 
   const createUserSheet = async(e) =>{
     e.preventDefault()
-    console.log('h')
     await getUsers();
 
   }
 
   const schoolYears = async (startYear, endYear) => {
     if (startYear >= endYear) {
-        console.log("Invalid input: Start year should be less than end year");
         return [];
     }
 
@@ -298,7 +294,6 @@ const SearchContainer = ({ startReload }) => {
         setToNarrowSchools({reactState: "schoolOptions", allowed: true, county: e.target.value})
         break;
       case "searchCity":
-        console.log('district')
         handleChanges({
           [e.target.name]: e.target.value,
           searchDistrict: "all",
@@ -469,7 +464,7 @@ const SearchContainer = ({ startReload }) => {
           >
             {t('search_forms', 'search forms')}
           </button>
-           {/* Render school years checkboxes */}
+           {/* Render school years checkboxxes */}
           <div>
           <label>{t("Select School Year(s)")}</label>
           <SchoolYearCheckboxes schoolYears={schoolYearsList} />

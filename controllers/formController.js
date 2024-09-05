@@ -46,12 +46,8 @@ const getFormMetrics = async(req,res) => {
     }
     if (period && period !== 'undefined' && period !== 'null') {
       responseQueryObject.period = period;
-      // console.log(responseQueryObject.period)
     }
-    // console.log(responseQueryObject)
     teacher = await User.findOne({ _id: teacherId });
-    console.log('hihihi')
-    console.log(teacher)
     studentResponses = await StudentResponse.find(responseQueryObject);
     school = await School.findOne({ _id: schoolId });
   } else {
@@ -101,9 +97,9 @@ const getFormMetrics = async(req,res) => {
       }
     });
   });
+  console.log(questionsToAnswersPromises)
 
   await Promise.all(questionsToAnswersPromises);
-  // console.log(questionsToAnswers)
   res.status(StatusCodes.OK).json({ questionsToAnswers, school, teacher, responseType: responseQueryObject , numberOfResponses: studentResponses.length});
 
 }

@@ -6,6 +6,8 @@ import Dropdown from "react-dropdown";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import ProductsTobacco from "../components/ProductsTobacco";
+import ProductsCannabis from "../components/ProductsCannabis";
 
 //still using 23-24 safety
 import {
@@ -20,13 +22,13 @@ import {
 
 
 import {
-  tobacco,
-  tobaccoElem,
-  cannabis,
-  healthy,
+  tobacco24,
+  tobaccoElem24,
+  cannabis24,
+  healthy24,
   // safety,
-  healthyCannabis,
-  healthyTobacco
+  healthyCannabis24,
+  healthyTobacco24
 } from "../utils/questions24-25";
 import ReCAPTCHA from "react-google-recaptcha"
 import {useTranslation} from "react-i18next";
@@ -46,7 +48,8 @@ const Form = () => {
     enterCode,
     submitForm,
     successAlert,
-    altertText,
+    productsTobacco,
+    productsCannabis,
     nextPg,
     handleChange
   } = useAppContext();
@@ -85,7 +88,8 @@ const Form = () => {
     e.preventDefault();
     const captcha =  captchaRef.current.getValue();
     const formData = [];
-    // console.log(names)
+    console.log('name')
+    console.log(names)
     names.forEach((name) => {
       const question = name;
       const answers = [];
@@ -96,12 +100,26 @@ const Form = () => {
         }
       }
       formData.push({ question, answers });
-      console.log(formData)
     });
+    console.log('prints')
+    console.log(formData)
+
     let grade = info["grade"];
     let when = info["when"];
     let type = info["form"];
-    if (type === "You and Me, Together Vape-Free"){
+    if (type == "Healthy Futures: Tobacco/Nicotine/Vaping"){
+      {Object.entries(productsTobacco).map(([key, value]) => (
+        formData.push({question:key,answers:value})
+      ))}
+  }
+  if (type == "Healthy Futures: Cannabis"){
+    {Object.entries(productsCannabis).map(([key, value]) => (
+      formData.push({question:key,answers:value})
+    ))}
+}
+  console.log(formData)
+
+    if (type == "You and Me, Together Vape-Free"){
       type = "You and Me Vape Free (middle school and above)"
     }
     let school = info["school"];
@@ -136,24 +154,24 @@ const Form = () => {
   const [usedForm, setUsedForm] = useState(() => {
     if (info["form"] === "You and Me, Together Vape-Free") {
       // return info["when"] === "before" ? tobacco : tobacco.concat(postTobacco); //this was for 23-24
-      return tobacco;
+      return tobacco24;
     } 
     else if(info["form"] ==="You and Me, Together Vape-Free(elem)"){
       // return info["when"] === "before" ? tobaccoElem : tobaccoElem.concat(postTobacco);  //this was for 23-24
-      return tobaccoElem;
+      return tobaccoElem24;
     }else if (
       info["form"] === "Smart Talk: Cannabis Prevention & Education Awareness"
     ) {
       // return info["when"] === "before"? cannabis: cannabis.concat(postCannabis); //this was for 23-24
-      return cannabis
+      return cannabis24
     } else if (info["form"] === "Safety First") {
       return safety;
     }
     else if (info["form"] === "Healthy Futures: Tobacco/Nicotine/Vaping") {
-      return healthy;
+      return healthy24;
     }
     else if (info["form"] === "Healthy Futures: Cannabis") {
-      return healthy;
+      return healthy24;
     }
   });
 
@@ -227,7 +245,6 @@ const Form = () => {
             else if (info.form === "You and Me, Together Vape-Free(elem)" && element["answers"].length===3 ){
               emoji = emojis[index];
             }
-            // console.log(answer)
             return (
               <label key={index} className="container">
                {emoji?emoji:null}
@@ -239,10 +256,12 @@ const Form = () => {
                 )):
                 
                 <span>{info["form"]=="Safety First"?answer:answer.text}</span>} 
-                {/*  temporarily removed translate */}
+                {console.log(answer.code)}
+                
                 <input
                   type="radio"
-                  value={info["form"]=="Safety First"?answer:answer.code}                  name={element["name"]}
+                  value={info["form"]=="Safety First"?answer:answer.code}                  
+                  name={element["name"]}
                 />
                 <span className="checkmark"></span>
               </label>
@@ -257,15 +276,23 @@ const Form = () => {
                 {/* <p>&#129335; I don't know</p> */}
                 <input
                   type="radio"
-                  value={info["form"]=="Safety First"?answer:answer.code}                  name={element["name"]}
+                  value={info["form"]=="Safety First"?answer:answer.code}                  
+                  name={element["name"]}
                 />
                 <span className="checkmark"></span>
               </label>
             );
           }
         })}
+        
   </div>
 ))}
+    {info["form"] === "Healthy Futures: Tobacco/Nicotine/Vaping"?
+    <ProductsTobacco/>:
+    null}
+    {info["form"] === "Healthy Futures: Cannabis"?
+    <ProductsCannabis/>:
+    null}
         <ReCAPTCHA 
             ref={captchaRef}
             sitekey={"6LerfqAnAAAAAB86YDhcCf0XanGHJXHQkvyxY6fJ"} />

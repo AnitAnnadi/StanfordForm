@@ -7,7 +7,6 @@ import School from "../models/School.js";
 
 const createLocation = async(req, res) =>{
   try{
-    console.log(req.body)
   const { multiplePeriods, country,  state, county, city, district, school, type } = req.body;
   if (type==="us"){
     if (!state || !county || !city || !school) {

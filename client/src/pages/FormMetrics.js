@@ -17,6 +17,15 @@ import { useAppContext } from "../context/appContext";
 import { utils as XLSXUtils, writeFile as writeXLSXFile } from 'xlsx';
 import { tobaccoElem, tobacco, postTobacco, cannabis, postCannabis, safety, healthy
 } from "../utils/questions23-24";
+import {
+  tobacco24,
+  tobaccoElem24,
+  cannabis24,
+  healthy24,
+  // safety,
+  healthyCannabis24,
+  healthyTobacco24
+} from "../utils/questions24-25";
 import { ThreeDots } from 'react-loader-spinner';
 import {useTranslation} from "react-i18next";
 
@@ -44,7 +53,8 @@ const FormMetrics = () => {
     getResponseGroups,
     shouldReload,
     currentSchoolIndex,
-    exportLoading
+    exportLoading,
+    selectedYear
   } = useAppContext();
 
   const { t, i18n } = useTranslation();
@@ -95,38 +105,84 @@ const FormMetrics = () => {
   };
 
 
-  // NOTE: old responses with older versions of the form will not have the same questions as the current form leading
-  // to the results not rendering due to this funciton.
+
   const createQuestionsToAnswersMap = (array, questionsToAnswers) => {
-    reorderedQuestionsToAnswers = {};
+  
+    // Step 1: Initialize reorderedQuestionsToAnswers based on selectedYear
+    let reorderedQuestionsToAnswers = {};
     array.forEach((question) => {
-      if ((questionsToAnswers).hasOwnProperty(question.question)) {
-        reorderedQuestionsToAnswers[question.question] = questionsToAnswers[question.question];
+      const key = selectedYear === "2024-2025" ? question.name : question.question;
+      console.log(question)
+      if (questionsToAnswers.hasOwnProperty(key)) {
+        reorderedQuestionsToAnswers[key] = questionsToAnswers[key];
       }
     });
     console.log(reorderedQuestionsToAnswers)
+  
+  
+    // Step 2: If selectedYear is "2024-2025", map names to questions and answer codes to texts
+    if (selectedYear === "2024-2025") {
+      console.log('sel');
+      const names = Object.keys(reorderedQuestionsToAnswers);
+      let updatedQuestionsToAnswers = {};
+    
+      names.forEach(name => {
+        // Find the corresponding question object in the array
+        const questionObject = array.find(question => question.name === name || question.question === name);
+        if (questionObject) {
+          // Initialize the entry for this question in updatedQuestionsToAnswers if it doesn't exist
+          if (!updatedQuestionsToAnswers[questionObject.question]) {
+            updatedQuestionsToAnswers[questionObject.question] = {};
+          }
+    
+          // Loop through each code in reorderedQuestionsToAnswers[questionObject.name]
+          const codes = Object.keys(reorderedQuestionsToAnswers[questionObject.name]);
+          codes.forEach(code => {
+            // Find the corresponding answer in questionObject.answers
+            const matchingAnswer = questionObject.answers.find(answer => answer.code == code);
+            if (matchingAnswer) {
+              // Store all the answers under their text key
+              updatedQuestionsToAnswers[questionObject.question][matchingAnswer.text] = reorderedQuestionsToAnswers[questionObject.name][code];
+            }
+          });
+    
+          console.log(updatedQuestionsToAnswers);
+        }
+      });
+    
+      // Update reorderedQuestionsToAnswers with the new mapping
+      reorderedQuestionsToAnswers = updatedQuestionsToAnswers;
+      console.log(reorderedQuestionsToAnswers);
+    }
+      
+    // Step 3: Set the updated questionsToAnswers
     setQuestionsToAnswers(reorderedQuestionsToAnswers);
   };
 
+  
+
+
   const formTimeType = (formType, when, data) => {
-    console.log(formType === "You and Me, Together Vape-Free(elem)")
+    // console.log(selectedYear)
     if (formType === "You and Me Vape Free (middle school and above)") {
-      return when === "before" ? createQuestionsToAnswersMap(tobacco, data) : createQuestionsToAnswersMap(tobacco.concat(postTobacco), data);
+      return selectedYear=="2024-2025"? createQuestionsToAnswersMap(tobacco24,data): (when === "before" ? createQuestionsToAnswersMap(tobacco, data) : createQuestionsToAnswersMap(tobacco.concat(postTobacco), data));
     } 
     else if(formType === "You and Me, Together Vape-Free(elem)") {
-      return when === "before" ? createQuestionsToAnswersMap(tobaccoElem, data) : createQuestionsToAnswersMap(tobaccoElem.concat(postTobacco), data);
+      return selectedYear=="2024-2025"? createQuestionsToAnswersMap(tobaccoElem24,data):
+      (when === "before" ? createQuestionsToAnswersMap(tobaccoElem, data) : createQuestionsToAnswersMap(tobaccoElem.concat(postTobacco), data));
     } 
     else if (formType === "Smart Talk: Cannabis Prevention & Education Awareness") {
-      return when === "before" ? createQuestionsToAnswersMap(cannabis, data) : createQuestionsToAnswersMap(cannabis.concat(postCannabis),data);
+      return selectedYear=="2024-2025"? createQuestionsToAnswersMap(cannabis24,data):
+      when === "before" ? createQuestionsToAnswersMap(cannabis, data) : createQuestionsToAnswersMap(cannabis.concat(postCannabis),data);
     }
     else if (formType === "Safety First"){
       return createQuestionsToAnswersMap(safety, data)
     }
     else if (formType === "Healthy Futures: Tobacco/Nicotine/Vaping"){
-      return createQuestionsToAnswersMap(healthy, data)
+      return createQuestionsToAnswersMap(healthy24.concat(healthyTobacco24), data)
     }
     else if (formType === "Healthy Futures: Cannabis"){
-      return createQuestionsToAnswersMap(healthy, data)
+      return createQuestionsToAnswersMap(healthy24.concat(healthyCannabis24), data)
     }
   };
 

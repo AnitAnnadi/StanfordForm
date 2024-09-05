@@ -120,15 +120,11 @@ const initialState = {
   declined:false,
   stanfordNewLoc:false,
   allUsers:null,
-  checkedYears:[]
+  selectedYear:"2023-2024",
+  productsTobacco:{nic_vape_intent: '', nic_nonnic_vape_intent: '', nic_cig_intent: ''},
+  productsCannabis:{can_smoke_intent: '', can_vape_intent: '', can_edible_intent: ''}
+
 };
-
-const stringDifScore = (str1, str2) => {
-  const str1Arr = str1.toUpperCase().split(" ").sort().join("");
-  const str2Arr = str2.toUpperCase().split(" ").sort().join("");
-
-  return distance(str1Arr, str2Arr);
-}
 
 const configureFormStates = async (userLocations, user, formStates) => {
   let {
@@ -170,7 +166,6 @@ const configureFormStates = async (userLocations, user, formStates) => {
       newCountyOptions = [userLocations[0]?.county];
       newDistrictOptions = [userLocations[0]?.district === "district" ? "N/A" : userLocations[0]?.district];
       newCityOptions = [userLocations[0]?.city];
-      console.log(narrowAllSchools({state: userLocations[0]?.state, county: userLocations[0]?.county, district: userLocations[0]?.district}))
       newSchoolOptions = ["all", ...(await narrowAllSchools({state: userLocations[0]?.state, county: userLocations[0]?.county, district: userLocations[0]?.district}))];
       break;
     case "County Admin":
@@ -261,7 +256,6 @@ const narrowAllSchools = async (getParams, allowed = false) => {
     if (allowed) {
       const {data} = await axios.get(`/api/v1/schools/user`);
       const { userLocations } = data;
-      console.log(userLocations)
 
       const { state, county, city, district, school } = getParams;
 
@@ -297,12 +291,10 @@ const narrowAllSchools = async (getParams, allowed = false) => {
 
       const {data} = await axios.get(`/api/v1/locations?${urlSearchParams}`);
       const {locations} = data;
-      console.log(locations)
 
       return narrowSchools(getParams).concat(locations.map((location) => location.name));
     }
   } catch (error) {
-    console.log(error);
     return [];
   }
 }
@@ -327,7 +319,6 @@ const AppProvider = ({ children }) => {
     },
     (error) => {
       if (error.response.status === 401) {
-        console.log('hi')
         logoutUser();
       }
       return Promise.reject(error);
@@ -434,7 +425,6 @@ const AppProvider = ({ children }) => {
         },
       });
     } catch (error) {
-      console.log(error)
       dispatch({
         type: SETUP_USER_ERROR,
         payload: { msg: error?.response?.data },
@@ -479,7 +469,6 @@ const AppProvider = ({ children }) => {
       const { state, county, district, city, school, multiplePeriods, requesterId } = locationData;
 
       let newLocationData = {state, county, district, city, school, multiplePeriods, requesterId};
-      console.log(requesterId)
       if (district === 'custom' || county === 'custom') {
         const urlSearchParams = new URLSearchParams(
           state,
@@ -692,6 +681,7 @@ const AppProvider = ({ children }) => {
 
 
   const handleChange = ({ name, value }) => {
+    console.log('change')
     console.log(name,value)
     dispatch({ type: HANDLE_CHANGE, payload: { name, value } });
   };
@@ -720,7 +710,7 @@ const AppProvider = ({ children }) => {
       searchTeacher,
       searchType,
       searchBeforeAfter,
-      checkedYears
+      selectedYear
     } = state;
     dispatch({ type: GET_RESPONSE_GROUPS_BEGIN, payload:{shouldReload} });
     try {
@@ -771,7 +761,7 @@ const AppProvider = ({ children }) => {
             formType: searchType,
             when: searchBeforeAfter,
             all,
-            checkedYears
+            selectedYear
           }
         });
         console.log(filteredSchools[schoolIndex].teacher,)
