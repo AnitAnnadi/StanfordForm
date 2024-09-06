@@ -81,7 +81,11 @@ const SearchContainer = ({ startReload }) => {
   const { t, i18n } = useTranslation();
 
   useEffect(() => {
+    console.log('holaa')
+    console.log(exportData)
     if (exportClicked && exportData) {
+      console.log(exportData)
+
       exportData.forEach((obj) => {
         const formtype = obj["form type"];
         if (formtype === "You and Me Vape Free (middle school and above)") {

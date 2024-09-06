@@ -14,6 +14,15 @@ import {
   healthy,
   tobaccoElem
 } from "../utils/questions.js";
+import {
+  tobacco24,
+  tobaccoElem24,
+  cannabis24,
+  healthy24,
+  // safety,
+  healthyCannabis24,
+  healthyTobacco24
+} from "../utils/questions24-25.js";
 import NoCode from "../models/NoCode.js";
 let exportData = [];
 
@@ -63,7 +72,6 @@ const getExport = async (req, res) => {
       school = await School.findOne({ _id: schoolId });
       teacher = await User.findOne({ _id: teacherId });
       studentResponses = await StudentResponse.find(responseQueryObject);
-      console.log(studentResponses)
     } else {
       responseQueryObject = {
         school: schoolName,
@@ -102,7 +110,6 @@ const getExport = async (req, res) => {
         };
 
         const readableDate = date.toLocaleString('en-US', options);
-        console.log(readableDate);
 
 
         let obj = {
@@ -123,6 +130,7 @@ const getExport = async (req, res) => {
         let questions = await Question.find({
           StudentResponse: studentResponse._id,
         });
+        console.log(questions)
         if (studentResponse.formType === "You and Me Vape Free (middle school and above)") {
           if (studentResponse.when === "before") {
             findResponse(tobacco, questions, obj);
@@ -157,6 +165,7 @@ const getExport = async (req, res) => {
         }
       })
     );
+    console.log('export')
     console.log(exportData)
     res.status(StatusCodes.OK).json({ exportData });
   } catch (error) {

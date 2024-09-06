@@ -333,15 +333,14 @@ export const tobacco24 = [
     ]
   },
   {
-    name: "vape_intent_goals",
-    question: "What are your goals regarding vaping?",
+    name: "vape_intent",
+    question: "How likely are you to use nicotine of any kind (smoked, vaped, etc.) in the next 6 months?",
     answers: [
-      { text: "I want to never use", code: 1 },
-      { text: "I want to cut back on my vaping", code: 2 },
-      { text: "I want to continue my current vaping patterns", code: 3 },
-      { text: "I want to quit completely", code: 4 },
-      { text: "I want to change what I vape", code: 5 },
-      { text: "I have not decided yet", code: 6 }
+      { text: "Not at all likely ", code: 1 },
+      { text: "Slightly likely", code: 2 },
+      { text: "Moderately likely", code: 3 },
+      { text: "Very likely", code: 4 },
+      { text: "Extremely likely", code: 5 }
     ]
   }
 ]
@@ -457,16 +456,14 @@ export const tobaccoElem24 = [
     ]
   },
   {
-    name: "vape_intent_goals",
-    question:
-      "What are your goals regarding vaping?",
+    name: "vape_intent",
+    question: "How likely are you to use nicotine of any kind (smoked, vaped, etc.) in the next 6 months?",
     answers: [
-      { text: "I want to never use", code: 1 },
-      { text: "I want to cut back on my vaping", code: 2 },
-      { text: "I want to continue my current vaping patterns", code: 3 },
-      { text: "I want to quit completely", code: 4 },
-      { text: "I want to change what I vape", code: 5 },
-      { text: "I have not decided yet", code: 6 }
+      { text: "Not at all likely ", code: 1 },
+      { text: "Slightly likely", code: 2 },
+      { text: "Moderately likely", code: 3 },
+      { text: "Very likely", code: 4 },
+      { text: "Extremely likely", code: 5 }
     ]
   }
 ];    
@@ -569,15 +566,15 @@ export const cannabis24 = [
     ]
   },
   {
-    name: "can_intent_goals",
+    name: "can_intent",
     question:
-      "What are your goals regarding cannabis use?",
+      "How likely are you to use cannabis of any kind (smoked, vaped, edibles, etc.) in the next 6 months?",
     answers: [
-      { text: "I want to never use", code: 1 },
-      { text: "I want to cut back on my cannabis use", code: 2 },
-      { text: "I want to continue my current cannabis use patterns", code: 3 },
-      { text: "I want to quit completely", code: 4 },
-      { text: "I have not decided yet", code: 5 }
+      { text: "Not at all likely ", code: 1 },
+      { text: "Slightly likely", code: 2 },
+      { text: "Moderately likely", code: 3 },
+      { text: "Very likely", code: 4 },
+      { text: "Extremely likely", code: 5 }
     ]
   }
 ]
