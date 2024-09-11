@@ -64,6 +64,7 @@ const SelectLoc = ({ noCode }) => {
     "District of Columbia",
     "Florida",
     "Georgia",
+    "Guam",
     "Hawaii",
     "Idaho",
     "Illinois",
