@@ -32,7 +32,20 @@ const enterCode=async(req,res)=>{
   if (user){
     let teacher=user["_id"]
     const schools=await School.find({teacher})
-    res.status(StatusCodes.OK).json({ user,schools });
+    const startOfSeptember = new Date('2024-09-01T00:00:00.000Z');
+    const endOfSeptember = new Date('2024-09-30T23:59:59.999Z');
+    
+    let recentResponses = await StudentResponse.find({
+      formCode: code,
+      createdAt: {
+        $gte: startOfSeptember, // Greater than or equal to September 1st
+        $lte: endOfSeptember // Less than or equal to September 30th
+      }
+    });
+    console.log(recentResponses)
+    recentResponses = recentResponses.length === 0 ? false : true;
+    console.log(recentResponses)
+    res.status(StatusCodes.OK).json({ user,schools, recentResponses });
   }
   else{
     throw new BadRequestError('Invalid Code. Try Again or Ask Teacher for Code');

@@ -50,7 +50,7 @@ const LSUser = JSON.parse(localStorage.getItem("user"));
 const LSUserLocations = JSON.parse(localStorage.getItem("userLocations"));
 const stateList = ["all", "Alabama", "Alaska", "Arizona", "Arkansas", "California",
       "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida",
-      "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas",
+      "Guam","Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas",
       "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan",
       "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada",
       "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina",
@@ -122,7 +122,8 @@ const initialState = {
   allUsers:null,
   selectedYear:"2023-2024",
   productsTobacco:{nic_vape_intent: '', nic_nonnic_vape_intent: '', nic_cig_intent: ''},
-  productsCannabis:{can_smoke_intent: '', can_vape_intent: '', can_edible_intent: ''}
+  productsCannabis:{can_smoke_intent: '', can_vape_intent: '', can_edible_intent: ''},
+  recentResponse: false
 
 };
 
@@ -583,10 +584,15 @@ const AppProvider = ({ children }) => {
   }
 
   const enterCode = async (code) => {
+    const {
+      recentResponse
+  } = state;
     try {
       const { data } = await axios.post(`/api/v1/auth/enterCode/`, {code});
+      const {id, name, email, state, city, school, recentResponses} = data;
+      handleChange({ name: "recentResponse", value: data["recentResponses"] });
 
-            const {id, name, email, state, city, school} = data;
+      // console.log(data["recentResponses"])
       dispatch({ type: ENTER_CODE , payload:{teacher:data["user"],schools:data["schools"]}});
     } catch (error) {
       if (error.response.status !== 401) {
@@ -925,10 +931,10 @@ const AppProvider = ({ children }) => {
         responseGroups,
         currentSchoolIndex,
         shouldReload,
-        exportLoading
+        exportLoading,
+        selectedYear
     } = state;
     handleChange({ name: "exportLoading", value: true });
-    console.log('context export')
     if (search) {
         try {
             dispatch({
@@ -936,7 +942,7 @@ const AppProvider = ({ children }) => {
                 payload: { exportData: null, msg: "Export Successful" },
             });
 
-            const data = await authFetch.get(`/export/${formCode}${search}`);
+            const data = await authFetch.get(`/export/${formCode}/${selectedYear}${search}`);
             const exportData = data.data.exportData;
             console.log(exportData)
             
@@ -973,7 +979,7 @@ const AppProvider = ({ children }) => {
 
           try {
             const data = await authFetch.get(
-              `/export/${uniqueResponseType.formCode}?${queryParameters}`
+              `/export/${uniqueResponseType.formCode}/${selectedYear}?${queryParameters}`
             );
             const exportDatas = data.data.exportData;
             exportDatas.forEach((exportData) => {

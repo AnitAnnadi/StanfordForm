@@ -26,13 +26,16 @@ import {
 import NoCode from "../models/NoCode.js";
 let exportData = [];
 
-const findResponse = (list, questions, obj) => {
+const findResponse = (list, questions, obj, selectedYear) => {
+  console.log(selectedYear)
   list.map((block) => {
-    let foundQuestions = questions.filter((object) => object.Question === block.question);
+    let foundQuestions = questions.filter((object) => 
+    object.Question === block[selectedYear === "2024-2025" ? 'name' : 'question']);    console.log(foundQuestions)
+    
     if (foundQuestions.length > 0) {
-      obj[block.question] = foundQuestions.map((q) => q.Answer).join(", "); // Combine answers if there are multiple matches
+      obj[block[selectedYear === "2024-2025" ? 'name' : 'question']] = foundQuestions.map((q) => q.Answer).join(", "); // Combine answers if there are multiple matches
     } else {
-      obj[block.question] = "";
+      obj[block[selectedYear === "2024-2025" ? 'name' : 'question']] = "";
     }
   });
   exportData.push(obj);
@@ -43,7 +46,8 @@ const getExport = async (req, res) => {
   try {
     const { noCode, teacherId, schoolId, period, grade, formType, when,
       school: schoolName, state, city, county, district } = req.query;
-    const { formCode } = req.params;
+    const { formCode, selectedYear } = req.params;
+    console.log(selectedYear)
 
     let responseQueryObject={}
 
@@ -130,19 +134,19 @@ const getExport = async (req, res) => {
         let questions = await Question.find({
           StudentResponse: studentResponse._id,
         });
-        console.log(questions)
+        console.log(selectedYear, "2024-2025")
         if (studentResponse.formType === "You and Me Vape Free (middle school and above)") {
           if (studentResponse.when === "before") {
-            findResponse(tobacco, questions, obj);
+            findResponse(selectedYear=="2024-2025"?tobacco24:tobacco, questions, obj, selectedYear);
           } else {
-            findResponse(tobacco.concat(postTobacco), questions, obj);
+            findResponse(selectedYear=="2024-2025"?tobacco24:tobacco.concat(postTobacco), questions, obj, selectedYear);
           }
         }
         else if (studentResponse.formType === "You and Me, Together Vape-Free(elem)") {
           if (studentResponse.when === "before") {
-            findResponse(tobaccoElem, questions, obj);
+            findResponse(selectedYear=="2024-2025"?tobaccoElem24:tobaccoElem, questions, obj, selectedYear);
           } else {
-            findResponse(tobaccoElem.concat(postTobacco), questions, obj);
+            findResponse(selectedYear=="2024-2025"?tobaccoElem24:tobaccoElem.concat(postTobacco), questions, obj, selectedYear);
           }
         }
         else if (
@@ -150,23 +154,22 @@ const getExport = async (req, res) => {
           "Smart Talk: Cannabis Prevention & Education Awareness"
         ) {
           if (studentResponse.when === "before") {
-            findResponse(cannabis, questions, obj);
+            findResponse(selectedYear=="2024-2025"?cannabis24:cannabis, questions, obj, selectedYear);
           } else {
-            findResponse(cannabis.concat(postCannabis), questions, obj);
+            findResponse(selectedYear=="2024-2025"?cannabis24:cannabis.concat(postCannabis), questions, obj, selectedYear);
           }
         } else if (studentResponse.formType === "Safety First") {
-          findResponse(safety, questions, obj);
+          findResponse(safety, questions, obj, selectedYear);
         }
         else if (studentResponse.formType === "Healthy Futures: Tobacco/Nicotine/Vaping") {
-          findResponse(healthy, questions, obj);
+          findResponse(selectedYear=="2024-2025"?healthy24.concat(healthyTobacco24):healthy, questions, obj, selectedYear);
         }
         else if (studentResponse.formType === "Healthy Futures: Cannabis") {
-          findResponse(healthy, questions, obj);
+          findResponse(selectedYear=="2024-2025"?healthy24.concat(healthyCannabis24):healthy, questions, obj, selectedYear);
         }
       })
     );
-    console.log('export')
-    console.log(exportData)
+
     res.status(StatusCodes.OK).json({ exportData });
   } catch (error) {
     console.error("Error exporting exportData:", error);

@@ -11,13 +11,13 @@ import ProductsCannabis from "../components/ProductsCannabis";
 
 //still using 23-24 safety
 import {
-//   tobacco,
-//   postTobacco,
-//   cannabis,
-//   postCannabis,
+  tobacco,
+  postTobacco,
+  cannabis,
+  postCannabis,
   safety,
-//   healthy,
-//   tobaccoElem
+  healthy,
+  tobaccoElem
 } from "../utils/questions23-24";
 
 
@@ -47,7 +47,7 @@ const Form = () => {
     isLoading,
     enterCode,
     submitForm,
-    successAlert,
+    recentResponse,
     productsTobacco,
     productsCannabis,
     nextPg,
@@ -154,24 +154,24 @@ const Form = () => {
   const [usedForm, setUsedForm] = useState(() => {
     if (info["form"] === "You and Me, Together Vape-Free") {
       // return info["when"] === "before" ? tobacco : tobacco.concat(postTobacco); //this was for 23-24
-      return tobacco24;
+      return recentResponse?(info["when"] === "before" ? tobacco : tobacco.concat(postTobacco)):tobacco24;
     } 
     else if(info["form"] ==="You and Me, Together Vape-Free(elem)"){
       // return info["when"] === "before" ? tobaccoElem : tobaccoElem.concat(postTobacco);  //this was for 23-24
-      return tobaccoElem24;
+      return recentResponse?info["when"] === "before" ? tobaccoElem : tobaccoElem.concat(postTobacco):tobaccoElem24;
     }else if (
       info["form"] === "Smart Talk: Cannabis Prevention & Education Awareness"
     ) {
       // return info["when"] === "before"? cannabis: cannabis.concat(postCannabis); //this was for 23-24
-      return cannabis24
+      return recentResponse?info["when"] === "before"? cannabis: cannabis.concat(postCannabis):cannabis24
     } else if (info["form"] === "Safety First") {
       return safety;
     }
     else if (info["form"] === "Healthy Futures: Tobacco/Nicotine/Vaping") {
-      return healthy24;
+      return recentResponse?healthy:healthy24;
     }
     else if (info["form"] === "Healthy Futures: Cannabis") {
-      return healthy24;
+      return recentResponse?healthy:healthy24;
     }
   });
 
