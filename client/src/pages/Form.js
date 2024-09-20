@@ -152,6 +152,7 @@ const Form = () => {
   };
 
   const [usedForm, setUsedForm] = useState(() => {
+    console.log(recentResponse)
     if (info["form"] === "You and Me, Together Vape-Free") {
       // return info["when"] === "before" ? tobacco : tobacco.concat(postTobacco); //this was for 23-24
       return recentResponse?(info["when"] === "before" ? tobacco : tobacco.concat(postTobacco)):tobacco24;
@@ -210,18 +211,18 @@ const Form = () => {
     {console.log(element)}
     <div style={{ display: "flex", columnGap: "0.35rem" }}>
       {/* {} */}
-      <p>{names.push(info["form"]=="Safety First"?element["question"]:element["name"])}.</p>
+      <p>{names.push(info["form"]=="Safety First"||recentResponse||recentResponse?element["question"]:element["name"])}.</p>
       <p>{t(element["question"], element["question"])}</p>
     </div>
     {element["question"].includes("check all that apply")
       ? element["answers"].map((answer, index) => (
           <label key={index} className="container">
-            <span>{info["form"]=="Safety First"?answer:answer.text}</span> 
+            <span>{info["form"]=="Safety First"||recentResponse?answer:answer.text}</span> 
             {/* temporarily removed translate */}
             <input
               type="checkbox"
-              name={element["name"]}
-              value={info["form"]=="Safety First"?answer:answer.code}
+              name={info["form"]=="Safety First"||recentResponse?element["question"]:element["name"]}
+              value={info["form"]=="Safety First"||recentResponse?answer:answer.code}
             />
             <span className="checkmark"></span>
           </label>
@@ -255,13 +256,14 @@ const Form = () => {
                   </div>
                 )):
                 
-                <span>{info["form"]=="Safety First"?answer:answer.text}</span>} 
+                <span>{info["form"]=="Safety First"||recentResponse?answer:answer.text}</span>} 
                 {console.log(answer.code)}
                 
                 <input
                   type="radio"
-                  value={info["form"]=="Safety First"?answer:answer.code}                  
-                  name={element["name"]}
+                  value={info["form"]=="Safety First"||recentResponse?answer:answer.code}                  
+                                name={info["form"]=="Safety First"||recentResponse?element["question"]:element["name"]}
+
                 />
                 <span className="checkmark"></span>
               </label>
@@ -276,8 +278,9 @@ const Form = () => {
                 {/* <p>&#129335; I don't know</p> */}
                 <input
                   type="radio"
-                  value={info["form"]=="Safety First"?answer:answer.code}                  
-                  name={element["name"]}
+                  value={info["form"]=="Safety First"||recentResponse?answer:answer.code}                  
+                                name={info["form"]=="Safety First"||recentResponse?element["question"]:element["name"]}
+
                 />
                 <span className="checkmark"></span>
               </label>
@@ -287,10 +290,10 @@ const Form = () => {
         
   </div>
 ))}
-    {info["form"] === "Healthy Futures: Tobacco/Nicotine/Vaping"?
+    {info["form"] === "Healthy Futures: Tobacco/Nicotine/Vaping" &&!recentResponse?
     <ProductsTobacco/>:
     null}
-    {info["form"] === "Healthy Futures: Cannabis"?
+    {info["form"] === "Healthy Futures: Cannabis" && !recentResponse?
     <ProductsCannabis/>:
     null}
         <ReCAPTCHA 
