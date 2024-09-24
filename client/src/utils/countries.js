@@ -31,6 +31,7 @@ const countries = [
     "Cambodia",
     "Cameroon",
     "Canada",
+    "Cayman Islands",
     "Central African Republic",
     "Chad",
     "Chile",
