@@ -70,8 +70,10 @@ const JoinForm = () => {
   });
 
   const MultipleSchools = () => {
-    const actualSchools = schools.filter((school) => school["school"]);
-
+    const actualSchools = schools
+    .filter((school) => school["school"]) // Filter out any falsy values for "school"
+    .sort((a, b) => a.school.localeCompare(b.school)); // Sort alphabetically by "school" property
+  
     if (actualSchools.length > 1) {
       return (
         <div>
