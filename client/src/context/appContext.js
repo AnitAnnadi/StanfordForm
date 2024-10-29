@@ -374,6 +374,7 @@ const AppProvider = ({ children }) => {
         captcha,
         adminTeacher}
       );
+      console.log(data)
 
         
       const { user, hasLocation, userLocations, pendingLocations } = data;

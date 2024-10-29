@@ -96,7 +96,6 @@ const createTwoFA =async({req,res, name, email, password, role, code, adminTeach
 
 const register = async (req, res) => {
   const { currentUser,captcha, adminTeacher} = req.body;
-  console.log(adminTeacher)
   const {name, email, password, role} = currentUser
   if (captcha!=undefined){
     const response = await axios.post(
@@ -175,7 +174,6 @@ const login = async (req, res) => {
   }
 
   const isPasswordCorrect = await user.comparePassword(password);
-  console.log(password)
   if (!isPasswordCorrect) {
     res.status(410).send('Invalid Credentials');
   }
