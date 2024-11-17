@@ -240,114 +240,141 @@ const SearchContainer = ({ startReload }) => {
     return values;
   };
 
-  const handleCheckboxChange = (e)=>{
-    if (e.target.checked){
 
-    }
-    else{
+const resetFields = (fields) => {
+  const resetState = fields.reduce((acc, field) => {
+    acc[field] = "all";
+    return acc;
+  }, {});
+  handleChanges(resetState);
+};
 
-    }
+const handleLocalChange = (e) => {
+  const { name, value } = e.target;
+
+  switch (name) {
+    case "searchState":
+      resetFields([
+        "searchCounty",
+        "searchCity",
+        "searchDistrict",
+        "searchSchool",
+        "searchTeacher",
+      ]);
+
+      handleChanges({
+        [name]: value,
+        countyOptions: narrowAllowedOptions(
+          "county",
+          narrowCounties({ state: value })
+        ),
+        cityOptions: narrowAllowedOptions(
+          "city",
+          narrowCities({ state: value })
+        ),
+        districtOptions: narrowAllowedOptions(
+          "district",
+          narrowDistricts({ state: value })
+        ),
+      });
+
+      setToNarrowSchools({
+        reactState: "schoolOptions",
+        allowed: false,
+        state: value,
+      });
+      break;
+
+    case "searchCounty":
+      resetFields(["searchCity", "searchDistrict", "searchSchool", "searchTeacher"]);
+
+      handleChanges({
+        [name]: value,
+        cityOptions: narrowAllowedOptions(
+          "city",
+          narrowCities({ county: value })
+        ),
+        districtOptions: narrowAllowedOptions(
+          "district",
+          narrowDistricts({ county: value, state: searchState })
+        ),
+      });
+
+      setToNarrowSchools({
+        reactState: "schoolOptions",
+        allowed: false,
+        county: value,
+      });
+      break;
+
+    case "searchCity":
+      resetFields(["searchDistrict", "searchSchool", "searchTeacher"]);
+
+      handleChanges({
+        [name]: value,
+        districtOptions: narrowAllowedOptions(
+          "district",
+          narrowDistricts({
+            city: value === "all" ? undefined : value,
+            county: searchCounty === "all" ? undefined : searchCounty,
+            state: searchState === "all" ? undefined : searchState,
+          })
+        ),
+      });
+
+      setToNarrowSchools({
+        reactState: "schoolOptions",
+        allowed: false,
+        city: value,
+        county: searchCounty,
+        state: searchState,
+      });
+      break;
+
+    case "searchDistrict":
+      resetFields(["searchSchool", "searchTeacher"]);
+
+      handleChanges({
+        [name]: value,
+      });
+
+      setToNarrowSchools({
+        reactState: "schoolOptions",
+        allowed: false,
+        district: value,
+        county: searchCounty,
+        state: searchState,
+        city: searchCity,
+      });
+      break;
+
+    case "searchSchool":
+      resetFields(["searchTeacher"]);
+
+      handleChanges({
+        [name]: value,
+      });
+      break;
+
+    case "searchTeacher":
+      if (value === "all") {
+        handleChanges({ [name]: "all" });
+      } else {
+        const selectedTeacher = teacherOptions.find(
+          (teacher) => teacher[0] === value
+        );
+        handleChanges({
+          [name]: selectedTeacher || "all",
+        });
+      }
+      break;
+
+    default:
+      handleChanges({ [name]: value });
+      break;
   }
-  const handleLocalChange = (e) => {
-    switch (e.target.name) {
-      case "searchState":
-        handleChanges({
-          [e.target.name]: e.target.value,
-          searchCounty: "all",
-          searchCity: "all",
-          searchDistrict: "all",
-          searchSchool: "all",
-          searchTeacher: "all",
-          countyOptions: narrowAllowedOptions(
-            "county",
-            narrowCounties({ state: e.target.value })
-          ),
-          cityOptions: narrowAllowedOptions(
-              "city",
-              narrowCities({ state: e.target.value })
-            ),
-          districtOptions: narrowAllowedOptions(
-            "district",
-            narrowDistricts({ state: e.target.value })
-          ),
-        });
-
-        setToNarrowSchools({reactState: "schoolOptions", allowed: true, state: e.target.value})
-        break;
-      case "searchCounty":
-        handleChanges({
-          [e.target.name]: e.target.value,
-          searchCity: "all",
-          searchDistrict: "all",
-          searchSchool: "all",
-          searchTeacher: "all",
-          cityOptions: narrowAllowedOptions(
-            "city",
-            narrowCities({ county: e.target.value })
-          ),
-          districtOptions: narrowAllowedOptions(
-            "district",
-            narrowDistricts({ county: e.target.value, state: searchState })
-          ),
-        });
-
-        setToNarrowSchools({reactState: "schoolOptions", allowed: true, county: e.target.value})
-        break;
-      case "searchCity":
-        handleChanges({
-          [e.target.name]: e.target.value,
-          searchDistrict: "all",
-          searchSchool: "all",
-          searchTeacher: "all",
-          districtOptions: narrowAllowedOptions(
-              "district",
-              narrowDistricts({
-                city: e.target.value === 'all' ? undefined : e.target.value,
-                county: searchCounty === 'all' ? undefined : searchCounty,
-                state: searchState === 'all' ? undefined : searchState
-              })
-            ),
-        });
-
-        setToNarrowSchools({reactState: "schoolOptions", allowed: true, city: e.target.value, county: searchCounty, state: searchState})
-        break;
-      case "searchDistrict":
-        handleChanges({
-          [e.target.name]: e.target.value,
-          searchSchool: 'all',
-          searchTeacher: 'all',
-        });
-
-        setToNarrowSchools({reactState: "schoolOptions", allowed: true, district: e.target.value, county: searchCounty, state: searchState, city: searchCity});
-        break;
-      case "searchSchool":
-        handleChanges({
-          searchTeacher: "all",
-          [e.target.name]: e.target.value,
-        });
-        break;
-      case "searchTeacher":
-        // get the second element of the teacher option array
-        if (e.target.value === "all") {
-          handleChanges({
-            [e.target.name]: "all",
-          });
-          break;
-        } else {
-          const selectedTeacher = teacherOptions.find(
-            (teacher) => teacher[0] === e.target.value
-          );
-          handleChanges({
-            [e.target.name]: selectedTeacher ? selectedTeacher : "all",
-          });
-          break;
-        }
-      default:
-        handleChanges({ [e.target.name]: e.target.value });
-        break;
-    }
-  };
-
+};
+  
   const handleSubmit = (e) => {
     e.preventDefault();
 

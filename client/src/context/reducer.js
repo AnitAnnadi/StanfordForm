@@ -211,7 +211,6 @@ const reducer = (state, action) => {
     };
   }
   if (action.type === HANDLE_CHANGE) {
-    console.log(action.payload.name,action.payload.value )
     return {
       ...state,
       page: 1,

@@ -63,7 +63,6 @@ const getExport = async (req, res) => {
       school = await School.findOne({ _id: schoolId });
       teacher = await User.findOne({ _id: teacherId });
       studentResponses = await StudentResponse.find(responseQueryObject);
-      console.log(studentResponses)
     } else {
       responseQueryObject = {
         school: schoolName,
@@ -102,7 +101,6 @@ const getExport = async (req, res) => {
         };
 
         const readableDate = date.toLocaleString('en-US', options);
-        console.log(readableDate);
 
 
         let obj = {
@@ -157,7 +155,6 @@ const getExport = async (req, res) => {
         }
       })
     );
-    console.log(exportData)
     res.status(StatusCodes.OK).json({ exportData });
   } catch (error) {
     console.error("Error exporting exportData:", error);

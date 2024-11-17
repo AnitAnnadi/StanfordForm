@@ -49,7 +49,6 @@ catch(error){
 
 
 const getUserSchools = async (req, res) => {
-  console.log('firstone')
   const user = await User.findOne({ _id: req.user.userId });
   const userLocations = await School.find({ teacher: user._id });
 

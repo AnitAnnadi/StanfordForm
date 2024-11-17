@@ -86,7 +86,7 @@ const initialState = {
   monthlyApplications: [],
   pendingLocations:[],
   stateOptions: localStorage.getItem("stateOptions") ? (localStorage.getItem("stateOptions") !== "undefined" ? JSON.parse(localStorage.getItem("stateOptions")): stateList) : stateList,
-  searchState: localStorage.getItem("searchState") ? (localStorage.getItem("searchState") !== "undefined" ? JSON.parse(localStorage.getItem("searchState")): 'all'): 'all',
+  searchState : localStorage.getItem("searchState") ? (localStorage.getItem("searchState") !== "undefined" ? JSON.parse(localStorage.getItem("searchState")) : 'all') : 'all',
   countyOptions: localStorage.getItem("countyOptions") ? (localStorage.getItem("countyOptions") !== "undefined" ? JSON.parse(localStorage.getItem("countyOptions")): ['all']): ['all'],
   searchCounty: localStorage.getItem("searchCounty") ? (localStorage.getItem("searchCounty") !== "undefined" ? JSON.parse(localStorage.getItem("searchCounty")): 'all'): 'all',
   districtOptions: localStorage.getItem("districtOptions") ? (localStorage.getItem("districtOptions") !== "undefined" ? JSON.parse(localStorage.getItem("districtOptions")): ['all']): ['all'],
@@ -171,7 +171,6 @@ const configureFormStates = async (userLocations, user, formStates) => {
       newCountyOptions = [userLocations[0]?.county];
       newDistrictOptions = [userLocations[0]?.district === "district" ? "N/A" : userLocations[0]?.district];
       newCityOptions = [userLocations[0]?.city];
-      console.log(narrowAllSchools({state: userLocations[0]?.state, county: userLocations[0]?.county, district: userLocations[0]?.district}))
       newSchoolOptions = ["all", ...(await narrowAllSchools({state: userLocations[0]?.state, county: userLocations[0]?.county, district: userLocations[0]?.district}))];
       break;
     case "County Admin":
@@ -259,10 +258,10 @@ const configureFormStates = async (userLocations, user, formStates) => {
 
 const narrowAllSchools = async (getParams, allowed = false) => {
   try {
+    console.log(getParams,allowed)
     if (allowed) {
       const {data} = await axios.get(`/api/v1/schools/user`);
       const { userLocations } = data;
-      console.log(userLocations)
 
       const { state, county, city, district, school } = getParams;
 
@@ -421,8 +420,10 @@ const AppProvider = ({ children }) => {
               return ['new' + key[0].toUpperCase() + key.slice(1), state[key]]
           }))
         );
+        
 
         stateKeys.forEach(key => {
+          handleChange({ name: "key", value: JSON.stringify(newFormState[key]) });
           localStorage.setItem(key, JSON.stringify(newFormState[key]));
         });
       }
@@ -587,7 +588,9 @@ const AppProvider = ({ children }) => {
 
   const setToNarrowSchools = async ({reactState, allowed, state, county, city, district}) => {
     try {
+      console.log('school')
       const schoolNames = await narrowAllSchools({state, county, city, district}, allowed);
+      console.log(schoolNames)
 
       dispatch({ type: HANDLE_CHANGE, payload: { name: reactState, value: schoolNames } });
     } catch (error) {
@@ -694,7 +697,6 @@ const AppProvider = ({ children }) => {
 
 
   const handleChange = ({ name, value }) => {
-    console.log(name,value)
     dispatch({ type: HANDLE_CHANGE, payload: { name, value } });
   };
   const handleChanges = (newStates) => {
@@ -762,7 +764,6 @@ const AppProvider = ({ children }) => {
       let newResponses = [];
       let teacherNames = [];
       let schoolIndex = (currentSchoolIndex && !all) ? currentSchoolIndex : 0;
-      console.log(filteredSchools)
       while ( schoolIndex < filteredSchools.length) {
         const { data: data2 } = await authFetch.get('/studentResponses', {
           params: {
@@ -776,7 +777,6 @@ const AppProvider = ({ children }) => {
             checkedYears
           }
         });
-        console.log(filteredSchools[schoolIndex].teacher,)
         const {teacherId, teacherName, studentResponses } = data2;
 
         // let teacherMatch = teacherNames.find(function(obj) {

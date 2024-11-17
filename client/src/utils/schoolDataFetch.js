@@ -3,7 +3,7 @@ import {common} from "@mui/material/colors";
 
 const narrowCounties = ({state}) => {
 
-    console.log('1')
+    console.log(state)
     const counties = schoolData
         .filter((school) => school.state.toUpperCase() === state.toUpperCase())
         .map((school) => school.county)
@@ -40,7 +40,6 @@ const narrowDistricts = ({state, county, city}) => {
 }
 
 const narrowCities = ({state, county}) => {
-    // console.lo
     const cities = schoolData
         .filter((school) => {
             if (county === undefined) {
@@ -58,6 +57,7 @@ const narrowCities = ({state, county}) => {
 }
 
 const narrowSchools = ({state, county, city, district}) => {
+    console.log('schools')
     const schools = schoolData
         .filter((school) => {
           // Seems like there should be a better way to do this but I can't think of it right now
