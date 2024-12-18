@@ -130,25 +130,39 @@ const getExport = async (req, res) => {
         (q) => q.StudentResponse.toString() === studentResponse._id.toString()
       );
 
-      // Process formType-specific responses
-      if (studentResponse.formType.includes("Vape Free")) {
-        if (studentResponse.when === "before") {
-          findResponse(tobacco, relatedQuestions, obj);
-        } else {
-          findResponse([...tobacco, ...postTobacco], relatedQuestions, obj);
-        }
-      } else if (studentResponse.formType.includes("Cannabis")) {
-        if (studentResponse.when === "before") {
-          findResponse(cannabis, relatedQuestions, obj);
-        } else {
-          findResponse([...cannabis, ...postCannabis], relatedQuestions, obj);
-        }
-      } else if (studentResponse.formType === "Safety First") {
-        findResponse(safety, relatedQuestions, obj);
-      } else if (studentResponse.formType.includes("Healthy Futures")) {
-        findResponse(healthy, relatedQuestions, obj);
-      }
+      // Define a mapping for form types and their respective data
+      const formTypeMapping = {
+        "You and Me Vape Free (middle school and above)": {
+          before: tobacco,
+          after: [...tobacco, ...postTobacco],
+        },
+        "You and Me, Together Vape-Free(elem)": {
+          before: tobaccoElem,
+          after: [...tobaccoElem, ...postTobacco],
+        },
+        "Smart Talk: Cannabis Prevention & Education Awareness": {
+          before: cannabis,
+          after: [...cannabis, ...postCannabis],
+        },
+        "Safety First": {
+          always: safety,
+        },
+        "Healthy Futures: Tobacco/Nicotine/Vaping": {
+          always: healthy,
+        },
+        "Healthy Futures: Cannabis": {
+          always: healthy,
+        },
+      };
 
+      // Simplify the logic using the mapping
+      if (formTypeMapping[studentResponse.formType]) {
+        const dataKey = studentResponse.when === "before" ? "before" : "after";
+        const data =
+          formTypeMapping[studentResponse.formType][dataKey] ||
+          formTypeMapping[studentResponse.formType].always;
+        if (data) findResponse(data, relatedQuestions, obj);
+      }
       return obj; // Add the processed object to exportData
     });
 
@@ -163,7 +177,6 @@ const getExport = async (req, res) => {
 
 const getExportBulk = async (req, res) => {
   try {
-    console.log('hi')
     const { allResponseGroups } = req.body; // Accept all responseGroups as input
 
     if (!allResponseGroups || allResponseGroups.length === 0) {
@@ -207,27 +220,38 @@ const getExportBulk = async (req, res) => {
     // Fetch all student responses in one go
     const studentResponses = await StudentResponse.find({
       $or: queryConditions,
-    });
-
+    }).populate("teacher", "name");
+    
     // Fetch related questions for all responses
     const responseIds = studentResponses.map((sr) => sr._id);
     const questions = await Question.find({
       StudentResponse: { $in: responseIds },
     });
 
+
+    const queryMap = responseQueries.reduce((acc, query) => {
+      const key = `${query.formCode}_${query.teacher}`;
+      acc[key] = query;
+      return acc;
+    }, {});
+    
     // Process all responses
     const exportData = studentResponses.map((studentResponse) => {
+      const key = `${studentResponse.formCode}_${studentResponse.teacher?._id}`;
+      const matchedQuery = queryMap[key];
+      
+            
+    
       const date = new Date(studentResponse.createdAt).toLocaleString("en-US", {
         timeZone: "America/Los_Angeles",
       });
-
       const obj = {
-        teacher: "n/a", // Default teacher (you can update this if needed)
-        school: studentResponse.school,
-        county: studentResponse.county || "n/a",
-        district: studentResponse.district || "n/a",
-        state: studentResponse.state,
-        city: studentResponse.city,
+        teacher:studentResponse.teacher?.name || "n/a",
+        school: matchedQuery?.school,
+        county: matchedQuery?.county || "n/a",
+        district: matchedQuery?.district || "n/a",
+        state: matchedQuery?.state,
+        city: matchedQuery?.city,
         date: date,
         when: studentResponse.when,
         grade: studentResponse.grade,
@@ -240,23 +264,38 @@ const getExportBulk = async (req, res) => {
         (q) => q.StudentResponse.toString() === studentResponse._id.toString()
       );
 
-      // Process based on formType
-      if (studentResponse.formType.includes("Vape Free")) {
-        if (studentResponse.when === "before") {
-          findResponse(tobacco, relatedQuestions, obj);
-        } else {
-          findResponse([...tobacco, ...postTobacco], relatedQuestions, obj);
-        }
-      } else if (studentResponse.formType.includes("Cannabis")) {
-        if (studentResponse.when === "before") {
-          findResponse(cannabis, relatedQuestions, obj);
-        } else {
-          findResponse([...cannabis, ...postCannabis], relatedQuestions, obj);
-        }
-      } else if (studentResponse.formType === "Safety First") {
-        findResponse(safety, relatedQuestions, obj);
-      } else if (studentResponse.formType.includes("Healthy Futures")) {
-        findResponse(healthy, relatedQuestions, obj);
+      // Define a mapping for form types and their respective data
+      const formTypeMapping = {
+        "You and Me Vape Free (middle school and above)": {
+          before: tobacco,
+          after: [...tobacco, ...postTobacco],
+        },
+        "You and Me, Together Vape-Free(elem)": {
+          before: tobaccoElem,
+          after: [...tobaccoElem, ...postTobacco],
+        },
+        "Smart Talk: Cannabis Prevention & Education Awareness": {
+          before: cannabis,
+          after: [...cannabis, ...postCannabis],
+        },
+        "Safety First": {
+          always: safety,
+        },
+        "Healthy Futures: Tobacco/Nicotine/Vaping": {
+          always: healthy,
+        },
+        "Healthy Futures: Cannabis": {
+          always: healthy,
+        },
+      };
+
+      // Simplify the logic using the mapping
+      if (formTypeMapping[studentResponse.formType]) {
+        const dataKey = studentResponse.when === "before" ? "before" : "after";
+        const data =
+          formTypeMapping[studentResponse.formType][dataKey] ||
+          formTypeMapping[studentResponse.formType].always;
+        if (data) findResponse(data, relatedQuestions, obj);
       }
 
       return obj;
@@ -269,6 +308,5 @@ const getExportBulk = async (req, res) => {
     res.status(500).json({ error: "Failed to export bulk data." });
   }
 };
-
 
 export { getExport, getExportBulk };
