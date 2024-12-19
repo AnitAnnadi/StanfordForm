@@ -1135,7 +1135,9 @@ const AppProvider = ({ children }) => {
       }
 
       // fetch no code responses for stanford staff
-      if (user.role === "Stanford Staff") {
+
+      if (user.role.includes("Site Admin") || user.role.includes("District Admin") || user.role.includes("County Admin") || user.role.includes("State Admin") || user.role.includes("Stanford Staff") ) {
+        console.log('inside no code')
         if (
           schoolIndex >= filteredSchools.length &&
           (newResponses.length === 0 || all)
@@ -1159,9 +1161,9 @@ const AppProvider = ({ children }) => {
               },
             }
           );
-
+          // console
           const { studentResponses: noCodeStudentResponses } = data3;
-
+          console.log(noCodeStudentResponses)
           let uniqueResponseTypes = [];
 
           for (const responseIndex in noCodeStudentResponses) {

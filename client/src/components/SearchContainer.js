@@ -119,12 +119,12 @@ const SearchContainer = ({ startReload }) => {
       XLSXUtils.book_append_sheet(
         workbook,
         healthyTobaccoSheet,
-        "Healthy Futures:Tobacco"
+        "Healthy Futures - Tobacco"
       );
       XLSXUtils.book_append_sheet(
         workbook,
         healthyCannabisSheet,
-        "Healthy Futures:Cannabis"
+        "Healthy Futures - Cannabis"
       );
       writeXLSXFile(workbook, `data.xlsx`);
       handleChange(exportData, []);
