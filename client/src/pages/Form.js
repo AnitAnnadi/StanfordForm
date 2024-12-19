@@ -1,4 +1,4 @@
-import { useState,useRef } from "react";
+import { useState, useRef } from "react";
 import { FormRow, Alert } from "../components";
 import { useAppContext } from "../context/appContext";
 import Wrapper from "../assets/wrappers/DashboardFormPage";
@@ -13,15 +13,31 @@ import {
   postCannabis,
   safety,
   healthy,
-  tobaccoElem
+  tobaccoElem,
 } from "../utils/questions23-24";
-import ReCAPTCHA from "react-google-recaptcha"
-import {useTranslation} from "react-i18next";
-import {MdLanguage} from "react-icons/md";
+import {
+  tobacco24,
+  tobaccoElem24,
+  cannabis24,
+  healthy24,
+  safety24,
+  healthyCannabis24,
+  healthyTobacco24,
+} from "../utils/questions24-25";
+import ProductsCannabis from "../components/ProductsCannabis";
+import ProductsTobacco from "../components/ProdcuctsTobacco";
+
+import ReCAPTCHA from "react-google-recaptcha";
+import { useTranslation } from "react-i18next";
+import { MdLanguage } from "react-icons/md";
 
 const Form = () => {
   const BlackBox = () => {
-    return <div style={{ backgroundColor: 'black', width: '20px', height: '20px' }}></div>;
+    return (
+      <div
+        style={{ backgroundColor: "black", width: "20px", height: "20px" }}
+      ></div>
+    );
   };
   const {
     user,
@@ -35,42 +51,45 @@ const Form = () => {
     successAlert,
     altertText,
     nextPg,
-    handleChange
+    handleChange,
+    productsCannabis,
+    productsTobacco
   } = useAppContext();
 
   const navigate = useNavigate();
   let location = useLocation();
   let info = location.state;
-  console.log(info)
+  console.log(info);
   let selected = [];
   let names = [];
-  const captchaRef = useRef(null)
+  const captchaRef = useRef(null);
 
   useEffect(() => {
     if (nextPg) {
       if (
-        (info["form"] === "Healthy Futures: Tobacco/Nicotine/Vaping" || info["form"] === "Healthy Futures: Cannabis") &&
+        (info["form"] === "Healthy Futures: Tobacco/Nicotine/Vaping" ||
+          info["form"] === "Healthy Futures: Cannabis") &&
         info["when"] === "after"
       ) {
         setTimeout(() => {
           navigate("/certificateinfo", { state: { info } });
-          handleChange({name:"isLoading",value:false})
+          handleChange({ name: "isLoading", value: false });
         }, 2000);
       } else {
         setTimeout(() => {
           navigate("/success", {});
-          handleChange({name:"isLoading",value:false})
-
+          handleChange({ name: "isLoading", value: false });
         }, 2000);
       }
-  
+
       captchaRef.current.reset();
     }
   }, [nextPg]);
-  
+
   const handleSubmit = (e) => {
+    console.log(names)
     e.preventDefault();
-    const captcha =  captchaRef.current.getValue();
+    const captcha = captchaRef.current.getValue();
     const formData = [];
 
     names.forEach((name) => {
@@ -78,6 +97,7 @@ const Form = () => {
       const answers = [];
 
       let checks = document.getElementsByName(name);
+      console.log(document.getElementsByName(name))
       for (var check of checks) {
         if (check.checked) {
           answers.push(check.value);
@@ -89,8 +109,22 @@ const Form = () => {
     let grade = info["grade"];
     let when = info["when"];
     let type = info["form"];
-    if (type === "You and Me, Together Vape-Free"){
-      type = "You and Me Vape Free (middle school and above)"
+    if (type == "Healthy Futures: Tobacco/Nicotine/Vaping") {
+      {
+        Object.entries(productsTobacco).map(([key, value]) =>
+          formData.push({ question: key, answers: value })
+        );
+      }
+    }
+    if (type == "Healthy Futures: Cannabis") {
+      {
+        Object.entries(productsCannabis).map(([key, value]) =>
+          formData.push({ question: key, answers: value })
+        );
+      }
+    }
+    if (type === "You and Me, Together Vape-Free") {
+      type = "You and Me Vape Free (middle school and above)";
     }
     let school = info["school"];
     if (info["noCode"]) {
@@ -115,38 +149,37 @@ const Form = () => {
     } else {
       let period = info["period"];
       let code = localStorage.getItem("code");
+      console.log(formData);
       submitForm(formData, code, grade, when, type, school, period, null, null, null, null, captcha);
-      
     }
-
   };
 
   const [usedForm, setUsedForm] = useState(() => {
     if (info["form"] === "You and Me, Together Vape-Free") {
-      return info["when"] === "before" ? tobacco : tobacco.concat(postTobacco);
-    } 
-    else if(info["form"] ==="You and Me, Together Vape-Free(elem)"){
-      return info["when"] === "before" ? tobaccoElem : tobaccoElem.concat(postTobacco); 
-    }else if (
+      return tobacco24;
+      // return info["when"] === "before" ? tobacco : tobacco.concat(postTobacco);
+    } else if (info["form"] === "You and Me, Together Vape-Free(elem)") {
+      return tobaccoElem24;
+      // return info["when"] === "before" ? tobaccoElem : tobaccoElem.concat(postTobacco);
+    } else if (
       info["form"] === "Smart Talk: Cannabis Prevention & Education Awareness"
     ) {
-      return info["when"] === "before"
-        ? cannabis
-        : cannabis.concat(postCannabis);
+      return cannabis24;
+      // return info["when"] === "before"
+      //   ? cannabis
+      //   : cannabis.concat(postCannabis);
     } else if (info["form"] === "Safety First") {
-      return safety;
-    }
-    else if (info["form"] === "Healthy Futures: Tobacco/Nicotine/Vaping") {
-      return healthy;
-    }
-    else if (info["form"] === "Healthy Futures: Cannabis") {
-      return healthy;
+      return safety24;
+    } else if (info["form"] === "Healthy Futures: Tobacco/Nicotine/Vaping") {
+      return healthy24.concat(healthyTobacco24);
+    } else if (info["form"] === "Healthy Futures: Cannabis") {
+      return healthy24.concat(healthyCannabis24);
     }
   });
 
   const { t, i18n } = useTranslation();
 
-  const [currentLanguage, setCurrentLanguage] = useState('en');
+  const [currentLanguage, setCurrentLanguage] = useState("en");
 
   useEffect(() => {
     const currentLanguage = i18n.language;
@@ -155,13 +188,11 @@ const Form = () => {
   });
 
   return (
-    <Wrapper
-      style={{ margin: "2rem auto", maxWidth: "90%", width: "700px" }}
-    >
+    <Wrapper style={{ margin: "2rem auto", maxWidth: "90%", width: "700px" }}>
       <form className="form" onSubmit={handleSubmit}>
         <h3>{`${t(info.form, info.form)}`}</h3>
         <div className="language-select-container">
-          <MdLanguage className="language-select-icon"/>
+          <MdLanguage className="language-select-icon" />
           <select
             className="language-select"
             value={currentLanguage}
@@ -173,83 +204,104 @@ const Form = () => {
             <option value="zh">中文</option>
           </select>
         </div>
-  {usedForm.map((element, qindex) => (
-  <div key={qindex}>
-    <div style={{ display: "flex", columnGap: "0.35rem" }}>
-      <p>{names.push(element["question"])}.</p>
-      <p>{t(element["question"], element["question"])}</p>
-    </div>
-    {element["question"].includes("check all that apply")
-      ? element["answers"].map((answer, index) => (
-          <label key={index} className="container">
-            <span>{t(answer, answer)}</span>
-            <input
-              type="checkbox"
-              name={element["question"]}
-              value={answer}
-            />
-            <span className="checkmark"></span>
-          </label>
-        ))
-      : element["answers"].map((answer, index) => {
-        let box = false;
-        let emoji = false;
-        console.log(index)
-          if (qindex==8 && info.form === "You and Me, Together Vape-Free(elem)" ){
-            let emojis = ['🙁', '🙁', '🙂', '😊','😁'];
-            emoji = emojis[index]
-          }
-          if (index < 5) {
-            let blackBoxes = [];
-            let emojis = ['👍', '👎', '🤷'];
-            if (info.form === "You and Me, Together Vape-Free(elem)" && element["answers"].length === 6) {
-              box = true
-              for (let i = 0; i < index + 1; i++) {
-                blackBoxes.push(<BlackBox key={i} />);
-              }
-            }
-            else if (info.form === "You and Me, Together Vape-Free(elem)" && element["answers"].length===3 ){
-              emoji = emojis[index];
-            }
-            return (
-              <label key={index} className="container">
-               {emoji?emoji:null}
-                {box?
-                blackBoxes.map((box, boxIndex) => (
-                  <div key={boxIndex} style={{ display: "inline-block", padding: "0.2rem" }}>
-                    {box}
-                  </div>
-                )):
-                <span>{t(answer, answer)}</span>}
-                <input
-                  type="radio"
-                  value={answer}
-                  name={element["question"]}
-                />
-                <span className="checkmark"></span>
-              </label>
-            );
-          } else {
-            return (
-              <label key={index} className="container">
-                <p style={{ fontSize: "15px" }}> 🤷(I don't know)</p>
+        {usedForm.map((element, qindex) => (
+          
+          <div key={qindex}>
+            <div style={{ display: "flex", columnGap: "0.35rem" }}>
+              <p>{names.push(element["name"])}.</p>
+              <p>{t(element["question"], element["question"])}</p>
+            </div>
+            {element["question"].includes("check all that apply")
+              ? element["answers"].map((answer, index) => (
+                  <label key={index} className="container">
+                    <span>{t(answer.text, answer.text)}</span>
+                    <input
+                      type="checkbox"
+                      name={element["name"]}
+                      value={answer.code}
+                    />
+                    <span className="checkmark"></span>
+                  </label>
+                ))
+              : element["answers"].map((answer, index) => {
+                  let box = false;
+                  let emoji = false;
+                  if (
+                    qindex == 8 &&
+                    info.form === "You and Me, Together Vape-Free(elem)"
+                  ) {
+                    let emojis = ["🙁", "🙁", "🙂", "😊", "😁"];
+                    emoji = emojis[index];
+                  }
+                  if (index < 5) {
+                    let blackBoxes = [];
+                    let emojis = ["👍", "👎", "🤷"];
+                    if (
+                      info.form === "You and Me, Together Vape-Free(elem)" &&
+                      element["answers"].length === 6
+                    ) {
+                      box = true;
+                      for (let i = 0; i < index + 1; i++) {
+                        blackBoxes.push(<BlackBox key={i} />);
+                      }
+                    } else if (
+                      info.form === "You and Me, Together Vape-Free(elem)" &&
+                      element["answers"].length === 3
+                    ) {
+                      emoji = emojis[index];
+                    }
+                    return (
+                      <label key={index} className="container">
+                        {emoji ? emoji : null}
+                        {box ? (
+                          blackBoxes.map((box, boxIndex) => (
+                            <div
+                              key={boxIndex}
+                              style={{
+                                display: "inline-block",
+                                padding: "0.2rem",
+                              }}
+                            >
+                              {box}
+                            </div>
+                          ))
+                        ) : (
+                          <span>{t(answer.text, answer.text)}</span>
+                        )}
+                        <input
+                          type="radio"
+                          value={answer.code}
+                          name={element["name"]}
+                        />
+                        <span className="checkmark"></span>
+                      </label>
+                    );
+                  } else {
+                    return (
+                      <label key={index} className="container">
+                        <p style={{ fontSize: "15px" }}> 🤷(I don't know)</p>
 
-                {/* <p>&#129335; I don't know</p> */}
-                <input
-                  type="radio"
-                  value={answer}
-                  name={element["question"]}
-                />
-                <span className="checkmark"></span>
-              </label>
-            );
-          }
-        })}
-  </div>
-))}
-        <ReCAPTCHA 
-            ref={captchaRef}
-            sitekey={"6LerfqAnAAAAAB86YDhcCf0XanGHJXHQkvyxY6fJ"} />
+                        {/* <p>&#129335; I don't know</p> */}
+                        <input
+                          type="radio"
+                          value={answer.code}
+                          name={element["question"]}
+                        />
+                        <span className="checkmark"></span>
+                      </label>
+                    );
+                  }
+                })}
+          </div>
+        ))}{" "}
+        {info["form"] === "Healthy Futures: Tobacco/Nicotine/Vaping" && (
+          <ProductsTobacco />
+        )}
+        {info["form"] === "Healthy Futures: Cannabis" && <ProductsCannabis />}
+        <ReCAPTCHA
+          ref={captchaRef}
+          sitekey={"6LerfqAnAAAAAB86YDhcCf0XanGHJXHQkvyxY6fJ"}
+        />
         {showAlert && <Alert />}
         <button
           className="btn btn-block"
@@ -258,7 +310,7 @@ const Form = () => {
           style={{ marginTop: "1.38rem" }}
           disabled={isLoading}
         >
-          {t('UP_submit', 'Submit')}
+          {t("UP_submit", "Submit")}
         </button>
       </form>
     </Wrapper>
