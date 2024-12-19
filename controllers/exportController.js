@@ -12,14 +12,16 @@ import {
   postCannabis,
   safety,
   healthy,
-  tobaccoElem
+  tobaccoElem,
 } from "../utils/questions.js";
 import NoCode from "../models/NoCode.js";
 let exportData = [];
 
 const findResponse = (list, questions, obj) => {
   list.map((block) => {
-    let foundQuestions = questions.filter((object) => object.Question === block.question);
+    let foundQuestions = questions.filter(
+      (object) => object.Question === block.question
+    );
     if (foundQuestions.length > 0) {
       obj[block.question] = foundQuestions.map((q) => q.Answer).join(", "); // Combine answers if there are multiple matches
     } else {
@@ -32,13 +34,23 @@ const findResponse = (list, questions, obj) => {
 const getExport = async (req, res) => {
   exportData = [];
   try {
-    const { noCode, teacherId, schoolId, period, grade, formType, when,
-      school: schoolName, state, city, county, district } = req.query;
+    const {
+      noCode,
+      teacherId,
+      schoolId,
+      period,
+      grade,
+      formType,
+      when,
+      school: schoolName,
+      state,
+      city,
+      county,
+      district,
+    } = req.query;
     const { formCode } = req.params;
 
-    let responseQueryObject={}
-
-
+    let responseQueryObject = {};
 
     let teacher;
     let studentResponses;
@@ -52,11 +64,10 @@ const getExport = async (req, res) => {
         formType: formType,
         when: when,
         school: schoolName,
-      }
-      if (period && period !== 'undefined' && period !== 'null') {
+      };
+      if (period && period !== "undefined" && period !== "null") {
         responseQueryObject.period = period;
-      }
-      else{
+      } else {
         responseQueryObject.period = null;
       }
 
@@ -74,13 +85,12 @@ const getExport = async (req, res) => {
         // formType: formType,
         period: period,
         when: when,
-      }
-
+      };
 
       studentResponses = await NoCode.find(responseQueryObject);
 
       teacher = {
-        name: 'n/a',
+        name: "n/a",
       };
 
       school = {
@@ -89,72 +99,73 @@ const getExport = async (req, res) => {
         county: county,
         district: district,
         city: city,
-      }
+      };
     }
 
+    const responseIds = studentResponses.map((sr) => sr._id);
+    const questions = await Question.find({
+      StudentResponse: { $in: responseIds },
+    });
+    const exportData = studentResponses.map((studentResponse) => {
+      const date = new Date(studentResponse.createdAt).toLocaleString("en-US", {
+        timeZone: "America/Los_Angeles",
+      });
 
-    const map = await Promise.all(
-      studentResponses.map(async (studentResponse) => {
-        const date = new Date(studentResponse.createdAt);
-        const options = {
-            timeZone: 'America/Los_Angeles',
-        };
+      const obj = {
+        teacher: teacher?.name,
+        school: school?.school,
+        county: school.county === "custom" ? "n/a" : school.county,
+        district: school.district === "custom" ? "n/a" : school.district,
+        state: school.state,
+        city: school.city,
+        date: date,
+        when: studentResponse.when,
+        grade: studentResponse.grade,
+        period: studentResponse.period || "n/a",
+        "form type": studentResponse.formType,
+      };
 
-        const readableDate = date.toLocaleString('en-US', options);
+      // Filter questions related to this response
+      const relatedQuestions = questions.filter(
+        (q) => q.StudentResponse.toString() === studentResponse._id.toString()
+      );
 
+      // Define a mapping for form types and their respective data
+      const formTypeMapping = {
+        "You and Me Vape Free (middle school and above)": {
+          before: tobacco,
+          after: [...tobacco, ...postTobacco],
+        },
+        "You and Me, Together Vape-Free(elem)": {
+          before: tobaccoElem,
+          after: [...tobaccoElem, ...postTobacco],
+        },
+        "Smart Talk: Cannabis Prevention & Education Awareness": {
+          before: cannabis,
+          after: [...cannabis, ...postCannabis],
+        },
+        "Safety First": {
+          always: safety,
+        },
+        "Healthy Futures: Tobacco/Nicotine/Vaping": {
+          always: healthy,
+        },
+        "Healthy Futures: Cannabis": {
+          always: healthy,
+        },
+      };
 
-        let obj = {
-          teacher: teacher?.name,
-          school: school?.school,
-          county: school.county === "custom" ? "n/a" : school.county,
-          district: school.district === "custom" ? "n/a" : school.district,
-          state:school.state,
-          city: school.city,
-          date: readableDate
-        };
-        obj.when = studentResponse.when;
-        obj.grade = studentResponse.grade;
-        obj.period =
-          studentResponse.period === undefined || studentResponse.period === null? "n/a" : studentResponse.period;
-          obj["form type"] = studentResponse.formType;
+      // Simplify the logic using the mapping
+      if (formTypeMapping[studentResponse.formType]) {
+        const dataKey = studentResponse.when === "before" ? "before" : "after";
+        const data =
+          formTypeMapping[studentResponse.formType][dataKey] ||
+          formTypeMapping[studentResponse.formType].always;
+        if (data) findResponse(data, relatedQuestions, obj);
+      }
+      return obj; // Add the processed object to exportData
+    });
 
-        let questions = await Question.find({
-          StudentResponse: studentResponse._id,
-        });
-        if (studentResponse.formType === "You and Me Vape Free (middle school and above)") {
-          if (studentResponse.when === "before") {
-            findResponse(tobacco, questions, obj);
-          } else {
-            findResponse(tobacco.concat(postTobacco), questions, obj);
-          }
-        }
-        else if (studentResponse.formType === "You and Me, Together Vape-Free(elem)") {
-          if (studentResponse.when === "before") {
-            findResponse(tobaccoElem, questions, obj);
-          } else {
-            findResponse(tobaccoElem.concat(postTobacco), questions, obj);
-          }
-        }
-        else if (
-          studentResponse.formType ===
-          "Smart Talk: Cannabis Prevention & Education Awareness"
-        ) {
-          if (studentResponse.when === "before") {
-            findResponse(cannabis, questions, obj);
-          } else {
-            findResponse(cannabis.concat(postCannabis), questions, obj);
-          }
-        } else if (studentResponse.formType === "Safety First") {
-          findResponse(safety, questions, obj);
-        }
-        else if (studentResponse.formType === "Healthy Futures: Tobacco/Nicotine/Vaping") {
-          findResponse(healthy, questions, obj);
-        }
-        else if (studentResponse.formType === "Healthy Futures: Cannabis") {
-          findResponse(healthy, questions, obj);
-        }
-      })
-    );
     res.status(StatusCodes.OK).json({ exportData });
   } catch (error) {
     console.error("Error exporting exportData:", error);
@@ -164,4 +175,138 @@ const getExport = async (req, res) => {
   }
 };
 
-export { getExport };
+const getExportBulk = async (req, res) => {
+  try {
+    const { allResponseGroups } = req.body; // Accept all responseGroups as input
+
+    if (!allResponseGroups || allResponseGroups.length === 0) {
+      return res.status(400).json({ error: "No response groups provided." });
+    }
+
+    // Prepare queries for all response groups
+    const responseQueries = allResponseGroups.map((group) => {
+      const { school, uniqueResponseType } = group;
+
+      return {
+        noCode: uniqueResponseType?.noCode === "true",
+        teacher: school.teacher,
+        formCode: uniqueResponseType.formCode,
+        grade: uniqueResponseType.grade,
+        period: uniqueResponseType.period,
+        formType: uniqueResponseType.formType,
+        when: uniqueResponseType.when,
+        school: school.school,
+        state: school.state,
+        city: school.city,
+        county: school.county,
+        district: school.district,
+      };
+    });
+
+    // Prepare combined query
+    const queryConditions = responseQueries.map((q) => {
+      const condition = {
+        formCode: q.formCode,
+        teacher: q.teacher,
+        grade: q.grade,
+        formType: q.formType,
+        when: q.when,
+        school: q.school,
+      };
+      if (q.period && q.period !== "null") condition.period = q.period;
+      return condition;
+    });
+
+    // Fetch all student responses in one go
+    const studentResponses = await StudentResponse.find({
+      $or: queryConditions,
+    }).populate("teacher", "name");
+    
+    // Fetch related questions for all responses
+    const responseIds = studentResponses.map((sr) => sr._id);
+    const questions = await Question.find({
+      StudentResponse: { $in: responseIds },
+    });
+
+
+    const queryMap = responseQueries.reduce((acc, query) => {
+      const key = `${query.formCode}_${query.teacher}`;
+      acc[key] = query;
+      return acc;
+    }, {});
+    
+    // Process all responses
+    const exportData = studentResponses.map((studentResponse) => {
+      const key = `${studentResponse.formCode}_${studentResponse.teacher?._id}`;
+      const matchedQuery = queryMap[key];
+      
+            
+    
+      const date = new Date(studentResponse.createdAt).toLocaleString("en-US", {
+        timeZone: "America/Los_Angeles",
+      });
+      const obj = {
+        teacher:studentResponse.teacher?.name || "n/a",
+        school: matchedQuery?.school,
+        county: matchedQuery?.county || "n/a",
+        district: matchedQuery?.district || "n/a",
+        state: matchedQuery?.state,
+        city: matchedQuery?.city,
+        date: date,
+        when: studentResponse.when,
+        grade: studentResponse.grade,
+        period: studentResponse.period || "n/a",
+        "form type": studentResponse.formType,
+      };
+
+      // Find related questions
+      const relatedQuestions = questions.filter(
+        (q) => q.StudentResponse.toString() === studentResponse._id.toString()
+      );
+
+      // Define a mapping for form types and their respective data
+      const formTypeMapping = {
+        "You and Me Vape Free (middle school and above)": {
+          before: tobacco,
+          after: [...tobacco, ...postTobacco],
+        },
+        "You and Me, Together Vape-Free(elem)": {
+          before: tobaccoElem,
+          after: [...tobaccoElem, ...postTobacco],
+        },
+        "Smart Talk: Cannabis Prevention & Education Awareness": {
+          before: cannabis,
+          after: [...cannabis, ...postCannabis],
+        },
+        "Safety First": {
+          always: safety,
+        },
+        "Healthy Futures: Tobacco/Nicotine/Vaping": {
+          always: healthy,
+        },
+        "Healthy Futures: Cannabis": {
+          always: healthy,
+        },
+      };
+
+      // Simplify the logic using the mapping
+      if (formTypeMapping[studentResponse.formType]) {
+        const dataKey = studentResponse.when === "before" ? "before" : "after";
+        const data =
+          formTypeMapping[studentResponse.formType][dataKey] ||
+          formTypeMapping[studentResponse.formType].always;
+        if (data) findResponse(data, relatedQuestions, obj);
+      }
+
+      return obj;
+    });
+
+    // Send the consolidated export data
+    res.status(200).json({ exportData });
+  } catch (error) {
+    console.error("Error exporting bulk data:", error);
+    res.status(500).json({ error: "Failed to export bulk data." });
+  }
+};
+
+export { getExport, getExportBulk };

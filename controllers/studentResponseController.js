@@ -40,7 +40,6 @@ const getStudentResponses = async (req, res) => {
 
     // Create an array to store the $or conditions based on checkedYears
     const orConditions = [];
-    console.log(checkedYears)
     if (checkedYears!=[] && checkedYears !==undefined ){
     for (const [year, isChecked] of Object.entries(checkedYears)) {
       if (isChecked === 'true') {
@@ -64,7 +63,6 @@ const getStudentResponses = async (req, res) => {
 
     // Query the database
     const studentResponses = await StudentResponse.find(queryObject);
-    console.log(queryObject)
     res.status(StatusCodes.OK).json({ teacherName: teacher?.name, studentResponses });
   } catch (error) {
     console.log(error);

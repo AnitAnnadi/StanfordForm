@@ -1,18 +1,25 @@
-import React, { useReducer, useContext, useEffect } from 'react';
+import React, { useReducer, useContext, useEffect } from "react";
 import {
   getSchoolDataValue,
   getSchoolObject,
   narrowCities,
   narrowCounties,
   narrowDistricts,
-  narrowSchools
+  narrowSchools,
 } from "../utils/schoolDataFetch";
 import { distance } from "fastest-levenshtein";
-import { tobacco,postTobacco, cannabis, postCannabis, safety  } from "../utils/questions23-24";
+import {
+  tobacco,
+  postTobacco,
+  cannabis,
+  postCannabis,
+  safety,
+} from "../utils/questions23-24";
 
+import pLimit from "p-limit";
 
-import reducer from './reducer';
-import axios from 'axios';
+import reducer from "./reducer";
+import axios from "axios";
 import {
   DISPLAY_ALERT,
   CLEAR_ALERT,
@@ -44,36 +51,88 @@ import {
   NEW_LOCATION_ADDED,
   ENTER_CODE,
   GET_TOTAL,
-  ADD_LOCATION_SUCCESS, HANDLE_MULTIPLE_CHANGES, SUCCESS_ALERT, SIMILAR_LOCATIONS_FOUND
-} from './actions';
+  ADD_LOCATION_SUCCESS,
+  HANDLE_MULTIPLE_CHANGES,
+  SUCCESS_ALERT,
+  SIMILAR_LOCATIONS_FOUND,
+} from "./actions";
 const LSUser = JSON.parse(localStorage.getItem("user"));
 const LSUserLocations = JSON.parse(localStorage.getItem("userLocations"));
-const stateList = ["all", "Alabama", "Alaska", "Arizona", "Arkansas", "California",
-      "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida",
-      "Guam","Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas",
-      "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan",
-      "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada",
-      "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina",
-      "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island",
-      "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont",
-      "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"];
-
+const stateList = [
+  "all",
+  "Alabama",
+  "Alaska",
+  "Arizona",
+  "Arkansas",
+  "California",
+  "Colorado",
+  "Connecticut",
+  "Delaware",
+  "District of Columbia",
+  "Florida",
+  "Guam",
+  "Georgia",
+  "Hawaii",
+  "Idaho",
+  "Illinois",
+  "Indiana",
+  "Iowa",
+  "Kansas",
+  "Kentucky",
+  "Louisiana",
+  "Maine",
+  "Maryland",
+  "Massachusetts",
+  "Michigan",
+  "Minnesota",
+  "Mississippi",
+  "Missouri",
+  "Montana",
+  "Nebraska",
+  "Nevada",
+  "New Hampshire",
+  "New Jersey",
+  "New Mexico",
+  "New York",
+  "North Carolina",
+  "North Dakota",
+  "Ohio",
+  "Oklahoma",
+  "Oregon",
+  "Pennsylvania",
+  "Rhode Island",
+  "South Carolina",
+  "South Dakota",
+  "Tennessee",
+  "Texas",
+  "Utah",
+  "Vermont",
+  "Virginia",
+  "Washington",
+  "West Virginia",
+  "Wisconsin",
+  "Wyoming",
+];
 
 const initialState = {
   userLoading: false,
-  exportLoading:false,
-  userExportLoading:false,
-  certificate:false,
+  exportLoading: false,
+  userExportLoading: false,
+  certificate: false,
   isLoading: false,
   showAlert: false,
-  alertText: '',
-  alertType: '',
-  healthyFuturesListCannabis:[],
-  healthyFuturesListTobacco:[],
-  exists:true,
+  alertText: "",
+  alertType: "",
+  healthyFuturesListCannabis: [],
+  healthyFuturesListTobacco: [],
+  exists: true,
   user: LSUser ? LSUser : null,
-  userLocation: '',
-  userLocations: LSUserLocations ? (LSUserLocations !== 'undefined' ? LSUserLocations : []) : [],
+  userLocation: "",
+  userLocations: LSUserLocations
+    ? LSUserLocations !== "undefined"
+      ? LSUserLocations
+      : []
+    : [],
   showSidebar: false,
   isEditing: false,
   responseGroups: [],
@@ -81,47 +140,110 @@ const initialState = {
   numOfPages: 1,
   page: 1,
   stats: {},
-  overallLoading:false,
-  allResponseGroups:[],
+  overallLoading: false,
+  allResponseGroups: [],
   monthlyApplications: [],
-  pendingLocations:[],
-  stateOptions: localStorage.getItem("stateOptions") ? (localStorage.getItem("stateOptions") !== "undefined" ? JSON.parse(localStorage.getItem("stateOptions")): stateList) : stateList,
-  searchState : localStorage.getItem("searchState") ? (localStorage.getItem("searchState") !== "undefined" ? JSON.parse(localStorage.getItem("searchState")) : 'all') : 'all',
-  countyOptions: localStorage.getItem("countyOptions") ? (localStorage.getItem("countyOptions") !== "undefined" ? JSON.parse(localStorage.getItem("countyOptions")): ['all']): ['all'],
-  searchCounty: localStorage.getItem("searchCounty") ? (localStorage.getItem("searchCounty") !== "undefined" ? JSON.parse(localStorage.getItem("searchCounty")): 'all'): 'all',
-  districtOptions: localStorage.getItem("districtOptions") ? (localStorage.getItem("districtOptions") !== "undefined" ? JSON.parse(localStorage.getItem("districtOptions")): ['all']): ['all'],
-  searchDistrict: localStorage.getItem("searchDistrict") ? (localStorage.getItem("searchDistrict") !== "undefined" ? JSON.parse(localStorage.getItem("searchDistrict")): 'all'): 'all',
-  cityOptions: localStorage.getItem("cityOptions") ? (localStorage.getItem("cityOptions") !== "undefined" ? JSON.parse(localStorage.getItem("cityOptions")): ['all']): ['all'],
-  searchCity: localStorage.getItem("searchCity") ? (localStorage.getItem("searchCity") !== "undefined" ? JSON.parse(localStorage.getItem("searchCity")): 'all'): 'all',
-  schoolOptions: localStorage.getItem("schoolOptions") ? (localStorage.getItem("schoolOptions") !== "undefined" ? JSON.parse(localStorage.getItem("schoolOptions")): ['all']): ['all'],
-  searchSchool: localStorage.getItem("searchSchool") ? (localStorage.getItem("searchSchool") !== "undefined" ? JSON.parse(localStorage.getItem("searchSchool")): 'all'): 'all',
-  gradeOptions: ['all', 'K', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', 'College or Above'],
-  searchGrade: 'all',
-  periodOptions: ['all', '1', '2', '3', '4', '5', '6', '7', '8'],
-  searchPeriod: 'all',
+  pendingLocations: [],
+  stateOptions: localStorage.getItem("stateOptions")
+    ? localStorage.getItem("stateOptions") !== "undefined"
+      ? JSON.parse(localStorage.getItem("stateOptions"))
+      : stateList
+    : stateList,
+  searchState: localStorage.getItem("searchState")
+    ? localStorage.getItem("searchState") !== "undefined"
+      ? JSON.parse(localStorage.getItem("searchState"))
+      : "all"
+    : "all",
+  countyOptions: localStorage.getItem("countyOptions")
+    ? localStorage.getItem("countyOptions") !== "undefined"
+      ? JSON.parse(localStorage.getItem("countyOptions"))
+      : ["all"]
+    : ["all"],
+  searchCounty: localStorage.getItem("searchCounty")
+    ? localStorage.getItem("searchCounty") !== "undefined"
+      ? JSON.parse(localStorage.getItem("searchCounty"))
+      : "all"
+    : "all",
+  districtOptions: localStorage.getItem("districtOptions")
+    ? localStorage.getItem("districtOptions") !== "undefined"
+      ? JSON.parse(localStorage.getItem("districtOptions"))
+      : ["all"]
+    : ["all"],
+  searchDistrict: localStorage.getItem("searchDistrict")
+    ? localStorage.getItem("searchDistrict") !== "undefined"
+      ? JSON.parse(localStorage.getItem("searchDistrict"))
+      : "all"
+    : "all",
+  cityOptions: localStorage.getItem("cityOptions")
+    ? localStorage.getItem("cityOptions") !== "undefined"
+      ? JSON.parse(localStorage.getItem("cityOptions"))
+      : ["all"]
+    : ["all"],
+  searchCity: localStorage.getItem("searchCity")
+    ? localStorage.getItem("searchCity") !== "undefined"
+      ? JSON.parse(localStorage.getItem("searchCity"))
+      : "all"
+    : "all",
+  schoolOptions: localStorage.getItem("schoolOptions")
+    ? localStorage.getItem("schoolOptions") !== "undefined"
+      ? JSON.parse(localStorage.getItem("schoolOptions"))
+      : ["all"]
+    : ["all"],
+  searchSchool: localStorage.getItem("searchSchool")
+    ? localStorage.getItem("searchSchool") !== "undefined"
+      ? JSON.parse(localStorage.getItem("searchSchool"))
+      : "all"
+    : "all",
+  gradeOptions: [
+    "all",
+    "K",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "College or Above",
+  ],
+  searchGrade: "all",
+  periodOptions: ["all", "1", "2", "3", "4", "5", "6", "7", "8"],
+  searchPeriod: "all",
   teacherOptions: [], // [[teacherName, teacherId], [teacherName, teacherId], ...]
-  searchTeacher: 'all',
-  typeOptions: ['You and Me, Together Vape-Free(elem)','You and Me Vape Free (middle school and above)', 'Smart Talk: Cannabis Prevention & Education Awareness', 'Safety First', 'Healthy Futures: Tobacco/Nicotine/Vaping','Healthy Futures: Cannabis'],
-  searchType: 'You and Me Vape Free (middle school and above)',
-  beforeAfterOptions: ['all', 'before', 'after'],
-  searchBeforeAfter: 'all',
-  teacher:'',
-  totalResponses:null,
-  hasLocation:null,
-  exportData:null,
-  currentSchoolIndex:null,
-  nextPg:false,
-  selectLocSchools:[],
-  searchContainerSchools:[],
-  resetPassword:false,
-  twofaSent:false,
-  pendingApproval:false,
-  pendingSchool:[],
-  approved:false,
-  declined:false,
-  stanfordNewLoc:false,
-  allUsers:null,
-  checkedYears:[]
+  searchTeacher: "all",
+  typeOptions: [
+    "You and Me, Together Vape-Free(elem)",
+    "You and Me Vape Free (middle school and above)",
+    "Smart Talk: Cannabis Prevention & Education Awareness",
+    "Safety First",
+    "Healthy Futures: Tobacco/Nicotine/Vaping",
+    "Healthy Futures: Cannabis",
+  ],
+  searchType: "You and Me Vape Free (middle school and above)",
+  beforeAfterOptions: ["all", "before", "after"],
+  searchBeforeAfter: "all",
+  teacher: "",
+  totalResponses: null,
+  hasLocation: null,
+  exportData: null,
+  currentSchoolIndex: null,
+  nextPg: false,
+  selectLocSchools: [],
+  searchContainerSchools: [],
+  resetPassword: false,
+  twofaSent: false,
+  pendingApproval: false,
+  pendingSchool: [],
+  approved: false,
+  declined: false,
+  stanfordNewLoc: false,
+  allUsers: null,
+  checkedYears: [],
 };
 
 const stringDifScore = (str1, str2) => {
@@ -129,7 +251,7 @@ const stringDifScore = (str1, str2) => {
   const str2Arr = str2.toUpperCase().split(" ").sort().join("");
 
   return distance(str1Arr, str2Arr);
-}
+};
 
 const configureFormStates = async (userLocations, user, formStates) => {
   let {
@@ -154,7 +276,11 @@ const configureFormStates = async (userLocations, user, formStates) => {
 
       newStateOptions = [userLocations[0]?.state];
       newCountyOptions = [userLocations[0]?.county];
-      newDistrictOptions = [userLocations[0]?.district === "district" ? "N/A" : userLocations[0]?.district];
+      newDistrictOptions = [
+        userLocations[0]?.district === "district"
+          ? "N/A"
+          : userLocations[0]?.district,
+      ];
       newCityOptions = [userLocations[0]?.city];
       newSchoolOptions = [userLocations[0]?.school];
 
@@ -169,9 +295,20 @@ const configureFormStates = async (userLocations, user, formStates) => {
 
       newStateOptions = [userLocations[0]?.state];
       newCountyOptions = [userLocations[0]?.county];
-      newDistrictOptions = [userLocations[0]?.district === "district" ? "N/A" : userLocations[0]?.district];
+      newDistrictOptions = [
+        userLocations[0]?.district === "district"
+          ? "N/A"
+          : userLocations[0]?.district,
+      ];
       newCityOptions = [userLocations[0]?.city];
-      newSchoolOptions = ["all", ...(await narrowAllSchools({state: userLocations[0]?.state, county: userLocations[0]?.county, district: userLocations[0]?.district}))];
+      newSchoolOptions = [
+        "all",
+        ...(await narrowAllSchools({
+          state: userLocations[0]?.state,
+          county: userLocations[0]?.county,
+          district: userLocations[0]?.district,
+        })),
+      ];
       break;
     case "County Admin":
       newSearchState = userLocations[0]?.state;
@@ -183,8 +320,20 @@ const configureFormStates = async (userLocations, user, formStates) => {
       newStateOptions = [userLocations[0]?.state];
       newCountyOptions = [userLocations[0]?.county];
 
-      newCityOptions = ["all", ...narrowCities({state: userLocations[0]?.state, county: userLocations[0]?.county})];
-      newDistrictOptions = ["all", ...narrowDistricts({state: userLocations[0]?.state, county: userLocations[0]?.county})];
+      newCityOptions = [
+        "all",
+        ...narrowCities({
+          state: userLocations[0]?.state,
+          county: userLocations[0]?.county,
+        }),
+      ];
+      newDistrictOptions = [
+        "all",
+        ...narrowDistricts({
+          state: userLocations[0]?.state,
+          county: userLocations[0]?.county,
+        }),
+      ];
       newSchoolOptions = ["all"];
       break;
     case "State Admin":
@@ -195,7 +344,7 @@ const configureFormStates = async (userLocations, user, formStates) => {
       newSearchSchool = "all";
 
       newStateOptions = [userLocations[0]?.state];
-      newCountyOptions = ["all", ...narrowCounties({state: newSearchState})];
+      newCountyOptions = ["all", ...narrowCounties({ state: newSearchState })];
       newDistrictOptions = ["all"];
       newCityOptions = ["all"];
       newSchoolOptions = ["all"];
@@ -210,7 +359,11 @@ const configureFormStates = async (userLocations, user, formStates) => {
 
         newStateOptions = [userLocations[0]?.state];
         newCountyOptions = [userLocations[0]?.county];
-        newDistrictOptions = [userLocations[0]?.district === "district" ? "N/A" : userLocations[0]?.district];
+        newDistrictOptions = [
+          userLocations[0]?.district === "district"
+            ? "N/A"
+            : userLocations[0]?.district,
+        ];
         newCityOptions = [userLocations[0]?.city];
         newSchoolOptions = [userLocations[0]?.school];
       } else {
@@ -220,7 +373,10 @@ const configureFormStates = async (userLocations, user, formStates) => {
         newSearchCity = "all";
         newSearchSchool = "all";
 
-        newStateOptions = ["all", ...new Set(userLocations.map((location) => location.state))];
+        newStateOptions = [
+          "all",
+          ...new Set(userLocations.map((location) => location.state)),
+        ];
         newCountyOptions = ["all"];
         newDistrictOptions = ["all"];
         newCityOptions = ["all"];
@@ -253,40 +409,51 @@ const configureFormStates = async (userLocations, user, formStates) => {
     districtOptions: newDistrictOptions,
     cityOptions: newCityOptions,
     schoolOptions: newSchoolOptions,
-  }
-}
+  };
+};
 
 const narrowAllSchools = async (getParams, allowed = false) => {
   try {
-    console.log(getParams,allowed)
+    console.log(getParams, allowed);
     if (allowed) {
-      const {data} = await axios.get(`/api/v1/schools/user`);
+      const { data } = await axios.get(`/api/v1/schools/user`);
       const { userLocations } = data;
 
       const { state, county, city, district, school } = getParams;
 
       // get all schoolnames that meet the getParams criteria, ignore undefined values
 
-      let userLocationsFiltered = userLocations
+      let userLocationsFiltered = userLocations;
 
       if (state && state !== "all") {
-        userLocationsFiltered = userLocationsFiltered.filter((location) => location.state.toUpperCase() === state.toUpperCase());
+        userLocationsFiltered = userLocationsFiltered.filter(
+          (location) => location.state.toUpperCase() === state.toUpperCase()
+        );
       }
 
       if (county && county !== "all") {
-        userLocationsFiltered = userLocationsFiltered.filter((location) => location.county?.toUpperCase() === county.toUpperCase());
+        userLocationsFiltered = userLocationsFiltered.filter(
+          (location) => location.county?.toUpperCase() === county.toUpperCase()
+        );
       }
 
       if (city && city !== "all") {
-        userLocationsFiltered = userLocationsFiltered.filter((location) => location.city?.toUpperCase() === city.toUpperCase());
+        userLocationsFiltered = userLocationsFiltered.filter(
+          (location) => location.city?.toUpperCase() === city.toUpperCase()
+        );
       }
 
       if (district && district !== "all") {
-        userLocationsFiltered = userLocationsFiltered.filter((location) => location.district?.toUpperCase() === district.toUpperCase());
+        userLocationsFiltered = userLocationsFiltered.filter(
+          (location) =>
+            location.district?.toUpperCase() === district.toUpperCase()
+        );
       }
 
       if (school && school !== "all") {
-        userLocationsFiltered = userLocationsFiltered.filter((location) => location.school.toUpperCase() === school.toUpperCase());
+        userLocationsFiltered = userLocationsFiltered.filter(
+          (location) => location.school.toUpperCase() === school.toUpperCase()
+        );
       }
 
       return userLocationsFiltered.map((location) => location.school);
@@ -295,18 +462,19 @@ const narrowAllSchools = async (getParams, allowed = false) => {
         Object.entries(getParams).filter(([key, value]) => value !== undefined)
       );
 
-      const {data} = await axios.get(`/api/v1/locations?${urlSearchParams}`);
-      const {locations} = data;
-      console.log(locations)
+      const { data } = await axios.get(`/api/v1/locations?${urlSearchParams}`);
+      const { locations } = data;
+      console.log(locations);
 
-      return narrowSchools(getParams).concat(locations.map((location) => location.name));
+      return narrowSchools(getParams).concat(
+        locations.map((location) => location.name)
+      );
     }
   } catch (error) {
     console.log(error);
     return [];
   }
-}
-
+};
 
 const AppContext = React.createContext();
 
@@ -315,7 +483,7 @@ const AppProvider = ({ children }) => {
 
   // axios
   const authFetch = axios.create({
-    baseURL: '/api/v1',
+    baseURL: "/api/v1",
   });
   // request
 
@@ -327,7 +495,7 @@ const AppProvider = ({ children }) => {
     },
     (error) => {
       if (error.response.status === 401) {
-        console.log('hi')
+        console.log("hi");
         logoutUser();
       }
       return Promise.reject(error);
@@ -335,16 +503,16 @@ const AppProvider = ({ children }) => {
   );
 
   const displayAlert = (diff) => {
-    dispatch({ type: DISPLAY_ALERT, payload:{diff} });
+    dispatch({ type: DISPLAY_ALERT, payload: { diff } });
     clearAlert();
   };
   const successAlert = (text) => {
-    dispatch({ type: SUCCESS_ALERT,payload:{alertText:text} });
+    dispatch({ type: SUCCESS_ALERT, payload: { alertText: text } });
     clearAlert();
   };
 
   const errorAlert = (text) => {
-    dispatch({ type: SETUP_USER_ERROR,payload:{msg:text} });
+    dispatch({ type: SETUP_USER_ERROR, payload: { msg: text } });
     clearAlert();
   };
 
@@ -353,32 +521,33 @@ const AppProvider = ({ children }) => {
       dispatch({ type: CLEAR_ALERT });
     }, 3000);
   };
-  const getLocations = async({user})=>{
-    const { data } = await axios.post(
-      `/api/v1/auth/getLocations`,
-      {user}
-    );
-    const { userLocations,pendingLocations } = data;
+  const getLocations = async ({ user }) => {
+    const { data } = await axios.post(`/api/v1/auth/getLocations`, { user });
+    const { userLocations, pendingLocations } = data;
     handleChange({ name: "userLocations", value: userLocations });
     handleChange({ name: "pendingLocations", value: pendingLocations });
-  }
-  const setupUser = async ({ currentUser, captcha, adminTeacher, endPoint, alertText }) => {
-    localStorage.clear()
+  };
+  const setupUser = async ({
+    currentUser,
+    captcha,
+    adminTeacher,
+    endPoint,
+    alertText,
+  }) => {
+    localStorage.clear();
     dispatch({ type: SETUP_USER_BEGIN });
     handleChange({ name: "twofaSent", value: false });
     try {
-      const { data } = await axios.post(
-        `/api/v1/auth/${endPoint}`,
-        {currentUser,
+      const { data } = await axios.post(`/api/v1/auth/${endPoint}`, {
+        currentUser,
         captcha,
-        adminTeacher}
-      );
-      console.log(data)
+        adminTeacher,
+      });
+      console.log(data);
 
-        
       const { user, hasLocation, userLocations, pendingLocations } = data;
-      
-     let role = currentUser.role
+
+      let role = currentUser.role;
       if (
         role !== "Site Admin" &&
         role !== "District Admin" &&
@@ -386,58 +555,62 @@ const AppProvider = ({ children }) => {
         role !== "State Admin" &&
         role !== "Stanford Staff"
       ) {
-        
-        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem("user", JSON.stringify(user));
         if (userLocations) {
-          localStorage.setItem('userLocations', JSON.stringify(userLocations));
+          localStorage.setItem("userLocations", JSON.stringify(userLocations));
         }
-      }
-
-      else{
+      } else {
         handleChange({ name: "twofaSent", value: true });
       }
-      
-    
 
       let newFormState = {};
 
-      if (endPoint === 'login') {
+      if (endPoint === "login") {
         const stateKeys = [
-          'searchState',
-          'searchCounty',
-          'searchDistrict',
-          'searchCity',
-          'searchSchool',
-          'stateOptions',
-          'countyOptions',
-          'districtOptions',
-          'cityOptions',
-          'schoolOptions'
+          "searchState",
+          "searchCounty",
+          "searchDistrict",
+          "searchCity",
+          "searchSchool",
+          "stateOptions",
+          "countyOptions",
+          "districtOptions",
+          "cityOptions",
+          "schoolOptions",
         ];
 
-        const newFormState = await configureFormStates(userLocations, user,
-          Object.fromEntries(stateKeys.map(key => {
-              return ['new' + key[0].toUpperCase() + key.slice(1), state[key]]
-          }))
+        const newFormState = await configureFormStates(
+          userLocations,
+          user,
+          Object.fromEntries(
+            stateKeys.map((key) => {
+              return ["new" + key[0].toUpperCase() + key.slice(1), state[key]];
+            })
+          )
         );
-        
 
-        stateKeys.forEach(key => {
-          handleChange({ name: "key", value: JSON.stringify(newFormState[key]) });
+        stateKeys.forEach((key) => {
+          handleChange({
+            name: "key",
+            value: JSON.stringify(newFormState[key]),
+          });
           localStorage.setItem(key, JSON.stringify(newFormState[key]));
         });
       }
 
       dispatch({
         type: SETUP_USER_SUCCESS,
-        payload: { user, alertText, hasLocation,
+        payload: {
+          user,
+          alertText,
+          hasLocation,
           userLocations: userLocations ? userLocations : [],
-          newFormStates: endPoint === 'login' ? newFormState : null,
+          newFormStates: endPoint === "login" ? newFormState : null,
           pendingLocations: pendingLocations ? pendingLocations : [],
         },
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       dispatch({
         type: SETUP_USER_ERROR,
         payload: { msg: error?.response?.data },
@@ -451,14 +624,14 @@ const AppProvider = ({ children }) => {
   };
 
   const logoutUser = async () => {
-    await authFetch.get('/auth/logout');
+    await authFetch.get("/auth/logout");
     localStorage.clear();
     dispatch({ type: LOGOUT_USER });
   };
   const updateUser = async (currentUser) => {
     dispatch({ type: UPDATE_USER_BEGIN });
     try {
-      const { data } = await authFetch.patch('/auth/updateUser', currentUser);
+      const { data } = await authFetch.patch("/auth/updateUser", currentUser);
 
       const { user } = data;
 
@@ -479,18 +652,32 @@ const AppProvider = ({ children }) => {
 
   const addLocation = async (locationData) => {
     try {
-      const { state, county, district, city, school, multiplePeriods, requesterId } = locationData;
+      const {
+        state,
+        county,
+        district,
+        city,
+        school,
+        multiplePeriods,
+        requesterId,
+      } = locationData;
 
-      let newLocationData = {state, county, district, city, school, multiplePeriods, requesterId};
-      console.log(requesterId)
-      if (district === 'custom' || county === 'custom') {
-        const urlSearchParams = new URLSearchParams(
-          state,
-          city,
-          school,
+      let newLocationData = {
+        state,
+        county,
+        district,
+        city,
+        school,
+        multiplePeriods,
+        requesterId,
+      };
+      console.log(requesterId);
+      if (district === "custom" || county === "custom") {
+        const urlSearchParams = new URLSearchParams(state, city, school);
+        const { data } = await axios.get(
+          `/api/v1/locations?${urlSearchParams}`
         );
-        const {data} = await axios.get(`/api/v1/locations?${urlSearchParams}`);
-        const {locations} = data;
+        const { locations } = data;
 
         if (locations.length > 0) {
           newLocationData.county = locations[0].county;
@@ -498,34 +685,38 @@ const AppProvider = ({ children }) => {
         }
       }
 
-      const { data } = await authFetch.post('/schools/user', newLocationData);
-      const { data: data2 } = await authFetch.get('/schools/user');
+      const { data } = await authFetch.post("/schools/user", newLocationData);
+      const { data: data2 } = await authFetch.get("/schools/user");
 
       const { user, exists } = data;
       const { userLocations } = data2;
 
-      localStorage.setItem('userLocations', JSON.stringify(userLocations))
+      localStorage.setItem("userLocations", JSON.stringify(userLocations));
 
       const stateKeys = [
-        'searchState',
-        'searchCounty',
-        'searchDistrict',
-        'searchCity',
-        'searchSchool',
-        'stateOptions',
-        'countyOptions',
-        'districtOptions',
-        'cityOptions',
-        'schoolOptions'
+        "searchState",
+        "searchCounty",
+        "searchDistrict",
+        "searchCity",
+        "searchSchool",
+        "stateOptions",
+        "countyOptions",
+        "districtOptions",
+        "cityOptions",
+        "schoolOptions",
       ];
 
-      const newFormState = await configureFormStates(userLocations, user,
-          Object.fromEntries(stateKeys.map(key => {
-              return ['new' + key[0].toUpperCase() + key.slice(1), state[key]]
-          }))
+      const newFormState = await configureFormStates(
+        userLocations,
+        user,
+        Object.fromEntries(
+          stateKeys.map((key) => {
+            return ["new" + key[0].toUpperCase() + key.slice(1), state[key]];
+          })
+        )
       );
 
-      stateKeys.forEach(key => {
+      stateKeys.forEach((key) => {
         localStorage.setItem(key, JSON.stringify(newFormState[key]));
       });
 
@@ -534,11 +725,11 @@ const AppProvider = ({ children }) => {
         payload: {
           userLocations,
           newFormStates: newFormState,
-          exists
-        }
+          exists,
+        },
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       if (error.response?.status !== 401) {
         dispatch({
           type: UPDATE_USER_ERROR,
@@ -549,61 +740,73 @@ const AppProvider = ({ children }) => {
     clearAlert();
   };
 
-  const addNewLocation = async (locationData, bypassSimilar=false) => {
-    const {
-      pendingSchool,
-      user
-  } = state;
+  const addNewLocation = async (locationData, bypassSimilar = false) => {
+    const { pendingSchool, user } = state;
     try {
-      const {multiplePeriods, country, state, county, city, district, school} = locationData
-      console.log(school)
-      const {data} = await authFetch.post('/locations', locationData); 
-      if (! data.msg && data.location){
-        if (user.role!="Stanford Staff"){
-
-        handleChange({ name: "pendingApproval", value: true });
-        }
-        else{
+      const {
+        multiplePeriods,
+        country,
+        state,
+        county,
+        city,
+        district,
+        school,
+      } = locationData;
+      console.log(school);
+      const { data } = await authFetch.post("/locations", locationData);
+      if (!data.msg && data.location) {
+        if (user.role != "Stanford Staff") {
+          handleChange({ name: "pendingApproval", value: true });
+        } else {
           handleChange({ name: "stanfordNewLoc", value: true });
           handleChange({ name: "pendingApproval", value: false });
         }
         dispatch({
-          type:NEW_LOCATION_ADDED,
-          payload:{pendingSchool: pendingSchool.push(school)}
-        })
-      } 
-      else if (data.msg){
+          type: NEW_LOCATION_ADDED,
+          payload: { pendingSchool: pendingSchool.push(school) },
+        });
+      } else if (data.msg) {
         errorAlert(data.msg);
+      } else {
+        errorAlert("There was an error submitting your location.");
       }
-      else{
-        errorAlert("There was an error submitting your location.")
-      }
-    }
-
-    catch(error){
-
-    }
-
+    } catch (error) {}
   };
 
-  const setToNarrowSchools = async ({reactState, allowed, state, county, city, district}) => {
+  const setToNarrowSchools = async ({
+    reactState,
+    allowed,
+    state,
+    county,
+    city,
+    district,
+  }) => {
     try {
-      console.log('school')
-      const schoolNames = await narrowAllSchools({state, county, city, district}, allowed);
-      console.log(schoolNames)
+      console.log("school");
+      const schoolNames = await narrowAllSchools(
+        { state, county, city, district },
+        allowed
+      );
+      console.log(schoolNames);
 
-      dispatch({ type: HANDLE_CHANGE, payload: { name: reactState, value: schoolNames } });
+      dispatch({
+        type: HANDLE_CHANGE,
+        payload: { name: reactState, value: schoolNames },
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   const enterCode = async (code) => {
     try {
-      const { data } = await axios.post(`/api/v1/auth/enterCode/`, {code});
+      const { data } = await axios.post(`/api/v1/auth/enterCode/`, { code });
 
-            const {id, name, email, state, city, school} = data;
-      dispatch({ type: ENTER_CODE , payload:{teacher:data["user"],schools:data["schools"]}});
+      const { id, name, email, state, city, school } = data;
+      dispatch({
+        type: ENTER_CODE,
+        payload: { teacher: data["user"], schools: data["schools"] },
+      });
     } catch (error) {
       if (error.response.status !== 401) {
         dispatch({
@@ -614,17 +817,41 @@ const AppProvider = ({ children }) => {
     }
     clearAlert();
   };
- const submitForm = async (formData,code,grade,when,type,school,period,state, city, county, district, captcha) => {
+  const submitForm = async (
+    formData,
+    code,
+    grade,
+    when,
+    type,
+    school,
+    period,
+    state,
+    city,
+    county,
+    district,
+    captcha
+  ) => {
     try {
-      console.log(period)
-      handleChange({name:"isLoading",value:true})
-      const { data } = await axios.post(`/api/v1/auth/submitForm/`, {formData,code,grade,when,type,school,period,state, city, county, district,captcha});
+      console.log(period);
+      handleChange({ name: "isLoading", value: true });
+      const { data } = await axios.post(`/api/v1/auth/submitForm/`, {
+        formData,
+        code,
+        grade,
+        when,
+        type,
+        school,
+        period,
+        state,
+        city,
+        county,
+        district,
+        captcha,
+      });
       dispatch({
         type: FORM_SUCCESS,
-        payload :{msg:"Form Sucessfully Completed. Redirecting..." }
-
+        payload: { msg: "Form Sucessfully Completed. Redirecting..." },
       });
-      
     } catch (error) {
       if (error.response.status !== 401) {
         dispatch({
@@ -637,64 +864,59 @@ const AppProvider = ({ children }) => {
     // clearAlert();
   };
 
-
-  const forgotPassword = async({email})=>{
-    try{
-      const { data } = await axios.post(`/api/v1/auth/forgotPassword`,{email})
-      if (data=="Email sent"){
+  const forgotPassword = async ({ email }) => {
+    try {
+      const { data } = await axios.post(`/api/v1/auth/forgotPassword`, {
+        email,
+      });
+      if (data == "Email sent") {
         dispatch({
           type: FORM_SUCCESS,
-          payload: {msg: `An email with the password reset has been sent to ${email}`}
-
+          payload: {
+            msg: `An email with the password reset has been sent to ${email}`,
+          },
         });
-        clearAlert()
+        clearAlert();
       }
-
-    }
-    catch(error){
+    } catch (error) {
       dispatch({
         type: FORM_FAIL,
         payload: { msg: error.response.data.msg },
       });
-      clearAlert()
-
+      clearAlert();
     }
-  }
+  };
 
-  const verifyReset = async({token, password})=>{
-
-    try{
+  const verifyReset = async ({ token, password }) => {
+    try {
       handleChange({ name: "resetPassword", value: false });
-      const { data } = await axios.post(`/api/v1/auth/verifyToken`,{token})
-      if (data.msg == "verified"){
-        const {reset} = await axios.post(`/api/v1/auth/resetpassword`,{password,token})
+      const { data } = await axios.post(`/api/v1/auth/verifyToken`, { token });
+      if (data.msg == "verified") {
+        const { reset } = await axios.post(`/api/v1/auth/resetpassword`, {
+          password,
+          token,
+        });
         dispatch({
           type: FORM_SUCCESS,
-          payload: {msg: "Password Changed"}
-
+          payload: { msg: "Password Changed" },
         });
         handleChange({ name: "resetPassword", value: true });
-        clearAlert()
-      }
-      else{
+        clearAlert();
+      } else {
         dispatch({
           type: FORM_FAIL,
           payload: { msg: "Your reset password link has expired" },
         });
         clearAlert();
       }
-
-    }
-    catch(error){
+    } catch (error) {
       dispatch({
         type: FORM_FAIL,
-        payload: { msg: error.response.data.msg},
+        payload: { msg: error.response.data.msg },
       });
       clearAlert();
     }
-  }
-
-
+  };
 
   const handleChange = ({ name, value }) => {
     dispatch({ type: HANDLE_CHANGE, payload: { name, value } });
@@ -709,7 +931,12 @@ const AppProvider = ({ children }) => {
     dispatch({ type: CLEAR_VALUES });
   };
 
-  const getResponseGroups = async (currentSchoolIndex, shouldReload, all=false, overallBreakdown= false) => {
+  const getResponseGroups = async (
+    currentSchoolIndex,
+    shouldReload,
+    all = false,
+    overallBreakdown = false
+  ) => {
     const {
       user,
       userLocations,
@@ -724,132 +951,219 @@ const AppProvider = ({ children }) => {
       searchTeacher,
       searchType,
       searchBeforeAfter,
-      checkedYears
+      checkedYears,
     } = state;
-    dispatch({ type: GET_RESPONSE_GROUPS_BEGIN, payload:{shouldReload} });
+    dispatch({ type: GET_RESPONSE_GROUPS_BEGIN, payload: { shouldReload } });
     try {
-      if (all){
+      // if all that means an export all has been triggered so that state is updated
+      if (all) {
         handleChange({ name: "exportLoading", value: true });
       }
-      if (overallBreakdown){
+
+      // breakdown UI component enters a loading state
+      if (overallBreakdown) {
         handleChange({ name: "overallLoading", value: true });
       }
-      const { data } = await authFetch.get('/schools', {
+
+      //Fetch a list of schools based on current search filters
+      const { data } = await authFetch.get("/schools", {
         params: {
           searchState,
           searchCounty,
           searchCity,
-          searchDistrict : searchDistrict === 'N/A' ? undefined : searchDistrict,
+          searchDistrict: searchDistrict === "N/A" ? undefined : searchDistrict,
           searchSchool,
           searchTeacher:
-            user.role === 'Teacher' ? user._id :
-              searchTeacher === 'all' ? 'all' : searchTeacher[1],
-        }
+            user.role === "Teacher"
+              ? user._id
+              : searchTeacher === "all"
+              ? "all"
+              : searchTeacher[1],
+        },
       });
 
       const { schools } = data;
+
+      //filter schools based on permission levels
       const filteredSchools = schools.filter((obj) => {
-        const isTeacher = user.role.includes("Teacher") && obj.teacher.toLowerCase() === user._id.toLowerCase();
-        const isSiteAdmin = user.role.includes("Site Admin") && obj.school.toLowerCase() === userLocations[0]?.school.toLowerCase();
-        const isDistrictAdmin = user.role.includes("District Admin") && obj.district.toLowerCase() === userLocations[0]?.district.toLowerCase();
-        const isCountyAdmin = user.role.includes("County Admin") && obj.county.toLowerCase() === userLocations[0]?.county.toLowerCase();
-        const isStateAdmin = user.role.includes("State Admin") && obj.state.toLowerCase() === userLocations[0]?.state.toLowerCase();
+        const isTeacher =
+          user.role.includes("Teacher") &&
+          obj.teacher.toLowerCase() === user._id.toLowerCase();
+        const isSiteAdmin =
+          user.role.includes("Site Admin") &&
+          obj.school.toLowerCase() === userLocations[0]?.school.toLowerCase();
+        const isDistrictAdmin =
+          user.role.includes("District Admin") &&
+          obj.district.toLowerCase() ===
+            userLocations[0]?.district.toLowerCase();
+        const isCountyAdmin =
+          user.role.includes("County Admin") &&
+          obj.county.toLowerCase() === userLocations[0]?.county.toLowerCase();
+        const isStateAdmin =
+          user.role.includes("State Admin") &&
+          obj.state.toLowerCase() === userLocations[0]?.state.toLowerCase();
         const isStanfordStaff = user.role.includes("Stanford Staff");
-      
-        return isTeacher || isSiteAdmin || isDistrictAdmin || isCountyAdmin || isStateAdmin || isStanfordStaff;
+
+        return (
+          isTeacher ||
+          isSiteAdmin ||
+          isDistrictAdmin ||
+          isCountyAdmin ||
+          isStateAdmin ||
+          isStanfordStaff
+        );
       });
-      
-      
 
       let newResponses = [];
       let teacherNames = [];
-      let schoolIndex = (currentSchoolIndex && !all) ? currentSchoolIndex : 0;
-      while ( schoolIndex < filteredSchools.length) {
-        const { data: data2 } = await authFetch.get('/studentResponses', {
-          params: {
-            school: filteredSchools[schoolIndex].school,
-            teacherId: filteredSchools[schoolIndex].teacher,
-            grade: searchGrade,
-            period: searchPeriod,
-            formType: searchType,
-            when: searchBeforeAfter,
-            all,
-            checkedYears
-          }
+      let schoolIndex = currentSchoolIndex && !all ? currentSchoolIndex : 0;
+      console.log(all);
+      if (all) {
+        // **Parallel fetching for Export All**
+        const limit = pLimit(15); // Limit to 5 concurrent requests
+
+        const studentResponsesPromises = filteredSchools.map((school) =>
+          limit(() =>
+            authFetch.get("/studentResponses", {
+              params: {
+                school: school.school,
+                teacherId: school.teacher,
+                grade: searchGrade,
+                period: searchPeriod,
+                formType: searchType,
+                when: searchBeforeAfter,
+                all,
+                checkedYears,
+              },
+            })
+          )
+        );
+        console.log(studentResponsesPromises);
+        const studentResponsesData = await Promise.all(
+          studentResponsesPromises
+        );
+        console.log(studentResponsesData);
+
+        // Process all responses
+        studentResponsesData.forEach((responseData, index) => {
+          const { teacherName, studentResponses } = responseData.data;
+          const school = filteredSchools[index];
+
+          const uniqueResponseTypes = new Map();
+
+          studentResponses.forEach((response) => {
+            const key = JSON.stringify({
+              formCode: response.formCode,
+              teacher: response.teacher,
+              grade: response.grade,
+              when: response.when,
+              formType: response.formType,
+              school: response.school,
+              period: response.period,
+            });
+            uniqueResponseTypes.set(
+              key,
+              (uniqueResponseTypes.get(key) || 0) + 1
+            );
+          });
+
+          uniqueResponseTypes.forEach((count, responseType) => {
+            newResponses.push({
+              school,
+              teacherName,
+              uniqueResponseType: JSON.parse(responseType),
+              numberOfResponses: count,
+            });
+          });
         });
-        const {teacherId, teacherName, studentResponses } = data2;
+      } else {
+        // **Sequential fetching until 8 responses**
+        while (
+          schoolIndex < filteredSchools.length &&
+          newResponses.length < 8
+        ) {
+          const school = filteredSchools[schoolIndex];
 
-        // let teacherMatch = teacherNames.find(function(obj) {
-        //     return obj[1] === filteredSchools[schoolIndex].teacher;
-        //   });
+          const { data: responseData } = await authFetch.get(
+            "/studentResponses",
+            {
+              params: {
+                school: school.school,
+                teacherId: school.teacher,
+                grade: searchGrade,
+                period: searchPeriod,
+                formType: searchType,
+                when: searchBeforeAfter,
+                all,
+                checkedYears,
+              },
+            }
+          );
 
-        // if (!teacherMatch) {
-        //   teacherNames.push([teacherName, filteredSchools[schoolIndex].teacher]);
-        // }
+          const { teacherName, studentResponses } = responseData;
 
+          const uniqueResponseTypes = new Map();
 
-        let uniqueResponseTypes = [];
+          studentResponses.forEach((response) => {
+            const key = JSON.stringify({
+              formCode: response.formCode,
+              teacher: response.teacher,
+              grade: response.grade,
+              when: response.when,
+              formType: response.formType,
+              school: response.school,
+              period: response.period,
+            });
 
-        for (const responseIndex in studentResponses) {
-          let newResponseType = {
-            formCode: studentResponses[responseIndex].formCode,
-            teacher: studentResponses[responseIndex].teacher,
-            grade: studentResponses[responseIndex].grade,
-            when: studentResponses[responseIndex].when,
-            formType: studentResponses[responseIndex].formType,
-            school: studentResponses[responseIndex].school,
-            period: studentResponses[responseIndex].period,
-          }
-
-          let match = uniqueResponseTypes.find(function(obj) {
-            return JSON.stringify(obj) === JSON.stringify(newResponseType);
+            uniqueResponseTypes.set(
+              key,
+              (uniqueResponseTypes.get(key) || 0) + 1
+            );
           });
 
-          if (!match) {
-            uniqueResponseTypes.push(newResponseType);
-          }
-        }
-
-        for (const responseTypeIndex in uniqueResponseTypes) {
-          newResponses.push({
-            school: filteredSchools[schoolIndex],
-            teacherName,
-            uniqueResponseType: uniqueResponseTypes[responseTypeIndex],
-            numberOfResponses: studentResponses.filter((response) => {
-              return Object.entries(uniqueResponseTypes[responseTypeIndex]).every(([key, value]) => {
-                return response[key] === value;
-              });
-            }).length,
+          uniqueResponseTypes.forEach((count, responseType) => {
+            newResponses.push({
+              school,
+              teacherName,
+              uniqueResponseType: JSON.parse(responseType),
+              numberOfResponses: count,
+            });
           });
 
-
-        }
-        schoolIndex++
-        if (!overallBreakdown && !all && newResponses.length>=8){
-          break
+          schoolIndex++;
         }
       }
-      if (user.role === 'Stanford Staff') {
-        if (schoolIndex >= filteredSchools.length && (newResponses.length === 0 || all)) {
+
+      // fetch no code responses for stanford staff
+
+      if (user.role.includes("Site Admin") || user.role.includes("District Admin") || user.role.includes("County Admin") || user.role.includes("State Admin") || user.role.includes("Stanford Staff") ) {
+        console.log('inside no code')
+        if (
+          schoolIndex >= filteredSchools.length &&
+          (newResponses.length === 0 || all)
+        ) {
           const offsetIndex = schoolIndex - filteredSchools.length;
 
-          const { data: data3 } = await authFetch.get('/studentResponses/noCode', {
-            params: {
-              school: searchSchool,
-              state: searchState,
-              city: searchCity,
-              county: searchCounty,
-              district: searchDistrict,
-              grade: searchGrade,
-              period: searchPeriod,
-              formType: searchType,
-              when: searchBeforeAfter,
-              all
+          const { data: data3 } = await authFetch.get(
+            "/studentResponses/noCode",
+            {
+              params: {
+                school: searchSchool,
+                state: searchState,
+                city: searchCity,
+                county: searchCounty,
+                district: searchDistrict,
+                grade: searchGrade,
+                period: searchPeriod,
+                formType: searchType,
+                when: searchBeforeAfter,
+                all,
+              },
             }
-          });
-
+          );
+          // console
           const { studentResponses: noCodeStudentResponses } = data3;
-
+          console.log(noCodeStudentResponses)
           let uniqueResponseTypes = [];
 
           for (const responseIndex in noCodeStudentResponses) {
@@ -869,10 +1183,10 @@ const AppProvider = ({ children }) => {
                 county: noCodeStudentResponses[responseIndex].county,
                 city: noCodeStudentResponses[responseIndex].city,
               },
-              period: "No Period"
-            }
+              period: "No Period",
+            };
 
-            let match = uniqueResponseTypes.find(function(obj) {
+            let match = uniqueResponseTypes.find(function (obj) {
               return JSON.stringify(obj) === JSON.stringify(newResponseType);
             });
 
@@ -880,14 +1194,19 @@ const AppProvider = ({ children }) => {
               uniqueResponseTypes.push(newResponseType);
             }
           }
-          for (let i = (offsetIndex * 8); (i < uniqueResponseTypes.length && ((i < ((offsetIndex * 8) + 8)) || all)); i += 1) {
-            const currentResponse = uniqueResponseTypes[i]
+          for (
+            let i = offsetIndex * 8;
+            i < uniqueResponseTypes.length && (i < offsetIndex * 8 + 8 || all);
+            i += 1
+          ) {
+            const currentResponse = uniqueResponseTypes[i];
             newResponses.push({
               school: currentResponse.school,
               teacherName: "No Teacher",
               uniqueResponseType: currentResponse,
               numberOfResponses: noCodeStudentResponses.filter((response) => {
-                return response.grade === currentResponse.grade &&
+                return (
+                  response.grade === currentResponse.grade &&
                   response.when === currentResponse.when &&
                   response.formType === currentResponse.formType &&
                   response.school === currentResponse.school.school &&
@@ -895,20 +1214,21 @@ const AppProvider = ({ children }) => {
                   response.district === currentResponse.school.district &&
                   response.county === currentResponse.school.county &&
                   response.city === currentResponse.school.city
-              }).length
+                );
+              }).length,
             });
           }
         }
       }
 
-      if (all){
+      if (all) {
         getExport(false, null, newResponses);
       }
 
       dispatch({
         type: PAGE_FULL,
         payload: {
-        schoolIndex,
+          schoolIndex,
         },
       });
       handleChange({ name: "overallLoading", value: false });
@@ -917,7 +1237,8 @@ const AppProvider = ({ children }) => {
         payload: {
           newResponses,
           all,
-          teacherOptions: searchTeacher === 'all' ? teacherNames : state.teacherOptions,
+          teacherOptions:
+            searchTeacher === "all" ? teacherNames : state.teacherOptions,
         },
       });
       return Promise.resolve();
@@ -927,117 +1248,100 @@ const AppProvider = ({ children }) => {
         type: GET_RESPONSE_GROUPS_ERROR,
         payload: { msg: error.response },
       });
-      // logoutUser();
     }
     clearAlert();
   };
 
+  const chunkArray = (array, size) => {
+    const chunked = [];
+    for (let i = 0; i < array.length; i += size) {
+      chunked.push(array.slice(i, i + size));
+    }
+    return chunked;
+  };
+
   const getExport = async (search, formCode, allResponseGroups) => {
-    const {
-        responseGroups,
-        currentSchoolIndex,
-        shouldReload,
-        exportLoading
-    } = state;
+    const { responseGroups } = state;
     handleChange({ name: "exportLoading", value: true });
-    console.log('context export')
-    if (search) {
-        try {
-            dispatch({
-                type: GET_EXPORT_BEGIN,
-                payload: { exportData: null, msg: "Export Successful" },
-            });
+    console.log("context export");
 
-            const data = await authFetch.get(`/export/${formCode}${search}`);
-            const exportData = data.data.exportData;
-            console.log(exportData)
-            
-            
-            dispatch({
-                type: GET_EXPORT_SUCCESS,
-                payload: { exportData: exportData, msg: "Export Successful" },
-            });
-        } catch (error) {
-            dispatch({ type: GET_EXPORT_FAIL, payload: { msg: "Export Failed" } });
-        }
-    } else {
-        dispatch({ type: GET_EXPORT_BEGIN, payload: { exportData: null } });
+    try {
+      dispatch({
+        type: GET_EXPORT_BEGIN,
+        payload: { exportData: null, msg: "" },
+      });
 
-        const allExportData = [];
-
-        for (const responseGroup of (allResponseGroups ? allResponseGroups : responseGroups)) {
-          const { school, uniqueResponseType } = responseGroup;
-
-          const queryParameters = new URLSearchParams({
-            noCode: uniqueResponseType?.noCode ? 'true' : 'false',
-            teacherId: school.teacher,
-            schoolId: school?._id,
-            period: uniqueResponseType.period,
-            grade: uniqueResponseType.grade,
-            formType: uniqueResponseType.formType,
-            when: uniqueResponseType.when,
-            school: school.school,
-            state: school.state,
-            city: school.city,
-            county: school.county,
-            district: school.district,
-          });
-
-          try {
-            const data = await authFetch.get(
-              `/export/${uniqueResponseType.formCode}?${queryParameters}`
-            );
-            const exportDatas = data.data.exportData;
-            exportDatas.forEach((exportData) => {
-              allExportData.push(exportData);
-            });
-          } catch (error) {
-            console.error(`Error fetching data for responseGroup: ${responseGroup}`, error);
-            dispatch({ type: GET_EXPORT_FAIL, payload: { msg: "Export Failed" } });
-            return; // Exit the function early since there was an error
-          }
-        
-        }
+      // Handle the single search case
+      if (search) {
+        const { data } = await authFetch.get(`/export/${formCode}${search}`);
+        const exportData = data.exportData;
 
         dispatch({
-            type: GET_EXPORT_SUCCESS,
-            payload: { exportData: allExportData, msg: "Export Successful" },
+          type: GET_EXPORT_SUCCESS,
+          payload: { exportData, msg: "Export Successful" },
         });
-        clearAlert();
+      } else {
+        // Bulk export: Split into chunks to avoid payload size issues
+        const groupsToExport = allResponseGroups || responseGroups;
+        const chunkSize = 100; // Adjust chunk size as needed
+        const chunks = chunkArray(groupsToExport, chunkSize);
+
+        let allExportData = [];
+
+        // Process each chunk sequentially
+        for (const chunk of chunks) {
+          console.log(`Sending chunk of size ${chunk.length}`);
+          const { data } = await authFetch.post("/export/bulk", {
+            allResponseGroups: chunk,
+          });
+
+          allExportData = allExportData.concat(data.exportData);
+          console.log(allExportData)
+        }
+
+        // Dispatch consolidated results
+        dispatch({
+          type: GET_EXPORT_SUCCESS,
+          payload: { exportData: allExportData, msg: "Export Successful" },
+        });
+      }
+    } catch (error) {
+      console.error("Error exporting data:", error);
+      dispatch({
+        type: GET_EXPORT_FAIL,
+        payload: { msg: "Export Failed" },
+      });
+    } finally {
+      handleChange({ name: "exportLoading", value: false });
+      clearAlert();
     }
-};
+  };
 
-
-  
-
-  
-
-  const getTotal = async(user)=>{
-    let code=user.code
-    const {data}=await authFetch.post('/form/responses', {
-      code
+  const getTotal = async (user) => {
+    let code = user.code;
+    const { data } = await authFetch.post("/form/responses", {
+      code,
     });
-    let total=(data["totalResponses"])
-    dispatch({ type: GET_TOTAL , payload:{total}});
-    
-  }
+    let total = data["totalResponses"];
+    dispatch({ type: GET_TOTAL, payload: { total } });
+  };
 
   const changePage = (page) => {
     dispatch({ type: CHANGE_PAGE, payload: { page } });
   };
 
-  const approveLocationRequest = async(_id) => {
-    console.log(_id)
-    const {data} = await authFetch.post('/locations/approve', {_id}); 
-    if (data){
+  const approveLocationRequest = async (_id) => {
+    console.log(_id);
+    const { data } = await authFetch.post("/locations/approve", { _id });
+    if (data) {
       dispatch({ type: NEW_LOCATION_APPROVE });
       clearAlert();
     }
   };
-  const declineLocationRequest = async(_id) => {
-    console.log(_id)
-    const {data} = await authFetch.post('/locations/decline', {_id}); 
-    if (data){
+  const declineLocationRequest = async (_id) => {
+    console.log(_id);
+    const { data } = await authFetch.post("/locations/decline", { _id });
+    if (data) {
       dispatch({ type: NEW_LOCATION_DECLINE });
       clearAlert();
     }
@@ -1045,86 +1349,86 @@ const AppProvider = ({ children }) => {
 
   // const declineAndSelectLocationRequest = async(_id) => {
   //   console.log(_id)
-  //   const {data} = await authFetch.post('/locations/decline', {_id}); 
+  //   const {data} = await authFetch.post('/locations/decline', {_id});
   //   if (data){
   //     dispatch({ type: NEW_LOCATION_DECLINE });
   //     clearAlert();
   //   }
   // };
 
-  const createCertificate = async ({name,info}) => {
-    try{
-    const { data } = await axios.post(`/api/v1/auth/createCertificate`,{name,info})
-    if (data.msg == "Certificate Created"){
-      handleChange({ name: "certificate", value: true });
-      handleChange({ name: "certificate", value: true });
-      successAlert("Creating Certificate...")
-    }
-  }
-    catch(error){
-    }
+  const createCertificate = async ({ name, info }) => {
+    try {
+      const { data } = await axios.post(`/api/v1/auth/createCertificate`, {
+        name,
+        info,
+      });
+      if (data.msg == "Certificate Created") {
+        handleChange({ name: "certificate", value: true });
+        handleChange({ name: "certificate", value: true });
+        successAlert("Creating Certificate...");
+      }
+    } catch (error) {}
     // dispatch({ type: CHANGE_PAGE, payload: { page } });
   };
 
-  const getHealthyFutures = async(teacherId) =>{
-    try{
-      const { data } = await authFetch.get('/studentResponses/healthyFutures', {
+  const getHealthyFutures = async (teacherId) => {
+    try {
+      const { data } = await authFetch.get("/studentResponses/healthyFutures", {
         params: {
-         teacherId
-        }
+          teacherId,
+        },
       });
-      handleChange({ name: "healthyFuturesListCannabis", value: data.responsesByCannabis });
-      handleChange({ name: "healthyFuturesListTobacco", value: data.responsesByTobacco });
+      handleChange({
+        name: "healthyFuturesListCannabis",
+        value: data.responsesByCannabis,
+      });
+      handleChange({
+        name: "healthyFuturesListTobacco",
+        value: data.responsesByTobacco,
+      });
 
       // const { data } = await authFetch.get('/studentResponse s/healthyFutures', {teacherId});
-    }
-    catch(error){
-    }
+    } catch (error) {}
+  };
 
-  }
+  const resendEmail = async (email) => {
+    try {
+      const { data } = await axios.post(`/api/v1/auth/resend2fa`, { email });
+      successAlert(data);
+    } catch (error) {}
+  };
 
-  const resendEmail = async(email) =>{
-    try{
-    const { data } = await axios.post(`/api/v1/auth/resend2fa`,{email })
-    successAlert(data)
-    }
-    catch(error){
-
-    }
-  }
-
-  const getUsers = async()=>{
-    try{
+  const getUsers = async () => {
+    try {
       handleChange({ name: "userExportLoading", value: true });
-      const { data } = await axios.post(`/api/v1/user/all`)
-      console.log(data)
+      const { data } = await axios.post(`/api/v1/user/all`);
+      console.log(data);
       handleChange({ name: "allUsers", value: data });
-    }
-    catch(error){
-
-    }
-  }
-  const verify2fa = async(_id) => {
-    try{
-      const { data } = await axios.post(`/api/v1/auth/verify2fa`,{_id})
+    } catch (error) {}
+  };
+  const verify2fa = async (_id) => {
+    try {
+      const { data } = await axios.post(`/api/v1/auth/verify2fa`, { _id });
       const { user, hasLocation, userLocations } = data;
-      localStorage.setItem('user', JSON.stringify(user))
+      localStorage.setItem("user", JSON.stringify(user));
 
       if (userLocations) {
-        localStorage.setItem('userLocations', JSON.stringify(userLocations))
+        localStorage.setItem("userLocations", JSON.stringify(userLocations));
       }
-      let alertText = "User Successfully Created"
+      let alertText = "User Successfully Created";
       dispatch({
         type: SETUP_USER_SUCCESS,
-        payload: { user, alertText, hasLocation,
+        payload: {
+          user,
+          alertText,
+          hasLocation,
           userLocations: userLocations ? userLocations : [],
         },
       });
       clearAlert();
 
       // const { data } = await authFetch.get('/studentResponse s/healthyFutures', {teacherId});
-    }
-    catch(error){
+    } catch (error) {
       dispatch({
         type: SETUP_USER_ERROR,
         payload: { msg: error.response.data },
@@ -1132,8 +1436,6 @@ const AppProvider = ({ children }) => {
       clearValues();
     }
   };
-
-
 
   return (
     <AppContext.Provider
@@ -1167,7 +1469,7 @@ const AppProvider = ({ children }) => {
         approveLocationRequest,
         declineLocationRequest,
         getLocations,
-        getUsers
+        getUsers,
       }}
     >
       {children}
