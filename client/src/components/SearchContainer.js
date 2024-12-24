@@ -201,8 +201,8 @@ const SearchContainer = ({ startReload }) => {
         "HealthyFutures_Can"
       );
       const todaysDate = new Date().toISOString().split("T")[0];
-      writeXLSXFile(workbook, `StanfordDataDashboard(${todaysDate}).xlsx`);
-      writeXLSXFile(workbook24, `StanfordDataDashboardUpdatedForm(${todaysDate}).xlsx`);
+      writeXLSXFile(workbook, `StanfordREACH_DashboardExport_2023-2024_(${todaysDate}).xlsx`);
+      writeXLSXFile(workbook24, `StanfordREACH_DashboardExport_2025on_(${todaysDate}).xlsx`);
       handleChange(exportData, []);
       setExportClicked(false);
     }
