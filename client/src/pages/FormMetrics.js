@@ -28,6 +28,7 @@ import {
   tobacco24,
   tobaccoElem24,
   cannabis24,
+  cannabisElem24,
   healthy24,
   safety24,
   healthyCannabis24,

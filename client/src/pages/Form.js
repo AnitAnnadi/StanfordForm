@@ -19,6 +19,7 @@ import {
   tobacco24,
   tobaccoElem24,
   cannabis24,
+  cannabisElem24,
   healthy24,
   safety24,
   healthyCannabis24,
@@ -165,15 +166,17 @@ const Form = () => {
       info["form"] === "Smart Talk: Cannabis Prevention & Education Awareness"
     ) {
       return cannabis24;
-      // return info["when"] === "before"
-      //   ? cannabis
-      //   : cannabis.concat(postCannabis);
-    } else if (info["form"] === "Safety First") {
+    } 
+    else if (
+      info["form"] === "Smart Talk: Cannabis Prevention & Education Awareness(elem)"
+    ){
+      return cannabisElem24;
+    }else if (info["form"] === "Safety First") {
       return safety24;
     } else if (info["form"] === "Healthy Futures: Tobacco/Nicotine/Vaping") {
-      return healthy24.concat(healthyTobacco24);
+      return healthy24
     } else if (info["form"] === "Healthy Futures: Cannabis") {
-      return healthy24.concat(healthyCannabis24);
+      return healthy24
     }
   });
 
@@ -233,11 +236,18 @@ const Form = () => {
                     let emojis = ["🙁", "🙁", "🙂", "😊", "😁"];
                     emoji = emojis[index];
                   }
+                  if (
+                    qindex == 7 &&
+                    info.form === "Smart Talk: Cannabis Prevention & Education Awareness(elem)"
+                  ) {
+                    let emojis = ["🙁", "🙁", "🙂", "😊", "😁"];
+                    emoji = emojis[index];
+                  }
                   if (index < 5) {
                     let blackBoxes = [];
                     let emojis = ["👍", "👎", "🤷"];
                     if (
-                      info.form === "You and Me, Together Vape-Free(elem)" &&
+                      (info.form == "You and Me, Together Vape-Free(elem)" || info.form =="Smart Talk: Cannabis Prevention & Education Awareness(elem)") &&
                       element["answers"].length === 6
                     ) {
                       box = true;
@@ -245,7 +255,7 @@ const Form = () => {
                         blackBoxes.push(<BlackBox key={i} />);
                       }
                     } else if (
-                      info.form === "You and Me, Together Vape-Free(elem)" &&
+                      (info.form == "You and Me, Together Vape-Free(elem)" || info.form =="Smart Talk: Cannabis Prevention & Education Awareness(elem)") &&
                       element["answers"].length === 3
                     ) {
                       emoji = emojis[index];
@@ -281,11 +291,10 @@ const Form = () => {
                       <label key={index} className="container">
                         <p style={{ fontSize: "15px" }}> 🤷(I don't know)</p>
 
-                        {/* <p>&#129335; I don't know</p> */}
                         <input
                           type="radio"
                           value={answer.code}
-                          name={element["question"]}
+                          name={element["name"]}
                         />
                         <span className="checkmark"></span>
                       </label>

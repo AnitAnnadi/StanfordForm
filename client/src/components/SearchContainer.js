@@ -20,7 +20,7 @@ import {
   healthy,
 } from "../utils/questions23-24";
 import { ThreeDots } from "react-loader-spinner";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 const SearchContainer = ({ startReload }) => {
   const {
@@ -58,7 +58,7 @@ const SearchContainer = ({ startReload }) => {
     exportData,
     allUsers,
     exportLoading,
-    userExportLoading
+    userExportLoading,
   } = useAppContext();
   const [exportClicked, setExportClicked] = useState(false);
   const [questionsToAnswers, setQuestionsToAnswers] = useState({});
@@ -67,41 +67,86 @@ const SearchContainer = ({ startReload }) => {
 
   let reorderedQuestionsToAnswers = {};
   const vape = [];
-  const vapeElem = []; 
+  const vapeElem = [];
   const cannabis = [];
   const safety = [];
   const healthyTobacco = [];
   const healthyCannabis = [];
-  const startYear = 2023
-  let currentYear = new Date().getFullYear() 
-  
-
-
+  const vape24 = [];
+  const vapeElem24 = [];
+  const cannabis24 = [];
+  const cannabisElem24 = [];
+  const safety24 = [];
+  const healthyTobacco24 = [];
+  const healthyCannabis24 = [];
+  const startYear = 2023;
+  let currentYear = new Date().getFullYear();
 
   const { t, i18n } = useTranslation();
-
+  const isInt = (value) => {
+    return Number.isInteger(Number(value));
+  };
   useEffect(() => {
     if (exportClicked && exportData) {
+      console.log(exportData);
+
+      const cutoffDate = new Date("2024-12-20");
+
       exportData.forEach((obj) => {
-        const formtype = obj["form type"];
+        const formDate = new Date(obj.date); // Convert obj.date to a Date object
+        const isNewForm = formDate >= cutoffDate; // Check if the form is new
+
+        console.log(isNewForm);
+        console.log(obj.date);
+
+        const formtype = obj["curriculum"];
+
         if (formtype === "You and Me Vape Free (middle school and above)") {
-          vape.push(obj);
-        }
-        else if (formtype === "You and Me, Together Vape-Free(elem)") {
-          vapeElem.push(obj);
-        }  
-        else if (
+          if (isNewForm) {
+            vape24.push(obj);
+          } else {
+            vape.push(obj);
+          }
+        } else if (formtype === "You and Me, Together Vape-Free(elem)") {
+          if (isNewForm) {
+            vapeElem24.push(obj);
+          } else {
+            vapeElem.push(obj);
+          }
+        } else if (
           formtype === "Smart Talk: Cannabis Prevention & Education Awareness"
         ) {
-          cannabis.push(obj);
-        } else if (formtype === "Safety First") {
-          safety.push(obj);
+          if (isNewForm) {
+            cannabis24.push(obj);
+          } else {
+            cannabis.push(obj);
+          }
+        } 
+        else if (
+          formtype === "Smart Talk: Cannabis Prevention & Education Awareness(elem)"
+        ) {
+          if (isNewForm) {
+            cannabisElem24.push(obj);
+          }
+        }else if (formtype === "Safety First") {
+          if (isNewForm) {
+            safety24.push(obj);
+          } else {
+            safety.push(obj);
+          }
         } else if (formtype === "Healthy Futures: Tobacco/Nicotine/Vaping") {
-          healthyTobacco.push(obj);
+          if (isNewForm) {
+            healthyTobacco24.push(obj);
+          } else {
+            healthyTobacco.push(obj);
+          }
         } else if (formtype === "Healthy Futures: Cannabis") {
-          healthyCannabis.push(obj);
+          if (isNewForm) {
+            healthyCannabis24.push(obj);
+          } else {
+            healthyCannabis.push(obj);
+          }
         }
-
       });
 
       const vapeSheet = XLSXUtils.json_to_sheet(vape);
@@ -111,22 +156,53 @@ const SearchContainer = ({ startReload }) => {
       const healthyTobaccoSheet = XLSXUtils.json_to_sheet(healthyTobacco);
       const healthyCannabisSheet = XLSXUtils.json_to_sheet(healthyCannabis);
 
+      const vape24Sheet = XLSXUtils.json_to_sheet(vape24);
+      const vapeElem24Sheet = XLSXUtils.json_to_sheet(vapeElem24);
+      const cannabis24Sheet = XLSXUtils.json_to_sheet(cannabis24);
+      const cannabisElem24Sheet = XLSXUtils.json_to_sheet(cannabisElem24);
+      const safety24Sheet = XLSXUtils.json_to_sheet(safety24);
+      const healthyTobacco24Sheet = XLSXUtils.json_to_sheet(healthyTobacco24);
+      const healthyCannabis24Sheet = XLSXUtils.json_to_sheet(healthyCannabis24);
+
       const workbook = XLSXUtils.book_new();
-      XLSXUtils.book_append_sheet(workbook, vapeSheet, "Vape-Free");
-      XLSXUtils.book_append_sheet(workbook, vapeElemSheet, "Vape-Free(elem)");
-      XLSXUtils.book_append_sheet(workbook, cannabisSheet, "Smart Talk");
-      XLSXUtils.book_append_sheet(workbook, safetySheet, "Safety First");
+      XLSXUtils.book_append_sheet(workbook, vapeSheet, "You&Me_MS+HS");
+      XLSXUtils.book_append_sheet(workbook, vapeElemSheet, "You&Me_Elm");
+      XLSXUtils.book_append_sheet(workbook, cannabisSheet, "SmartTalk");
+      XLSXUtils.book_append_sheet(workbook, safetySheet, "SafetyFirst");
       XLSXUtils.book_append_sheet(
         workbook,
         healthyTobaccoSheet,
-        "Healthy Futures - Tobacco"
+        "HealthyFutures_Nic"
       );
       XLSXUtils.book_append_sheet(
         workbook,
         healthyCannabisSheet,
-        "Healthy Futures - Cannabis"
+        "HealthyFutures_Can"
       );
-      writeXLSXFile(workbook, `data.xlsx`);
+
+      const workbook24 = XLSXUtils.book_new();
+      XLSXUtils.book_append_sheet(workbook24, vape24Sheet, "You&Me_MS+HS");
+      XLSXUtils.book_append_sheet(
+        workbook24,
+        vapeElem24Sheet,
+        "You&Me_Elm"
+      );
+      XLSXUtils.book_append_sheet(workbook24, cannabis24Sheet, "SmartTalk");
+      XLSXUtils.book_append_sheet(workbook24, cannabisElem24Sheet, "SmartTalk_Elm");
+      XLSXUtils.book_append_sheet(workbook24, safety24Sheet, "SafetyFirst");
+      XLSXUtils.book_append_sheet(
+        workbook24,
+        healthyTobacco24Sheet,
+        "HealthyFutures_Nic"
+      );
+      XLSXUtils.book_append_sheet(
+        workbook24,
+        healthyCannabis24Sheet,
+        "HealthyFutures_Can"
+      );
+      const todaysDate = new Date().toISOString().split("T")[0];
+      writeXLSXFile(workbook, `StanfordDataDashboard(${todaysDate}).xlsx`);
+      writeXLSXFile(workbook24, `StanfordDataDashboardUpdatedForm(${todaysDate}).xlsx`);
       handleChange(exportData, []);
       setExportClicked(false);
     }
@@ -134,7 +210,6 @@ const SearchContainer = ({ startReload }) => {
 
   useEffect(() => {
     if (allUsers && !usersSheetCreated) {
-      
       const usersSheet = XLSXUtils.json_to_sheet(allUsers);
       const workbook = XLSXUtils.book_new();
       XLSXUtils.book_append_sheet(workbook, usersSheet, "All Users");
@@ -142,7 +217,6 @@ const SearchContainer = ({ startReload }) => {
       // Set a flag to indicate that the sheet has been created
       setUsersSheetCreated(true);
       handleChange({ name: "userExportLoading", value: false });
-
     }
   }, [allUsers, usersSheetCreated]);
 
@@ -154,79 +228,49 @@ const SearchContainer = ({ startReload }) => {
     fetchSchoolYears();
   }, [startYear, currentYear]);
 
-
   const createExcelSheet = async () => {
     await getResponseGroups(currentSchoolIndex, shouldReload, true);
     setExportClicked(true);
   };
 
-  const createUserSheet = async(e) =>{
-    e.preventDefault()
+  const createUserSheet = async (e) => {
+    e.preventDefault();
     await getUsers();
-
-  }
+  };
 
   const schoolYears = async (startYear, endYear) => {
     if (startYear >= endYear) {
-        return [];
+      return [];
     }
 
     const schoolYearList = [];
     for (let year = startYear; year <= endYear; year++) {
-        const nextYear = year + 1;
-        schoolYearList.push(`${year}-${nextYear}`);
+      const nextYear = year + 1;
+      schoolYearList.push(`${year}-${nextYear}`);
     }
 
     return schoolYearList;
-};
-
- 
-
-  const createQuestionsToAnswersMap = (array, questionsToAnswers) => {
-    reorderedQuestionsToAnswers = {};
-    array.forEach((question) => {
-      if (questionsToAnswers.hasOwnProperty(question.question)) {
-        reorderedQuestionsToAnswers[question.question] =
-          questionsToAnswers[question.question];
-      }
-    });
-    setQuestionsToAnswers(reorderedQuestionsToAnswers);
-  };
-
-  const formTimeType = (formType, when, data) => {
-    if (formType === "You and Me Vape Free (middle school and above)") {
-      return when === "before"
-        ? createQuestionsToAnswersMap(tobacco, data)
-        : createQuestionsToAnswersMap(tobacco.concat(postTobacco), data);
-    } else if (
-      formType === "Smart Talk: Cannabis Prevention & Education Awareness"
-    ) {
-      return when === "before"
-        ? createQuestionsToAnswersMap(cannabis, data)
-        : createQuestionsToAnswersMap(cannabis.concat(postCannabis), data);
-    } else if (formType === "Healthy Futures") {
-      return createQuestionsToAnswersMap(healthy, data);
-    } else if (formType === "Safety First") {
-      return createQuestionsToAnswersMap(safety, data);
-    }
   };
 
   const narrowAllowedOptions = (searchType, searchValues) => {
     let values;
 
     if (user.role === "Teacher") {
-      const allowedValues = userLocations.map(
-        (location) => location[searchType].toUpperCase()
+      const allowedValues = userLocations.map((location) =>
+        location[searchType].toUpperCase()
       );
-      values = searchValues.filter((value) => allowedValues.includes(value.toUpperCase()));
-    }  else if (user.role === "Stanford Staff") {
+      values = searchValues.filter((value) =>
+        allowedValues.includes(value.toUpperCase())
+      );
+    } else if (user.role === "Stanford Staff") {
       values = searchValues;
     } else {
       if (userLocations[0][searchType] === null) {
         values = searchValues;
       } else {
         values = searchValues.filter(
-          (value) => value.toUpperCase() === userLocations[0][searchType].toUpperCase()
+          (value) =>
+            value.toUpperCase() === userLocations[0][searchType].toUpperCase()
         );
       }
     }
@@ -240,141 +284,145 @@ const SearchContainer = ({ startReload }) => {
     return values;
   };
 
+  const resetFields = (fields) => {
+    const resetState = fields.reduce((acc, field) => {
+      acc[field] = "all";
+      return acc;
+    }, {});
+    handleChanges(resetState);
+  };
 
-const resetFields = (fields) => {
-  const resetState = fields.reduce((acc, field) => {
-    acc[field] = "all";
-    return acc;
-  }, {});
-  handleChanges(resetState);
-};
+  const handleLocalChange = (e) => {
+    const { name, value } = e.target;
 
-const handleLocalChange = (e) => {
-  const { name, value } = e.target;
+    switch (name) {
+      case "searchState":
+        resetFields([
+          "searchCounty",
+          "searchCity",
+          "searchDistrict",
+          "searchSchool",
+          "searchTeacher",
+        ]);
 
-  switch (name) {
-    case "searchState":
-      resetFields([
-        "searchCounty",
-        "searchCity",
-        "searchDistrict",
-        "searchSchool",
-        "searchTeacher",
-      ]);
-
-      handleChanges({
-        [name]: value,
-        countyOptions: narrowAllowedOptions(
-          "county",
-          narrowCounties({ state: value })
-        ),
-        cityOptions: narrowAllowedOptions(
-          "city",
-          narrowCities({ state: value })
-        ),
-        districtOptions: narrowAllowedOptions(
-          "district",
-          narrowDistricts({ state: value })
-        ),
-      });
-
-      setToNarrowSchools({
-        reactState: "schoolOptions",
-        allowed: false,
-        state: value,
-      });
-      break;
-
-    case "searchCounty":
-      resetFields(["searchCity", "searchDistrict", "searchSchool", "searchTeacher"]);
-
-      handleChanges({
-        [name]: value,
-        cityOptions: narrowAllowedOptions(
-          "city",
-          narrowCities({ county: value })
-        ),
-        districtOptions: narrowAllowedOptions(
-          "district",
-          narrowDistricts({ county: value, state: searchState })
-        ),
-      });
-
-      setToNarrowSchools({
-        reactState: "schoolOptions",
-        allowed: false,
-        county: value,
-      });
-      break;
-
-    case "searchCity":
-      resetFields(["searchDistrict", "searchSchool", "searchTeacher"]);
-
-      handleChanges({
-        [name]: value,
-        districtOptions: narrowAllowedOptions(
-          "district",
-          narrowDistricts({
-            city: value === "all" ? undefined : value,
-            county: searchCounty === "all" ? undefined : searchCounty,
-            state: searchState === "all" ? undefined : searchState,
-          })
-        ),
-      });
-
-      setToNarrowSchools({
-        reactState: "schoolOptions",
-        allowed: false,
-        city: value,
-        county: searchCounty,
-        state: searchState,
-      });
-      break;
-
-    case "searchDistrict":
-      resetFields(["searchSchool", "searchTeacher"]);
-
-      handleChanges({
-        [name]: value,
-      });
-
-      setToNarrowSchools({
-        reactState: "schoolOptions",
-        allowed: false,
-        district: value,
-        county: searchCounty,
-        state: searchState,
-        city: searchCity,
-      });
-      break;
-
-    case "searchSchool":
-      resetFields(["searchTeacher"]);
-
-      handleChanges({
-        [name]: value,
-      });
-      break;
-
-    case "searchTeacher":
-      if (value === "all") {
-        handleChanges({ [name]: "all" });
-      } else {
-        const selectedTeacher = teacherOptions.find(
-          (teacher) => teacher[0] === value
-        );
         handleChanges({
-          [name]: selectedTeacher || "all",
+          [name]: value,
+          countyOptions: narrowAllowedOptions(
+            "county",
+            narrowCounties({ state: value })
+          ),
+          cityOptions: narrowAllowedOptions(
+            "city",
+            narrowCities({ state: value })
+          ),
+          districtOptions: narrowAllowedOptions(
+            "district",
+            narrowDistricts({ state: value })
+          ),
         });
-      }
-      break;
 
-    default:
-      handleChanges({ [name]: value });
-      break;
-  }
-};
-  
+        setToNarrowSchools({
+          reactState: "schoolOptions",
+          allowed: false,
+          state: value,
+        });
+        break;
+
+      case "searchCounty":
+        resetFields([
+          "searchCity",
+          "searchDistrict",
+          "searchSchool",
+          "searchTeacher",
+        ]);
+
+        handleChanges({
+          [name]: value,
+          cityOptions: narrowAllowedOptions(
+            "city",
+            narrowCities({ county: value })
+          ),
+          districtOptions: narrowAllowedOptions(
+            "district",
+            narrowDistricts({ county: value, state: searchState })
+          ),
+        });
+
+        setToNarrowSchools({
+          reactState: "schoolOptions",
+          allowed: false,
+          county: value,
+        });
+        break;
+
+      case "searchCity":
+        resetFields(["searchDistrict", "searchSchool", "searchTeacher"]);
+
+        handleChanges({
+          [name]: value,
+          districtOptions: narrowAllowedOptions(
+            "district",
+            narrowDistricts({
+              city: value === "all" ? undefined : value,
+              county: searchCounty === "all" ? undefined : searchCounty,
+              state: searchState === "all" ? undefined : searchState,
+            })
+          ),
+        });
+
+        setToNarrowSchools({
+          reactState: "schoolOptions",
+          allowed: false,
+          city: value,
+          county: searchCounty,
+          state: searchState,
+        });
+        break;
+
+      case "searchDistrict":
+        resetFields(["searchSchool", "searchTeacher"]);
+
+        handleChanges({
+          [name]: value,
+        });
+
+        setToNarrowSchools({
+          reactState: "schoolOptions",
+          allowed: false,
+          district: value,
+          county: searchCounty,
+          state: searchState,
+          city: searchCity,
+        });
+        break;
+
+      case "searchSchool":
+        resetFields(["searchTeacher"]);
+
+        handleChanges({
+          [name]: value,
+        });
+        break;
+
+      case "searchTeacher":
+        if (value === "all") {
+          handleChanges({ [name]: "all" });
+        } else {
+          const selectedTeacher = teacherOptions.find(
+            (teacher) => teacher[0] === value
+          );
+          handleChanges({
+            [name]: selectedTeacher || "all",
+          });
+        }
+        break;
+
+      default:
+        handleChanges({ [name]: value });
+        break;
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -388,9 +436,7 @@ const handleLocalChange = (e) => {
   return (
     <Wrapper>
       <form className="form">
-        <h4>
-          {t('search_form', 'Search Form')}
-        </h4>
+        <h4>{t("search_form", "Search Form")}</h4>
         <div className="form-center">
           {/* search by state */}
           <FormRowSelect
@@ -489,13 +535,13 @@ const handleLocalChange = (e) => {
             disabled={isLoading}
             onClick={handleSubmit}
           >
-            {t('search_forms', 'search forms')}
+            {t("search_forms", "search forms")}
           </button>
-           {/* Render school years checkboxes */}
+          {/* Render school years checkboxes */}
           <div>
-          <label>{t("Select School Year(s)")}</label>
-          <SchoolYearCheckboxes schoolYears={schoolYearsList} />
-        </div>
+            <label>{t("Select School Year(s)")}</label>
+            <SchoolYearCheckboxes schoolYears={schoolYearsList} />
+          </div>
           <button
             className="btn btn-block btn-apply"
             disabled={isLoading}
@@ -508,40 +554,41 @@ const handleLocalChange = (e) => {
           >
             {exportLoading ? (
               <>
-                {t('exporting_data', 'Exporting Data')}
+                {t("exporting_data", "Exporting Data")}
                 <ThreeDots color="green" height={20} width={20} />
               </>
             ) : (
-              t('export_all_data', 'Export All Data')
+              t("export_all_data", "Export All Data")
             )}
           </button>
-          {user.role === "Stanford Staff"?
-          <button
-            className="btn btn-block btn-apply"
-            disabled={isLoading}
-            onClick={createUserSheet}
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              placeItems: "center",
-            }}
-          >
-            {userExportLoading ? (
-              <>
-                {t('exporting_data', 'Exporting Data')}
-                <ThreeDots color="green" height={20} width={20} />
-              </>
-            ) : (
-              t('export_user_data', 'Export User Data')
-            )}
-          </button>:null}
+          {user.role === "Stanford Staff" ? (
+            <button
+              className="btn btn-block btn-apply"
+              disabled={isLoading}
+              onClick={createUserSheet}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                placeItems: "center",
+              }}
+            >
+              {userExportLoading ? (
+                <>
+                  {t("exporting_data", "Exporting Data")}
+                  <ThreeDots color="green" height={20} width={20} />
+                </>
+              ) : (
+                t("export_user_data", "Export User Data")
+              )}
+            </button>
+          ) : null}
 
           <Link
             className="btn btn-block btn-obreak"
             disabled={isLoading}
             to={isLoading ? "#" : `/api/v1/form/`}
           >
-            {t('overall_breakdown', 'Overall Breakdown')}
+            {t("overall_breakdown", "Overall Breakdown")}
           </Link>
         </div>
       </form>
