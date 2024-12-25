@@ -28,6 +28,7 @@ import NoCode from "../models/NoCode.js";
 let exportData = [];
 
 const findResponse = (list, questions, obj, isNewForm) => {
+  console.log(list, questions, obj)
   list.map((block) => {
     let foundQuestions = questions.filter((object) =>
       isNewForm
