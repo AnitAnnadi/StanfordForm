@@ -220,6 +220,7 @@ const initialState = {
     "You and Me, Together Vape-Free(elem)",
     "You and Me Vape Free (middle school and above)",
     "Smart Talk: Cannabis Prevention & Education Awareness",
+    "Smart Talk: Cannabis Prevention & Education Awareness(elem)",
     "Safety First",
     "Healthy Futures: Tobacco/Nicotine/Vaping",
     "Healthy Futures: Cannabis",
