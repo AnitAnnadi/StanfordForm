@@ -33,6 +33,8 @@ import {
   safety24,
   healthyCannabis24,
   healthyTobacco24,
+  nicQuitQuestion,
+  canQuitQuestion
 } from "../utils/questions24-25";
 import { ThreeDots } from "react-loader-spinner";
 import { useTranslation } from "react-i18next";
@@ -196,6 +198,19 @@ const FormMetrics = () => {
             cannabis.concat(postCannabis),
             data
           );
+    }
+    else if (
+      formType === "Smart Talk: Cannabis Prevention & Education Awareness(elem)"
+    ) {
+      return isNewForm
+        ? createQuestionsToAnswersMap(isNewForm, cannabisElem24, data)
+        : when === "before"
+        ? createQuestionsToAnswersMap(isNewForm, cannabis, data)
+        : createQuestionsToAnswersMap(
+            isNewForm,
+            cannabis.concat(postCannabis),
+            data
+          );
     } else if (formType === "Safety First") {
       return isNewForm
         ? createQuestionsToAnswersMap(isNewForm, safety24, data)
@@ -204,7 +219,7 @@ const FormMetrics = () => {
       return isNewForm
         ? createQuestionsToAnswersMap(
             isNewForm,
-            healthy24.concat(healthyTobacco24),
+            healthy24.concat(nicQuitQuestion).concat(healthyTobacco24),
             data
           )
         : createQuestionsToAnswersMap(isNewForm, healthy, data);
@@ -212,7 +227,7 @@ const FormMetrics = () => {
       return isNewForm
         ? createQuestionsToAnswersMap(
             isNewForm,
-            healthy24.concat(healthyCannabis24),
+            healthy24.concat(canQuitQuestion).concat(healthyCannabis24),
             data
           )
         : createQuestionsToAnswersMap(isNewForm, healthy, data);

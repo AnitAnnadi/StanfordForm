@@ -1014,7 +1014,31 @@ export const healthy24 = [
       { text: "Strongly agree", code: 5 },
     ],
   },
+  
 ];
+
+export const nicQuitQuestion = {
+  name: "nic_quit",
+  category: "Quit Intentions",
+  question: "Are you seriously considering quitting using nicotine within the next 6 months?",
+  answers: [
+    { text: "Yes", code: 1 },
+    { text: "No", code: 2 },
+    { text: "Not applicable", code: 99 },
+  ],
+};
+
+export const canQuitQuestion = {
+  name: "can_quit",
+  category: "Quit Intentions",
+  question: "Are you seriously considering quitting using cannabis within the next 6 months?",
+  answers: [
+    { text: "Yes", code: 1 },
+    { text: "No", code: 2 },
+    { text: "Don’t know", code: 99 },
+  ],
+};
+
 
 export const healthyCannabis24 = [
   {
