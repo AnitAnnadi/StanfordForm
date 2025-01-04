@@ -24,6 +24,8 @@ import {
   safety24,
   healthyCannabis24,
   healthyTobacco24,
+  nicQuitQuestion,
+  canQuitQuestion
 } from "../utils/questions24-25";
 import ProductsCannabis from "../components/ProductsCannabis";
 import ProductsTobacco from "../components/ProdcuctsTobacco";
@@ -174,9 +176,9 @@ const Form = () => {
     }else if (info["form"] === "Safety First") {
       return safety24;
     } else if (info["form"] === "Healthy Futures: Tobacco/Nicotine/Vaping") {
-      return healthy24
+      return healthy24.concat(nicQuitQuestion)
     } else if (info["form"] === "Healthy Futures: Cannabis") {
-      return healthy24
+      return healthy24.concat(canQuitQuestion)
     }
   });
 

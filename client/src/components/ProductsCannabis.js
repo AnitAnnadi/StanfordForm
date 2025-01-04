@@ -43,7 +43,7 @@ const ProductsCannabis = () => {
 
   return (
     <>
-      <p>9. Do you think you will EVER try these products AGAIN?</p>
+      <p>10. Do you think you will EVER try these products AGAIN?</p>
       <div style={{ marginLeft: '20px' }}> {/* Apply indentation */}
         {products.map((product) => (
 
