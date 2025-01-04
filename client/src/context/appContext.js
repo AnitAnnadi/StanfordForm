@@ -220,6 +220,7 @@ const initialState = {
     "You and Me, Together Vape-Free(elem)",
     "You and Me Vape Free (middle school and above)",
     "Smart Talk: Cannabis Prevention & Education Awareness",
+    "Smart Talk: Cannabis Prevention & Education Awareness(elem)",
     "Safety First",
     "Healthy Futures: Tobacco/Nicotine/Vaping",
     "Healthy Futures: Cannabis",
@@ -244,6 +245,8 @@ const initialState = {
   stanfordNewLoc: false,
   allUsers: null,
   checkedYears: [],
+  productsTobacco:{nic_vape_intent: '', nic_nonnic_vape_intent: '', nic_cig_intent: ''},
+  productsCannabis:{can_smoke_intent: '', can_vape_intent: '', can_edible_intent: ''},
 };
 
 const stringDifScore = (str1, str2) => {
@@ -832,7 +835,6 @@ const AppProvider = ({ children }) => {
     captcha
   ) => {
     try {
-      console.log(period);
       handleChange({ name: "isLoading", value: true });
       const { data } = await axios.post(`/api/v1/auth/submitForm/`, {
         formData,

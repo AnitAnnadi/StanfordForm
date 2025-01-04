@@ -144,6 +144,9 @@ const JoinForm = () => {
     if (form==="You and Me, Together Vape-Free" && (parseInt(grade)<6 || grade =="K")){
       newForm="You and Me, Together Vape-Free(elem)"
     }
+    if (form==="Smart Talk: Cannabis Prevention & Education Awareness" && (parseInt(grade)<6 || grade =="K")){
+      newForm="Smart Talk: Cannabis Prevention & Education Awareness(elem)"
+    }
     if (info["noCode"]){
       if (
         form !== "default" &&

@@ -14,13 +14,28 @@ import {
 import { AiOutlineForm, AiOutlineNumber } from "react-icons/ai";
 import { TbListNumbers, TbNumbers } from "react-icons/tb";
 import { useAppContext } from "../context/appContext";
-import { utils as XLSXUtils, writeFile as writeXLSXFile } from 'xlsx';
-import { tobaccoElem, tobacco, postTobacco, cannabis, postCannabis, safety, healthy
+import { utils as XLSXUtils, writeFile as writeXLSXFile } from "xlsx";
+import {
+  tobaccoElem,
+  tobacco,
+  postTobacco,
+  cannabis,
+  postCannabis,
+  safety,
+  healthy,
 } from "../utils/questions23-24";
-import { ThreeDots } from 'react-loader-spinner';
-import {useTranslation} from "react-i18next";
-
-
+import {
+  tobacco24,
+  tobaccoElem24,
+  cannabis24,
+  cannabisElem24,
+  healthy24,
+  safety24,
+  healthyCannabis24,
+  healthyTobacco24,
+} from "../utils/questions24-25";
+import { ThreeDots } from "react-loader-spinner";
+import { useTranslation } from "react-i18next";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -44,7 +59,7 @@ const FormMetrics = () => {
     getResponseGroups,
     shouldReload,
     currentSchoolIndex,
-    exportLoading
+    exportLoading,
   } = useAppContext();
 
   const { t, i18n } = useTranslation();
@@ -65,24 +80,23 @@ const FormMetrics = () => {
   const navigate = useNavigate();
 
   const location = useLocation();
-  let data =[]
-  let formTypeForName = null
-  let whenForName = null
+  let data = [];
+  let formTypeForName = null;
+  let whenForName = null;
 
   useEffect(() => {
-    if (exportClicked && exportData && exportData!=[]) {
+    if (exportClicked && exportData && exportData != []) {
       const worksheet = XLSXUtils.json_to_sheet(exportData);
       const workbook = XLSXUtils.book_new();
       XLSXUtils.book_append_sheet(workbook, worksheet, "Sheet1");
       writeXLSXFile(workbook, `data.xlsx`);
-      handleChange(exportData,[])
+      handleChange(exportData, []);
       setExportClicked(false);
     }
   }, [exportData, exportClicked]);
 
   const createExcelSheet = async () => {
-    
-    setExportClicked(true)
+    setExportClicked(true);
     if (location.search) {
       const urlParams = new URLSearchParams(window.location.search);
       formTypeForName = urlParams.get("formType");
@@ -91,62 +105,134 @@ const FormMetrics = () => {
     } else {
       await getExport(false, null);
     }
-  
   };
-
 
   // NOTE: old responses with older versions of the form will not have the same questions as the current form leading
   // to the results not rendering due to this funciton.
-  const createQuestionsToAnswersMap = (array, questionsToAnswers) => {
-    reorderedQuestionsToAnswers = {};
+  const createQuestionsToAnswersMap = (
+    isNewForm,
+    array,
+    questionsToAnswers
+  ) => {
+    let reorderedQuestionsToAnswers = {};
     array.forEach((question) => {
-      if ((questionsToAnswers).hasOwnProperty(question.question)) {
-        reorderedQuestionsToAnswers[question.question] = questionsToAnswers[question.question];
+      if (questionsToAnswers.hasOwnProperty(isNewForm?question.name:question.question)) {
+        
+        if (isNewForm) {
+          // Find the current question object that matches by name
+          const currentQuestion = array.find(
+            (each) => each.name === question.name
+          );
+          if (currentQuestion) {
+            const answerCodes = Object.keys(
+              questionsToAnswers[question.name]
+            );
+
+            answerCodes.forEach((code) => {
+              // Check if the current question has the matching code
+              const matchingAnswer = currentQuestion.answers.find(
+                (answer) => answer.code.toString() === code
+              );
+
+              if (matchingAnswer) {
+                // Map the matching code's data to the current question
+                if (!reorderedQuestionsToAnswers[currentQuestion.question]) {
+                  reorderedQuestionsToAnswers[currentQuestion.question] = {};
+                }
+                
+                reorderedQuestionsToAnswers[currentQuestion.question][
+                  matchingAnswer.text
+                ] = questionsToAnswers[question.name][code];
+              }
+            });
+          }
+        } else {
+          // For older forms, simply map questions directly
+          reorderedQuestionsToAnswers[question.question] =
+            questionsToAnswers[question.question];
+        }
       }
     });
-    console.log(reorderedQuestionsToAnswers)
+
     setQuestionsToAnswers(reorderedQuestionsToAnswers);
   };
-
   const formTimeType = (formType, when, data) => {
-    console.log(formType === "You and Me, Together Vape-Free(elem)")
+    const isInt = (value) => {
+      return Number.isInteger(Number(value));
+    };
+
+    let formAnswers = Object.values(data);
+    let isNewForm = isInt(Object.keys(formAnswers[0])[0]);
+
     if (formType === "You and Me Vape Free (middle school and above)") {
-      return when === "before" ? createQuestionsToAnswersMap(tobacco, data) : createQuestionsToAnswersMap(tobacco.concat(postTobacco), data);
-    } 
-    else if(formType === "You and Me, Together Vape-Free(elem)") {
-      return when === "before" ? createQuestionsToAnswersMap(tobaccoElem, data) : createQuestionsToAnswersMap(tobaccoElem.concat(postTobacco), data);
-    } 
-    else if (formType === "Smart Talk: Cannabis Prevention & Education Awareness") {
-      return when === "before" ? createQuestionsToAnswersMap(cannabis, data) : createQuestionsToAnswersMap(cannabis.concat(postCannabis),data);
-    }
-    else if (formType === "Safety First"){
-      return createQuestionsToAnswersMap(safety, data)
-    }
-    else if (formType === "Healthy Futures: Tobacco/Nicotine/Vaping"){
-      return createQuestionsToAnswersMap(healthy, data)
-    }
-    else if (formType === "Healthy Futures: Cannabis"){
-      return createQuestionsToAnswersMap(healthy, data)
+      return isNewForm
+        ? createQuestionsToAnswersMap(isNewForm, tobacco24, data)
+        : when === "before"
+        ? createQuestionsToAnswersMap(isNewForm, tobacco, data)
+        : createQuestionsToAnswersMap(
+            isNewForm,
+            tobacco.concat(postTobacco),
+            data
+          );
+    } else if (formType === "You and Me, Together Vape-Free(elem)") {
+      return isNewForm
+        ? createQuestionsToAnswersMap(isNewForm, tobaccoElem24, data)
+        : when === "before"
+        ? createQuestionsToAnswersMap(isNewForm, tobaccoElem, data)
+        : createQuestionsToAnswersMap(
+            isNewForm,
+            tobaccoElem.concat(postTobacco),
+            data
+          );
+    } else if (
+      formType === "Smart Talk: Cannabis Prevention & Education Awareness"
+    ) {
+      return isNewForm
+        ? createQuestionsToAnswersMap(isNewForm, cannabis24, data)
+        : when === "before"
+        ? createQuestionsToAnswersMap(isNewForm, cannabis, data)
+        : createQuestionsToAnswersMap(
+            isNewForm,
+            cannabis.concat(postCannabis),
+            data
+          );
+    } else if (formType === "Safety First") {
+      return isNewForm
+        ? createQuestionsToAnswersMap(isNewForm, safety24, data)
+        : createQuestionsToAnswersMap(isNewForm, safety, data);
+    } else if (formType === "Healthy Futures: Tobacco/Nicotine/Vaping") {
+      return isNewForm
+        ? createQuestionsToAnswersMap(
+            isNewForm,
+            healthy24.concat(healthyTobacco24),
+            data
+          )
+        : createQuestionsToAnswersMap(isNewForm, healthy, data);
+    } else if (formType === "Healthy Futures: Cannabis") {
+      return isNewForm
+        ? createQuestionsToAnswersMap(
+            isNewForm,
+            healthy24.concat(healthyCannabis24),
+            data
+          )
+        : createQuestionsToAnswersMap(isNewForm, healthy, data);
     }
   };
 
-
-  useEffect(()=>{
-    if (isOverall){
-      getResponseGroups(currentSchoolIndex,shouldReload, false, true);
+  useEffect(() => {
+    if (isOverall) {
+      getResponseGroups(currentSchoolIndex, shouldReload, false, true);
     }
-  },[isOverall])
+  }, [isOverall]);
 
   useEffect(() => {
     let combinedQuestionsToAnswers = {};
-  
+
     const fetchDataForResponseGroups = () => {
-      console.log('new called' )
-      console.log(responseGroups) // this is returning null
       return Promise.all(
         responseGroups.map((responseGroup) => {
           const { school, uniqueResponseType } = responseGroup;
-    
+
           const queryParameters = new URLSearchParams({
             noCode: uniqueResponseType?.noCode,
             teacherId: school.teacher,
@@ -161,48 +247,55 @@ const FormMetrics = () => {
             county: school.county,
             district: school.district,
           });
-  
-          return fetch(`/api/v1/form/${uniqueResponseType.formCode}?${queryParameters.toString()}`)
-            .then((res) => res.json());
+
+          return fetch(
+            `/api/v1/form/${
+              uniqueResponseType.formCode
+            }?${queryParameters.toString()}`
+          ).then((res) => res.json());
         })
       );
     };
-  
+
     if (!location.search) {
       setIsOverall(true);
       setIsLoading(true);
-      
+
       fetchDataForResponseGroups()
         .then((responses) => {
-          // console.log(responses)
           responses.forEach((data) => {
             const currentQuestionsToAnswers = data.questionsToAnswers;
             Object.keys(currentQuestionsToAnswers).forEach((question) => {
               if (!combinedQuestionsToAnswers[question]) {
-                combinedQuestionsToAnswers[question] = currentQuestionsToAnswers[question];
+                combinedQuestionsToAnswers[question] =
+                  currentQuestionsToAnswers[question];
               } else {
                 // Add the counts of each answer from the current response to the combinedQuestionsToAnswers
                 const currentAnswers = currentQuestionsToAnswers[question];
                 const combinedAnswers = combinedQuestionsToAnswers[question];
                 Object.keys(currentAnswers).forEach((answer) => {
-                  combinedAnswers[answer] = (combinedAnswers[answer] || 0) + currentAnswers[answer];
+                  combinedAnswers[answer] =
+                    (combinedAnswers[answer] || 0) + currentAnswers[answer];
                 });
               }
             });
           });
           // Calculate the total number of responses
-          const totalResponses = responses.reduce((total, data) => total + data.numberOfResponses, 0);
+          const totalResponses = responses.reduce(
+            (total, data) => total + data.numberOfResponses,
+            0
+          );
           setNumberOfResponses(totalResponses);
-          formTimeType(searchType, searchBeforeAfter, combinedQuestionsToAnswers )
+          formTimeType(
+            searchType,
+            searchBeforeAfter,
+            combinedQuestionsToAnswers
+          );
           // setQuestionsToAnswers(combinedQuestionsToAnswers);
           setIsLoading(false);
         })
         .catch((error) => console.error(error));
-    } 
-    
-
-    else {
-
+    } else {
       setIsOverall(false);
       setIsLoading(true);
       const queryParameters = new URLSearchParams(location.search);
@@ -212,10 +305,9 @@ const FormMetrics = () => {
       fetch(`/api/v1/form/${formCode}?${queryParameters.toString()}`)
         .then((res) => res.json())
         .then((data) => {
-          console.log(data)
           setSchool(data.school);
           setTeacher(data.teacher);
-          formTimeType(formType, when, data.questionsToAnswers)
+          formTimeType(formType, when, data.questionsToAnswers);
           setNumberOfResponses(data.numberOfResponses);
           setResponseType(data.responseType);
         })
@@ -223,16 +315,21 @@ const FormMetrics = () => {
         .finally(() => setIsLoading(false));
     }
   }, [location.search, formCode, responseGroups]);
-      
-  if (isLoading || overallLoading) return (
-  <div>
-    {isOverall?<p>
-      {t('may_take_awhile_retrieving_data', 'This may take a while. We have to retrieve all your data')}
-    </p>:null}
-  <Loading center />
-  </div>
-  
-  );
+
+  if (isLoading || overallLoading)
+    return (
+      <div>
+        {isOverall ? (
+          <p>
+            {t(
+              "may_take_awhile_retrieving_data",
+              "This may take a while. We have to retrieve all your data"
+            )}
+          </p>
+        ) : null}
+        <Loading center />
+      </div>
+    );
 
   return (
     <Wrapper style={{ maxWidth: "800px" }}>
@@ -240,94 +337,124 @@ const FormMetrics = () => {
         <>
           <header>
             <div className="info">
-              <h3>
-                {t('overall_form_metrics', 'Overall Form Metrics')}</h3>
+              <h3>{t("overall_form_metrics", "Overall Form Metrics")}</h3>
             </div>
           </header>
-          
+
           <div className="content">
-          <button
-            className="btn"
-            style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
-            onClick={() => createExcelSheet()}
-          >
-            <span className="icon-css">
-              <BiExport />
-            </span>
-            {exportLoading ? (
-              <div style={{ display: 'flex', alignItems: 'center', marginLeft: '10px' }}>
-                <p style={{ margin: 0 }}>{t('UP_exporting', "Exporting")}</p>
-                <ThreeDots color="white" height={20} width={20} style={{ marginLeft: '10px' }} />
-              </div>
-            ) : (
-              t('export_to_excel', "Export To Excel")
-            )}
-          </button>
+            <button
+              className="btn"
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onClick={() => createExcelSheet()}
+            >
+              <span className="icon-css">
+                <BiExport />
+              </span>
+              {exportLoading ? (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginLeft: "10px",
+                  }}
+                >
+                  <p style={{ margin: 0 }}>{t("UP_exporting", "Exporting")}</p>
+                  <ThreeDots
+                    color="white"
+                    height={20}
+                    width={20}
+                    style={{ marginLeft: "10px" }}
+                  />
+                </div>
+              ) : (
+                t("export_to_excel", "Export To Excel")
+              )}
+            </button>
 
             <div className="content-center">
               <ResponseGroupInfo
                 icon={<AiOutlineNumber />}
-                text={`${numberOfResponses} ${t('responses', 'responses')}`}
+                text={`${numberOfResponses} ${t("responses", "responses")}`}
               />
-              <div >
+              <div>
                 <ResponseGroupInfo
                   icon={<FaLocationArrow />}
                   text={
-                    searchState === "all" ? t('all_states', 'All states') + ',' : searchState + ","
+                    searchState === "all"
+                      ? t("all_states", "All states") + ","
+                      : searchState + ","
                   }
                 />
                 <ResponseGroupInfo
                   text={
                     searchCounty === "all"
-                      ? t('all_counties', 'All counties') + ","
+                      ? t("all_counties", "All counties") + ","
                       : searchCounty + ","
                   }
                 />
                 <ResponseGroupInfo
                   text={
-                    searchCity === "all" ? t('all_cities', 'All cities') + "," : (searchCity + ",")
+                    searchCity === "all"
+                      ? t("all_cities", "All cities") + ","
+                      : searchCity + ","
                   }
                 />
                 <ResponseGroupInfo
                   text={
                     searchDistrict === "all"
-                      ? t('all_districts', 'All districts') + ","
+                      ? t("all_districts", "All districts") + ","
                       : searchDistrict + ","
                   }
                 />
                 <ResponseGroupInfo
-                  text={searchSchool === "all" ? t('all_schools', 'All schools') : searchSchool}
+                  text={
+                    searchSchool === "all"
+                      ? t("all_schools", "All schools")
+                      : searchSchool
+                  }
                 />
               </div>
               <ResponseGroupInfo
                 icon={<FaChalkboardTeacher />}
-                text={searchTeacher === "all" ? t('all_teachers', 'All teachers') : searchTeacher}
+                text={
+                  searchTeacher === "all"
+                    ? t("all_teachers", "All teachers")
+                    : searchTeacher
+                }
               />
               <ResponseGroupInfo
                 icon={<TbListNumbers />}
                 text={
                   searchPeriod === "all"
-                    ? t('all_periods', 'All periods')
-                    : t('period', 'Period') + " " + searchPeriod
+                    ? t("all_periods", "All periods")
+                    : t("period", "Period") + " " + searchPeriod
                 }
               />
               <ResponseGroupInfo
                 icon={<TbNumbers />}
                 text={
-                  searchGrade === "all" ?
-                  t('all_grades', 'All grades') :
-                  t('grade', 'Grade') + " " + searchGrade
+                  searchGrade === "all"
+                    ? t("all_grades", "All grades")
+                    : t("grade", "Grade") + " " + searchGrade
                 }
               />
               <ResponseGroupInfo
                 icon={<AiOutlineForm />}
-                text={searchType === "all" ? t('all_types', 'All types') : searchType}
+                text={
+                  searchType === "all"
+                    ? t("all_types", "All types")
+                    : searchType
+                }
               />
               <ResponseGroupInfo
                 icon={<FaRegCalendarAlt />}
                 text={
                   searchBeforeAfter === "all"
-                    ? t('before_and_after', 'Before and after')
+                    ? t("before_and_after", "Before and after")
                     : searchBeforeAfter
                 }
               />
@@ -346,24 +473,40 @@ const FormMetrics = () => {
           </header>
           <div className="content">
             <div className="content-center">
-            <button
-            className="btn"
-            style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
-            onClick={() => createExcelSheet()}
-          >
-            <span className="icon-css">
-              <BiExport />
-            </span>
-            {exportLoading ? (
-              <div style={{ display: 'flex', alignItems: 'center', marginLeft: '10px' }}>
-                <p style={{ margin: 0 }}>{t('UP_exporting', "Exporting")}</p>
-                <ThreeDots color="white" height={20} width={20} style={{ marginLeft: '10px' }} />
-              </div>
-            ) : (
-              t('export_to_excel',
-              "Export To Excel")
-            )}
-          </button>
+              <button
+                className="btn"
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+                onClick={() => createExcelSheet()}
+              >
+                <span className="icon-css">
+                  <BiExport />
+                </span>
+                {exportLoading ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      marginLeft: "10px",
+                    }}
+                  >
+                    <p style={{ margin: 0 }}>
+                      {t("UP_exporting", "Exporting")}
+                    </p>
+                    <ThreeDots
+                      color="white"
+                      height={20}
+                      width={20}
+                      style={{ marginLeft: "10px" }}
+                    />
+                  </div>
+                ) : (
+                  t("export_to_excel", "Export To Excel")
+                )}
+              </button>
               <ResponseGroupInfo
                 icon={<FaChalkboardTeacher />}
                 text={teacher.name}
@@ -372,18 +515,17 @@ const FormMetrics = () => {
                 icon={<AiOutlineNumber />}
                 text={`${numberOfResponses} response(s)`}
               />
-              {/* {console.log(responseType)} */}
               <ResponseGroupInfo
                 icon={<TbListNumbers />}
                 text={
-                  (responseType?.period) && (responseType?.period !== "No Period")
-                    ? t('UP_period', 'Period') + " " + responseType.period
-                    : t('no_specified_period', 'No specified period')
+                  responseType?.period && responseType?.period !== "No Period"
+                    ? t("UP_period", "Period") + " " + responseType.period
+                    : t("no_specified_period", "No specified period")
                 }
               />
               <ResponseGroupInfo
                 icon={<TbNumbers />}
-                text={t('UP_grade', "Grade") + " " + responseType.grade}
+                text={t("UP_grade", "Grade") + " " + responseType.grade}
               />
               <ResponseGroupInfo
                 icon={<AiOutlineForm />}
@@ -404,7 +546,6 @@ const FormMetrics = () => {
           <div className="content">
             <div className="content-center">
               {Object.keys(questionsToAnswers).map((question, index) => {
-
                 const backgroundColors = [
                   "#3be320",
                   "#99e018",
@@ -412,28 +553,35 @@ const FormMetrics = () => {
                   "#ecb533",
                   "#e56a16",
                   "#e7420e",
-                ]
+                ];
 
-                const newBackgroundColors = []
+                const newBackgroundColors = [];
 
-                Object.keys(questionsToAnswers[question]).sort().forEach((answer, index) => {
-                  newBackgroundColors.push(backgroundColors[index % backgroundColors.length])
-                })
+                Object.keys(questionsToAnswers[question])
+                  .sort()
+                  .forEach((answer, index) => {
+                    newBackgroundColors.push(
+                      backgroundColors[index % backgroundColors.length]
+                    );
+                  });
 
                 return (
                   <div key={index}>
                     <h5 style={{ padding: "1rem 0" }}>{question}</h5>
-                    <div className="chartCanvas" >
+                    <div className="chartCanvas">
                       <Doughnut
                         data={{
                           labels: Object.keys(questionsToAnswers[question]),
                           datasets: [
                             {
-                              label: t('how_many_gave_this_answer', 'How many gave this answer'),
+                              label: t(
+                                "how_many_gave_this_answer",
+                                "How many gave this answer"
+                              ),
                               data: Object.values(questionsToAnswers[question]),
                               backgroundColor: newBackgroundColors,
                               borderWidth: 1,
-                            }
+                            },
                           ],
                         }}
                         options={{
@@ -458,7 +606,7 @@ const FormMetrics = () => {
       )}
       <footer>
         <button className="btn btn-block" onClick={() => navigate("/metrics")}>
-          {t('go_back', 'Go Back')}
+          {t("go_back", "Go Back")}
         </button>
       </footer>
     </Wrapper>
