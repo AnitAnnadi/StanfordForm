@@ -239,15 +239,16 @@ const SearchContainer = ({ startReload }) => {
   };
 
   const schoolYears = async (startYear, endYear) => {
-    if (startYear >= endYear) {
-      return [];
-    }
+    // if (startYear >= endYear) {
+    //   return [];
+    // }
 
-    const schoolYearList = [];
-    for (let year = startYear; year <= endYear; year++) {
-      const nextYear = year + 1;
-      schoolYearList.push(`${year}-${nextYear}`);
-    }
+    // const schoolYearList = [];
+    // for (let year = startYear; year <= endYear; year++) {
+    //   const nextYear = year + 1;
+    //   schoolYearList.push(`${year}-${nextYear}`);
+    // }
+    let schoolYearList = ['2023-2024', '2024 (August–December)', '2025(Jan 6 - )']
 
     return schoolYearList;
   };

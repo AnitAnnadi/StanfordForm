@@ -40,24 +40,32 @@ const getStudentResponses = async (req, res) => {
 
     // Create an array to store the $or conditions based on checkedYears
     const orConditions = [];
-    if (checkedYears!=[] && checkedYears !==undefined ){
-    for (const [year, isChecked] of Object.entries(checkedYears)) {
-      if (isChecked === 'true') {
-        // Parse the year to create date ranges
-        const [startYear, endYear] = year.split('-');
-        const startDate = new Date(`${startYear}-07-01T00:00:00.000Z`);
-        const endDate = new Date(`${endYear}-06-30T23:59:59.999Z`);
+    if (checkedYears != [] && checkedYears !== undefined) {
+      for (const [year, isChecked] of Object.entries(checkedYears)) {
+        if (isChecked === "true") {
+          // Handle different year formats
+          let startDate, endDate;
 
-        orConditions.push({
-          createdAt: {
-            $gte: startDate,
-            $lt: endDate,
-          },
-        });
+          if (year === "2023-2024") {
+            startDate = new Date("2023-07-01T00:00:00.000Z");
+            endDate = new Date("2024-06-30T23:59:59.999Z");
+          } else if (year === "2024 (August–December)") {
+            startDate = new Date("2024-08-01T00:00:00.000Z");
+            endDate = new Date("2024-12-31T23:59:59.999Z");
+          } else if (year === "2025") {
+            startDate = new Date("2025-01-04T00:00:00.000Z");
+            endDate = new Date("2025-12-31T23:59:59.999Z");
+          }
+
+          orConditions.push({
+            createdAt: {
+              $gte: startDate,
+              $lt: endDate,
+            },
+          });
+        }
       }
-    }
-  }
-    if (orConditions.length > 0) {
+    }    if (orConditions.length > 0) {
       queryObject.$or = orConditions;
     }
 
@@ -113,24 +121,32 @@ const getNoCodeStudentResponses = async (req, res) => {
 
     // Create an array to store the $or conditions based on checkedYears
     const orConditions = [];
-    if (checkedYears!=[] && checkedYears !==undefined ){
+    if (checkedYears != [] && checkedYears !== undefined) {
       for (const [year, isChecked] of Object.entries(checkedYears)) {
-      if (isChecked === 'true') {
-        // Parse the year to create date ranges
-        const [startYear, endYear] = year.split('-');
-        const startDate = new Date(`${startYear}-07-01T00:00:00.000Z`);
-        const endDate = new Date(`${endYear}-06-30T23:59:59.999Z`);
+        if (isChecked === "true") {
+          // Handle different year formats
+          let startDate, endDate;
 
-        orConditions.push({
-          createdAt: {
-            $gte: startDate,
-            $lt: endDate,
-          },
-        });
+          if (year === "2023-2024") {
+            startDate = new Date("2023-07-01T00:00:00.000Z");
+            endDate = new Date("2024-06-30T23:59:59.999Z");
+          } else if (year === "2024 (August–December)") {
+            startDate = new Date("2024-08-01T00:00:00.000Z");
+            endDate = new Date("2024-12-31T23:59:59.999Z");
+          } else if (year === "2025") {
+            startDate = new Date("2025-01-04T00:00:00.000Z");
+            endDate = new Date("2025-12-31T23:59:59.999Z");
+          }
+
+          orConditions.push({
+            createdAt: {
+              $gte: startDate,
+              $lt: endDate,
+            },
+          });
+        }
       }
-    }
-  }
-    if (orConditions.length > 0) {
+    }    if (orConditions.length > 0) {
       queryObject.$or = orConditions;
     }
 
