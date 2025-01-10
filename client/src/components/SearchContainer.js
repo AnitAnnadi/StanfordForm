@@ -89,8 +89,9 @@ const SearchContainer = ({ startReload }) => {
   useEffect(() => {
     if (exportClicked && exportData) {
       console.log(exportData);
+      console.log(exportData)
 
-      const cutoffDate = new Date("2024-12-20");
+      const cutoffDate = new Date("2025-1-6"); //
 
       exportData.forEach((obj) => {
         const formDate = new Date(obj.date); // Convert obj.date to a Date object

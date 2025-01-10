@@ -263,6 +263,7 @@ const getExportBulk = async (req, res) => {
     }, {});
 
     // Process all responses
+    let count = 0
     const exportData = studentResponses.map((studentResponse) => {
       const key = `${studentResponse.formCode}_${studentResponse.teacher?._id}`;
       const matchedQuery = queryMap[key];
@@ -289,6 +290,7 @@ const getExportBulk = async (req, res) => {
         return q.StudentResponse.toString() === studentResponse._id.toString();
       });
       let isNewForm;
+      
       if (relatedQuestions.length > 0) {
         isNewForm = isInt(relatedQuestions[0].Answer);
       }
