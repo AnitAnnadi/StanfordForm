@@ -956,16 +956,18 @@ const AppProvider = ({ children }) => {
       checkedYears,
     } = state;
     dispatch({ type: GET_RESPONSE_GROUPS_BEGIN, payload: { shouldReload } });
+    console.log(all, overallBreakdown)
     try {
       // if all that means an export all has been triggered so that state is updated
-      if (all) {
+      if (all && !overallBreakdown) {
         handleChange({ name: "exportLoading", value: true });
       }
 
       // breakdown UI component enters a loading state
       if (overallBreakdown) {
         handleChange({ name: "overallLoading", value: true });
-      }
+      } 
+
 
       //Fetch a list of schools based on current search filters
       const { data } = await authFetch.get("/schools", {
@@ -1006,6 +1008,9 @@ const AppProvider = ({ children }) => {
           obj.state.toLowerCase() === userLocations[0]?.state.toLowerCase();
         const isStanfordStaff = user.role.includes("Stanford Staff");
 
+
+
+
         return (
           isTeacher ||
           isSiteAdmin ||
@@ -1019,10 +1024,9 @@ const AppProvider = ({ children }) => {
       let newResponses = [];
       let teacherNames = [];
       let schoolIndex = currentSchoolIndex && !all ? currentSchoolIndex : 0;
-      console.log(all);
       if (all) {
         // **Parallel fetching for Export All**
-        const limit = pLimit(15); // Limit to 5 concurrent requests
+        const limit = pLimit(15); // Limit to 15 concurrent requests
 
         const studentResponsesPromises = filteredSchools.map((school) =>
           limit(() =>
@@ -1044,7 +1048,6 @@ const AppProvider = ({ children }) => {
         const studentResponsesData = await Promise.all(
           studentResponsesPromises
         );
-        console.log(studentResponsesData);
 
         // Process all responses
         studentResponsesData.forEach((responseData, index) => {
@@ -1070,22 +1073,41 @@ const AppProvider = ({ children }) => {
           });
 
           uniqueResponseTypes.forEach((count, responseType) => {
-            newResponses.push({
-              school,
-              teacherName,
-              uniqueResponseType: JSON.parse(responseType),
-              numberOfResponses: count,
-            });
+            console.log(JSON.parse(responseType))
+            if (overallBreakdown){
+              if (JSON.parse(responseType).formType == searchType){
+                newResponses.push({
+                  school,
+                  teacherName,
+                  uniqueResponseType: JSON.parse(responseType),
+                  numberOfResponses: count,
+                });
+              }
+            
+            }
+            if (all && !overallBreakdown){
+              newResponses.push({
+                school,
+                teacherName,
+                uniqueResponseType: JSON.parse(responseType),
+                numberOfResponses: count,
+              });
+            }
+
           });
         });
-      } else {
+      } 
+      else if (overallBreakdown){
+        console.log('hi')
+      }
+      else {
         // **Sequential fetching until 8 responses**
         while (
           schoolIndex < filteredSchools.length &&
           newResponses.length < 8
         ) {
           const school = filteredSchools[schoolIndex];
-
+          
           const { data: responseData } = await authFetch.get(
             "/studentResponses",
             {
@@ -1234,6 +1256,7 @@ const AppProvider = ({ children }) => {
         },
       });
       handleChange({ name: "overallLoading", value: false });
+      if (!all){
       dispatch({
         type: GET_RESPONSE_GROUPS_SUCCESS,
         payload: {
@@ -1242,7 +1265,7 @@ const AppProvider = ({ children }) => {
           teacherOptions:
             searchTeacher === "all" ? teacherNames : state.teacherOptions,
         },
-      });
+      });}
       return Promise.resolve();
     } catch (error) {
       console.error("Error fetching schools:", error);
@@ -1300,7 +1323,7 @@ const AppProvider = ({ children }) => {
           allExportData = allExportData.concat(data.exportData);
           console.log(allExportData)
         }
-
+        
         // Dispatch consolidated results
         dispatch({
           type: GET_EXPORT_SUCCESS,
