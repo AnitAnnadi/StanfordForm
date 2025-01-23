@@ -44,6 +44,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 const FormMetrics = () => {
   const {
     responseGroups,
+    exportData,
     overallLoading,
     handleChange,
     searchState,
@@ -57,7 +58,6 @@ const FormMetrics = () => {
     searchTeacher,
     searchBeforeAfter,
     getExport,
-    exportData,
     getResponseGroups,
     shouldReload,
     currentSchoolIndex,
@@ -76,15 +76,16 @@ const FormMetrics = () => {
   const [questionsToAnswers, setQuestionsToAnswers] = useState({});
   const [responseType, setResponseType] = useState({});
   const [numberOfResponses, setNumberOfResponses] = useState(0);
-  let reorderedQuestionsToAnswers = {};
 
   const { formCode } = useParams();
   const navigate = useNavigate();
 
   const location = useLocation();
-  let data = [];
   let formTypeForName = null;
   let whenForName = null;
+
+
+
 
   useEffect(() => {
     if (exportClicked && exportData && exportData != []) {
@@ -108,6 +109,11 @@ const FormMetrics = () => {
       await getExport(false, null);
     }
   };
+
+
+
+
+
 
   // NOTE: old responses with older versions of the form will not have the same questions as the current form leading
   // to the results not rendering due to this funciton.
@@ -155,9 +161,17 @@ const FormMetrics = () => {
         }
       }
     });
-
+    console.log(reorderedQuestionsToAnswers)
+    console.log(exportData.length, isOverall)
     setQuestionsToAnswers(reorderedQuestionsToAnswers);
+    
+    setIsLoading(false)
   };
+
+
+
+
+
   const formTimeType = (formType, when, data) => {
     const isInt = (value) => {
       return Number.isInteger(Number(value));
@@ -234,102 +248,42 @@ const FormMetrics = () => {
     }
   };
 
+
+
+
+  let metadata_keys = new Set(["teacher", "school", "county", "district", "state", 'city', 'curriculum', 'date', 'grade', 'period', 'pre_post'])
   useEffect(() => {
     if (isOverall) {
-      getResponseGroups(currentSchoolIndex, shouldReload, false, true);
+      getResponseGroups(currentSchoolIndex, shouldReload, true, true);
     }
   }, [isOverall]);
-
+  let structuredData = {}
   useEffect(() => {
-    let combinedQuestionsToAnswers = {};
-
-    const fetchDataForResponseGroups = () => {
-      return Promise.all(
-        responseGroups.map((responseGroup) => {
-          const { school, uniqueResponseType } = responseGroup;
-
-          const queryParameters = new URLSearchParams({
-            noCode: uniqueResponseType?.noCode,
-            teacherId: school.teacher,
-            schoolId: school?._id,
-            period: uniqueResponseType.period,
-            grade: uniqueResponseType.grade,
-            formType: uniqueResponseType.formType,
-            when: uniqueResponseType.when,
-            school: school.school,
-            state: school.state,
-            city: school.city,
-            county: school.county,
-            district: school.district,
-          });
-
-          return fetch(
-            `/api/v1/form/${
-              uniqueResponseType.formCode
-            }?${queryParameters.toString()}`
-          ).then((res) => res.json());
-        })
-      );
-    };
-
     if (!location.search) {
       setIsOverall(true);
-      setIsLoading(true);
-
-      fetchDataForResponseGroups()
-        .then((responses) => {
-          responses.forEach((data) => {
-            const currentQuestionsToAnswers = data.questionsToAnswers;
-            Object.keys(currentQuestionsToAnswers).forEach((question) => {
-              if (!combinedQuestionsToAnswers[question]) {
-                combinedQuestionsToAnswers[question] =
-                  currentQuestionsToAnswers[question];
-              } else {
-                // Add the counts of each answer from the current response to the combinedQuestionsToAnswers
-                const currentAnswers = currentQuestionsToAnswers[question];
-                const combinedAnswers = combinedQuestionsToAnswers[question];
-                Object.keys(currentAnswers).forEach((answer) => {
-                  combinedAnswers[answer] =
-                    (combinedAnswers[answer] || 0) + currentAnswers[answer];
-                });
+      exportData?.map((response=>{
+        for (const [question, answer] of Object.entries(response)) {
+          if (!metadata_keys.has(question)) { // Exclude metadata fields
+              if (!structuredData[question]) {
+                  structuredData[question] = {}; // Initialize dictionary for responses
               }
-            });
-          });
-          // Calculate the total number of responses
-          const totalResponses = responses.reduce(
-            (total, data) => total + data.numberOfResponses,
-            0
-          );
-          setNumberOfResponses(totalResponses);
-          formTimeType(
-            searchType,
-            searchBeforeAfter,
-            combinedQuestionsToAnswers
-          );
-          // setQuestionsToAnswers(combinedQuestionsToAnswers);
-          setIsLoading(false);
-        })
-        .catch((error) => console.error(error));
-    } else {
-      setIsOverall(false);
-      setIsLoading(true);
-      const queryParameters = new URLSearchParams(location.search);
+              structuredData[question][answer] = (structuredData[question][answer] || 0) + 1; // Count responses
+          }
+      }
+      
+      }))
+      if (exportData){
+        setNumberOfResponses(exportData.length)
+        formTimeType(
+          searchType,
+          searchBeforeAfter,
+          structuredData
+        );
+      }
+      
 
-      const formType = queryParameters.get("formType");
-      const when = queryParameters.get("when");
-      fetch(`/api/v1/form/${formCode}?${queryParameters.toString()}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setSchool(data.school);
-          setTeacher(data.teacher);
-          formTimeType(formType, when, data.questionsToAnswers);
-          setNumberOfResponses(data.numberOfResponses);
-          setResponseType(data.responseType);
-        })
-        .catch((error) => console.error(error))
-        .finally(() => setIsLoading(false));
     }
-  }, [location.search, formCode, responseGroups]);
+  }, [exportData]);
 
   if (isLoading || overallLoading)
     return (
@@ -554,9 +508,11 @@ const FormMetrics = () => {
           </div>
         </>
       )}
-      {responseGroups.length === 0 && isOverall ? (
+      {exportData.length === 0 && isOverall ? (
         <h3>No responses yet</h3>
-      ) : (
+      ) : 
+      (
+        
         <>
           <div className="content">
             <div className="content-center">

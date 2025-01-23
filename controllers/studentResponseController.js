@@ -49,7 +49,6 @@ const getStudentResponses = async (req, res) => {
 
     // Create an array to store the $or conditions based on checkedYears
     const orConditions = [];
-    console.log(checkedYears)
     if (checkedYears != [] && checkedYears !== undefined) {
       for (const [year, isChecked] of Object.entries(checkedYears)) {
         if (isChecked === "true") {
@@ -98,7 +97,7 @@ const getNoCodeStudentResponses = async (req, res) => {
     const user = await User.findOne({ _id: req.user.userId });
     const token = user.createJWT();
     attachCookie({ res, token });
-
+    console.log('yooo')
     const {
       school,
       state,
@@ -178,8 +177,14 @@ const getNoCodeStudentResponses = async (req, res) => {
     }
 
     // Query the database
+    Object.keys(queryObject).forEach((key) => {
+      if (typeof queryObject[key] === "string") {
+        queryObject[key] = { $regex: queryObject[key], $options: "i" };
+      }
+    });
+    
     const studentResponses = await NoCodeSchema.find(queryObject);
-
+    
     res.status(StatusCodes.OK).json({ studentResponses });
   } catch (error) {
     console.log(error);
