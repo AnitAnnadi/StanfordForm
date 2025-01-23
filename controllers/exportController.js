@@ -126,11 +126,11 @@ const getExport = async (req, res) => {
       };
     }
 
-    const responseIds = studentResponses.map((sr) => sr._id);
+    const responseIds = studentResponses?.map((sr) => sr._id);
     const questions = await Question.find({
       StudentResponse: { $in: responseIds },
     });
-    const exportData = studentResponses.map((studentResponse) => {
+    const exportData = studentResponses?.map((studentResponse) => {
       const date = new Date(studentResponse.createdAt).toLocaleString("en-US", {
         timeZone: "America/Los_Angeles",
       });
@@ -205,7 +205,7 @@ const getExport = async (req, res) => {
 
 const getExportBulk = async (req, res) => {
   try {
-    const { allResponseGroups } = req.body; // Accept all responseGroups as input
+    const { allResponseGroups, user } = req.body;
 
     if (!allResponseGroups || allResponseGroups.length === 0) {
       return res.status(400).json({ error: "No response groups provided." });
@@ -217,67 +217,100 @@ const getExportBulk = async (req, res) => {
 
       return {
         noCode: uniqueResponseType?.noCode === "true",
-        teacher: school.teacher,
+        teacher: uniqueResponseType?.teacher || "n/a",
         formCode: uniqueResponseType.formCode,
         grade: uniqueResponseType.grade,
         period: uniqueResponseType.period,
         formType: uniqueResponseType.formType,
         when: uniqueResponseType.when,
-        school: school.school,
-        state: school.state,
-        city: school.city,
-        county: school.county,
-        district: school.district,
+        school: school?.school || uniqueResponseType.school,
+        state: school?.state || uniqueResponseType.state,
+        city: school?.city || uniqueResponseType.city,
+        county: school?.county || uniqueResponseType.county,
+        district: school?.district || uniqueResponseType.district,
       };
     });
 
-    // Prepare combined query
-    const queryConditions = responseQueries.map((q) => {
+    // Prepare queries for StudentResponse and NoCode collections
+    const queryConditions = [];
+    const noCodeQueryConditions = [];
+
+    responseQueries.forEach((q) => {
       const condition = {
         formCode: q.formCode,
-        teacher: q.teacher,
         grade: q.grade,
         formType: q.formType,
         when: q.when,
         school: q.school,
       };
+
       if (q.period && q.period !== "null") condition.period = q.period;
-      return condition;
+
+      if (q.teacher !== "n/a") {
+        condition.teacher = q.teacher;
+        queryConditions.push(condition);
+      } else {
+        noCodeQueryConditions.push(condition);
+      }
     });
 
-    // Fetch all student responses in one go
-    const studentResponses = await StudentResponse.find({
-      $or: queryConditions,
-    }).populate("teacher", "name");
+    // Fetch StudentResponse data
+    let studentResponses = [];
+    let noCodeStudentResponses = [];
 
-    // Fetch related questions for all responses
-    const responseIds = studentResponses.map((sr) => sr._id);
+
+    if (queryConditions?.length > 0) {
+      studentResponses = await StudentResponse.find({
+        $or: queryConditions,
+      }).populate("teacher", "name");
+    }
+
+    // Fetch NoCode data
+    if (noCodeQueryConditions?.length > 0) {
+      noCodeStudentResponses = await NoCode.find({
+        $or: noCodeQueryConditions,
+      });
+    }
+
+    // Fetch related questions for both StudentResponse and NoCode
+    const studentResponseIds = studentResponses?.map((sr) => sr._id);
+    const noCodeResponseIds = noCodeStudentResponses?.map((nc) => nc._id);
+
+    const questionIds = [
+      ...(studentResponseIds?.length > 0 ? studentResponseIds : []),
+      ...(noCodeResponseIds?.length > 0 ? noCodeResponseIds : []),
+    ];
+
     const questions = await Question.find({
-      StudentResponse: { $in: responseIds },
+      StudentResponse: { $in: questionIds },
     });
-
+    // Create query map for quick lookup
     const queryMap = responseQueries.reduce((acc, query) => {
-      const key = `${query.formCode}_${query.teacher}`;
+      const key = `${query.formCode}_${
+        query.teacher !== "n/a" ? query.teacher : "n/a"
+      }`;
       acc[key] = query;
       return acc;
     }, {});
 
-    // Process all responses
-    let count = 0
-    const exportData = studentResponses.map((studentResponse) => {
-      const key = `${studentResponse.formCode}_${studentResponse.teacher?._id}`;
+    // **Process all StudentResponse data**
+    let studentExportData = studentResponses?.map((studentResponse) => {
+      const key = `${studentResponse.formCode}_${
+        studentResponse.teacher?._id || "n/a"
+      }`;
       const matchedQuery = queryMap[key];
 
       const date = new Date(studentResponse.createdAt).toLocaleString("en-US", {
         timeZone: "America/Los_Angeles",
       });
+
       const obj = {
         teacher: studentResponse.teacher?.name || "n/a",
-        school: matchedQuery?.school,
+        school: matchedQuery?.school || "n/a",
         county: matchedQuery?.county || "n/a",
         district: matchedQuery?.district || "n/a",
-        state: matchedQuery?.state,
-        city: matchedQuery?.city,
+        state: matchedQuery?.state || "n/a",
+        city: matchedQuery?.city || "n/a",
         date: date,
         pre_post: studentResponse.when,
         grade: studentResponse.grade,
@@ -286,11 +319,11 @@ const getExportBulk = async (req, res) => {
       };
 
       // Find related questions
-      const relatedQuestions = questions.filter((q) => {
-        return q.StudentResponse.toString() === studentResponse._id.toString();
-      });
+      const relatedQuestions = questions.filter(
+        (q) => q.StudentResponse.toString() === studentResponse._id.toString()
+      );
+
       let isNewForm;
-      
       if (relatedQuestions.length > 0) {
         isNewForm = isInt(relatedQuestions[0].Answer);
       }
@@ -324,7 +357,6 @@ const getExportBulk = async (req, res) => {
         },
       };
 
-      // Simplify the logic using the mapping
       if (formTypeMapping[studentResponse.formType]) {
         const dataKey = studentResponse.when === "before" ? "before" : "after";
         const data =
@@ -335,11 +367,87 @@ const getExportBulk = async (req, res) => {
 
       return obj;
     });
+
+    // **Process all NoCodeStudentResponse data with questions**
+    let noCodeExportData = noCodeStudentResponses?.map((response) => {
+      const matchedQuery = queryMap[`${response.formCode}_n/a`];
+
+      const obj = {
+        teacher: "n/a", // NoCode responses have no teacher
+        school: matchedQuery?.school || "n/a",
+        county: matchedQuery?.county || "n/a",
+        district: matchedQuery?.district || "n/a",
+        state: matchedQuery?.state || "n/a",
+        city: matchedQuery?.city || "n/a",
+        date: new Date(response.createdAt).toLocaleString("en-US", {
+          timeZone: "America/Los_Angeles",
+        }),
+        pre_post: response.when,
+        grade: response.grade,
+        period: response.period || "n/a",
+        curriculum: response.formType,
+      };
+
+      // Find related questions
+      const relatedQuestions = questions.filter(
+        (q) => q.StudentResponse.toString() === response._id.toString()
+      );
+
+      let isNewForm;
+      if (relatedQuestions.length > 0) {
+        isNewForm = isInt(relatedQuestions[0].Answer);
+      }
+
+      const dataKey = response.when === "before" ? "before" : "after";
+      const formTypeMapping = {
+        "You and Me Vape Free (middle school and above)": {
+          before: isNewForm ? tobacco24 : tobacco,
+          after: isNewForm ? tobacco24 : [...tobacco, ...postTobacco],
+        },
+        "You and Me, Together Vape-Free(elem)": {
+          before: isNewForm ? tobaccoElem24 : tobaccoElem,
+          after: isNewForm ? tobaccoElem24 : [...tobaccoElem, ...postTobacco],
+        },
+        "Smart Talk: Cannabis Prevention & Education Awareness": {
+          before: isNewForm ? cannabis24 : cannabis,
+          after: isNewForm ? cannabis24 : [...cannabis, ...postCannabis],
+        },
+        "Smart Talk: Cannabis Prevention & Education Awareness(elem)": {
+          before: isNewForm ? cannabisElem24 : cannabis,
+          after: isNewForm ? cannabisElem24 : [...cannabis, ...postCannabis],
+        },
+        "Safety First": {
+          always: isNewForm ? safety24 : safety,
+        },
+        "Healthy Futures: Tobacco/Nicotine/Vaping": {
+          always: isNewForm ? healthy24.concat(healthyTobacco24) : healthy,
+        },
+        "Healthy Futures: Cannabis": {
+          always: isNewForm ? healthy24.concat(healthyCannabis24) : healthy,
+        },
+      };
+      const data =
+        formTypeMapping[response.formType]?.[dataKey] ||
+        formTypeMapping[response.formType]?.always;
+      if (data) findResponse(data, relatedQuestions, obj, isNewForm);
+
+      return obj;
+    });
+
+    studentExportData = Array.isArray(studentExportData)
+      ? studentExportData
+      : [];
+    noCodeExportData = Array.isArray(noCodeExportData) ? noCodeExportData : [];
+
+    exportData = [...studentExportData, ...noCodeExportData];
+
     // Send the consolidated export data
     res.status(200).json({ exportData });
   } catch (error) {
-    console.error("Error exporting bulk data:", error);
-    res.status(500).json({ error: "Failed to export bulk data." });
+    console.error("❌ Error exporting bulk data:", error);
+    res
+      .status(500)
+      .json({ error: "Failed to export bulk data.", details: error.message });
   }
 };
 

@@ -1044,10 +1044,33 @@ const AppProvider = ({ children }) => {
             })
           )
         );
-        console.log(studentResponsesPromises);
-        const studentResponsesData = await Promise.all(
-          studentResponsesPromises
+        //continue here
+        console.log(searchSchool)
+        const noCodeStudentPromises = limit(() =>
+          authFetch.get("/studentResponses/noCode", {
+            params: {
+              school: searchSchool,
+              state: searchState,
+              city:searchCity,
+              county:searchCounty,
+              district:searchDistrict,
+              grade:searchGrade,
+              period:searchPeriod,
+              formType:searchType,
+              when:searchBeforeAfter,
+              all,
+            },
+          })
         );
+        
+        console.log(await Promise.all([noCodeStudentPromises]));
+        const studentResponsesData = await Promise.all([
+          ...studentResponsesPromises,
+          noCodeStudentPromises
+        ]);
+  
+      console.log(studentResponsesData);
+        
 
         // Process all responses
         studentResponsesData.forEach((responseData, index) => {
@@ -1055,7 +1078,6 @@ const AppProvider = ({ children }) => {
           const school = filteredSchools[index];
 
           const uniqueResponseTypes = new Map();
-
           studentResponses.forEach((response) => {
             const key = JSON.stringify({
               formCode: response.formCode,
@@ -1063,8 +1085,12 @@ const AppProvider = ({ children }) => {
               grade: response.grade,
               when: response.when,
               formType: response.formType,
-              school: response.school,
               period: response.period,
+              school: response.school,
+              state: response.state,
+              city: response.city,
+              county: response.county,
+              district: response.district
             });
             uniqueResponseTypes.set(
               key,
@@ -1073,7 +1099,6 @@ const AppProvider = ({ children }) => {
           });
 
           uniqueResponseTypes.forEach((count, responseType) => {
-            console.log(JSON.parse(responseType))
             if (overallBreakdown){
               if (JSON.parse(responseType).formType == searchType){
                 newResponses.push({
@@ -1160,90 +1185,7 @@ const AppProvider = ({ children }) => {
 
       // fetch no code responses for stanford staff
 
-      if (user.role.includes("Site Admin") || user.role.includes("District Admin") || user.role.includes("County Admin") || user.role.includes("State Admin") || user.role.includes("Stanford Staff") ) {
-        console.log('inside no code')
-        if (
-          schoolIndex >= filteredSchools.length &&
-          (newResponses.length === 0 || all)
-        ) {
-          const offsetIndex = schoolIndex - filteredSchools.length;
-
-          const { data: data3 } = await authFetch.get(
-            "/studentResponses/noCode",
-            {
-              params: {
-                school: searchSchool,
-                state: searchState,
-                city: searchCity,
-                county: searchCounty,
-                district: searchDistrict,
-                grade: searchGrade,
-                period: searchPeriod,
-                formType: searchType,
-                when: searchBeforeAfter,
-                all,
-              },
-            }
-          );
-          // console
-          const { studentResponses: noCodeStudentResponses } = data3;
-          console.log(noCodeStudentResponses)
-          let uniqueResponseTypes = [];
-
-          for (const responseIndex in noCodeStudentResponses) {
-            let newResponseType = {
-              formCode: "noCode",
-              noCode: true,
-              teacher: "No Teacher",
-              grade: noCodeStudentResponses[responseIndex].grade,
-              when: noCodeStudentResponses[responseIndex].when,
-              formType: noCodeStudentResponses[responseIndex].formType,
-              school: {
-                school: noCodeStudentResponses[responseIndex].school,
-                state: noCodeStudentResponses[responseIndex].state,
-                teacher: "No Teacher",
-                multiplePeriods: false,
-                district: noCodeStudentResponses[responseIndex].district,
-                county: noCodeStudentResponses[responseIndex].county,
-                city: noCodeStudentResponses[responseIndex].city,
-              },
-              period: "No Period",
-            };
-
-            let match = uniqueResponseTypes.find(function (obj) {
-              return JSON.stringify(obj) === JSON.stringify(newResponseType);
-            });
-
-            if (!match) {
-              uniqueResponseTypes.push(newResponseType);
-            }
-          }
-          for (
-            let i = offsetIndex * 8;
-            i < uniqueResponseTypes.length && (i < offsetIndex * 8 + 8 || all);
-            i += 1
-          ) {
-            const currentResponse = uniqueResponseTypes[i];
-            newResponses.push({
-              school: currentResponse.school,
-              teacherName: "No Teacher",
-              uniqueResponseType: currentResponse,
-              numberOfResponses: noCodeStudentResponses.filter((response) => {
-                return (
-                  response.grade === currentResponse.grade &&
-                  response.when === currentResponse.when &&
-                  response.formType === currentResponse.formType &&
-                  response.school === currentResponse.school.school &&
-                  response.state === currentResponse.school.state &&
-                  response.district === currentResponse.school.district &&
-                  response.county === currentResponse.school.county &&
-                  response.city === currentResponse.school.city
-                );
-              }).length,
-            });
-          }
-        }
-      }
+      
 
       if (all) {
         getExport(false, null, newResponses);
@@ -1286,7 +1228,8 @@ const AppProvider = ({ children }) => {
   };
 
   const getExport = async (search, formCode, allResponseGroups) => {
-    const { responseGroups } = state;
+    const { responseGroups, user } = state;
+    console.log(user)
     handleChange({ name: "exportLoading", value: true });
     console.log("context export");
 
@@ -1318,6 +1261,7 @@ const AppProvider = ({ children }) => {
           console.log(`Sending chunk of size ${chunk.length}`);
           const { data } = await authFetch.post("/export/bulk", {
             allResponseGroups: chunk,
+            user: user
           });
 
           allExportData = allExportData.concat(data.exportData);
@@ -1337,6 +1281,7 @@ const AppProvider = ({ children }) => {
         payload: { msg: "Export Failed" },
       });
     } finally {
+      handleChange({ name: "exportLoading", value: false });
       handleChange({ name: "exportLoading", value: false });
       clearAlert();
     }
