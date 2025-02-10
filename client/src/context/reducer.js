@@ -124,6 +124,8 @@ const reducer = (state, action) => {
       alertType: 'success',
       alertText: action.payload.msg,
       exportData: action.payload.exportData,
+      searchSchoolData: action.payload.schoolData, 
+      searchTeacherData:action.payload.teacherData,
       isLoading: false,
       exportLoading:false
     };

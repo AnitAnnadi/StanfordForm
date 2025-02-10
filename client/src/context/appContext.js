@@ -247,6 +247,8 @@ const initialState = {
   checkedYears: [],
   productsTobacco:{nic_vape_intent: '', nic_nonnic_vape_intent: '', nic_cig_intent: ''},
   productsCannabis:{can_smoke_intent: '', can_vape_intent: '', can_edible_intent: ''},
+  searchSchoolData:null,
+  searchTeacherData:null
 };
 
 const stringDifScore = (str1, str2) => {
@@ -1008,6 +1010,7 @@ const AppProvider = ({ children }) => {
           obj.state.toLowerCase() === userLocations[0]?.state.toLowerCase();
         const isStanfordStaff = user.role.includes("Stanford Staff");
 
+        
 
 
 
@@ -1020,7 +1023,7 @@ const AppProvider = ({ children }) => {
           isStanfordStaff
         );
       });
-
+      console.log(filteredSchools)
       let newResponses = [];
       let teacherNames = [];
       let schoolIndex = currentSchoolIndex && !all ? currentSchoolIndex : 0;
@@ -1122,9 +1125,6 @@ const AppProvider = ({ children }) => {
           });
         });
       } 
-      else if (overallBreakdown){
-        console.log('hi')
-      }
       else {
         // **Sequential fetching until 8 responses**
         while (
@@ -1171,12 +1171,14 @@ const AppProvider = ({ children }) => {
           });
 
           uniqueResponseTypes.forEach((count, responseType) => {
+            if (school.school!=undefined){
             newResponses.push({
               school,
               teacherName,
               uniqueResponseType: JSON.parse(responseType),
               numberOfResponses: count,
             });
+          }
           });
 
           schoolIndex++;
@@ -1184,8 +1186,6 @@ const AppProvider = ({ children }) => {
       }
 
       // fetch no code responses for stanford staff
-
-      
 
       if (all) {
         getExport(false, null, newResponses);
@@ -1231,7 +1231,6 @@ const AppProvider = ({ children }) => {
     const { responseGroups, user } = state;
     console.log(user)
     handleChange({ name: "exportLoading", value: true });
-    console.log("context export");
 
     try {
       dispatch({
@@ -1243,14 +1242,18 @@ const AppProvider = ({ children }) => {
       if (search) {
         const { data } = await authFetch.get(`/export/${formCode}${search}`);
         const exportData = data.exportData;
+        const schoolData = data.school
+        const teacherData = data.teacher
 
         dispatch({
           type: GET_EXPORT_SUCCESS,
-          payload: { exportData, msg: "Export Successful" },
+          payload: { teacherData, schoolData, exportData, msg: "Export Successful" },
         });
-      } else {
+      } 
+      else {
         // Bulk export: Split into chunks to avoid payload size issues
-        const groupsToExport = allResponseGroups || responseGroups;
+        const groupsToExport = allResponseGroups||responseGroups;
+        console.log(groupsToExport)
         const chunkSize = 100; // Adjust chunk size as needed
         const chunks = chunkArray(groupsToExport, chunkSize);
 

@@ -158,7 +158,6 @@ const getLocations = async(req,res) =>{
   const { user} = req.body;
   const userLocations = await School.find({ teacher: user._id });  
   const pendingLocations = await Location.find({ requestedUser: user._id });
-  console.log(pendingLocations)
   res.status(StatusCodes.OK).json({ userLocations,pendingLocations });
 
 }
@@ -218,7 +217,6 @@ const updateUser = async (req, res) => {
 const verify2fa = async (req, res) => {
   try{
   const {_id} = req.body;
-  console.log(_id)
   const pending = await Pending.findOne({ _id });
   if (pending) {
     console.log(pending.password)
@@ -264,14 +262,10 @@ const forgotPassword=async(req,res)=>{
     throw new BadRequestError('Please Enter an email');
   }
   const user = await User.findOne({ email });
-  console.log(user)
   if (user){
     const token = crypto.randomBytes(20).toString('hex');
     const userId = user._id
     const reset = await ResetPassword.create({userId, email,token})
-    console.log(reset)
-
-    console.log(process.env.EMAIL,process.env.EMAIL_PASSWORD)
 
   const transporter = nodemailer.createTransport({
     service: 'Gmail', // e.g., 'Gmail', 'SendGrid'
@@ -372,14 +366,12 @@ const submitForm = async(req,res) =>{
   //   throw new BadRequestError('Please complete the reCaptcha. ');
   // }}
   if (code){
-    console.log(code)
   const teacher = await User.findOne({ code });
   if (!teacher){
     throw new BadRequestError('Invalid Code. Try Again or Ask Teacher for Code');
   }
 
   let StudentResponseData=''
-  console.log(period)
   if (period!=="default"){
     StudentResponseData= await StudentResponse.create({formCode:code,teacher:teacher._id,grade:grade,when:when,formType:type,school:school,period:period})
 

@@ -43,7 +43,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 const FormMetrics = () => {
   const {
-    responseGroups,
+    searchSchoolData,
     exportData,
     overallLoading,
     handleChange,
@@ -62,6 +62,8 @@ const FormMetrics = () => {
     shouldReload,
     currentSchoolIndex,
     exportLoading,
+    searchTeacherData
+
   } = useAppContext();
 
   const { t, i18n } = useTranslation();
@@ -81,6 +83,18 @@ const FormMetrics = () => {
   const navigate = useNavigate();
 
   const location = useLocation();
+  const queryString = location.search
+  const params = new URLSearchParams(queryString);
+  const queryObject = {};
+  params.forEach((value, key) => {
+      queryObject[key] = value;
+  });
+
+
+  useEffect(() => {
+    setResponseType(queryObject)
+  }, [queryObject]);
+  
   let formTypeForName = null;
   let whenForName = null;
 
@@ -112,11 +126,6 @@ const FormMetrics = () => {
 
 
 
-
-
-
-  // NOTE: old responses with older versions of the form will not have the same questions as the current form leading
-  // to the results not rendering due to this funciton.
   const createQuestionsToAnswersMap = (
     isNewForm,
     array,
@@ -161,13 +170,10 @@ const FormMetrics = () => {
         }
       }
     });
-    console.log(reorderedQuestionsToAnswers)
-    console.log(exportData.length, isOverall)
     setQuestionsToAnswers(reorderedQuestionsToAnswers);
     
     setIsLoading(false)
   };
-
 
 
 
@@ -252,13 +258,17 @@ const FormMetrics = () => {
 
 
   let metadata_keys = new Set(["teacher", "school", "county", "district", "state", 'city', 'curriculum', 'date', 'grade', 'period', 'pre_post'])
+  
   useEffect(() => {
     if (isOverall) {
       getResponseGroups(currentSchoolIndex, shouldReload, true, true);
     }
+    else{getExport(location.search, formCode)}
   }, [isOverall]);
-  let structuredData = {}
+
+
   useEffect(() => {
+    let structuredData = {}
     if (!location.search) {
       setIsOverall(true);
       exportData?.map((response=>{
@@ -270,7 +280,6 @@ const FormMetrics = () => {
               structuredData[question][answer] = (structuredData[question][answer] || 0) + 1; // Count responses
           }
       }
-      
       }))
       if (exportData){
         setNumberOfResponses(exportData.length)
@@ -280,8 +289,28 @@ const FormMetrics = () => {
           structuredData
         );
       }
-      
-
+    }
+    if (location.search) {
+      exportData?.map((response=>{
+        for (const [question, answer] of Object.entries(response)) {
+          if (!metadata_keys.has(question)) { // Exclude metadata fields
+              if (!structuredData[question]) {
+                  structuredData[question] = {}; // Initialize dictionary for responses
+              }
+              structuredData[question][answer] = (structuredData[question][answer] || 0) + 1; // Count responses
+          }
+      }
+      }))
+      if (Object.keys(structuredData).length > 0){
+        setNumberOfResponses(exportData.length)
+        setSchool(searchSchoolData)
+        setTeacher(searchTeacherData)
+        formTimeType(
+          searchType,
+          searchBeforeAfter,
+          structuredData
+        );
+      }
     }
   }, [exportData]);
 
@@ -299,7 +328,6 @@ const FormMetrics = () => {
         <Loading center />
       </div>
     );
-
   return (
     <Wrapper style={{ maxWidth: "800px" }}>
       {isOverall ? (
@@ -508,10 +536,11 @@ const FormMetrics = () => {
           </div>
         </>
       )}
-      {exportData.length === 0 && isOverall ? (
+      {exportData?.length === 0 && isOverall ? (
         <h3>No responses yet</h3>
-      ) : 
+      ) :
       (
+        
         
         <>
           <div className="content">
@@ -562,12 +591,7 @@ const FormMetrics = () => {
                         }}
                       />
                     </div>
-                    {/*{Object.keys(questionsToAnswers[question]).map((answer, index) => (*/}
-                    {/*  <div key={index}>*/}
-                    {/*    <p>{`Answer: ${answer}`}</p>*/}
-                    {/*    <p>{`How many gave this answer: ${questionsToAnswers[question][answer]}`}</p>*/}
-                    {/*  </div>*/}
-                    {/*))}*/}
+
                   </div>
                 );
               })}

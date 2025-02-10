@@ -97,6 +97,7 @@ const getExport = async (req, res) => {
 
       school = await School.findOne({ _id: schoolId });
       teacher = await User.findOne({ _id: teacherId });
+      console.log(teacher)
       studentResponses = await StudentResponse.find(responseQueryObject);
     } else {
       responseQueryObject = {
@@ -194,7 +195,7 @@ const getExport = async (req, res) => {
       return obj; // Add the processed object to exportData
     });
 
-    res.status(StatusCodes.OK).json({ exportData });
+    res.status(StatusCodes.OK).json({ exportData, school, teacher });
   } catch (error) {
     console.error("Error exporting exportData:", error);
     res
@@ -206,6 +207,7 @@ const getExport = async (req, res) => {
 const getExportBulk = async (req, res) => {
   try {
     const { allResponseGroups, user } = req.body;
+    console.log(allResponseGroups.length)
 
     if (!allResponseGroups || allResponseGroups.length === 0) {
       return res.status(400).json({ error: "No response groups provided." });
@@ -437,7 +439,7 @@ const getExportBulk = async (req, res) => {
     studentExportData = Array.isArray(studentExportData)
       ? studentExportData
       : [];
-    noCodeExportData = Array.isArray(noCodeExportData) ? noCodeExportData : [];
+    noCodeExportData = [];
 
     exportData = [...studentExportData, ...noCodeExportData];
 
