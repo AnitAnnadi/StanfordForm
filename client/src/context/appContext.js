@@ -1374,6 +1374,7 @@ const AppProvider = ({ children }) => {
   const getUsers = async () => {
     try {
       handleChange({ name: "userExportLoading", value: true });
+      console.log('hi')
       const { data } = await axios.post(`/api/v1/user/all`);
       console.log(data);
       handleChange({ name: "allUsers", value: data });

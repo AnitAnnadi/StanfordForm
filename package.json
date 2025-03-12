@@ -18,7 +18,9 @@
   "license": "ISC",
   "devDependencies": {
     "concurrently": "^6.4.0",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "webpack": "^4.46.0",
+    "webpack-dev-server": "^3.11.3"
   },
   "dependencies": {
     "@emotion/react": "^11.13.0",
@@ -54,6 +56,8 @@
     "path-browserify": "^1.0.1",
     "pdf-lib": "^1.17.1",
     "querystring-es3": "^0.2.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-google-recaptcha": "^3.1.0",
     "react-i18next": "^13.3.0",
     "react-loader-spinner": "^5.4.5",

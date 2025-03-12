@@ -1,47 +1,56 @@
 import User from "../models/User.js";
 import School from "../models/School.js";
 import { StatusCodes } from "http-status-codes";
-
 const getAllUsers = async (req, res) => {
   try {
     const userData = await User.find();
-    const users = [];
 
-    for (const user of userData) {
+
+    // Parallelize school fetching per user
+    const userWithSchoolsPromises = userData.map(async (user) => {
       const { _id, name, email, role, code } = user;
 
-      // Fetch school data for the current user
+      // Get all schools for this user
       const schools = await School.find({ teacher: _id });
 
-      // Prepare an array of school details for the user
-      const userSchools = schools.map(school => ({
+      // Prepare user details for each school
+      return schools.map((school) => ({
+        id: _id,
+        name,
+        email,
+        role,
+        code,
         school: school.school,
+        country:
+        !school.country || school.country.toLowerCase() === "country"
+          ? "United States"
+          : school.country,
         state: school.state,
         county: school.county,
         city: school.city,
-        district: school.district
-      }));
+        district: school.district,}));
+      
+      
+    });
 
-      // Add each school directly to the user details
-      for (const school of userSchools) {
-        const userDetails = {
-          id: _id,
-          name,
-          email,
-          role,
-          code,
-          ...school  // Spread school details into userDetails
-        };
-        users.push(userDetails);
-      }
-    }
-    console.log(users)
-    // Return users array as JSON response
+    // Wait for all school fetching to complete
+    const userSchoolsArray = await Promise.all(userWithSchoolsPromises);
+    console.log(userSchoolsArray)
+    
+
+    // Flatten the nested arrays into one array
+    const users = userSchoolsArray.flat();
+
+    console.log(users);
+
     res.status(StatusCodes.OK).json(users);
   } catch (error) {
-    console.log(error);
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Server error" });
+    console.error(error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: "Server error" });
   }
 };
+
 
 export { getAllUsers };
