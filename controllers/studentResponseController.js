@@ -176,16 +176,23 @@ const getNoCodeStudentResponses = async (req, res) => {
       queryObject.$or = orConditions;
     }
 
+    
+
     // Query the database
-    Object.keys(queryObject).forEach((key) => {
-      if (typeof queryObject[key] === "string") {
-        queryObject[key] = { $regex: queryObject[key], $options: "i" };
+    const regexFields = ["school", "state", "city", "county", "district"];
+    regexFields.forEach((field) => {
+      if (queryObject[field]) {
+        queryObject[field] = {
+          $regex: queryObject[field],
+          $options: "i",
+        };
       }
     });
     
     const studentResponses = await NoCodeSchema.find(queryObject);
+    console.log(studentResponses.length)
     
-    res.status(StatusCodes.OK).json({ studentResponses });
+    res.status(StatusCodes.OK).json( studentResponses );
   } catch (error) {
     console.log(error);
     res
