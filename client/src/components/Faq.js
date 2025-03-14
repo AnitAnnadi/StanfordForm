@@ -14,7 +14,7 @@ const Faq = () => {
     {
       id: 2,
       title: "Which form is my student supposed to fill out?",
-      info: "The type of form your student should fill out coorelates with the Stanford Reach Lab's toolkit you are using.",
+      info: "The type of form your student should fill out correlates with the Stanford Reach Lab's toolkit you are using.",
     },
     {
       id: 3,
