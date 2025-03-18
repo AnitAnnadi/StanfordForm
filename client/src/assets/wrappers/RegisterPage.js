@@ -30,7 +30,7 @@ const Wrapper = styled.section`
     cursor: pointer;
     letter-spacing: var(--letterSpacing);
   }
-  
+
   .language-select {
     border-color: transparent;
     background: transparent;
@@ -51,5 +51,8 @@ const Wrapper = styled.section`
     margin-top: 0.5rem;
   }
 
+  .register-text {
+    justify-self: self-end;
+  }
 `;
 export default Wrapper;
