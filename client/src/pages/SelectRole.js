@@ -6,8 +6,8 @@ import Wrapper from "../assets/wrappers/LandingPage";
 import { useAppContext } from "../context/appContext";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import {useTranslation} from "react-i18next";
-import {MdLanguage} from "react-icons/md";
+import { useTranslation } from "react-i18next";
+import { MdLanguage } from "react-icons/md";
 
 function SelectRole() {
   const [role, setRole] = useState("");
@@ -18,7 +18,7 @@ function SelectRole() {
 
   const { t, i18n } = useTranslation();
 
-  const [currentLanguage, setCurrentLanguage] = useState('en');
+  const [currentLanguage, setCurrentLanguage] = useState("en");
 
   useEffect(() => {
     const currentLanguage = i18n.language;
@@ -30,9 +30,9 @@ function SelectRole() {
     // <React.Fragment>
     <Wrapper>
       <div className="content">
-      {/* <p>I will display &#129335;</p> */}
+        {/* <p>I will display &#129335;</p> */}
 
-        <h2>{t('i_am_a', 'I am a') + "..."}</h2>
+        <h2>{t("i_am_a", "I am a") + "..."}</h2>
         <div className="landing-btns">
           <Link
             to="/register?type=teacher"
@@ -40,7 +40,7 @@ function SelectRole() {
             onClick={handleClick}
             value={"teacher"}
           >
-            {t('UP_teacher', 'Teacher')}
+            {t("UP_teacher", "Teacher")}
           </Link>
           <Link
             to="/register?type=admin"
@@ -48,11 +48,11 @@ function SelectRole() {
             onClick={handleClick}
             value={"admin"}
           >
-            {t('UP_admin', 'Admin')}
+            {t("UP_admin", "Admin")}
           </Link>
         </div>
         <div className="language-select-container">
-          <MdLanguage className="language-select-icon"/>
+          <MdLanguage className="language-select-icon" />
           <select
             className="language-select"
             value={currentLanguage}

@@ -25,7 +25,7 @@ import {
   healthyCannabis24,
   healthyTobacco24,
   nicQuitQuestion,
-  canQuitQuestion
+  canQuitQuestion,
 } from "../utils/questions24-25";
 import ProductsCannabis from "../components/ProductsCannabis";
 import ProductsTobacco from "../components/ProdcuctsTobacco";
@@ -56,7 +56,7 @@ const Form = () => {
     nextPg,
     handleChange,
     productsCannabis,
-    productsTobacco
+    productsTobacco,
   } = useAppContext();
 
   const navigate = useNavigate();
@@ -90,7 +90,7 @@ const Form = () => {
   }, [nextPg]);
 
   const handleSubmit = (e) => {
-    console.log(names)
+    console.log(names);
     e.preventDefault();
     const captcha = captchaRef.current.getValue();
     const formData = [];
@@ -100,7 +100,7 @@ const Form = () => {
       const answers = [];
 
       let checks = document.getElementsByName(name);
-      console.log(document.getElementsByName(name))
+      console.log(document.getElementsByName(name));
       for (var check of checks) {
         if (check.checked) {
           answers.push(check.value);
@@ -153,7 +153,20 @@ const Form = () => {
       let period = info["period"];
       let code = localStorage.getItem("code");
       console.log(formData);
-      submitForm(formData, code, grade, when, type, school, period, null, null, null, null, captcha);
+      submitForm(
+        formData,
+        code,
+        grade,
+        when,
+        type,
+        school,
+        period,
+        null,
+        null,
+        null,
+        null,
+        captcha
+      );
     }
   };
 
@@ -168,17 +181,17 @@ const Form = () => {
       info["form"] === "Smart Talk: Cannabis Prevention & Education Awareness"
     ) {
       return cannabis24;
-    } 
-    else if (
-      info["form"] === "Smart Talk: Cannabis Prevention & Education Awareness(elem)"
-    ){
+    } else if (
+      info["form"] ===
+      "Smart Talk: Cannabis Prevention & Education Awareness(elem)"
+    ) {
       return cannabisElem24;
-    }else if (info["form"] === "Safety First") {
+    } else if (info["form"] === "Safety First") {
       return safety24;
     } else if (info["form"] === "Healthy Futures: Tobacco/Nicotine/Vaping") {
-      return healthy24.concat(nicQuitQuestion)
+      return healthy24.concat(nicQuitQuestion);
     } else if (info["form"] === "Healthy Futures: Cannabis") {
-      return healthy24.concat(canQuitQuestion)
+      return healthy24.concat(canQuitQuestion);
     }
   });
 
@@ -210,7 +223,6 @@ const Form = () => {
           </select>
         </div>
         {usedForm.map((element, qindex) => (
-          
           <div key={qindex}>
             <div style={{ display: "flex", columnGap: "0.35rem" }}>
               <p>{names.push(element["name"])}.</p>
@@ -240,7 +252,8 @@ const Form = () => {
                   }
                   if (
                     qindex == 7 &&
-                    info.form === "Smart Talk: Cannabis Prevention & Education Awareness(elem)"
+                    info.form ===
+                      "Smart Talk: Cannabis Prevention & Education Awareness(elem)"
                   ) {
                     let emojis = ["🙁", "🙁", "🙂", "😊", "😁"];
                     emoji = emojis[index];
@@ -249,7 +262,9 @@ const Form = () => {
                     let blackBoxes = [];
                     let emojis = ["👍", "👎", "🤷"];
                     if (
-                      (info.form == "You and Me, Together Vape-Free(elem)" || info.form =="Smart Talk: Cannabis Prevention & Education Awareness(elem)") &&
+                      (info.form == "You and Me, Together Vape-Free(elem)" ||
+                        info.form ==
+                          "Smart Talk: Cannabis Prevention & Education Awareness(elem)") &&
                       element["answers"].length === 6
                     ) {
                       box = true;
@@ -257,7 +272,9 @@ const Form = () => {
                         blackBoxes.push(<BlackBox key={i} />);
                       }
                     } else if (
-                      (info.form == "You and Me, Together Vape-Free(elem)" || info.form =="Smart Talk: Cannabis Prevention & Education Awareness(elem)") &&
+                      (info.form == "You and Me, Together Vape-Free(elem)" ||
+                        info.form ==
+                          "Smart Talk: Cannabis Prevention & Education Awareness(elem)") &&
                       element["answers"].length === 3
                     ) {
                       emoji = emojis[index];

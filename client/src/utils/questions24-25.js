@@ -143,9 +143,18 @@ export const safety24 = [
     name: "know_addict",
     question: "What is the definition of addiction?",
     answers: [
-      { text: "Uncontrollable desire to use something despite consequences", code: 1 },
-      { text: "The condition of not having any or enough of something", code: 2 },
-      { text: "A situation in which someone must have something to survive", code: 3 },
+      {
+        text: "Uncontrollable desire to use something despite consequences",
+        code: 1,
+      },
+      {
+        text: "The condition of not having any or enough of something",
+        code: 2,
+      },
+      {
+        text: "A situation in which someone must have something to survive",
+        code: 3,
+      },
       { text: "I don’t know", code: 99 },
     ],
   },
@@ -154,7 +163,10 @@ export const safety24 = [
     question: "What is a drug?",
     answers: [
       { text: "A substance that you can only get from a pharmacy", code: 1 },
-      { text: "Any substance that in small amounts produces significant changes in the brain or body", code: 2 },
+      {
+        text: "Any substance that in small amounts produces significant changes in the brain or body",
+        code: 2,
+      },
       { text: "A substance used only to treat illness", code: 3 },
       { text: "Any substance that is illegal to use", code: 4 },
     ],
@@ -171,17 +183,25 @@ export const safety24 = [
   },
   {
     name: "know_harm_reduct",
-    question: "Which of the following best describes the concept of harm reduction?",
+    question:
+      "Which of the following best describes the concept of harm reduction?",
     answers: [
-      { text: "Encouraging complete abstinence from all risky behaviors", code: 1 },
+      {
+        text: "Encouraging complete abstinence from all risky behaviors",
+        code: 1,
+      },
       { text: "Punishing individuals who engage in risky behaviors", code: 2 },
-      { text: "Encouraging abstinence and protective factors if engaging in risky behaviors", code: 3 },
+      {
+        text: "Encouraging abstinence and protective factors if engaging in risky behaviors",
+        code: 3,
+      },
       { text: "Ignoring the risks associated with harmful behaviors", code: 4 },
     ],
   },
   {
     name: "safest_path",
-    question: "How much do you agree or disagree with the following statement: The safest path for teens is to avoid drugs altogether.",
+    question:
+      "How much do you agree or disagree with the following statement: The safest path for teens is to avoid drugs altogether.",
     answers: [
       { text: "Strongly agree", code: 5 },
       { text: "Agree", code: 4 },
@@ -192,7 +212,8 @@ export const safety24 = [
   },
   {
     name: "drugs_coping",
-    question: "How much do you agree or disagree with the following statement: Using drugs is an unhealthy way to cope with stress.",
+    question:
+      "How much do you agree or disagree with the following statement: Using drugs is an unhealthy way to cope with stress.",
     answers: [
       { text: "Strongly agree", code: 5 },
       { text: "Agree", code: 4 },
@@ -203,7 +224,8 @@ export const safety24 = [
   },
   {
     name: "drug_safer",
-    question: "How much do you agree or disagree with the following statement: I can name at least 2 ways to keep myself safe if I am using drugs.",
+    question:
+      "How much do you agree or disagree with the following statement: I can name at least 2 ways to keep myself safe if I am using drugs.",
     answers: [
       { text: "Strongly agree", code: 5 },
       { text: "Agree", code: 4 },
@@ -214,7 +236,8 @@ export const safety24 = [
   },
   {
     name: "su_resources",
-    question: "How much do you agree or disagree with the following statement: I can name at least 2 resources to help people who use substances.",
+    question:
+      "How much do you agree or disagree with the following statement: I can name at least 2 resources to help people who use substances.",
     answers: [
       { text: "Strongly agree", code: 5 },
       { text: "Agree", code: 4 },
@@ -225,7 +248,8 @@ export const safety24 = [
   },
   {
     name: "know_tolerance",
-    question: "When a person needs more of a substance to get the same effect, this is called:",
+    question:
+      "When a person needs more of a substance to get the same effect, this is called:",
     answers: [
       { text: "Addiction", code: 1 },
       { text: "Substance use disorder", code: 2 },
@@ -245,7 +269,8 @@ export const safety24 = [
   },
   {
     name: "know_dependence",
-    question: "It is easier to become dependent on drugs as a teen than as an adult.",
+    question:
+      "It is easier to become dependent on drugs as a teen than as an adult.",
     answers: [
       { text: "True", code: 1 },
       { text: "False", code: 2 },
@@ -253,7 +278,8 @@ export const safety24 = [
   },
   {
     name: "freq_drug_a",
-    question: "If you use drugs a few times a week, how likely is it that… You'll feel less stressed.",
+    question:
+      "If you use drugs a few times a week, how likely is it that… You'll feel less stressed.",
     answers: [
       { text: "Not at all likely", code: 1 },
       { text: "Slightly likely", code: 2 },
@@ -264,7 +290,8 @@ export const safety24 = [
   },
   {
     name: "freq_drug_b",
-    question: "If you use drugs a few times a week, how likely is it that… You'll be addicted to the product.",
+    question:
+      "If you use drugs a few times a week, how likely is it that… You'll be addicted to the product.",
     answers: [
       { text: "Not at all likely", code: 1 },
       { text: "Slightly likely", code: 2 },
@@ -275,7 +302,8 @@ export const safety24 = [
   },
   {
     name: "freq_drug_c",
-    question: "If you use drugs a few times a week, how likely is it that… You'll still be using the product in 5 years.",
+    question:
+      "If you use drugs a few times a week, how likely is it that… You'll still be using the product in 5 years.",
     answers: [
       { text: "Not at all likely", code: 1 },
       { text: "Slightly likely", code: 2 },
@@ -286,7 +314,8 @@ export const safety24 = [
   },
   {
     name: "freq_drug_d",
-    question: "If you use drugs a few times a week, how likely is it that… You can quit using the product if you want to.",
+    question:
+      "If you use drugs a few times a week, how likely is it that… You can quit using the product if you want to.",
     answers: [
       { text: "Not at all likely", code: 1 },
       { text: "Slightly likely", code: 2 },
@@ -300,14 +329,24 @@ export const safety24 = [
     question: "What do Good Samaritan laws do?",
     answers: [
       { text: "Punish people for using drugs in public", code: 1 },
-      { text: "Protect people from getting in trouble if they call for help during a drug emergency", code: 2 },
-      { text: "Make people tell the police when someone is using drugs", code: 3 },
-      { text: "Make doctors tell the police about someone who is using drugs", code: 4 },
+      {
+        text: "Protect people from getting in trouble if they call for help during a drug emergency",
+        code: 2,
+      },
+      {
+        text: "Make people tell the police when someone is using drugs",
+        code: 3,
+      },
+      {
+        text: "Make doctors tell the police about someone who is using drugs",
+        code: 4,
+      },
     ],
   },
   {
     name: "drug_marketing",
-    question: "How much do you agree or disagree with the following statement: I know how to dissect different drug marketing messages.",
+    question:
+      "How much do you agree or disagree with the following statement: I know how to dissect different drug marketing messages.",
     answers: [
       { text: "Strongly agree", code: 5 },
       { text: "Agree", code: 4 },
@@ -318,7 +357,8 @@ export const safety24 = [
   },
   {
     name: "zero_tolerance",
-    question: "How much do you agree or disagree with the following statement: Zero-tolerance policies can be harmful to adolescents.",
+    question:
+      "How much do you agree or disagree with the following statement: Zero-tolerance policies can be harmful to adolescents.",
     answers: [
       { text: "Strongly agree", code: 5 },
       { text: "Agree", code: 4 },
@@ -329,7 +369,8 @@ export const safety24 = [
   },
   {
     name: "drug_intent",
-    question: "How likely are you to use ANY drugs (nicotine, cannabis, alcohol, stimulants, opioids, etc.) in the next 6 months?",
+    question:
+      "How likely are you to use ANY drugs (nicotine, cannabis, alcohol, stimulants, opioids, etc.) in the next 6 months?",
     answers: [
       { text: "Not at all likely", code: 1 },
       { text: "Slightly likely", code: 2 },
@@ -805,7 +846,6 @@ export const cannabis24 = [
   },
 ];
 
-
 export const cannabisElem24 = [
   {
     name: "can_occasion_harm",
@@ -921,8 +961,6 @@ export const cannabisElem24 = [
   },
 ];
 
-
-
 export const healthy24 = [
   {
     name: "can_su_triggers",
@@ -1014,13 +1052,13 @@ export const healthy24 = [
       { text: "Strongly agree", code: 5 },
     ],
   },
-  
 ];
 
 export const nicQuitQuestion = {
   name: "nic_quit",
   category: "Quit Intentions",
-  question: "Are you seriously considering quitting using nicotine within the next 6 months?",
+  question:
+    "Are you seriously considering quitting using nicotine within the next 6 months?",
   answers: [
     { text: "Yes", code: 1 },
     { text: "No", code: 2 },
@@ -1031,14 +1069,14 @@ export const nicQuitQuestion = {
 export const canQuitQuestion = {
   name: "can_quit",
   category: "Quit Intentions",
-  question: "Are you seriously considering quitting using cannabis within the next 6 months?",
+  question:
+    "Are you seriously considering quitting using cannabis within the next 6 months?",
   answers: [
     { text: "Yes", code: 1 },
     { text: "No", code: 2 },
     { text: "Don’t know", code: 99 },
   ],
 };
-
 
 export const healthyCannabis24 = [
   {
@@ -1107,6 +1145,323 @@ export const healthyTobacco24 = [
       { text: "Probably not", code: 2 },
       { text: "Probably yes", code: 3 },
       { text: "Definitely yes", code: 4 },
+    ],
+  },
+];
+
+export const LGBTQ24 = [
+  {
+    name: "vape_occasion_addict",
+    question:
+      "Imagine you vape nicotine occasionally: How likely are you to become addicted?",
+    answers: [
+      { text: "Not at all likely", code: 1 },
+      { text: "Slightly likely", code: 2 },
+      { text: "Moderately likely", code: 3 },
+      { text: "Very likely", code: 4 },
+      { text: "Extremely likely", code: 5 },
+    ],
+  },
+  {
+    name: "vape_daily_addict",
+    question:
+      "Imagine you vape nicotine daily: How likely are you to become addicted?",
+    answers: [
+      { text: "Not at all likely", code: 1 },
+      { text: "Slightly likely", code: 2 },
+      { text: "Moderately likely", code: 3 },
+      { text: "Very likely", code: 4 },
+      { text: "Extremely likely", code: 5 },
+    ],
+  },
+  {
+    name: "refuse_nic",
+    question:
+      'How easy or hard would it be for you to refuse or say "no" to a friend who offered you nicotine of any kind (i.e., smoked, vaped, etc.)?',
+    answers: [
+      { text: "Very easy", code: 1 },
+      { text: "Easy", code: 2 },
+      { text: "Neither hard or easy", code: 3 },
+      { text: "Hard", code: 4 },
+      { text: "Very hard", code: 5 },
+    ],
+  },
+  {
+    name: "refuse_can",
+    question:
+      'How easy or hard would it be for you to refuse or say "no" to a friend who offered you cannabis of any kind (i.e., smoked, vaped, edibles, or drink)?',
+    answers: [
+      { text: "Very easy", code: 1 },
+      { text: "Easy", code: 2 },
+      { text: "Neither hard or easy", code: 3 },
+      { text: "Hard", code: 4 },
+      { text: "Very hard", code: 5 },
+    ],
+  },
+  {
+    name: "can_occasion_addict",
+    question:
+      "Imagine you use cannabis (smoked, vaped, edibles, or drink) occasionally: How likely are you to become addicted?",
+    answers: [
+      { text: "Not at all likely", code: 1 },
+      { text: "Slightly likely", code: 2 },
+      { text: "Moderately likely", code: 3 },
+      { text: "Very likely", code: 4 },
+      { text: "Extremely likely", code: 5 },
+    ],
+  },
+  {
+    name: "can_daily_addict",
+    question:
+      "Imagine you use cannabis (smoked, vaped, edibles, or drink) daily: How likely are you to become addicted?",
+    answers: [
+      { text: "Not at all likely", code: 1 },
+      { text: "Slightly likely", code: 2 },
+      { text: "Moderately likely", code: 3 },
+      { text: "Very likely", code: 4 },
+      { text: "Extremely likely", code: 5 },
+    ],
+  },
+  {
+    name: "nic_smoke_harm",
+    question:
+      "How much do you agree or disagree with the following statement: Nicotine smoke/vapor is harmful to your lungs?",
+    answers: [
+      { text: "Strongly agree", code: 5 },
+      { text: "Agree", code: 4 },
+      { text: "Neither agree or disagree", code: 3 },
+      { text: "Disagree", code: 2 },
+      { text: "Strongly disagree", code: 1 },
+    ],
+  },
+  {
+    name: "can_under25_harm",
+    question:
+      "How much do you agree or disagree with the following statement: Cannabis of any kind is harmful to the brain development of someone under the age of about 25?",
+    answers: [
+      { text: "Strongly agree", code: 5 },
+      { text: "Agree", code: 4 },
+      { text: "Neither agree or disagree", code: 3 },
+      { text: "Disagree", code: 2 },
+      { text: "Strongly disagree", code: 1 },
+    ],
+  },
+  {
+    name: "know_addict",
+    question: "What is the definition of addiction?",
+    answers: [
+      {
+        text: "Uncontrollable desire to use something despite consequences",
+        code: 1,
+      },
+      {
+        text: "The state/condition of not having any or enough of something",
+        code: 0,
+      },
+      {
+        text: "A situation in which someone must have something to survive",
+        code: 0,
+      },
+      { text: "I don't know", code: 99 },
+    ],
+  },
+  {
+    name: "nic_intent",
+    question:
+      "How likely are you to use nicotine of any kind (smoked, vaped, etc.) in the next 6 months?",
+    answers: [
+      { text: "Not at all likely", code: 1 },
+      { text: "Slightly likely", code: 2 },
+      { text: "Moderately likely", code: 3 },
+      { text: "Very likely", code: 4 },
+      { text: "Extremely likely", code: 5 },
+    ],
+  },
+  {
+    name: "can_intent",
+    question:
+      "How likely are you to use cannabis of any kind (smoked, vaped, edibles, etc.) in the next 6 months?",
+    answers: [
+      { text: "Not at all likely", code: 1 },
+      { text: "Slightly likely", code: 2 },
+      { text: "Moderately likely", code: 3 },
+      { text: "Very likely", code: 4 },
+      { text: "Extremely likely", code: 5 },
+    ],
+  },
+  {
+    name: "target_youth",
+    question:
+      "How much do you agree or disagree with the following statement: tobacco and vaping (e-cigarette) companies target youth?",
+    answers: [
+      { text: "Strongly agree", code: 5 },
+      { text: "Agree", code: 4 },
+      { text: "Neither agree or disagree", code: 3 },
+      { text: "Disagree", code: 2 },
+      { text: "Strongly disagree", code: 1 },
+    ],
+  },
+  {
+    name: "target_lgbt",
+    question:
+      "How much do you agree or disagree with the following statement: tobacco and vaping (e-cigarette) companies target LGBTQ+ communities?",
+    answers: [
+      { text: "Strongly agree", code: 5 },
+      { text: "Agree", code: 4 },
+      { text: "Neither agree or disagree", code: 3 },
+      { text: "Disagree", code: 2 },
+      { text: "Strongly disagree", code: 1 },
+    ],
+  },
+  {
+    name: "minor_marg_def",
+    question:
+      "How do the terms minority and marginalized differ from one another?",
+    answers: [
+      {
+        text: "Minority refers to a smaller portion of a population, while marginalized describes groups that face social exclusion and disempowerment.",
+        code: 1,
+      },
+      {
+        text: "They don't differ. Minority and marginalized mean the same thing.",
+        code: 2,
+      },
+      {
+        text: "Minority describes those with more power, while marginalized describes those with less power.",
+        code: 3,
+      },
+      {
+        text: "Minority refers to cultural differences, while marginalized refers to economic status.",
+        code: 4,
+      },
+      {
+        text: "Minority is only related to ethnicity, while marginalized can refer to any social group.",
+        code: 5,
+      },
+    ],
+  },
+  {
+    name: "target_marketing_effect",
+    question:
+      "Which of the following is not an effect of targeted tobacco and cannabis marketing toward the LGBTQ+ community?",
+    answers: [
+      { text: "Increased use within the community", code: 0 },
+      {
+        text: "Increased exposure to harmful substances within the community",
+        code: 0,
+      },
+      {
+        text: "Increased awareness of the harmful effects of these products",
+        code: 1,
+      },
+      {
+        text: "False perceptions of these products within the community",
+        code: 0,
+      },
+      {
+        text: "Harm towards the overall health and wellness of the community",
+        code: 0,
+      },
+    ],
+  },
+  {
+    name: "know_coping_strategy",
+    question:
+      "How much do you agree or disagree with the following statement: I know strategies to manage and cope with negative stress.",
+    answers: [
+      { text: "Strongly agree", code: 5 },
+      { text: "Agree", code: 4 },
+      { text: "Neither agree or disagree", code: 3 },
+      { text: "Disagree", code: 2 },
+      { text: "Strongly disagree", code: 1 },
+    ],
+  },
+  {
+    name: "identity_stress",
+    question: "What is identity stress?",
+    answers: [
+      { text: "Feeling happy and confident about who you are.", code: 0 },
+      {
+        text: "A type of pressure that comes from trying to figure out who you are and how you fit in.",
+        code: 1,
+      },
+      {
+        text: "Not caring at all about what other people think of you.",
+        code: 0,
+      },
+      { text: "Being stressed only about school and homework.", code: 0 },
+    ],
+  },
+  {
+    name: "neg_stress",
+    question:
+      "Which of the following is not an outcome of unmanaged negative stress?",
+    answers: [
+      { text: "Improved coping strategies and resilience.", code: 1 },
+      {
+        text: "More stress-related problems in everyday life.",
+        code: 0,
+      },
+      {
+        text: "An imbalance that turns into trauma.",
+        code: 0,
+      },
+      {
+        text: "Physical problems like headaches and fatigue.",
+        code: 0,
+      },
+      {
+        text: "Harder to cope with future challenges.",
+        code: 0,
+      },
+    ],
+  },
+  {
+    name: "nic_hormone_effect",
+    question:
+      "What effect can nicotine use have on individuals using gender-affirming hormone therapy?",
+    answers: [
+      { text: "It decreases the risk of heart attacks and strokes.", code: 1 },
+      {
+        text: "It has no impact on health conditions related to hormone therapy.",
+        code: 2,
+      },
+      {
+        text: "It can increase the risk of heart attacks, strokes, and other cardiovascular conditions.",
+        code: 3,
+      },
+      {
+        text: "It affects mental health but has no physical health risks.",
+        code: 4,
+      },
+      {
+        text: "It improves the effectiveness of gender-affirming hormone therapy.",
+        code: 5,
+      },
+    ],
+  },
+  {
+    name: "minority_stress",
+    question:
+      "How can minority stress theory help explain the experiences of LGBTQ+ individuals?",
+    answers: [
+      {
+        text: "All minority groups have the same stressors and challenges.",
+        code: 1,
+      },
+      { text: "LGBTQ+ individuals never face any negative feelings.", code: 2 },
+      {
+        text: "Minority stress only affects physical health, not mental health.",
+        code: 3,
+      },
+      {
+        text: "LGBTQ+ individuals can face stress due to discrimination, stigma, and fear of rejection.",
+        code: 4,
+      },
+      {
+        text: "LGBTQ+ individuals are less likely to experience stress than other groups.",
+        code: 5,
+      },
     ],
   },
 ];
