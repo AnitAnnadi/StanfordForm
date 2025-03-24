@@ -310,14 +310,15 @@ const getExportBulk = async (req, res) => {
       const date = new Date(studentResponse.createdAt).toLocaleString("en-US", {
         timeZone: "America/Los_Angeles",
       });
+      console.log(matchedQuery, studentResponse)
 
       const obj = {
         teacher: studentResponse.teacher?.name || "n/a",
-        school: matchedQuery?.school || "n/a",
-        county: matchedQuery?.county || "n/a",
-        district: matchedQuery?.district || "n/a",
-        state: matchedQuery?.state || "n/a",
-        city: matchedQuery?.city || "n/a",
+        school: matchedQuery?.school || studentResponse?.school || "n/a",
+        county: matchedQuery?.county || studentResponse?.county || "n/a", 
+        district: matchedQuery?.district || studentResponse?.district || "n/a",
+        state: matchedQuery?.state || studentResponse?.state || "n/a",
+        city: matchedQuery?.city || studentResponse?.city || "n/a",
         date: date,
         pre_post: studentResponse.when,
         grade: studentResponse.grade,
@@ -381,7 +382,7 @@ const getExportBulk = async (req, res) => {
 
       const obj = {
         teacher: "n/a", // NoCode responses have no teacher
-        school: matchedQuery?.school || "n/a",
+        school: matchedQuery?.school || "q/a",
         county: matchedQuery?.county || "n/a",
         district: matchedQuery?.district || "n/a",
         state: matchedQuery?.state || "n/a",
