@@ -79,7 +79,7 @@ const SchoolsContainer = ({ shouldReload, stopReload }) => {
   if (isLoading && responseGroups.length === 0) {
     return <Loading center />;
   }
-  {console.log(responseGroups)}
+  {console.log(responseGroups.length)}
   if (responseGroups.length === 0) {
     return (
       <Wrapper>

@@ -965,7 +965,6 @@ const AppProvider = ({ children }) => {
       searchBeforeAfter,
       checkedYears,
     } = state;
-    let noCodeStudentData;
     dispatch({ type: GET_RESPONSE_GROUPS_BEGIN, payload: { shouldReload } });
     console.log(all, overallBreakdown);
     try {
@@ -1029,6 +1028,7 @@ const AppProvider = ({ children }) => {
       });
       console.log(filteredSchools);
       let newResponses = [];
+      let noCodeStudentData;
       let teacherNames = [];
       let schoolIndex = currentSchoolIndex && !all ? currentSchoolIndex : 0;
       if (all) {
@@ -1051,40 +1051,23 @@ const AppProvider = ({ children }) => {
             })
           )
         );
-        //continue here
-        console.log(searchSchool);
-        const noCodeStudentPromises = limit(() =>
-          authFetch.get("/studentResponses/noCode", {
-            params: {
-              school: searchSchool,
-              state: searchState,
-              city: searchCity,
-              county: searchCounty,
-              district: searchDistrict,
-              grade: searchGrade,
-              period: searchPeriod,
-              formType: searchType,
-              when: searchBeforeAfter,
-              all,
-            },
-          })
+
+
+        // Fetch all student response data in parallel
+        const studentResponsesData = await Promise.all(
+          studentResponsesPromises
         );
 
-        console.log(await Promise.all([noCodeStudentPromises]));
-        const studentResponsesData = await Promise.all([
-          ...studentResponsesPromises,
-          noCodeStudentPromises,
-        ]);
-
-        console.log(studentResponsesData);
-
-        // Process all responses
+        // Process each response group per school
         studentResponsesData.forEach((responseData, index) => {
+          if (!responseData?.data) return;
+
           const { teacherName, studentResponses } = responseData.data;
           const school = filteredSchools[index];
 
           const uniqueResponseTypes = new Map();
-          studentResponses.forEach((response) => {
+
+          studentResponses?.forEach((response) => {
             const key = JSON.stringify({
               formCode: response.formCode,
               teacher: response.teacher,
@@ -1098,6 +1081,7 @@ const AppProvider = ({ children }) => {
               county: response.county,
               district: response.district,
             });
+
             uniqueResponseTypes.set(
               key,
               (uniqueResponseTypes.get(key) || 0) + 1
@@ -1105,35 +1089,35 @@ const AppProvider = ({ children }) => {
           });
 
           uniqueResponseTypes.forEach((count, responseType) => {
-            if (overallBreakdown) {
-              if (JSON.parse(responseType).formType == searchType) {
-                newResponses.push({
-                  school,
-                  teacherName,
-                  uniqueResponseType: JSON.parse(responseType),
-                  numberOfResponses: count,
-                });
-              }
+            const parsedType = JSON.parse(responseType);
+
+            if (overallBreakdown && parsedType.formType == searchType) {
+              newResponses.push({
+                school,
+                teacherName,
+                uniqueResponseType: parsedType,
+                numberOfResponses: count,
+              });
             }
+
             if (all && !overallBreakdown) {
               newResponses.push({
                 school,
                 teacherName,
-                uniqueResponseType: JSON.parse(responseType),
+                uniqueResponseType: parsedType,
                 numberOfResponses: count,
               });
             }
           });
         });
-      } 
-      else {
+      } else {
         // Sequential fetching until you have 8 responses
         while (
           schoolIndex < filteredSchools.length &&
           newResponses.length < 8
         ) {
           const school = filteredSchools[schoolIndex];
-      
+
           const { data: responseData } = await authFetch.get(
             "/studentResponses",
             {
@@ -1149,11 +1133,11 @@ const AppProvider = ({ children }) => {
               },
             }
           );
-      
+
           const { teacherName, studentResponses } = responseData;
-      
+
           const uniqueResponseTypes = new Map();
-      
+
           studentResponses.forEach((response) => {
             const key = JSON.stringify({
               formCode: response.formCode,
@@ -1164,13 +1148,13 @@ const AppProvider = ({ children }) => {
               school: response.school,
               period: response.period,
             });
-      
+
             uniqueResponseTypes.set(
               key,
               (uniqueResponseTypes.get(key) || 0) + 1
             );
           });
-      
+
           uniqueResponseTypes.forEach((count, responseType) => {
             if (school.school !== undefined) {
               newResponses.push({
@@ -1181,75 +1165,37 @@ const AppProvider = ({ children }) => {
               });
             }
           });
-      
+
           schoolIndex++;
         }
-      
+
         // Fetch noCodeStudentData (once)
-        const noCodeStudentResponse = await authFetch.get(
-          "/studentResponses/noCode",
-          {
-            params: {
-              grade: searchGrade,
-              when: searchBeforeAfter,
-              formType: searchType,
-              school: searchSchool,
-              state: searchState,
-              city: searchCity,
-              county: searchCounty,
-              district: searchDistrict,
-              checkedYears: checkedYears,
-            },
-          }
-        );
-      
-        // Extract the data payload
-        const noCodeStudentData = noCodeStudentResponse.data;
-        console.log(noCodeStudentData)
-        // Process noCodeStudentData similar to the other studentResponses
-        const noCodeResponses = noCodeStudentData.data || [];
-        const noCodeTeacherName = noCodeStudentData.teacherName || "N/A";
         
-        const noCodeSchool = {
-          school: searchSchool || "No Code School",
-          state: searchState || "",
-          city: searchCity || "",
-          county: searchCounty || "",
-          district: searchDistrict || ""
-        };
-        
-        const noCodeUniqueResponseTypes = new Map();
-        console.log(noCodeResponses)
-        noCodeResponses.forEach((response) => {
-          // Build key excluding formCode, period, teacher
-          const key = JSON.stringify({
-            grade: response.grade,
-            when: response.when,
-            formType: response.formType,
-            school: response.school,
-          });
-          console.log(key)
-        
-          noCodeUniqueResponseTypes.set(
-            key,
-            (noCodeUniqueResponseTypes.get(key) || 0) + 1
-          );
-        });
-        
-        noCodeUniqueResponseTypes.forEach((count, responseType) => {
-          newResponses.push({
-            school: noCodeSchool,
-            teacherName: noCodeTeacherName,
-            uniqueResponseType: JSON.parse(responseType),
-            numberOfResponses: count,
-            isNoCode: true, // Optional, if you want to flag noCode entries
-          });
-        });
-        console.log(noCodeUniqueResponseTypes)
       }
-      
+      console.log('fetching')
+      const noCodeStudentResponse = await authFetch.get(
+        "/studentResponses/noCode",
+        {
+          params: {
+            grade: searchGrade,
+            when: searchBeforeAfter,
+            formType: searchType,
+            school: searchSchool,
+            state: searchState,
+            city: searchCity,
+            county: searchCounty,
+            district: searchDistrict,
+            checkedYears: checkedYears,
+          },
+        }
+      );
+
+      // Extract the data payload
+      noCodeStudentData = noCodeStudentResponse.data;
+      console.log(noCodeStudentData)
       if (all) {
-        getExport(false, null, newResponses);
+        console.log('first' + noCodeStudentData.length);
+        getExport(false, null, newResponses, noCodeStudentData);
       }
 
       dispatch({
@@ -1259,7 +1205,7 @@ const AppProvider = ({ children }) => {
         },
       });
       handleChange({ name: "overallLoading", value: false });
-      console.log(noCodeStudentData, newResponses)
+      console.log('second' + noCodeStudentData.length, newResponses);
       if (!all) {
         dispatch({
           type: GET_RESPONSE_GROUPS_SUCCESS,
@@ -1290,9 +1236,14 @@ const AppProvider = ({ children }) => {
     return chunked;
   };
 
-  const getExport = async (search, formCode, allResponseGroups) => {
+  const getExport = async (
+    search,
+    formCode,
+    allResponseGroups,
+    noCodeStudentData
+  ) => {
     const { responseGroups, user } = state;
-    console.log(user);
+    console.log(noCodeStudentData);
     handleChange({ name: "exportLoading", value: true });
 
     try {
@@ -1332,6 +1283,7 @@ const AppProvider = ({ children }) => {
           const { data } = await authFetch.post("/export/bulk", {
             allResponseGroups: chunk,
             user: user,
+            noCodeStudentData: noCodeStudentData,
           });
 
           allExportData = allExportData.concat(data.exportData);

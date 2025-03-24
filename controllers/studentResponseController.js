@@ -97,7 +97,6 @@ const getNoCodeStudentResponses = async (req, res) => {
     const user = await User.findOne({ _id: req.user.userId });
     const token = user.createJWT();
     attachCookie({ res, token });
-    console.log('yooo')
     const {
       school,
       state,
@@ -112,7 +111,6 @@ const getNoCodeStudentResponses = async (req, res) => {
       checkedYears,
     } = req.query;
     let form = all === "true" ? "all" : formType;
-
     // Prepare the query object
     const queryObject = {};
 
@@ -144,6 +142,7 @@ const getNoCodeStudentResponses = async (req, res) => {
       queryObject.district = district;
     }
 
+
     // Create an array to store the $or conditions based on checkedYears
     const orConditions = [];
     if (checkedYears != [] && checkedYears !== undefined) {
@@ -158,11 +157,10 @@ const getNoCodeStudentResponses = async (req, res) => {
           } else if (year === "2024 (August–December)") {
             startDate = new Date("2024-08-01T00:00:00.000Z");
             endDate = new Date("2024-12-31T23:59:59.999Z");
-          } else if (year === "2025") {
+          } else if (year === "2025(Jan 6 - )") {
             startDate = new Date("2025-01-04T00:00:00.000Z");
             endDate = new Date("2025-12-31T23:59:59.999Z");
           }
-
           orConditions.push({
             createdAt: {
               $gte: startDate,
@@ -172,6 +170,7 @@ const getNoCodeStudentResponses = async (req, res) => {
         }
       }
     }
+
     if (orConditions.length > 0) {
       queryObject.$or = orConditions;
     }
@@ -190,6 +189,7 @@ const getNoCodeStudentResponses = async (req, res) => {
     });
     
     const studentResponses = await NoCodeSchema.find(queryObject);
+    console.log(queryObject)
     console.log(studentResponses.length)
     
     res.status(StatusCodes.OK).json( studentResponses );

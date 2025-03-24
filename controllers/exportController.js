@@ -97,7 +97,6 @@ const getExport = async (req, res) => {
 
       school = await School.findOne({ _id: schoolId });
       teacher = await User.findOne({ _id: teacherId });
-      console.log(teacher)
       studentResponses = await StudentResponse.find(responseQueryObject);
     } else {
       responseQueryObject = {
@@ -206,8 +205,7 @@ const getExport = async (req, res) => {
 
 const getExportBulk = async (req, res) => {
   try {
-    const { allResponseGroups, user } = req.body;
-    console.log(allResponseGroups.length)
+    const { allResponseGroups, user, noCodeStudentData } = req.body;
 
     if (!allResponseGroups || allResponseGroups.length === 0) {
       return res.status(400).json({ error: "No response groups provided." });
@@ -216,6 +214,7 @@ const getExportBulk = async (req, res) => {
     // Prepare queries for all response groups
     const responseQueries = allResponseGroups.map((group) => {
       const { school, uniqueResponseType } = group;
+      if (uniqueResponseType?.teacher){
 
       return {
         noCode: uniqueResponseType?.noCode === "true",
@@ -231,20 +230,25 @@ const getExportBulk = async (req, res) => {
         county: school?.county || uniqueResponseType.county,
         district: school?.district || uniqueResponseType.district,
       };
+      }
+      else{
+        return group
+      }
     });
 
     // Prepare queries for StudentResponse and NoCode collections
     const queryConditions = [];
     const noCodeQueryConditions = [];
-
     responseQueries.forEach((q) => {
-      const condition = {
+      if (!q.formCode) return;
+      let condition = {
         formCode: q.formCode,
         grade: q.grade,
         formType: q.formType,
         when: q.when,
         school: q.school,
       };
+
 
       if (q.period && q.period !== "null") condition.period = q.period;
 
@@ -266,6 +270,7 @@ const getExportBulk = async (req, res) => {
         $or: queryConditions,
       }).populate("teacher", "name");
     }
+    studentResponses.push(...noCodeStudentData)
 
     // Fetch NoCode data
     if (noCodeQueryConditions?.length > 0) {

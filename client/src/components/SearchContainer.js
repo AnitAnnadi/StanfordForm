@@ -89,7 +89,6 @@ const SearchContainer = ({ startReload }) => {
   useEffect(() => {
     if (exportClicked && exportData) {
       console.log(exportData);
-      console.log(exportData)
 
       const cutoffDate = new Date("2025-1-6"); //
 
@@ -211,6 +210,7 @@ const SearchContainer = ({ startReload }) => {
 
   useEffect(() => {
     if (allUsers && !usersSheetCreated) {
+      console.log(allUsers)
       const usersSheet = XLSXUtils.json_to_sheet(allUsers);
       const workbook = XLSXUtils.book_new();
       XLSXUtils.book_append_sheet(workbook, usersSheet, "All Users");
