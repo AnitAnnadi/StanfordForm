@@ -3,7 +3,6 @@ import {common} from "@mui/material/colors";
 
 const narrowCounties = ({state}) => {
 
-    console.log(state)
     const counties = schoolData
         .filter((school) => school.state.toUpperCase() === state.toUpperCase())
         .map((school) => school.county)
@@ -82,7 +81,6 @@ const narrowSchools = ({state, county, city, district}) => {
 }
 
 const getSchoolObject = ({state, county, city, school: schoolName}) => {
-    console.log('4')
     return schoolData
         .find((school) =>
           school.state.toUpperCase() === state.toUpperCase()
@@ -92,7 +90,6 @@ const getSchoolObject = ({state, county, city, school: schoolName}) => {
 }
 
 const getDistrictCounty = (state, city, schoolName) => {
-    console.log('5')
     const {district, county} = schoolData
         .find((school) => school.state.toUpperCase() === state.toUpperCase() && school.city.toUpperCase() === city.toUpperCase() && school.name.toUpperCase() === schoolName.toUpperCase() && school.district)
 

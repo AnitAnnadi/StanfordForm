@@ -50,8 +50,6 @@ const getFormMetrics = async(req,res) => {
     }
     // console.log(responseQueryObject)
     teacher = await User.findOne({ _id: teacherId });
-    console.log('hihihi')
-    console.log(teacher)
     studentResponses = await StudentResponse.find(responseQueryObject);
     school = await School.findOne({ _id: schoolId });
   } else {
