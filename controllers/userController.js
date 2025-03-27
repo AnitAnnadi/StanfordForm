@@ -35,13 +35,11 @@ const getAllUsers = async (req, res) => {
 
     // Wait for all school fetching to complete
     const userSchoolsArray = await Promise.all(userWithSchoolsPromises);
-    console.log(userSchoolsArray)
     
 
     // Flatten the nested arrays into one array
     const users = userSchoolsArray.flat();
 
-    console.log(users);
 
     res.status(StatusCodes.OK).json(users);
   } catch (error) {

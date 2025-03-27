@@ -427,7 +427,6 @@ const configureFormStates = async (userLocations, user, formStates) => {
 
 const narrowAllSchools = async (getParams, allowed = false) => {
   try {
-    console.log(getParams, allowed);
     if (allowed) {
       const { data } = await axios.get(`/api/v1/schools/user`);
       const { userLocations } = data;
@@ -477,7 +476,6 @@ const narrowAllSchools = async (getParams, allowed = false) => {
 
       const { data } = await axios.get(`/api/v1/locations?${urlSearchParams}`);
       const { locations } = data;
-      console.log(locations);
 
       return narrowSchools(getParams).concat(
         locations.map((location) => location.name)
@@ -509,7 +507,6 @@ const AppProvider = ({ children }) => {
     (error) => {
       console.log(error);
       if (error?.response?.status === 401) {
-        console.log("hi");
         logoutUser();
       }
       return Promise.reject(error);
@@ -557,7 +554,6 @@ const AppProvider = ({ children }) => {
         captcha,
         adminTeacher,
       });
-      console.log(data);
 
       const { user, hasLocation, userLocations, pendingLocations } = data;
 
@@ -685,7 +681,6 @@ const AppProvider = ({ children }) => {
         multiplePeriods,
         requesterId,
       };
-      console.log(requesterId);
       if (district === "custom" || county === "custom") {
         const urlSearchParams = new URLSearchParams(state, city, school);
         const { data } = await axios.get(
@@ -766,7 +761,6 @@ const AppProvider = ({ children }) => {
         district,
         school,
       } = locationData;
-      console.log(school);
       const { data } = await authFetch.post("/locations", locationData);
       if (!data.msg && data.location) {
         if (user.role != "Stanford Staff") {
@@ -796,12 +790,10 @@ const AppProvider = ({ children }) => {
     district,
   }) => {
     try {
-      console.log("school");
       const schoolNames = await narrowAllSchools(
         { state, county, city, district },
         allowed
       );
-      console.log(schoolNames);
 
       dispatch({
         type: HANDLE_CHANGE,
@@ -967,7 +959,6 @@ const AppProvider = ({ children }) => {
       checkedYears,
     } = state;
     dispatch({ type: GET_RESPONSE_GROUPS_BEGIN, payload: { shouldReload } });
-    console.log(all, overallBreakdown);
     try {
       // if all that means an export all has been triggered so that state is updated
       if (all && !overallBreakdown) {
@@ -1027,7 +1018,6 @@ const AppProvider = ({ children }) => {
           isStanfordStaff
         );
       });
-      console.log(filteredSchools);
       let newResponses = [];
       let noCodeStudentData;
       let teacherNames = [];
@@ -1171,7 +1161,6 @@ const AppProvider = ({ children }) => {
 
         // Fetch noCodeStudentData (once)
       }
-      console.log("fetching");
       const noCodeStudentResponse = await authFetch.get(
         "/studentResponses/noCode",
         {
@@ -1235,20 +1224,22 @@ const AppProvider = ({ children }) => {
   const getExport = async (
     search,
     formCode,
-    allResponseGroups,
-    searchState,
-    searchCounty,
-    searchCity,
-    searchDistrict,
-    searchSchool,
-    searchGrade,
-    searchPeriod,
-    searchTeacher,
-    searchType,
-    searchBeforeAfter,
-    checkedYears
+    allResponseGroups
   ) => {
-    const { responseGroups, user } = state;
+    const { 
+      responseGroups,
+      user, 
+      searchState,
+      searchCounty,
+      searchCity,
+      searchDistrict,
+      searchSchool,
+      searchGrade,
+      searchPeriod,
+      searchTeacher,
+      searchType,
+      searchBeforeAfter,
+      checkedYears } = state;
     handleChange({ name: "exportLoading", value: true });
 
     try {
@@ -1274,9 +1265,7 @@ const AppProvider = ({ children }) => {
           },
         });
       } else {
-        // Bulk export: Split into chunks to avoid payload size issues
         const groupsToExport = allResponseGroups || responseGroups;
-        console.log(groupsToExport);
         const chunkSize = 50; // Adjust chunk size as needed
         const chunks = chunkArray(groupsToExport, chunkSize);
 
@@ -1284,7 +1273,6 @@ const AppProvider = ({ children }) => {
 
         for (let i = 0; i < chunks.length; i++) {
           const chunk = chunks[i];
-          console.log(`Sending chunk of size ${chunk.length}`);
 
           // Payload now only contains what backend needs to fetch everything itself
           const payload = {
@@ -1300,16 +1288,12 @@ const AppProvider = ({ children }) => {
             district: searchDistrict,
             school: searchSchool,
             checkedYears,
+            includeNoCode: i==0,
           };
-          console.log(payload)
-          console.log(
-            `Payload size (chunk ${i + 1}):`,
-            new TextEncoder().encode(JSON.stringify(payload)).length
-          );
+
 
           const { data } = await authFetch.post("/export/bulk", payload);
           allExportData = allExportData.concat(data.exportData);
-          console.log(allExportData);
         }
 
         // Dispatch consolidated results
@@ -1355,7 +1339,6 @@ const AppProvider = ({ children }) => {
     }
   };
   const declineLocationRequest = async (_id) => {
-    console.log(_id);
     const { data } = await authFetch.post("/locations/decline", { _id });
     if (data) {
       dispatch({ type: NEW_LOCATION_DECLINE });
@@ -1417,9 +1400,7 @@ const AppProvider = ({ children }) => {
   const getUsers = async () => {
     try {
       handleChange({ name: "userExportLoading", value: true });
-      console.log("hi");
       const { data } = await axios.post(`/api/v1/user/all`);
-      console.log(data);
       handleChange({ name: "allUsers", value: data });
     } catch (error) {}
   };

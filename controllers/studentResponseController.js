@@ -189,8 +189,7 @@ const getNoCodeStudentResponses = async (req, res) => {
     });
     
     const studentResponses = await NoCodeSchema.find(queryObject);
-    console.log(queryObject)
-    console.log(studentResponses.length)
+
     
     res.status(StatusCodes.OK).json( studentResponses );
   } catch (error) {

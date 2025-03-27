@@ -111,7 +111,6 @@ const Profile = () => {
               </>
             )}
           </div>
-          {console.log(userLocations)}
           {userLocations.map((location, index) => {
             const renderLocationInfo = () => {
               if (user.role === "Teacher" || user.role === "Site Admin") {

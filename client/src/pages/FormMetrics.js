@@ -6,6 +6,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Loading } from "../components";
 import Wrapper from "../assets/wrappers/DashboardFormPage";
 import ResponseGroupInfo from "../components/ResponseGroupInfo";
+import { useMemo } from "react";
 import {
   FaChalkboardTeacher,
   FaRegCalendarAlt,
@@ -85,14 +86,18 @@ const FormMetrics = () => {
   const location = useLocation();
   const queryString = location.search
   const params = new URLSearchParams(queryString);
-  const queryObject = {};
-  params.forEach((value, key) => {
-      queryObject[key] = value;
-  });
-
+  const queryObject = useMemo(() => {
+    const result = {};
+    params.forEach((value, key) => {
+      result[key] = value;
+    });
+    return result;
+  }, [queryString]); 
 
   useEffect(() => {
-    setResponseType(queryObject)
+    if (Object.keys(queryObject).length > 0) {
+      setResponseType(queryObject);
+    }
   }, [queryObject]);
   
   let formTypeForName = null;

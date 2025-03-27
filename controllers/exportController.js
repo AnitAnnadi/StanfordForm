@@ -153,7 +153,7 @@ const getExport = async (req, res) => {
       const relatedQuestions = questions.filter(
         (q) => q.StudentResponse.toString() === studentResponse._id.toString()
       );
-      let isNewForm = isInt(relatedQuestions[0].Answer);
+      let isNewForm = isInt(relatedQuestions[0]?.Answer);
 
       // Define a mapping for form types and their respective data
       const formTypeMapping = {
@@ -206,7 +206,7 @@ const getExport = async (req, res) => {
 
 const getExportBulk = async (req, res) => {
   try {
-    const { allResponseGroups, user, grade, period, formType, when, state, city, county, district, school, checkedYears } = req.body;
+    const { allResponseGroups, user, grade, period, formType, when, state, city, county, district, school, checkedYears, includeNoCode } = req.body;
     
 
     if (!allResponseGroups || allResponseGroups.length === 0) {
@@ -269,21 +269,12 @@ const getExportBulk = async (req, res) => {
       }).populate("teacher", "name");
     }
 
-    console.log(      
+    let noCodeStudentData = []
+    if (includeNoCode){
+    noCodeStudentData = await getNoCodeStudentData({
       grade,
       period,
-      formType,
-      when,
-      state,
-      city,
-      county,
-      district,
-      school,
-      checkedYears,)
-    const noCodeStudentData = await getNoCodeStudentData({
-      grade,
-      period,
-      formType,
+      formType: 'all',
       when,
       state,
       city,
@@ -292,6 +283,7 @@ const getExportBulk = async (req, res) => {
       school,
       checkedYears,
     });
+  }
     
     studentResponses.push(...noCodeStudentData)
 
@@ -325,7 +317,6 @@ const getExportBulk = async (req, res) => {
       const date = new Date(studentResponse.createdAt).toLocaleString("en-US", {
         timeZone: "America/Los_Angeles",
       });
-      console.log(matchedQuery, studentResponse)
 
       const obj = {
         teacher: studentResponse.teacher?.name || "n/a",
@@ -389,7 +380,7 @@ const getExportBulk = async (req, res) => {
       }
 
       return obj;
-    });
+    }); 
 
 
     studentExportData = Array.isArray(studentExportData)
