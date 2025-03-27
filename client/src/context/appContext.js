@@ -507,7 +507,8 @@ const AppProvider = ({ children }) => {
       return response;
     },
     (error) => {
-      if (error.response.status === 401) {
+      console.log(error);
+      if (error?.response?.status === 401) {
         console.log("hi");
         logoutUser();
       }
@@ -1033,7 +1034,7 @@ const AppProvider = ({ children }) => {
       let schoolIndex = currentSchoolIndex && !all ? currentSchoolIndex : 0;
       if (all) {
         // **Parallel fetching for Export All**
-        const limit = pLimit(15); // Limit to 15 concurrent requests
+        const limit = pLimit(10); // Limit to 10 concurrent requests
 
         const studentResponsesPromises = filteredSchools.map((school) =>
           limit(() =>
@@ -1051,7 +1052,6 @@ const AppProvider = ({ children }) => {
             })
           )
         );
-
 
         // Fetch all student response data in parallel
         const studentResponsesData = await Promise.all(
@@ -1170,9 +1170,8 @@ const AppProvider = ({ children }) => {
         }
 
         // Fetch noCodeStudentData (once)
-        
       }
-      console.log('fetching')
+      console.log("fetching");
       const noCodeStudentResponse = await authFetch.get(
         "/studentResponses/noCode",
         {
@@ -1192,10 +1191,8 @@ const AppProvider = ({ children }) => {
 
       // Extract the data payload
       noCodeStudentData = noCodeStudentResponse.data;
-      console.log(noCodeStudentData)
       if (all) {
-        console.log('first' + noCodeStudentData.length);
-        getExport(false, null, newResponses, noCodeStudentData);
+        getExport(false, null, newResponses);
       }
 
       dispatch({
@@ -1205,7 +1202,6 @@ const AppProvider = ({ children }) => {
         },
       });
       handleChange({ name: "overallLoading", value: false });
-      console.log('second' + noCodeStudentData.length, newResponses);
       if (!all) {
         dispatch({
           type: GET_RESPONSE_GROUPS_SUCCESS,
@@ -1240,10 +1236,19 @@ const AppProvider = ({ children }) => {
     search,
     formCode,
     allResponseGroups,
-    noCodeStudentData
+    searchState,
+    searchCounty,
+    searchCity,
+    searchDistrict,
+    searchSchool,
+    searchGrade,
+    searchPeriod,
+    searchTeacher,
+    searchType,
+    searchBeforeAfter,
+    checkedYears
   ) => {
     const { responseGroups, user } = state;
-    console.log(noCodeStudentData);
     handleChange({ name: "exportLoading", value: true });
 
     try {
@@ -1272,20 +1277,37 @@ const AppProvider = ({ children }) => {
         // Bulk export: Split into chunks to avoid payload size issues
         const groupsToExport = allResponseGroups || responseGroups;
         console.log(groupsToExport);
-        const chunkSize = 100; // Adjust chunk size as needed
+        const chunkSize = 50; // Adjust chunk size as needed
         const chunks = chunkArray(groupsToExport, chunkSize);
 
         let allExportData = [];
 
-        // Process each chunk sequentially
-        for (const chunk of chunks) {
+        for (let i = 0; i < chunks.length; i++) {
+          const chunk = chunks[i];
           console.log(`Sending chunk of size ${chunk.length}`);
-          const { data } = await authFetch.post("/export/bulk", {
-            allResponseGroups: chunk,
-            user: user,
-            noCodeStudentData: noCodeStudentData,
-          });
 
+          // Payload now only contains what backend needs to fetch everything itself
+          const payload = {
+            allResponseGroups: chunk,
+            user,
+            grade: searchGrade,
+            period: searchPeriod,
+            formType: searchType,
+            when: searchBeforeAfter,
+            state: searchState,
+            city: searchCity,
+            county: searchCounty,
+            district: searchDistrict,
+            school: searchSchool,
+            checkedYears,
+          };
+          console.log(payload)
+          console.log(
+            `Payload size (chunk ${i + 1}):`,
+            new TextEncoder().encode(JSON.stringify(payload)).length
+          );
+
+          const { data } = await authFetch.post("/export/bulk", payload);
           allExportData = allExportData.concat(data.exportData);
           console.log(allExportData);
         }
@@ -1293,7 +1315,10 @@ const AppProvider = ({ children }) => {
         // Dispatch consolidated results
         dispatch({
           type: GET_EXPORT_SUCCESS,
-          payload: { exportData: allExportData, msg: "Export Successful" },
+          payload: {
+            exportData: allExportData,
+            msg: "Export Successful",
+          },
         });
       }
     } catch (error) {
@@ -1303,7 +1328,6 @@ const AppProvider = ({ children }) => {
         payload: { msg: "Export Failed" },
       });
     } finally {
-      handleChange({ name: "exportLoading", value: false });
       handleChange({ name: "exportLoading", value: false });
       clearAlert();
     }
