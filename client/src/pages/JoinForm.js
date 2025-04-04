@@ -45,6 +45,12 @@ const JoinForm = () => {
   else if (info.formName=="SafetyFirst"){
     info.formName = "Safety First"
   }
+  else if (info.formName == "LGBTQCurriculum"){
+    info.formName = "LGBTQ+ Curriculum"
+  }
+  else if (info.formName == "SafetyFirstFentanyl"){
+    info.formName = "Safety First(Fentanyl)"
+  }
   const [form, setForm] = useState(info.formName??"default");
   const [grade, setGrade] = useState("default");
   const [when, setWhen] = useState(info.when ?? "default");
