@@ -1,4 +1,4 @@
-export const safety_fent24 = [
+export const safetyFent24 = [
   {
     name: "prescription",
     question:

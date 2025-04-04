@@ -22,10 +22,10 @@ import {
   cannabisElem24,
   healthy24,
   safety24,
-  healthyCannabis24,
-  healthyTobacco24,
+  safetyFent24,
   nicQuitQuestion,
   canQuitQuestion,
+  LGBTQ24
 } from "../utils/questions24-25";
 import ProductsCannabis from "../components/ProductsCannabis";
 import ProductsTobacco from "../components/ProdcuctsTobacco";
@@ -192,6 +192,12 @@ const Form = () => {
       return healthy24.concat(nicQuitQuestion);
     } else if (info["form"] === "Healthy Futures: Cannabis") {
       return healthy24.concat(canQuitQuestion);
+    }
+    else if (info["form"] === "Safety First(Fentanyl)") {
+      return safetyFent24
+    }
+    else if (info["form"] === "LGBTQ+ Curriculum") {
+      return LGBTQ24
     }
   });
 

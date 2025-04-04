@@ -24,6 +24,8 @@ import {
   safety24,
   healthyCannabis24,
   healthyTobacco24,
+  safetyFent24,
+  LGBTQ24
 } from "../utils/questions24-25.js";
 import NoCode from "../models/NoCode.js";
 let exportData = [];
@@ -181,6 +183,12 @@ const getExport = async (req, res) => {
         },
         "Healthy Futures: Cannabis": {
           always: isNewForm ? healthy24.concat(healthyCannabis24) : healthy,
+        },
+        "Safety First(Fentanyl)": {
+          always: safetyFent24,
+        },
+        "LGBTQ+ Curriculum": {
+          always: LGBTQ24,
         },
       };
 
@@ -368,6 +376,13 @@ const getExportBulk = async (req, res) => {
         },
         "Healthy Futures: Cannabis": {
           always: isNewForm ? healthy24.concat(healthyCannabis24) : healthy,
+        },
+        
+        "Safety First(Fentanyl)": {
+          always: safetyFent24,
+        },
+        "LGBTQ+ Curriculum": {
+          always: LGBTQ24,
         },
       };
 

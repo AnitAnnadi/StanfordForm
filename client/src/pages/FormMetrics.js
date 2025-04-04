@@ -35,7 +35,9 @@ import {
   healthyCannabis24,
   healthyTobacco24,
   nicQuitQuestion,
-  canQuitQuestion
+  canQuitQuestion,
+  safetyFent24,
+  LGBTQ24
 } from "../utils/questions24-25";
 import { ThreeDots } from "react-loader-spinner";
 import { useTranslation } from "react-i18next";
@@ -137,6 +139,7 @@ const FormMetrics = () => {
     questionsToAnswers
   ) => {
     let reorderedQuestionsToAnswers = {};
+
     array.forEach((question) => {
       if (questionsToAnswers.hasOwnProperty(isNewForm?question.name:question.question)) {
         
@@ -145,6 +148,7 @@ const FormMetrics = () => {
           const currentQuestion = array.find(
             (each) => each.name === question.name
           );
+          console.log(currentQuestion)
           if (currentQuestion) {
             const answerCodes = Object.keys(
               questionsToAnswers[question.name]
@@ -175,6 +179,7 @@ const FormMetrics = () => {
         }
       }
     });
+    console.log(reorderedQuestionsToAnswers)
     setQuestionsToAnswers(reorderedQuestionsToAnswers);
     
     setIsLoading(false)
@@ -256,6 +261,12 @@ const FormMetrics = () => {
             data
           )
         : createQuestionsToAnswersMap(isNewForm, healthy, data);
+    }
+    else if (formType === "Safety First(Fentanyl)") {
+      createQuestionsToAnswersMap(true, safetyFent24, data);
+    }
+    else if (formType === "LGBTQ+ Curriculum") {
+      createQuestionsToAnswersMap(true, LGBTQ24, data);
     }
   };
 
@@ -548,6 +559,7 @@ const FormMetrics = () => {
         
         
         <>
+        {console.log(questionsToAnswers)}
           <div className="content">
             <div className="content-center">
               {Object.keys(questionsToAnswers).map((question, index) => {

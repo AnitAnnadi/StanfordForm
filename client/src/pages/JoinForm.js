@@ -278,6 +278,12 @@ const JoinForm = () => {
                     </option>
                   </>
                 )}
+                <option value={"Safety First(Fentanyl)"}>
+                  Safety First(Fentanyl)
+                </option>
+                <option value={"LGBTQ+ Curriculum"}>
+                  LGBTQ+ Curriculum
+                </option>
               </select>
             )}
 

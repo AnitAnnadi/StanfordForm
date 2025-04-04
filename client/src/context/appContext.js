@@ -224,6 +224,8 @@ const initialState = {
     "Safety First",
     "Healthy Futures: Tobacco/Nicotine/Vaping",
     "Healthy Futures: Cannabis",
+    "Safety First(Fentanyl)",
+    "LGBTQ+ Curriculum"
   ],
   searchType: "You and Me Vape Free (middle school and above)",
   beforeAfterOptions: ["all", "before", "after"],

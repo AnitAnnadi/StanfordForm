@@ -79,6 +79,8 @@ const SearchContainer = ({ startReload }) => {
   const safety24 = [];
   const healthyTobacco24 = [];
   const healthyCannabis24 = [];
+  const safetyFent24 = []
+  const LGBTQ24 = [] 
   const startYear = 2023;
   let currentYear = new Date().getFullYear();
 
@@ -145,8 +147,18 @@ const SearchContainer = ({ startReload }) => {
             healthyCannabis24.push(obj);
           } else {
             healthyCannabis.push(obj);
-          }
+          } 
         }
+        else if (formtype === "Safety First(Fentanyl)") {
+          safetyFent24.push(obj);
+        }
+        else if (formtype === "Safety First(Fentanyl)") {
+          safetyFent24.push(obj);
+        }
+        else if (formtype == "LGBTQ+ Curriculum"){
+          LGBTQ24.push(obj)
+        }
+        
       });
 
       const vapeSheet = XLSXUtils.json_to_sheet(vape);
@@ -163,6 +175,8 @@ const SearchContainer = ({ startReload }) => {
       const safety24Sheet = XLSXUtils.json_to_sheet(safety24);
       const healthyTobacco24Sheet = XLSXUtils.json_to_sheet(healthyTobacco24);
       const healthyCannabis24Sheet = XLSXUtils.json_to_sheet(healthyCannabis24);
+      const safetyFent24Sheet = XLSXUtils.json_to_sheet(safetyFent24);
+      const lgbtq24Sheet = XLSXUtils.json_to_sheet(LGBTQ24);
 
       const workbook = XLSXUtils.book_new();
       XLSXUtils.book_append_sheet(workbook, vapeSheet, "You&Me_MS+HS");
@@ -200,6 +214,19 @@ const SearchContainer = ({ startReload }) => {
         healthyCannabis24Sheet,
         "HealthyFutures_Can"
       );
+
+      XLSXUtils.book_append_sheet(
+        workbook24,
+        safetyFent24Sheet,
+        "SafetyFirst_Fent"
+      );
+
+      XLSXUtils.book_append_sheet(
+        workbook24,
+        lgbtq24Sheet,
+        "LGBTQ+ Curriculum"
+      );
+      
       const todaysDate = new Date().toISOString().split("T")[0];
       writeXLSXFile(workbook, `StanfordREACH_DashboardExport_2023-2024_(${todaysDate}).xlsx`);
       writeXLSXFile(workbook24, `StanfordREACH_DashboardExport_2025on_(${todaysDate}).xlsx`);
