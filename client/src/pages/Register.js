@@ -282,16 +282,13 @@ const Register = () => {
       <Wrapper className="full-page">
         <form className="form" onSubmit={onSubmit}>
           {!values.isMember && (
-            <p className="register-text">
-              Registered?
-              <button
-                type="button"
-                onClick={toggleMember}
-                className="member-btn"
-              >
-                Click here
-              </button>
-            </p>
+            <button
+              type="button"
+              onClick={toggleMember}
+              className="btn top-btn"
+            >
+              Registered? Click here
+            </button>
           )}
           <h3>
             {values.isMember
@@ -308,7 +305,6 @@ const Register = () => {
               handleChange={handleChange}
             />
           )}
-
           {/* email input */}
           <FormRow
             type="email"
@@ -341,7 +337,6 @@ const Register = () => {
               {t("forgot_password", "Forgot Password?")}
             </button>
           ) : null}
-
           {!values.isMember && <AdminRole />}
           {!values.isMember && type == "admin" && (
             <label className="checkbox-container">

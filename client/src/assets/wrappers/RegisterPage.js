@@ -10,9 +10,11 @@ const Wrapper = styled.section`
   }
   .form {
     max-width: 400px;
+    position: relative;
     border-top: 5px solid var(--primary-500);
   }
   h3 {
+    margin-top: 2rem;
     text-align: center;
   }
   p {
@@ -29,6 +31,12 @@ const Wrapper = styled.section`
     color: var(--primary-500);
     cursor: pointer;
     letter-spacing: var(--letterSpacing);
+  }
+
+  .top-btn {
+    position: absolute;
+    top: 0;
+    right: 5px;
   }
 
   .language-select {

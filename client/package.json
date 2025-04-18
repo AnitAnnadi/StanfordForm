@@ -62,5 +62,11 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:4000"
+  "options": {
+    "allowedHosts": [
+      "localhost",
+      ".localhost"
+    ],
+    "proxy": "https://localhost:4000"
+  }
 }
