@@ -1223,101 +1223,97 @@ const AppProvider = ({ children }) => {
     return chunked;
   };
 
-  const getExport = async (
-    search,
-    formCode,
-    allResponseGroups
-  ) => {
-    const { 
-      responseGroups,
-      user, 
-      searchState,
-      searchCounty,
-      searchCity,
-      searchDistrict,
-      searchSchool,
-      searchGrade,
-      searchPeriod,
-      searchTeacher,
-      searchType,
-      searchBeforeAfter,
-      checkedYears } = state;
-    handleChange({ name: "exportLoading", value: true });
+const getExport = async (search, formCode, allResponseGroups) => {
+  const {
+    responseGroups,
+    user,
+    searchState,
+    searchCounty,
+    searchCity,
+    searchDistrict,
+    searchSchool,
+    searchGrade,
+    searchPeriod,
+    searchTeacher,
+    searchType,
+    searchBeforeAfter,
+    checkedYears,
+  } = state;
 
-    try {
+  handleChange({ name: "exportLoading", value: true });
+
+  try {
+    dispatch({
+      type: GET_EXPORT_BEGIN,
+      payload: { exportData: null, msg: "" },
+    });
+
+    if (search) {
+      const { data } = await authFetch.get(`/export/${formCode}${search}`);
+      const { exportData, school: schoolData, teacher: teacherData } = data;
+
       dispatch({
-        type: GET_EXPORT_BEGIN,
-        payload: { exportData: null, msg: "" },
+        type: GET_EXPORT_SUCCESS,
+        payload: {
+          teacherData,
+          schoolData,
+          exportData,
+          msg: "Export Successful",
+        },
       });
+    } else {
+      const groupsToExport = allResponseGroups || responseGroups;
+      const chunkSize = 50;
+      const chunks = chunkArray(groupsToExport, chunkSize);
 
-      // Handle the single search case
-      if (search) {
-        const { data } = await authFetch.get(`/export/${formCode}${search}`);
-        const exportData = data.exportData;
-        const schoolData = data.school;
-        const teacherData = data.teacher;
+      let allExportData = [];
 
-        dispatch({
-          type: GET_EXPORT_SUCCESS,
-          payload: {
-            teacherData,
-            schoolData,
-            exportData,
-            msg: "Export Successful",
-          },
-        });
-      } else {
-        const groupsToExport = allResponseGroups || responseGroups;
-        const chunkSize = 50; // Adjust chunk size as needed
-        const chunks = chunkArray(groupsToExport, chunkSize);
+      for (let i = 0; i < chunks.length; i++) {
+        const chunk = chunks[i];
+        const payload = {
+          allResponseGroups: chunk,
+          user,
+          grade: searchGrade,
+          period: searchPeriod,
+          formType: searchType,
+          when: searchBeforeAfter,
+          state: searchState,
+          city: searchCity,
+          county: searchCounty,
+          district: searchDistrict,
+          school: searchSchool,
+          checkedYears,
+          includeNoCode: i === 0,
+        };
 
-        let allExportData = [];
-
-        for (let i = 0; i < chunks.length; i++) {
-          const chunk = chunks[i];
-
-          // Payload now only contains what backend needs to fetch everything itself
-          const payload = {
-            allResponseGroups: chunk,
-            user,
-            grade: searchGrade,
-            period: searchPeriod,
-            formType: searchType,
-            when: searchBeforeAfter,
-            state: searchState,
-            city: searchCity,
-            county: searchCounty,
-            district: searchDistrict,
-            school: searchSchool,
-            checkedYears,
-            includeNoCode: i==0,
-          };
-
-
+        try {
           const { data } = await authFetch.post("/export/bulk", payload);
           allExportData = allExportData.concat(data.exportData);
+        } catch (chunkError) {
+          console.error(`❌ Error in export chunk ${i}:`, chunkError.response?.data || chunkError.message);
+          throw new Error("Export failed during one of the chunks.");
         }
-
-        // Dispatch consolidated results
-        dispatch({
-          type: GET_EXPORT_SUCCESS,
-          payload: {
-            exportData: allExportData,
-            msg: "Export Successful",
-          },
-        });
       }
-    } catch (error) {
-      console.error("Error exporting data:", error);
+
       dispatch({
-        type: GET_EXPORT_FAIL,
-        payload: { msg: "Export Failed" },
+        type: GET_EXPORT_SUCCESS,
+        payload: {
+          exportData: allExportData,
+          msg: "Export Successful",
+        },
       });
-    } finally {
-      handleChange({ name: "exportLoading", value: false });
-      clearAlert();
     }
-  };
+  } catch (error) {
+    console.error("❌ Error exporting data (main):", error.response?.data || error.message);
+    dispatch({
+      type: GET_EXPORT_FAIL,
+      payload: { msg: "Export Failed" },
+    });
+  } finally {
+    handleChange({ name: "exportLoading", value: false });
+    clearAlert();
+  }
+};
 
   const getTotal = async (user) => {
     let code = user.code;

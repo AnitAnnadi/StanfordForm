@@ -31,6 +31,7 @@ import NoCode from "../models/NoCode.js";
 let exportData = [];
 
 const findResponse = (list, questions, obj, isNewForm) => {
+  console.log('in find')
   list.map((block) => {
     let foundQuestions = questions.filter((object) =>
       isNewForm
@@ -139,6 +140,7 @@ const getExport = async (req, res) => {
       });
 
       const obj = {
+        id: studentResponse._id,
         teacher: teacher?.name,
         school: school?.school,
         county: school.county === "custom" ? "n/a" : school.county,
@@ -199,6 +201,7 @@ const getExport = async (req, res) => {
           formTypeMapping[studentResponse.formType][dataKey] ||
           formTypeMapping[studentResponse.formType].always;
         if (data) findResponse(data, relatedQuestions, obj, isNewForm);
+        console.log('202')
       }
       return obj; // Add the processed object to exportData
     });
@@ -214,75 +217,11 @@ const getExport = async (req, res) => {
 
 const getExportBulk = async (req, res) => {
   try {
-    const { allResponseGroups, user, grade, period, formType, when, state, city, county, district, school, checkedYears, includeNoCode } = req.body;
-    
-
-    if (!allResponseGroups || allResponseGroups.length === 0) {
-      return res.status(400).json({ error: "No response groups provided." });
-    }
-
-    // Prepare queries for all response groups
-    const responseQueries = allResponseGroups.map((group) => {
-      const { school, uniqueResponseType } = group;
-      if (uniqueResponseType?.teacher){
-
-      return {
-        noCode: uniqueResponseType?.noCode === "true",
-        teacher: uniqueResponseType?.teacher || "n/a",
-        formCode: uniqueResponseType.formCode,
-        grade: uniqueResponseType.grade,
-        period: uniqueResponseType.period,
-        formType: uniqueResponseType.formType,
-        when: uniqueResponseType.when,
-        school: school?.school || uniqueResponseType.school,
-        state: school?.state || uniqueResponseType.state,
-        city: school?.city || uniqueResponseType.city,
-        county: school?.county || uniqueResponseType.county,
-        district: school?.district || uniqueResponseType.district,
-      };
-      }
-      else{
-        return group
-      }
-    });
-
-    // Prepare queries for StudentResponse and NoCode collections
-    const queryConditions = [];
-    responseQueries.forEach((q) => {
-      if (!q.formCode) return;
-      let condition = {
-        formCode: q.formCode,
-        grade: q.grade,
-        formType: q.formType,
-        when: q.when,
-        school: q.school,
-      };
-
-
-      if (q.period && q.period !== "null") condition.period = q.period;
-
-      if (q.teacher !== "n/a") {
-        condition.teacher = q.teacher;
-        queryConditions.push(condition);
-      } 
-    });
-
-    // Fetch StudentResponse data
-    let studentResponses = [];
-
-
-    if (queryConditions?.length > 0) {
-      studentResponses = await StudentResponse.find({
-        $or: queryConditions,
-      }).populate("teacher", "name");
-    }
-
-    let noCodeStudentData = []
-    if (includeNoCode){
-    noCodeStudentData = await getNoCodeStudentData({
+    const {
+      allResponseGroups,
       grade,
       period,
-      formType: 'all',
+      formType,
       when,
       state,
       city,
@@ -290,67 +229,123 @@ const getExportBulk = async (req, res) => {
       district,
       school,
       checkedYears,
+      includeNoCode,
+    } = req.body;
+
+    if (!allResponseGroups || allResponseGroups.length === 0) {
+      return res.status(400).json({ error: "No response groups provided." });
+    }
+
+    const responseQueries = allResponseGroups.map((group) => {
+      const { school, uniqueResponseType } = group;
+      const base = uniqueResponseType || group;
+
+      return {
+        noCode: base?.noCode === "true",
+        teacher: base?.teacher || "n/a",
+        formCode: base?.formCode,
+        grade: base?.grade,
+        period: base?.period,
+        formType: base?.formType,
+        when: base?.when,
+        school: school?.school || base?.school,
+        state: school?.state || base?.state,
+        city: school?.city || base?.city,
+        county: school?.county || base?.county,
+        district: school?.district || base?.district,
+      };
     });
-  }
-    
-    studentResponses.push(...noCodeStudentData)
 
+    // === Build query conditions ===
+    const queryConditions = responseQueries
+      .filter((q) => q.formCode)
+      .map((q) => {
+        const condition = {
+          formCode: q.formCode,
+          grade: q.grade,
+          formType: q.formType,
+          when: q.when,
+          school: q.school,
+        };
+        if (q.period && q.period !== "null") condition.period = q.period;
+        if (q.teacher !== "n/a") condition.teacher = q.teacher;
+        return condition;
+      });
 
-    // Fetch related questions for both StudentResponse and NoCode
-    const studentResponseIds = studentResponses?.map((sr) => sr._id);
+    let studentResponses = [];
+    if (queryConditions.length > 0) {
+      studentResponses = await StudentResponse.find({ $or: queryConditions })
+        .lean()
+        .populate("teacher", "name");
+    }
 
-    const questionIds = [
-      ...(studentResponseIds?.length > 0 ? studentResponseIds : []),
-    ];
+    let noCodeStudentData = [];
+    if (includeNoCode) {
+      noCodeStudentData = await getNoCodeStudentData({
+        grade,
+        period,
+        formType: "all",
+        when,
+        state,
+        city,
+        county,
+        district,
+        school,
+        checkedYears,
+      });
+    }
 
+    studentResponses.push(...noCodeStudentData);
+
+    // === Fetch related questions ===
+    const studentResponseIds = studentResponses.map((sr) => sr._id);
     const questions = await Question.find({
-      StudentResponse: { $in: questionIds },
-    });
-    // Create query map for quick lookup
+      StudentResponse: { $in: studentResponseIds },
+    }).lean();
+
+    // === Build response map for faster lookup ===
+    const questionsMap = {};
+    for (const q of questions) {
+      const id = q.StudentResponse.toString();
+      if (!questionsMap[id]) questionsMap[id] = [];
+      questionsMap[id].push(q);
+    }
+
+    // === Build export data ===
     const queryMap = responseQueries.reduce((acc, query) => {
-      const key = `${query.formCode}_${
-        query.teacher !== "n/a" ? query.teacher : "n/a"
-      }`;
+      const key = `${query.formCode}_${query.teacher || "n/a"}`;
       acc[key] = query;
       return acc;
     }, {});
 
-    // **Process all StudentResponse data**
-    let studentExportData = studentResponses?.map((studentResponse) => {
-      const key = `${studentResponse.formCode}_${
-        studentResponse.teacher?._id || "n/a"
-      }`;
+    const studentExportData = studentResponses.map((sr) => {
+      const key = `${sr.formCode}_${sr.teacher?._id || "n/a"}`;
       const matchedQuery = queryMap[key];
 
-      const date = new Date(studentResponse.createdAt).toLocaleString("en-US", {
+      const date = new Date(sr.createdAt).toLocaleString("en-US", {
         timeZone: "America/Los_Angeles",
       });
 
       const obj = {
-        teacher: studentResponse.teacher?.name || "n/a",
-        school: matchedQuery?.school || studentResponse?.school || "n/a",
-        county: matchedQuery?.county || studentResponse?.county || "n/a", 
-        district: matchedQuery?.district || studentResponse?.district || "n/a",
-        state: matchedQuery?.state || studentResponse?.state || "n/a",
-        city: matchedQuery?.city || studentResponse?.city || "n/a",
-        date: date,
-        pre_post: studentResponse.when,
-        grade: studentResponse.grade,
-        period: studentResponse.period || "n/a",
-        curriculum: studentResponse.formType,
+        id: sr._id,
+        teacher: sr.teacher?.name || "n/a",
+        school: matchedQuery?.school || sr.school || "n/a",
+        county: matchedQuery?.county || sr.county || "n/a",
+        district: matchedQuery?.district || sr.district || "n/a",
+        state: matchedQuery?.state || sr.state || "n/a",
+        city: matchedQuery?.city || sr.city || "n/a",
+        date,
+        pre_post: sr.when,
+        grade: sr.grade,
+        period: sr.period || "n/a",
+        curriculum: sr.formType,
       };
+      console.log(obj)
 
-      // Find related questions
-      const relatedQuestions = questions.filter(
-        (q) => q.StudentResponse.toString() === studentResponse._id.toString()
-      );
+      const relatedQuestions = questionsMap[sr._id?.toString()] || [];
+      const isNewForm =
+        relatedQuestions.length > 0 && isInt(relatedQuestions[0].Answer);
 
-      let isNewForm;
-      if (relatedQuestions.length > 0) {
-        isNewForm = isInt(relatedQuestions[0].Answer);
-      }
-
-      // Define a mapping for form types and their respective data
       const formTypeMapping = {
         "You and Me Vape Free (middle school and above)": {
           before: isNewForm ? tobacco24 : tobacco,
@@ -377,7 +372,6 @@ const getExportBulk = async (req, res) => {
         "Healthy Futures: Cannabis": {
           always: isNewForm ? healthy24.concat(healthyCannabis24) : healthy,
         },
-        
         "Safety First(Fentanyl)": {
           always: safetyFent24,
         },
@@ -386,32 +380,28 @@ const getExportBulk = async (req, res) => {
         },
       };
 
-      if (formTypeMapping[studentResponse.formType]) {
-        const dataKey = studentResponse.when === "before" ? "before" : "after";
-        const data =
-          formTypeMapping[studentResponse.formType][dataKey] ||
-          formTypeMapping[studentResponse.formType].always;
-        if (data) findResponse(data, relatedQuestions, obj, isNewForm);
-      }
+      const dataKey = sr.when === "before" ? "before" : "after";
+      const data =
+        formTypeMapping[sr.formType]?.[dataKey] ||
+        formTypeMapping[sr.formType]?.always;
+
+      if (data) findResponse(data, relatedQuestions, obj, isNewForm);
 
       return obj;
-    }); 
+    });
 
-
-    studentExportData = Array.isArray(studentExportData)
-      ? studentExportData
-      : [];
-
-    exportData = [...studentExportData];
-
-    // Send the consolidated export data
-    res.status(200).json({ exportData });
+    res.status(200).json({ exportData: studentExportData });
   } catch (error) {
-    console.error("❌ Error exporting bulk data:", error);
-    res
-      .status(500)
-      .json({ error: "Failed to export bulk data.", details: error.message });
+    console.error("❌ Bulk Export Error:", error.message);
+    res.status(500).json({
+      error: "Failed to export bulk data.",
+      details: error.message,
+    });
   }
 };
+
+
+// export default getExportBulk;
+
 
 export { getExport, getExportBulk };
