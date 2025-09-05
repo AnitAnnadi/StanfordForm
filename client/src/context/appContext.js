@@ -1353,11 +1353,12 @@ const getExport = async (search, formCode, allResponseGroups) => {
   //   }
   // };
 
-  const createCertificate = async ({ name, info }) => {
+  const createCertificate = async ({ name, info, extraEmails }) => {
     try {
-      const { data } = await axios.post(`/api/v1/auth/createCertificate`, {
+      const { data } = await axios.post(`/api/v1/certificate/createCertificate`, {
         name,
         info,
+        extraEmails
       });
       if (data.msg == "Certificate Created") {
         handleChange({ name: "certificate", value: true });

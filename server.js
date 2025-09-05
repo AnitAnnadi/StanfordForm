@@ -29,6 +29,7 @@ import studentResponseRouter from "./routes/studentResponseRoutes.js";
 import formRouter from "./routes/formRoutes.js";
 import exportRouter from "./routes/exportRoutes.js";
 import userRouter from "./routes/userRoutes.js";
+import certRouter from "./routes/certRoutes.js";
 
 // i18n
 import i18next from "i18next";
@@ -78,6 +79,7 @@ app.use("/api/v1/studentResponses", authenticateUser, studentResponseRouter);
 app.use("/api/v1/form", authenticateUser, formRouter);
 app.use("/api/v1/export", exportRouter); //changed to not authenticate. come back to this
 app.use("/api/v1/user", authenticateUser, userRouter);
+app.use("/api/v1/certificate", certRouter);
 
 // ✅ Translation endpoint to add missing keys
 app.post("/locales/add/:lng/:ns", (req, res) => {

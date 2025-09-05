@@ -18,7 +18,6 @@ import {
   forgotPassword,
   verifyToken,
   resetPassword,
-  createCertificate,
   verify2fa,
   resendTwoFa,
   getLocations
@@ -36,7 +35,6 @@ router.route('/forgotpassword').post(forgotPassword)
 router.route('/verifyToken').post(verifyToken)
 router.route('/resetpassword').post(resetPassword)
 router.route('/updateUser').patch(authenticateUser, testUser, updateUser);
-router.route('/createCertificate').post(createCertificate);
 router.route('/getlocations').post(getLocations);
 
 router.route('/resend2fa').post(resendTwoFa);
