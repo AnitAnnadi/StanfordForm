@@ -196,6 +196,7 @@ const JoinForm = () => {
         school !== "default"
       ) {
         let teacher_id = localStorage.getItem("teacher_id")
+        console.log("here:" + newForm,grade,when,school)
         successAlert("Redirecting...");
         setTimeout(() => {
           navigate("/form", {

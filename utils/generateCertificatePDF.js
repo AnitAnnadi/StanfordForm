@@ -11,6 +11,7 @@ import path from 'path';
  * @param {string} opts.outputDir - Directory to write the file into
  * @param {string} opts.backgroundPath - Absolute path to the PNG/JPG background
  * @param {string} [opts.fontPath] - Optional absolute path to a .ttf font
+ * @param {string} opts.formName - The curriculum/form name (used for border color)
  * @returns {Promise<string>} absolute file path to the generated PDF
  */
 export function generateCertificatePDF({
@@ -19,6 +20,7 @@ export function generateCertificatePDF({
   outputDir,
   backgroundPath,
   fontPath,
+  formName
 }) {
   return new Promise((resolve, reject) => {
     const safeName = name.replace(/[^\w\- ]+/g, '').trim().replace(/\s+/g, '_');
@@ -48,12 +50,30 @@ export function generateCertificatePDF({
 
     doc.fillColor('black');
 
-    // Positions translated from your React inline styles:
-    // name at ~50% vertical, centered
+    // Positions
     const centerX = doc.page.width / 2;
     const nameY = doc.page.height * 0.50;
     const dateY = doc.page.height * 0.64;
-    const dateX = doc.page.width * 0.56; // left ~56%
+    const dateX = doc.page.width * 0.56;
+
+    // Conditional border color
+    if (formName === 'Healthy Futures: Tobacco/Nicotine/Vaping') {
+        console.log("there")
+      doc.save()
+        .lineWidth(10)
+        .strokeColor('red')
+        .rect(5, 5, doc.page.width - 10, doc.page.height - 10)
+        .stroke()
+        .restore();
+    } else if (formName === 'Healthy Futures: Cannabis') {
+        console.log("here");
+      doc.save()
+        .lineWidth(10)
+        .strokeColor('green')
+        .rect(5, 5, doc.page.width - 10, doc.page.height - 10)
+        .stroke()
+        .restore();
+    }
 
     // Name
     doc.fontSize(30);

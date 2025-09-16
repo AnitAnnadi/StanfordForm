@@ -56,6 +56,7 @@ export const createCertificate = async (req, res) => {
 
     // teacher email (await!)
     let teacherEmail = null;
+    console.log("info:", info);
     if (info?.teacher_id) {
       const teacher = await User.findOne({ _id: info.teacher_id }).select("email").lean();
       teacherEmail = teacher?.email || null;
@@ -103,6 +104,7 @@ export const createCertificate = async (req, res) => {
       outputDir,
       backgroundPath,
       fontPath: fs.existsSync(fontPath) ? fontPath : undefined,
+      formName: info?.form
       // optionally pass custom filename if your util supports it
       // filename: `certificate_${safeName}_${printedDate}.pdf`
     });
