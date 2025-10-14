@@ -799,7 +799,7 @@ export const cannabis24 = [
   {
     name: "can_know_vapor",
     question:
-      "Nicotine vapes/e-cigarettes are devices that deliver nicotine in the form of a…",
+      "Cannabis vapes/e-cigarettes are devices that deliver nicotine in the form of a…",
     answers: [
       { text: "Vapor", code: 1 },
       { text: "Aerosol", code: 2 },
