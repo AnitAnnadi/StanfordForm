@@ -314,13 +314,20 @@ const getExportBulk = async (req, res) => {
     // === Build export data ===
     const queryMap = responseQueries.reduce((acc, query) => {
       const key = `${query.formCode}_${query.teacher || "n/a"}`;
-      acc[key] = query;
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(query);
       return acc;
     }, {});
 
+
     const studentExportData = studentResponses.map((sr) => {
       const key = `${sr.formCode}_${sr.teacher?._id || "n/a"}`;
-      const matchedQuery = queryMap[key];
+      const possibleQueries = queryMap[key] || [];
+      const matchedQuery = possibleQueries.find(
+        (q) =>
+          q.school === sr.school
+      ) || possibleQueries[0]; 
+
 
       const date = new Date(sr.createdAt).toLocaleString("en-US", {
         timeZone: "America/Los_Angeles",
@@ -340,7 +347,7 @@ const getExportBulk = async (req, res) => {
         period: sr.period || "n/a",
         curriculum: sr.formType,
       };
-      console.log(obj)
+      // console.log(obj)
 
       const relatedQuestions = questionsMap[sr._id?.toString()] || [];
       const isNewForm =

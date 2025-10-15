@@ -18,9 +18,7 @@
   "license": "ISC",
   "devDependencies": {
     "concurrently": "^6.4.0",
-    "nodemon": "^2.0.15",
-    "webpack": "^4.46.0",
-    "webpack-dev-server": "^3.11.3"
+    "nodemon": "^2.0.15"
   },
   "dependencies": {
     "@emotion/react": "^11.13.0",
