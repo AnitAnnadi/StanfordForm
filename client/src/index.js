@@ -11,7 +11,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <AppProvider>
-      <div
+      {/* <div
         role="alert"
         style={{
           backgroundColor: "#fee2e2",
@@ -26,7 +26,7 @@ root.render(
       >
         The website is currently under maintenance. Please visit back in a few
         hours. The team sincerely apologizes for the inconvenience.
-      </div>
+      </div> */}
       <App />
     </AppProvider>
   </React.StrictMode>
