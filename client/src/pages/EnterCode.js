@@ -82,26 +82,8 @@ const EnterCode = () => {
       className="full-page"
       style={{ display: "grid", alignItems: "center", padding: "0 1.5rem" }}
     >
-      <div style={{
-        backgroundColor: '#fff3cd',
-        border: '2px solid #ffc107',
-        borderRadius: '8px',
-        padding: '20px',
-        margin: '20px auto',
-        maxWidth: '600px',
-        textAlign: 'center',
-        boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-      }}>
-        <h2 style={{ color: '#856404', margin: '0 0 10px 0', fontSize: '24px' }}>
-          Website Temporarily Inactive
-        </h2>
-        <p style={{ color: '#856404', margin: '0', fontSize: '16px', lineHeight: '1.5' }}>
-          This website is currently being migrated and is temporarily unavailable.
-          Please check back later. We apologize for any inconvenience.
-        </p>
-      </div>
       <Wrapper style={{ paddingBottom: "1.75rem" }}>
-        <form className="form" onSubmit={handleSubmit} style={{ opacity: 0.5, pointerEvents: 'none' }}>
+        <form className="form" onSubmit={handleSubmit}>
           {showAlert && <Alert />}
           <div className="form">
             <h3>{t('enter_code', 'Enter Code')}</h3>
