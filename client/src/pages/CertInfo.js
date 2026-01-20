@@ -14,6 +14,7 @@ const CertInfo = () => {
     emails: "", // NEW: comma-separated emails
   };
   const [values, setValues] = useState(initialState);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const { certificate, createCertificate, isLoading, showAlert, displayAlert } =
     useAppContext();
@@ -42,6 +43,7 @@ const CertInfo = () => {
       .map((s) => s.trim())
       .filter(Boolean);
 
+    setIsSubmitting(true);
     createCertificate({ name, info, extraEmails }); // pass along
   };
 
@@ -55,38 +57,43 @@ const CertInfo = () => {
     <div>
       <Wrapper className="full-page">
         <form className="form" onSubmit={onSubmit}>
+          <h3 style={{ textAlign: 'center', marginBottom: '2rem' }}>
+            {t('certificate_of_completion', 'Certificate of Completion')}
+          </h3>
+
           {showAlert && <Alert />}
 
-          <label className="form-label">
-            {t(
-              'thanks_for_completion_certificate',
-              'Thank you for completing Stanford REACH Lab’s course. In order to receive credit for completing the course AND to receive a certificate of completion, please enter your full first and last name.'
-            )}
-          </label>
+          <p style={{ marginBottom: '2rem', lineHeight: '1.6' }}>
+            <strong>{t('congratulations', 'Congratulations!')}</strong> {t('thanks_completion', "Thank you for completing Stanford REACH Lab's course. Please enter your full name below to receive your certificate.")}
+          </p>
 
           <FormRow
-            labelText={"Full Name"}
+            labelText={t('full_name', 'Full Name')}
             type="text"
             name="name"
             value={values.name}
             handleChange={handleChange}
           />
 
-          {/* NEW FIELD */}
-          <FormRow
-            labelText={t(
-              'other_recipients_question',
-              'Other than your teacher, would you like any other emails to receive your certificate? Enter as a comma-separated list.'
-            )}
-            type="text"
-            name="emails"
-            value={values.emails}
-            handleChange={handleChange}
-            placeholder="parent1@example.com, counselor@school.org"
-          />
+          <div style={{ marginTop: '1.5rem' }}>
+            <FormRow
+              labelText={t(
+                'other_recipients_question',
+                'Additional Email Recipients (Optional)'
+              )}
+              type="text"
+              name="emails"
+              value={values.emails}
+              handleChange={handleChange}
+              placeholder="parent@example.com, counselor@school.org"
+            />
+            <p style={{ fontSize: '0.85rem', color: '#666', marginTop: '0.5rem' }}>
+              {t('comma_separated_note', 'Use commas to separate multiple email addresses')}
+            </p>
+          </div>
 
-          <button type="submit" className="btn btn-block" disabled={isLoading}>
-            {t('generate_certificate', 'Generate Certificate')}
+          <button type="submit" className="btn btn-block" disabled={isLoading || isSubmitting} style={{ marginTop: '2rem' }}>
+            {isSubmitting ? t('generating', 'Generating...') : t('generate_certificate', 'Generate Certificate')}
           </button>
         </form>
       </Wrapper>
